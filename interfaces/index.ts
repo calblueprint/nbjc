@@ -8,3 +8,9 @@ export type User = {
   id: number;
   name: string;
 };
+
+export type Organization = {
+  id: number;
+  name: string;
+  hasBlueberries: boolean;
+};
