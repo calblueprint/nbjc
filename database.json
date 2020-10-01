@@ -1,0 +1,36 @@
+{
+  "dev": {
+    "driver": "pg",
+    "user": { "ENV": "PG_USERNAME" },
+    "password": { "ENV": "PG_PASSWORD" },
+    "host": "localhost",
+    "port": { "ENV": "PG_PORT" },
+    "database": "nbjc_development"
+  },
+
+  "test": {
+    "driver": "pg",
+    "user": { "ENV": "PG_USERNAME" },
+    "password": { "ENV": "PG_PASSWORD" },
+    "host": "localhost",
+    "port": { "ENV": "PG_PORT" },
+    "database": "nbjc_test"
+  },
+
+  "prod": {
+    "driver": "pg",
+    "user": { "ENV": "PG_USERNAME" },
+    "password": { "ENV": "PG_PASSWORD" },
+    "host": "localhost",
+    "port": { "ENV": "PG_PORT" },
+    "database": "nbjc_production"
+  },
+
+  "pg": {
+    "driver": "pg",
+    "user": { "ENV": "PG_USERNAME" },
+    "password": { "ENV": "PG_PASSWORD" },
+    "host": "localhost",
+    "port": { "ENV": "PG_PORT" }
+  }
+}
