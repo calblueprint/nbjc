@@ -15,14 +15,12 @@ exports.setup = function (options, seedLink) {
 };
 
 exports.up = function (db) {
-  return db.createTable('organization', {
+  return db.createTable('organzation', {
     id: { type: 'int', primaryKey: true, autoIncrement: true },
-    name: 'string',
-    lat: 'int',
+    name: { type: 'string', notNull: true },
     long: 'int',
+    lat: 'int',
     type: 'string',
-    many_users: 'boolean',
-    one_app: 'boolean',
   });
 };
 
