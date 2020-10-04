@@ -1,11 +1,24 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
+model migrations {
+  id     Int      @id @default(autoincrement())
+  name   String
+  run_on DateTime
+}
+
+model organization {
+  id         Int      @id @default(autoincrement())
+  name       String?
+  lat        Int?
+  long       Int?
+  type       String?
+  many_users Boolean?
+  one_app    Boolean?
 }
