@@ -1,10 +1,9 @@
-import Link from 'next/link';
 import Layout from 'components/Layout';
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
 
 const Map = ReactMapboxGl({
   accessToken:
-    'pk.eyJ1IjoiZmFicmljOCIsImEiOiJjaWc5aTV1ZzUwMDJwdzJrb2w0dXRmc2d0In0.p6GGlfyV-WksaDV_KdN27A',
+    'pk.eyJ1IjoiY2luZHl6aGFuZzciLCJhIjoiY2tmdXFsMHhiMHVxbjJ6cXFpNjlqYjBwdSJ9.p-mWz2ectUNc4X-ZdGkeSw',
 });
 
 const MapPage: React.FunctionComponent = () => (
