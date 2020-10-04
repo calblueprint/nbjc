@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "cm": "cz",
+    "prisma:update": "prisma introspect && prisma generate",
+    "db:update": "yarn db:migrate up && yarn prisma:update",
     "db:migrate": "ts-node -O '{ \"module\": \"commonjs\" }' $(yarn bin db-migrate)",
     "db:migrate:create": "ts-node -O '{ \"module\": \"commonjs\" }' bin/create-migration.ts"
   },
