@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "cm": "cz"
+    "cm": "cz",
+    "db:migrate": "ts-node -O '{ \"module\": \"commonjs\" }' $(yarn bin db-migrate)",
+    "db:migrate:create": "ts-node -O '{ \"module\": \"commonjs\" }' bin/create-migration.ts"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx,json}": [
@@ -25,13 +27,15 @@
     "@material-ui/core": "^4.11.0",
     "@prisma/client": "^2.8.0",
     "db-migrate": "^0.11.11",
+    "db-migrate-base": "^2.3.0",
     "db-migrate-pg": "^1.2.2",
     "next": "9.5.3",
     "react": "16.13.1",
     "react-dom": "16.13.1"
   },
   "devDependencies": {
-    "@prisma/cli": "^2.7.1",
+    "@prisma/cli": "^2.8.0",
+    "@types/db-migrate-base": "^0.0.8",
     "@types/node": "^14.11.1",
     "@types/react": "^16.9.49",
     "@types/react-dom": "^16.9.8",
@@ -39,6 +43,7 @@
     "@typescript-eslint/parser": "^4.1.1",
     "commitizen": "^4.2.1",
     "cz-conventional-changelog": "3.3.0",
+    "db-migrate-plugin-typescript": "ethanlee16/plugin-typescript",
     "eslint": "^7.9.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-prettier": "^6.11.0",
@@ -51,6 +56,7 @@
     "husky": "^4.3.0",
     "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",
+    "ts-node": "^9.0.0",
     "typescript": "^4.0.3"
   },
   "config": {
