@@ -1,4 +1,4 @@
-// TODO: instead of creating another list component, how can I use the List.tsx file?
+// TODO: instead of creating another list component, can I use the List.tsx file somehow?
 
 import { Org } from 'interfaces';
 import OrgCard from './OrgCard';
@@ -8,6 +8,11 @@ type Props = {
 };
 
 const List: React.FunctionComponent<Props> = ({ items }) => (
-  items.map((item) => <OrgCard data={item} />);
+  <>
+    {items.map((item) => (
+      <OrgCard data={item} />
+    ))}
+  </>
+);
 
 export default List;

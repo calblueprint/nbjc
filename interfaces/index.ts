@@ -14,10 +14,11 @@ export type Admin = {
   name: string;
 };
 
-// TODO: logo needs to be type of an image.... but image isn't a primitive so how to implement this??
+// TODO: logo needs to be type of an image.... saving as string for now
 export type Org = {
   id: number;
   date: number;
   name: string;
   logo: string;
+  description: string;
 };

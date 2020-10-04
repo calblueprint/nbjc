@@ -17,6 +17,18 @@ export const sampleAdminData: Admin[] = [
 
 // TODO: implement logo and date differently...
 export const sampleOrgData: Org[] = [
-  { id: 107, name: 'Org1', logo: 'test', date: 111 },
-  { id: 108, name: 'Org2', logo: 'test', date: 111 },
+  {
+    id: 107,
+    name: 'Org1',
+    logo: 'logo1.png',
+    date: 10122000,
+    description: 'Description for Org 1 here',
+  },
+  {
+    id: 108,
+    name: 'Org2',
+    logo: 'logo2.png',
+    date: 10102000,
+    description: 'Description for Org 2 here',
+  },
 ];

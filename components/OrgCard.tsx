@@ -1,26 +1,23 @@
 import Link from 'next/link';
 // import Head from 'next/head';
 import { Org } from 'interfaces';
-
-/** A React.Element<typeof Component> takes a single type argument, typeof Component
- * typeof Component is the component type of the React element
- * For an intrinsic element, typeof Component will be the string literal for the intrinsic you used. */
-
-// TODO: each card should have a logo, date, name, spot for text
-// TODO: how to add the logo??
+// import styles from 'styles/OrgCard.module.css';
 
 type Props = {
   data: Org;
 };
 
+// <OrgCard className={styles.OrgCard}> OrgCard</OrgCard>
 const OrgCard: React.FunctionComponent<Props> = ({ data }) => (
-  <Link href="/admin/[id]" as={`/admin/${data.id}`}>
-    <a>
-      {data.logo}
-      {data.date}
-      {data.id}: {data.name}
-    </a>
-  </Link>
+  <>
+    <p>{data.logo}</p>
+    <Link href="/admin/[id]" as={`/admin/${data.id}`}>
+      <a>
+        {data.name}: {data.date}
+      </a>
+    </Link>
+    <div>{data.description}</div>
+  </>
 );
 
 export default OrgCard;

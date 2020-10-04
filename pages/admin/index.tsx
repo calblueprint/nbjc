@@ -1,5 +1,3 @@
-// copy from Users
-
 import { GetStaticProps } from 'next';
 import Link from 'next/link';
 
@@ -17,10 +15,6 @@ type Props = {
 const WithStaticProps: React.FunctionComponent<Props> = ({ items }) => (
   <Layout title="Admin Dash | Next.js + TypeScript Example">
     <h1>Admin Dash</h1>
-    <p>
-      Example fetching data from in <code>getStaticProps()</code>.
-    </p>
-    <p>You are currently on: /admins</p>
     <List items={items} />
     <p>
       <Link href="/">
