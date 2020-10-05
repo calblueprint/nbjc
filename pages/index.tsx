@@ -1,5 +1,6 @@
 import Layout from 'components/Layout';
 import { Button, CircularProgress } from '@material-ui/core';
+import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
 import styles from '../styles/Home.module.css';
 
 const Home: React.FC = () => {
