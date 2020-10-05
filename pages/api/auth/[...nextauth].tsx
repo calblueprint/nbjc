@@ -15,6 +15,6 @@ const options = {
   database: process.env.DATABASE_URL,
 };
 
-export default (req, res) => {
-  return NextAuth(req, res, options);
-};
+// export default (req, res) => {
+//   return NextAuth(req, res, options);
+// };
