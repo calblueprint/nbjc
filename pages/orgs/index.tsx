@@ -18,6 +18,7 @@ const WithStaticProps: React.FunctionComponent<Props> = ({ items }) => (
       RANDOM TEXT RANDOM TEXT
     </p>
     <p>You are currently on: /orgs</p>
+    {/* This is broken because List is implemented with 'user' URL */}
     <List items={items} />
     <p>
       <Link href="/">
