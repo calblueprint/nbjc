@@ -3,6 +3,7 @@ import type { AppProps } from 'next/app';
 import '../styles/globals.css';
 import { ThemeProvider } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { Provider } from 'next-auth/client';
 import theme from 'utils/theme';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
@@ -18,7 +19,9 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
     <>
       <CssBaseline />
       <ThemeProvider theme={theme}>
-        <Component {...pageProps} />
+        <Provider session={pageProps.session}>
+          <Component {...pageProps} />
+        </Provider>
       </ThemeProvider>
     </>
   );
