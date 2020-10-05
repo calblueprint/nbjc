@@ -8,6 +8,9 @@
     "start": "next start",
     "cm": "cz",
     "prisma:update": "prisma introspect && prisma generate",
+    "db:create": "db-migrate db:create nbjc_development -e pg",
+    "db:drop": "db-migrate db:drop nbjc_development -e pg",
+    "db:reset": "yarn db:drop && yarn db:create",
     "db:update": "yarn db:migrate up && yarn prisma:update",
     "db:migrate": "ts-node -O '{ \"module\": \"commonjs\" }' $(yarn bin db-migrate)",
     "db:migrate:create": "ts-node -O '{ \"module\": \"commonjs\" }' bin/create-migration.ts"
