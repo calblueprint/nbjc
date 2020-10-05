@@ -10,8 +10,8 @@ export const sampleUserData: User[] = [
 ];
 
 export const sampleOrgData: Organization[] = [
-  { id: 1, name: 'Blueprint', hasBlueberries: true },
-  { id: 2, name: 'Redprint', hasBlueberries: false },
-  { id: 3, name: 'Greenprint', hasBlueberries: true },
-  { id: 420, name: 'Yellowprint', hasBlueberries: false },
+  { id: 1, name: 'Blueprint' },
+  { id: 2, name: 'Redprint' },
+  { id: 3, name: 'Greenprint' },
+  { id: 420, name: 'Yellowprint' },
 ];
