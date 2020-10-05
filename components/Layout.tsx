@@ -28,6 +28,10 @@ const Layout: React.FunctionComponent<Props> = ({
         <Link href="/users">
           <a>Users List</a>
         </Link>{' '}
+        |{' '}
+        <Link href="/orgs">
+          <a>Orgs List</a>
+        </Link>{' '}
         | <a href="/api/users">Users API</a>
       </nav>
     </header>
