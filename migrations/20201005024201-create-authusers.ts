@@ -3,7 +3,9 @@ import { promisify } from 'util';
 
 export function up(db: Base, callback: Base.CallbackFunction): void {
   db.runSql(
-    `CREATE TABLE accounts
+    `
+CREATE TYPE user_role AS ENUM ('organization', 'moderator', 'admin');
+CREATE TABLE accounts
   (
     id                   SERIAL,
     compound_id          VARCHAR(255) NOT NULL,
@@ -32,7 +34,9 @@ CREATE TABLE sessions
 CREATE TABLE users
   (
     id             SERIAL,
-    name           VARCHAR(255),
+    first_name     VARCHAR(255),
+    last_name      VARCHAR(255),
+    role           user_role,
     email          VARCHAR(255),
     email_verified TIMESTAMPTZ,
     image          VARCHAR(255),
