@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { Organization } from 'interfaces';
 import { sampleOrgData } from 'utils/sample-data';
 import Layout from 'components/Layout';
-import List from 'components/List';
 
 type Props = {
   items: Organization[];
@@ -18,8 +17,13 @@ const WithStaticProps: React.FunctionComponent<Props> = ({ items }) => (
       RANDOM TEXT RANDOM TEXT
     </p>
     <p>You are currently on: /orgs</p>
-    {/* This is broken because List is implemented with 'user' URL */}
-    <List items={items} />
+    {items.map((item) => (
+      <Link href="/orgs/[id]" as={`/orgs/${item.id}`}>
+        <a>
+          {item.id}: {item.name}
+        </a>
+      </Link>
+    ))}
     <p>
       <Link href="/">
         <a>Go home</a>
