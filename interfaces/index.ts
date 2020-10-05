@@ -12,5 +12,4 @@ export type User = {
 export type Organization = {
   id: number;
   name: string;
-  hasBlueberries: boolean;
 };
