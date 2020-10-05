@@ -13,14 +13,6 @@ model migrations {
   run_on DateTime
 }
 
-model orgnizations {
-  id   Int     @id @default(autoincrement())
-  name String
-  long Float?
-  lat  Float?
-  type String?
-}
-
 model accounts {
   id                   Int       @id @default(autoincrement())
   compound_id          String    @unique
@@ -50,13 +42,15 @@ model sessions {
 }
 
 model users {
-  id             Int       @id @default(autoincrement())
-  name           String?
-  email          String?   @unique
+  id             Int        @id @default(autoincrement())
+  first_name     String?
+  last_name      String?
+  role           user_role?
+  email          String?    @unique
   email_verified DateTime?
   image          String?
-  created_at     DateTime  @default(now())
-  updated_at     DateTime  @default(now())
+  created_at     DateTime   @default(now())
+  updated_at     DateTime   @default(now())
 }
 
 model verification_requests {
@@ -66,4 +60,18 @@ model verification_requests {
   expires    DateTime
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
+}
+
+model organizations {
+  id   Int     @id @default(autoincrement())
+  name String
+  long Float?
+  lat  Float?
+  type String?
+}
+
+enum user_role {
+  admin
+  moderator
+  organization
 }
