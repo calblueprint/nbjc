@@ -8,15 +8,15 @@ datasource db {
 }
 
 model migrations {
-  id     Int      @default(autoincrement()) @id
+  id     Int      @id @default(autoincrement())
   name   String
   run_on DateTime
 }
 
-model organzation {
-  id   Int     @default(autoincrement()) @id
+model orgnizations {
+  id   Int     @id @default(autoincrement())
   name String
-  long Int?
-  lat  Int?
+  long Float?
+  lat  Float?
   type String?
 }
