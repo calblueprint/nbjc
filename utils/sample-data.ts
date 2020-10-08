@@ -1,4 +1,4 @@
-import { User, Admin, Org } from 'interfaces';
+import { User, Org } from 'interfaces';
 
 /** Dummy user data. */
 // eslint-disable-next-line import/prefer-default-export
@@ -10,13 +10,8 @@ export const sampleUserData: User[] = [
   { id: 104, name: 'Dave' },
 ];
 
-export const sampleAdminData: Admin[] = [
-  { id: 105, name: 'Sonja' },
-  { id: 106, name: 'Fred' },
-];
-
 // TODO: implement logo and date differently...
-export const sampleOrgData: Org[] = [
+export const sampleOrgAppData: Org[] = [
   {
     id: 107,
     name: 'Org1',

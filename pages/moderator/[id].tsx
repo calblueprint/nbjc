@@ -1,16 +1,16 @@
 import { GetStaticProps, GetStaticPaths } from 'next';
 
 import { Org } from 'interfaces';
-import { sampleOrgData } from 'utils/sample-data';
+import { sampleOrgAppData } from 'utils/sample-data';
 import Layout from 'components/Layout';
-import OrgDetail from 'components/ListDetail';
+import OrgDetail from 'components/OrgDetail';
 
 type Props = {
   item?: Org;
   errors?: string;
 };
 
-const StaticPropsDetail: React.FunctionComponent<Props> = ({
+const ModeratorDashboard: React.FunctionComponent<Props> = ({
   item,
   errors,
 }) => {
@@ -27,7 +27,7 @@ const StaticPropsDetail: React.FunctionComponent<Props> = ({
   return (
     <Layout
       title={`${
-        item ? item.name : 'Admin Detail'
+        item ? item.name : 'Moderator Detail'
       } | Next.js + TypeScript Example`}
     >
       {item && <OrgDetail item={item} />}
@@ -35,12 +35,12 @@ const StaticPropsDetail: React.FunctionComponent<Props> = ({
   );
 };
 
-export default StaticPropsDetail;
+export default ModeratorDashboard;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  // Get the paths we want to pre-render based on admins
-  const paths = sampleOrgData.map((admin) => ({
-    params: { id: admin.id.toString() },
+  // Get the paths we want to pre-render based on mods
+  const paths = sampleOrgAppData.map((moderator) => ({
+    params: { id: moderator.id.toString() },
   }));
 
   // We'll pre-render only these paths at build time.
@@ -54,7 +54,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   try {
     const id = params?.id;
-    const item = sampleOrgData.find((data) => data.id === Number(id));
+    const item = sampleOrgAppData.find((data) => data.id === Number(id));
     // By returning { props: item }, the StaticPropsDetail component
     // will receive `item` as a prop at build time
     return { props: { item } };

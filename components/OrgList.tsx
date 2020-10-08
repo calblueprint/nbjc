@@ -1,4 +1,4 @@
-// TODO: instead of creating another list component, can I use the List.tsx file somehow?
+// TODO: instead of creating another list component, can I use the List.tsx file?
 
 import { Org } from 'interfaces';
 import OrgCard from './OrgCard';

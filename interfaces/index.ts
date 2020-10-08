@@ -9,7 +9,7 @@ export type User = {
   name: string;
 };
 
-export type Admin = {
+export type Moderator = {
   id: number;
   name: string;
 };

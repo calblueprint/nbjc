@@ -1,23 +1,22 @@
 import Link from 'next/link';
-// import Head from 'next/head';
 import { Org } from 'interfaces';
-// import styles from 'styles/OrgCard.module.css';
+import styles from 'styles/OrgCard.module.css';
 
 type Props = {
   data: Org;
 };
 
-// <OrgCard className={styles.OrgCard}> OrgCard</OrgCard>
 const OrgCard: React.FunctionComponent<Props> = ({ data }) => (
-  <>
-    <p>{data.logo}</p>
-    <Link href="/admin/[id]" as={`/admin/${data.id}`}>
+  <div className={styles.main}>
+    <p className={styles.logo}>{data.logo}</p>
+    <Link href="/moderator/[id]" as={`/moderator/${data.id}`}>
       <a>
-        {data.name}: {data.date}
+        <div className={styles.name}>{data.name}</div>
+        {data.date}
       </a>
     </Link>
-    <div>{data.description}</div>
-  </>
+    <div className={styles.description}>{data.description}</div>
+  </div>
 );
 
 export default OrgCard;
