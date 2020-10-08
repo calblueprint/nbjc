@@ -1,5 +1,3 @@
-# Your feature title here
-
 _Describe your feature here_
 
 ## Related PRs
