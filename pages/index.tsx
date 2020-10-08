@@ -1,7 +1,11 @@
+import dynamic from 'next/dynamic';
 import Layout from 'components/Layout';
 import { Button, CircularProgress } from '@material-ui/core';
-import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
 import styles from '../styles/Home.module.css';
+
+const DynamicComponentWithNoSSR = dynamic(() => import('../components/Map'), {
+  ssr: false,
+});
 
 const Home: React.FC = () => {
   return (
@@ -12,6 +16,7 @@ const Home: React.FC = () => {
         Hello
       </Button>
       <CircularProgress />
+      <DynamicComponentWithNoSSR />
     </Layout>
   );
 };
