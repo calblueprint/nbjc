@@ -32,11 +32,7 @@ const Layout: React.FunctionComponent<Props> = ({
         <Link href="/orgs">
           <a>Orgs List</a>
         </Link>{' '}
-        | <a href="/api/users">Users API</a> |{' '}
-        <Link href="/map">
-          <a>Map</a>
-        </Link>{' '}
-        |
+        | <a href="/api/users">Users API</a>
       </nav>
     </header>
     {children}

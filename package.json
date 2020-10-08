@@ -34,7 +34,6 @@
     "db-migrate": "^0.11.11",
     "db-migrate-base": "^2.3.0",
     "db-migrate-pg": "^1.2.2",
-    "mapbox-gl": "^1.12.0",
     "next": "9.5.3",
     "react": "16.13.1",
     "react-dom": "16.13.1",

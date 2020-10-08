@@ -12,7 +12,7 @@ const Map: React.FC = () => {
   return (
     <ReactMapGL
       mapStyle="mapbox://styles/mapbox/streets-v9"
-      mapboxApiAccessToken="pk.eyJ1IjoiYnJ5LWdhdmlubyIsImEiOiJja2ZydDZjdHkwOXc1MnJxcWJqNHRsejF3In0.wUyQfr7dEqtTx8Q4r2EYiA"
+      mapboxApiAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_KEY}
       onViewportChange={(newViewport) => setViewport(newViewport)}
       {...viewport}
     />

@@ -3,7 +3,7 @@ import Layout from 'components/Layout';
 import { Button, CircularProgress } from '@material-ui/core';
 import styles from '../styles/Home.module.css';
 
-const DynamicComponentWithNoSSR = dynamic(() => import('../components/Map'), {
+const MapVisual = dynamic(() => import('../components/Map'), {
   ssr: false,
 });
 
@@ -16,7 +16,7 @@ const Home: React.FC = () => {
         Hello
       </Button>
       <CircularProgress />
-      <DynamicComponentWithNoSSR />
+      <MapVisual />
     </Layout>
   );
 };
