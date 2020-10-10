@@ -81,6 +81,7 @@ export async function down(
 ): Promise<void> {
   const removeIndex = promisify<string>(db.removeIndex.bind(db));
   const dropTable = promisify<string>(db.dropTable.bind(db));
+  const runSql = promisify<string>(db.runSql.bind(db));
   try {
     // Drop indexes
     await removeIndex('token');
@@ -96,11 +97,11 @@ export async function down(
     await dropTable('verification_requests');
     await dropTable('users');
     await dropTable('sessions');
-    db.dropTable('accounts', callback);
+    await dropTable('accounts');
+    await runSql(`DROP TYPE user_role;`);
   } catch (err) {
     callback(err, null);
   }
-  db.runSql(`DROP TYPE user_role;`);
 }
 
 // eslint-disable-next-line no-underscore-dangle
