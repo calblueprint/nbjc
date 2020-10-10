@@ -31,6 +31,14 @@ model accounts {
   @@index([user_id], name: "user_id")
 }
 
+model organizations {
+  id   Int     @id @default(autoincrement())
+  name String
+  long Float?
+  lat  Float?
+  type String?
+}
+
 model sessions {
   id            Int      @id @default(autoincrement())
   user_id       Int
@@ -60,14 +68,6 @@ model verification_requests {
   expires    DateTime
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
-}
-
-model organizations {
-  id   Int     @id @default(autoincrement())
-  name String
-  long Float?
-  lat  Float?
-  type String?
 }
 
 enum user_role {
