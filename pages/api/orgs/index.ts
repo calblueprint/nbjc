@@ -7,7 +7,7 @@ async function handleCREATE(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
-  const post = await prisma.organizations.create({
+  const newOrg = await prisma.organizations.create({
     data: {
       name: req.body.name,
       long: req.body.long,
@@ -15,52 +15,56 @@ async function handleCREATE(
       type: req.body.type,
     },
   });
-  res.json(post);
+  res.json(newOrg);
 }
 
 async function handleDELETE(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
-  const post = await prisma.organizations.delete({
-    where: { id: Number(req.id) },
+  const deletedOrg = await prisma.organizations.delete({
+    where: { id: Number(req.query.id) },
   });
-  res.json(post);
+  res.json(deletedOrg);
 }
 
 async function handleUPDATE(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
-  const post = await prisma.organizations.findOne({
-    where: { id: Number(postId) },
-    include: { author: true },
+  const updatedOrg = await prisma.organizations.update({
+    where: { id: Number(req.query.id) },
+    data: {
+      name: req.body.name,
+      long: req.body.long,
+      lat: req.body.lat,
+      type: req.body.type,
+    },
   });
-  res.json(post);
+  res.json(updatedOrg);
 }
 
 async function handleREAD(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
-  const post = await prisma.organizations.findOne({
-    where: { id: Number(postId) },
-    include: { author: true },
+  const org = await prisma.organizations.findOne({
+    where: { id: Number(req.query.id) },
   });
-  res.json(post);
+  res.json(org);
 }
 
 export default async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  if (req.method === 'CREATE') {
+  if (req.query.method === 'CREATE') {
     handleCREATE(req, res);
-  } else if (req.method === 'DELETE') {
+  } else if (req.query.method === 'DELETE') {
     handleDELETE(req, res);
-  } else if (req.method === 'UPDATE') {
+  } else if (req.query.method === 'UPDATE') {
     handleUPDATE(req, res);
-  } else if (req.method === 'READ') {
+  } else if (req.query.method === 'READ') {
     handleREAD(req, res);
   } else {
     throw new Error(
