@@ -35,15 +35,19 @@
     "db-migrate-base": "^2.3.0",
     "db-migrate-pg": "^1.2.2",
     "next": "9.5.3",
+    "next-auth": "^3.1.0",
     "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react-dom": "16.13.1",
+    "react-map-gl": "^5.2.9"
   },
   "devDependencies": {
     "@prisma/cli": "^2.8.0",
     "@types/db-migrate-base": "^0.0.8",
+    "@types/next-auth": "^3.1.11",
     "@types/node": "^14.11.1",
     "@types/react": "^16.9.49",
     "@types/react-dom": "^16.9.8",
+    "@types/react-map-gl": "^5.2.7",
     "@typescript-eslint/eslint-plugin": "^4.1.1",
     "@typescript-eslint/parser": "^4.1.1",
     "commitizen": "^4.2.1",

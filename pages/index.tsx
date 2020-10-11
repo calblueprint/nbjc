@@ -1,6 +1,12 @@
+import dynamic from 'next/dynamic';
 import Layout from 'components/Layout';
 import { Button, CircularProgress } from '@material-ui/core';
-import styles from '../styles/Home.module.css';
+// import { signIn, signOut, useSession } from 'next-auth/client';
+// import styles from '../styles/Home.module.css';
+
+const MapVisual = dynamic(() => import('../components/Map'), {
+  ssr: false,
+});
 
 const Home: React.FC = () => {
   return (
@@ -11,6 +17,7 @@ const Home: React.FC = () => {
         Hello
       </Button>
       <CircularProgress />
+      <MapVisual />
     </Layout>
   );
 };
