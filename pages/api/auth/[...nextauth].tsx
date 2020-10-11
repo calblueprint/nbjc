@@ -32,6 +32,14 @@ const options = {
     }),
   ],
 
+  pages: {
+    signIn: '/api/auth/signin', // Displays signin buttons
+    signOut: '/api/auth/signout', // Displays form with sign out button
+    error: '/api/auth/error', // Error code passed in query string as ?error=
+    verifyRequest: '/api/auth/verify-request', // Used for check email page
+    newUser: null, // If set, new users will be directed here on first sign in
+  },
+
   // A database is optional, but required to persist accounts in a database
   database: process.env.DATABASE_URL,
 };
