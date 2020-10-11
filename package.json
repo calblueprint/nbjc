@@ -28,6 +28,9 @@
       "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true"
     }
   },
+  "prisma": {
+    "schema": "./schema.prisma"
+  },
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@prisma/client": "^2.8.0",
