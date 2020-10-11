@@ -1,9 +1,11 @@
 import Link from 'next/link';
-import { Org } from 'interfaces';
+import { OrgApp } from 'interfaces';
 import styles from 'styles/OrgCard.module.css';
 
+// change Org instances to Organization or OrgApp?
+
 type Props = {
-  data: Org;
+  data: OrgApp;
 };
 
 const OrgCard: React.FunctionComponent<Props> = ({ data }) => (

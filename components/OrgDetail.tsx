@@ -1,7 +1,7 @@
-import { Org } from 'interfaces';
+import { OrgApp } from 'interfaces';
 
 type OrgDetailProps = {
-  item: Org;
+  item: OrgApp;
 };
 
 const OrgDetail: React.FunctionComponent<OrgDetailProps> = ({ item: org }) => (
