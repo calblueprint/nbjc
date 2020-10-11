@@ -1,5 +1,6 @@
 import Base from 'db-migrate-base';
 import { promisify } from 'util';
+
 /**
  * Describe what your `up` migration does.
  */
