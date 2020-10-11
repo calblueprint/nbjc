@@ -8,11 +8,11 @@ type Props = {
 };
 
 const List: React.FunctionComponent<Props> = ({ items }) => (
-  <li>
+  <>
     {items.map((item) => (
-      <OrgCard data={item} />
+      <OrgCard data={item} key={item.id} />
     ))}
-  </li>
+  </>
 );
 
 export default List;
