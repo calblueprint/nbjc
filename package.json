@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "cm": "cz",
     "prisma:update": "prisma introspect && prisma generate",
     "db:create": "db-migrate db:create nbjc_development -e pg",
