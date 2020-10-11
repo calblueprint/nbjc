@@ -1,6 +1,5 @@
 import Base from 'db-migrate-base';
 import { promisify } from 'util';
-
 /**
  * Describe what your `up` migration does.
  */
@@ -10,7 +9,7 @@ export async function up(
 ): Promise<void> {
   const createTable = promisify(db.createTable.bind(db));
   try {
-    await createTable('orgnizations', {
+    await createTable('organizations', {
       id: { type: 'int', primaryKey: true, autoIncrement: true },
       name: { type: 'string', notNull: true },
       long: 'decimal',
@@ -21,7 +20,6 @@ export async function up(
     callback(err, null);
   }
 }
-
 /**
  * Describe what your `down` migration does.
  */
@@ -36,7 +34,6 @@ export async function down(
     callback(err, null);
   }
 }
-
 // eslint-disable-next-line no-underscore-dangle
 export const _meta = {
   version: 1,
