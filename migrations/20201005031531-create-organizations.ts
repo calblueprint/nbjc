@@ -10,7 +10,7 @@ export async function up(
 ): Promise<void> {
   const createTable = promisify(db.createTable.bind(db));
   try {
-    await createTable('orgnizations', {
+    await createTable('organizations', {
       id: { type: 'int', primaryKey: true, autoIncrement: true },
       name: { type: 'string', notNull: true },
       long: 'decimal',
