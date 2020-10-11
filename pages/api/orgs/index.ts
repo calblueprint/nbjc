@@ -26,23 +26,23 @@ function handleCREATE( req, res ) => {
       where: { id: Number(postId) },
       include: { author: true },
     })
-    res.json(post)
+    res.json(post);
   }
   
   // DELETE /api/post/:id
   function handleDELETE( req, res): void => {
     const post = await prisma.organizations.delete({
-      where: { id: Number(postId) },
-    })
-    res.json(post)
+        where: { id: Number(postId) },
+    });
+    res.json(post);
   }
 
   function handleUPDATE(req, res): void => {
     const post = await prisma.post.findOne({
-      where: { id: Number(postId) },
-      include: { author: true },
-    })
-    res.json(post)
+        where: { id: Number(postId) },
+        include: { author: true },
+    });
+    res.json(post);
   }
 
   function handleREAD(req, res): void => {
@@ -50,6 +50,6 @@ function handleCREATE( req, res ) => {
       where: { id: Number(postId) },
       include: { author: true },
     })
-    res.json(post)
+    res.json(post);
   }
 
