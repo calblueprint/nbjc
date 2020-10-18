@@ -1,10 +1,15 @@
 import { useState } from 'react';
-import ReactMapGL from 'react-map-gl';
+import ReactMapGL, { ViewportProps } from 'react-map-gl';
+
+type ViewportStateProps = {
+  width: number | string;
+  height: number | string;
+};
 
 const Map: React.FC = () => {
-  const [viewport, setViewport] = useState({
-    width: 50000000, // large number to fit the box?
-    height: 400,
+  const [viewport, setViewport] = useState<ViewportStateProps | ViewportProps>({
+    width: 100,
+    height: 100,
     latitude: 41.5868,
     longitude: -93.625,
     zoom: 13,
