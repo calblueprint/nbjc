@@ -32,12 +32,12 @@ model accounts {
 }
 
 model organizations {
-  id                        Int                         @id @default(autoincrement())
-  name                      String
-  long                      Float?
-  lat                       Float?
-  type                      String?
-  organization_applications organization_applications[]
+  id                       Int                        @id @default(autoincrement())
+  name                     String
+  long                     Float?
+  lat                      Float?
+  type                     String?
+  organizationapplications organizationapplications[]
 }
 
 model sessions {
@@ -71,7 +71,7 @@ model verification_requests {
   updated_at DateTime @default(now())
 }
 
-model organization_applications {
+model organizationapplications {
   id              Int           @id @default(autoincrement())
   status          status
   organization_id Int

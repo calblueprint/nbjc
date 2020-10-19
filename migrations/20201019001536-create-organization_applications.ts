@@ -6,7 +6,7 @@ import { promisify } from 'util';
 export function up(db: Base, callback: Base.CallbackFunction): void {
   db.runSql(
     `
-      CREATE TABLE organization_applications
+      CREATE TABLE OrganizationApplications
         (
           id                   SERIAL,
           status               status NOT NULL,
@@ -29,7 +29,7 @@ export async function down(
 ): Promise<void> {
   const dropTable = promisify<string>(db.dropTable.bind(db));
   try {
-    await dropTable('organization_applications');
+    await dropTable('OrganizationApplications');
   } catch (err) {
     callback(err, null);
   }
