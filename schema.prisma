@@ -1,88 +1,98 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model migrations {
-  id     Int      @id @default(autoincrement())
-  name   String
-  run_on DateTime
+generator client {
+  provider = "prisma-client-js"
+
+
 }
 
-model accounts {
-  id                   Int       @id @default(autoincrement())
-  compound_id          String    @unique
-  user_id              Int
-  provider_type        String
-  provider_id          String
-  provider_account_id  String
-  refresh_token        String?
-  access_token         String?
-  access_token_expires DateTime?
-  created_at           DateTime  @default(now())
-  updated_at           DateTime  @default(now())
+model Migration {
+  id    Int      @id @default(autoincrement())
+  name  String
+  runOn DateTime @map("run_on")
 
-  @@index([provider_account_id], name: "provider_account_id")
-  @@index([provider_id], name: "provider_id")
-  @@index([user_id], name: "user_id")
+
+  @@map("migrations")
 }
 
-model organizations {
-  id                       Int                        @id @default(autoincrement())
-  name                     String
-  long                     Float?
-  lat                      Float?
-  type                     String?
+model Account {
+  id                Int       @id @default(autoincrement())
+  compoundId        String    @unique @map("compound_id")
+  userId            Int       @map("user_id")
+  providerType      String    @map("provider_type")
+  providerId        String    @map("provider_id")
+  providerAccountId String    @map("provider_account_id")
+  refreshToken      String?   @map("refresh_token")
+  accessToken       String?   @map("access_token")
+  accessTokenExpire DateTime? @map("access_token_expires")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at")
+
+
+  @@map("accounts")
+}
+
+model Organization {
+  id   Int     @id @default(autoincrement())
+  name String
+  long Float?
+  lat  Float?
+  type String?
+
+
+  @@map("organizations")
   organizationapplications organizationapplications[]
 }
 
-model sessions {
-  id            Int      @id @default(autoincrement())
-  user_id       Int
-  expires       DateTime
-  session_token String   @unique
-  access_token  String   @unique
-  created_at    DateTime @default(now())
-  updated_at    DateTime @default(now())
+model Session {
+  id           Int      @id @default(autoincrement())
+  userId       Int      @map("user_id")
+  expire       DateTime @map("expires")
+  sessionToken String   @unique @map("session_token")
+  accessToken  String   @unique @map("access_token")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+
+  @@map("sessions")
 }
 
-model users {
-  id             Int        @id @default(autoincrement())
-  first_name     String?
-  last_name      String?
-  role           user_role?
-  email          String?    @unique
-  email_verified DateTime?
-  image          String?
-  created_at     DateTime   @default(now())
-  updated_at     DateTime   @default(now())
+model User {
+  id            Int       @id @default(autoincrement())
+  firstName     String?   @map("first_name")
+  lastName      String?   @map("last_name")
+  role          UserRole?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
+
+
+  @@map("users")
 }
 
-model verification_requests {
+model VerificationRequest {
   id         Int      @id @default(autoincrement())
   identifier String
   token      String   @unique
-  expires    DateTime
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
+  expire     DateTime @map("expires")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+
+  @@map("verification_requests")
 }
 
 model organizationapplications {
-  id              Int           @id @default(autoincrement())
+  id              Int          @id @default(autoincrement())
   status          status
   organization_id Int
   question        String
-  organizations   organizations @relation(fields: [organization_id], references: [id])
-}
-
-enum user_role {
-  admin
-  moderator
-  organization
+  organizations   Organization @relation(fields: [organization_id], references: [id])
 }
 
 enum status {
@@ -90,4 +100,12 @@ enum status {
   draft
   rejected
   submitted
+}
+
+enum UserRole {
+  admin
+  moderator
+  organization
+
+  @@map("user_role")
 }
