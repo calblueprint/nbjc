@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { Box, Button, IconButton, TextField } from '@material-ui/core';
+import { Button, IconButton, TextField } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
+import styles from 'styles/Home.module.css';
 
 type Props = {
   title?: string;
@@ -10,25 +11,25 @@ const AdminDash: React.FunctionComponent<Props> = ({
   children,
   title = 'NBJC',
 }) => (
-  <Box className={styles.page}>
-    <Box className={styles.layout}>
-      <Box className={styles.titleSearch}>
-        <Box className={styles.pageTitle}>
+  <div className={styles.page}>
+    <div className={styles.layout}>
+      <div className={styles.titleSearch}>
+        <div className={styles.pageTitle}>
           <Link href="/">
             <a>{title}</a>
           </Link>
-        </Box>
-        <Box className={styles.searchBar}>
-          <Box>
+        </div>
+        <div className={styles.searchBar}>
+          <div>
             <IconButton color="primary">
               <SearchIcon />
             </IconButton>
             <TextField id="standard-basic" label="Explore Organizations" />
-          </Box>
-        </Box>
-      </Box>
-      <Box className={styles.linksHeader}>
-        <Box className={styles.link}>
+          </div>
+        </div>
+      </div>
+      <div className={styles.linksHeader}>
+        <div className={styles.link}>
           <Link href="/">
             <a>Map</a>
           </Link>
@@ -38,16 +39,16 @@ const AdminDash: React.FunctionComponent<Props> = ({
           <Link href="/">
             <a>Dashboard</a>
           </Link>
-        </Box>
-        <Box className={styles.admin}>
+        </div>
+        <div className={styles.admin}>
           <Button variant="contained" color="primary" href="#contained-buttons">
             Admin
           </Button>
-        </Box>
-      </Box>
-    </Box>
+        </div>
+      </div>
+    </div>
     {children}
-  </Box>
+  </div>
 );
 
 export default AdminDash;

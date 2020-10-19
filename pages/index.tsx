@@ -74,9 +74,7 @@ const Home: React.FC = () => {
           </div>
 
           <div className={styles.rightCol}>
-            <div className={styles.component}>
-              <Map />
-            </div>
+            <Map width="100%" height="100%" />
           </div>
         </div>
       </div>

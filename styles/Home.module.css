@@ -127,6 +127,7 @@
   margin-top: 5px;
   flex-direction: column;
   flex-wrap: wrap;
+  height: 80vh;
 }
 
 .pageTitle {
@@ -159,7 +160,9 @@
   flex-direction: row;
   flex-wrap: wrap;
   margin-top: 20px;
+  margin-bottom: 20px;
   justify-content: space-between;
+  height: 100%;
 }
 
 .searchBar {

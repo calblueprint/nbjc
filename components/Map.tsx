@@ -6,10 +6,10 @@ type ViewportStateProps = {
   height: number | string;
 };
 
-const Map: React.FC = () => {
+const Map: React.FunctionComponent<ViewportStateProps> = () => {
   const [viewport, setViewport] = useState<ViewportStateProps | ViewportProps>({
-    width: 100,
-    height: 100,
+    width: '100%',
+    height: '100%',
     latitude: 41.5868,
     longitude: -93.625,
     zoom: 13,
