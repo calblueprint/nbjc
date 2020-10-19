@@ -17,11 +17,15 @@ export type Moderator = {
 // TODO: logo needs to be type of an image.... saving as string for now
 export type OrgApp = {
   id: number;
+  orgType: string;
   date: number;
   name: string;
   logo: string;
   description: string;
-  question: string;
+  contact: string;
+  email: string;
+  website: string;
+  workType: string;
 };
 
 export type Organization = {
