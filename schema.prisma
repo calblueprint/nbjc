@@ -32,11 +32,12 @@ model accounts {
 }
 
 model organizations {
-  id   Int     @id @default(autoincrement())
-  name String
-  long Float?
-  lat  Float?
-  type String?
+  id                        Int                         @id @default(autoincrement())
+  name                      String
+  long                      Float?
+  lat                       Float?
+  type                      String?
+  organization_applications organization_applications[]
 }
 
 model sessions {
@@ -70,8 +71,23 @@ model verification_requests {
   updated_at DateTime @default(now())
 }
 
+model organization_applications {
+  id              Int           @id @default(autoincrement())
+  status          status
+  organization_id Int
+  question        String
+  organizations   organizations @relation(fields: [organization_id], references: [id])
+}
+
 enum user_role {
   admin
   moderator
   organization
+}
+
+enum status {
+  approved
+  draft
+  rejected
+  submitted
 }
