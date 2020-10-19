@@ -10,23 +10,43 @@ export const sampleUserData: User[] = [
   { id: 104, name: 'Dave' },
 ];
 
-// TODO: implement logo and date differently...
+// TODO: implement logo and date differently...?
 export const sampleOrgAppData: OrgApp[] = [
   {
     id: 107,
-    name: 'Org1',
-    logo: 'logo1.png',
+    orgType: '501(c)(3)',
+    workType: 'service',
+    website: 'white.com',
+    email: 'skylerwhite@gmail.com',
+    name: 'The DEA',
+    logo: '/logo2.png',
     date: 10122000,
     description: 'Description for Org 1 here',
-    question: 'bla blah',
+    contact: 'Skyler White',
   },
   {
     id: 108,
-    name: 'Org2',
-    logo: 'logo2.png',
+    orgType: '501(c)(3)',
+    workType: 'service',
+    website: 'google.com',
+    email: 'walterwhite@gmail.com',
+    name: 'The Car Wash',
+    logo: '/logo1.png',
     date: 10102000,
     description: 'Description for Org 2 here',
-    question: 'la blah',
+    contact: 'Walter White',
+  },
+  {
+    id: 109,
+    orgType: 'for profit!',
+    workType: 'service',
+    website: '14125.com',
+    email: 'pinkman@gmail.com',
+    name: 'Los Pollos Hermanos',
+    logo: '/oski.jpg',
+    date: 10112000,
+    description: 'Description for Org 3 here',
+    contact: 'Jesse Pinkman',
   },
 ];
 

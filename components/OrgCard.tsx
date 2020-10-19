@@ -1,24 +1,30 @@
-import Link from 'next/link';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Typography from '@material-ui/core/Typography';
 import { OrgApp } from 'interfaces';
 import styles from 'styles/OrgCard.module.css';
 
-// change Org instances to Organization or OrgApp?
-
-type Props = {
-  data: OrgApp;
+type CardProps = {
+  items: OrgApp;
 };
 
-const OrgCard: React.FunctionComponent<Props> = ({ data }) => (
-  <div className={styles.main}>
-    <p className={styles.logo}>{data.logo}</p>
-    <Link href="/moderator/[id]" as={`/moderator/${data.id}`}>
-      <a>
-        <div className={styles.name}>{data.name}</div>
-        {data.date}
-      </a>
-    </Link>
-    <div className={styles.description}>{data.description}</div>
-  </div>
-);
+const OrgCard: React.FunctionComponent<CardProps> = ({ items }) => {
+  return (
+    <Card className={styles.root}>
+      <CardMedia className={styles.media} image={items.logo} />
+      <div className={styles.details}>
+        <CardContent className={styles.content}>
+          <Typography component="h5" variant="h5">
+            {items.name}
+          </Typography>
+          <Typography variant="subtitle1" color="textSecondary">
+            {items.description}
+          </Typography>
+        </CardContent>
+      </div>
+    </Card>
+  );
+};
 
 export default OrgCard;

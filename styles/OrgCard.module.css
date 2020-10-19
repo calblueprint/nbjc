@@ -1,36 +1,23 @@
-.main {
-  width: 300px;
-  border: 5px solid black;
-  padding: 50px;
-  margin: 10px;
-  border-radius: 25px;
-
+.root {
   display: flex;
+  width: 100%;
+  border-color: black;
+  border: 2px solid black;
+  margin-right: 10px;
+  margin-bottom: 8px;
+  margin-left: 10px;
+  margin-top: 2px;
+}
+.details {
+  display: flex;
+  background-color: white;
   flex-direction: column;
-  align-items: center;
+  width: 75%;
 }
-
-.description {
-  display: inline-block;
-  justify-content: flex-start;
-  align-items: left;
-  color: pink;
-  font-size: 15px;
+.content {
+  flex: 1 0 auto;
 }
-
-.name {
-  font-size: 25px;
-  font-weight: 400;
-  color: red;
-}
-
-.logo {
-  display: flex;
-  justify-content: left;
-  align-items: left;
-
-  border: 5px solid blue;
-  height: 30%;
-  padding: 10px;
-  margin: 2px;
+.media {
+  width: 25%;
+  margin: 8px;
 }

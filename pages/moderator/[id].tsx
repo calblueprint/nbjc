@@ -1,5 +1,4 @@
 import { GetStaticProps, GetStaticPaths } from 'next';
-
 import { OrgApp } from 'interfaces';
 import { sampleOrgAppData } from 'utils/sample-data';
 import Layout from 'components/Layout';
