@@ -1,6 +1,5 @@
 .root {
   display: flex;
-  width: 100%;
   border-color: black;
   border: 2px solid black;
   margin-right: 10px;
@@ -8,16 +7,15 @@
   margin-left: 10px;
   margin-top: 2px;
 }
-.details {
+.content {
   display: flex;
   background-color: white;
   flex-direction: column;
   width: 75%;
 }
-.content {
-  flex: 1 0 auto;
+.cardMain {
+  display: flex;
 }
 .media {
   width: 25%;
-  margin: 8px;
 }

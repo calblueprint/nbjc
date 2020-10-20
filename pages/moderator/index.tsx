@@ -8,12 +8,13 @@ import styles from 'styles/index.module.css';
 import OrgCard from 'components/OrgCard';
 import OrgDetail from 'components/OrgDetail';
 import { useState } from 'react';
+import Button from '@material-ui/core/Button';
 
 type Props = {
   items: OrgApp[];
 };
 
-const ModList: React.FunctionComponent<Props> = ({ items }) => {
+const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
   const [card, setCard] = useState<OrgApp>(items[0]);
 
   const clickCard = (newCard: OrgApp): void => {
@@ -21,30 +22,27 @@ const ModList: React.FunctionComponent<Props> = ({ items }) => {
   };
 
   return (
-    <Layout title="Moderator Dash">
+    <Layout title="Moderator Dashboard">
       <h1>Moderator Dash</h1>
       <div className={styles.root}>
         <div className={styles.leftCol}>
-          {items.map((a) => (
-            <div key={a.id} onClick={() => clickCard(a)}>
-              <OrgCard items={a} />
+          {items.map((item) => (
+            <div key={item.id} onClick={() => clickCard(item)}>
+              <OrgCard items={item} />
             </div>
           ))}
         </div>
         <div className={styles.rightCol}>
           <div className={styles.expandedApp}>
-            {' '}
-            <OrgDetail items={card} />{' '}
+            <OrgDetail items={card} />
           </div>
           <div className={styles.acceptDecline}>
-            <button type="button" className={styles.accept}>
-              {' '}
+            <Button variant="contained" color="primary">
               Accept
-            </button>
-            <button type="button" className={styles.decline}>
-              {' '}
+            </Button>
+            <Button variant="contained" color="secondary">
               Decline
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -57,4 +55,4 @@ export const getStaticProps: GetStaticProps = async () => {
   return { props: { items } };
 };
 
-export default ModList;
+export default ModeratorDashBoard;

@@ -36,13 +36,13 @@
 }
 
 .accept {
-  background-color: white;
+  background-color: lightblue;
   border-radius: 8px;
   font-size: 15px;
 }
 
 .decline {
-  background-color: darkgray;
+  background-color: red;
   border-radius: 8px;
   color: white;
   font-size: 15px;
