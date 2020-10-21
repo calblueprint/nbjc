@@ -9,52 +9,31 @@ generator client {
 
 }
 
-model Migration {
-  id    Int      @id @default(autoincrement())
-  name  String
-  runOn DateTime @map("run_on")
-
-
-  @@map("migrations")
-}
-
 model Account {
   id                Int       @id @default(autoincrement())
-  compoundId        String    @unique @map("compound_id")
-  userId            Int       @map("user_id")
-  providerType      String    @map("provider_type")
-  providerId        String    @map("provider_id")
-  providerAccountId String    @map("provider_account_id")
-  refreshToken      String?   @map("refresh_token")
-  accessToken       String?   @map("access_token")
-  accessTokenExpire DateTime? @map("access_token_expires")
-  createdAt         DateTime  @default(now()) @map("created_at")
-  updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at")
+  compoundId        String    @unique
+  userId            Int
+  providerType      String
+  providerId        String
+  providerAccountId String
+  refreshToken      String?
+  accessToken       String?
+  accessTokenExpire DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @default(now()) @updatedAt
 
 
   @@map("accounts")
 }
 
-model Organization {
-  id   Int     @id @default(autoincrement())
-  name String
-  long Float?
-  lat  Float?
-  type String?
-
-
-  @@map("organizations")
-  organization_applications organization_applications[]
-}
-
 model Session {
   id           Int      @id @default(autoincrement())
-  userId       Int      @map("user_id")
-  expire       DateTime @map("expires")
-  sessionToken String   @unique @map("session_token")
-  accessToken  String   @unique @map("access_token")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+  userId       Int
+  expire       DateTime
+  sessionToken String   @unique
+  accessToken  String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
 
 
   @@map("sessions")
@@ -62,14 +41,14 @@ model Session {
 
 model User {
   id            Int       @id @default(autoincrement())
-  firstName     String?   @map("first_name")
-  lastName      String?   @map("last_name")
+  firstName     String?
+  lastName      String?
   role          UserRole?
   email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
+  emailVerified DateTime?
   image         String?
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
 
 
   @@map("users")
@@ -79,12 +58,60 @@ model VerificationRequest {
   id         Int      @id @default(autoincrement())
   identifier String
   token      String   @unique
-  expire     DateTime @map("expires")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+  expire     DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
 
 
   @@map("verification_requests")
+}
+
+model Migration {
+  id    Int      @id @default(autoincrement())
+  name  String
+  runOn DateTime @map("run_on")
+
+
+  @@map("migrations")
+}
+
+model OrganizationApplication {
+  id                Int               @id @default(autoincrement())
+  applicationStatus ApplicationStatus @map("application_status")
+  organizationId    Int               @unique @map("organization_id")
+  organizationName  String            @map("organization_name")
+  contactName       String?           @map("contact_name")
+  contactEmail      String?           @map("contact_email")
+  organizationType  OrganizationType  @map("organization_type")
+  workType          WorkType          @map("work_type")
+  address           String
+  lat               Int
+  long              Int
+  missionStatement  String?           @map("mission_statement")
+  shortHistory      String?           @map("short_history")
+  keyValue          String?           @map("key_values")
+  lgbtqDemographic  LgbtqDemographic  @map("lgbtq_demographic")
+  raceDemographic   RaceDemographic   @map("race_demographic")
+  ageDemographic    AgeDemographic    @map("age_demographic")
+  capacity          Int?
+  ein               Int
+  foundingDate      DateTime          @map("founding_date")
+  organization      Organization      @relation(name: "organization_applicationsToorganizations", fields: [organizationId], references: [id])
+
+
+  @@map("organization_applications")
+}
+
+model Organization {
+  id                      Int                      @id @default(autoincrement())
+  name                    String
+  long                    Float?
+  lat                     Float?
+  type                    String?
+  organizationApplication OrganizationApplication? @relation(name: "organization_applicationsToorganizations")
+
+
+  @@map("organizations")
 }
 
 enum UserRole {
@@ -95,23 +122,67 @@ enum UserRole {
   @@map("user_role")
 }
 
-model organization_applications {
-  id              Int          @id @default(autoincrement())
-  status          status
-  organization_id Int
-  question        String
-  organizations   Organization @relation(fields: [organization_id], references: [id])
+enum AgeDemographic {
+  adult   @map("Adults")
+  child   @map("Children")
+  senior  @map("Seniors")
+  teen    @map("Teens")
+
+  @@map("age_demographic")
 }
 
-enum user_role {
-  admin
-  moderator
-  organization
-}
-
-enum status {
+enum ApplicationStatus {
   approved
   draft
   rejected
   submitted
+
+  @@map("application_status")
+}
+
+enum LgbtqDemographic {
+  asexualAromantic  @map("Asexual/Aromantic")
+  lgbtqAll          @map("LGBTQ+ (All)")
+  other             @map("Other")
+  sgl               @map("SGL")
+  transgender       @map("Transgender")
+
+  @@map("lgbtq_demographic")
+}
+
+enum OrganizationType {
+  c3         @map("510(c)(3)")
+  grassroot  @map("Grassroots")
+  other      @map("Other")
+
+  @@map("organization_type")
+}
+
+enum RaceDemographic {
+  asian              @map("Asian")
+  black              @map("Black")
+  latinx             @map("Latinx")
+  nativeIndigeneous  @map("Native/Indigeneous")
+  other              @map("Other")
+  pocAll             @map("POC (All)")
+  pacificIslander    @map("Pacific Islander")
+
+  @@map("race_demographic")
+}
+
+enum Status {
+  approved
+  draft
+  rejected
+  submitted
+
+  @@map("status")
+}
+
+enum WorkType {
+  advocacy       @map("Advocacy")
+  directService  @map("Direct Service")
+  networking     @map("Networking")
+
+  @@map("work_type")
 }
