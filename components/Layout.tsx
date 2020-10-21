@@ -10,26 +10,29 @@ const Layout: React.FunctionComponent<Props> = ({
   title = 'NBJC',
 }) => (
   <div>
-    <div className={styles.pageTitle}>
-      {title}
-      <div>
-        <Button
-          className={styles.logButtonSpace}
-          variant="contained"
-          color="primary"
-        >
-          Log In
-        </Button>{' '}
-        <Button
-          className={styles.logButtonSpace}
-          variant="contained"
-          color="primary"
-        >
-          Join Us
-        </Button>
+    <header>
+      <div className={styles.pageTitle}>
+        {title}
+        <div>
+          <Button
+            className={styles.logButtonSpace}
+            variant="contained"
+            color="primary"
+          >
+            Log In
+          </Button>{' '}
+          <Button
+            className={styles.logButtonSpace}
+            variant="contained"
+            color="primary"
+          >
+            Join Us
+          </Button>
+        </div>
       </div>
-    </div>
+    </header>
     {children}
+    <footer />
   </div>
 );
 

@@ -23,7 +23,6 @@ const Home: React.FC = () => {
         <TextField
           id="outlined-size-small"
           placeholder="Explore Organizations"
-          size="normal"
           fullWidth
           InputProps={{
             startAdornment: (
@@ -40,31 +39,31 @@ const Home: React.FC = () => {
             <div className={styles.keywords}>
               <div className={styles.keyButtonSpace}>
                 <FormControl className={styles.keyword} variant="outlined">
-                  <InputLabel>Keyword</InputLabel>
+                  <InputLabel aria-label="Keyword">Keyword</InputLabel>
                   <Select>
-                    <MenuItem value={10}>Test1</MenuItem>
-                    <MenuItem value={20}>Test1</MenuItem>
-                    <MenuItem value={30}>Test1</MenuItem>
+                    <MenuItem value={undefined}>None</MenuItem>
+                    <MenuItem value={undefined}>None</MenuItem>
+                    <MenuItem value={undefined}>None</MenuItem>
                   </Select>
-                </FormControl>{' '}
+                </FormControl>
               </div>
               <div className={styles.keyButtonSpace}>
                 <FormControl className={styles.keyword} variant="outlined">
-                  <InputLabel>Keyword</InputLabel>
+                  <InputLabel aria-label="Keyword">Keyword</InputLabel>
                   <Select>
-                    <MenuItem value={10}>Test1</MenuItem>
-                    <MenuItem value={20}>Test1</MenuItem>
-                    <MenuItem value={30}>Test1</MenuItem>
+                    <MenuItem value={undefined}>None</MenuItem>
+                    <MenuItem value={undefined}>None</MenuItem>
+                    <MenuItem value={undefined}>None</MenuItem>
                   </Select>
-                </FormControl>{' '}
+                </FormControl>
               </div>
               <div className={styles.keyButtonSpace}>
                 <FormControl className={styles.keyword} variant="outlined">
-                  <InputLabel>More</InputLabel>
+                  <InputLabel aria-label="More">More</InputLabel>
                   <Select>
-                    <MenuItem value={10}>Test1</MenuItem>
-                    <MenuItem value={20}>Test1</MenuItem>
-                    <MenuItem value={30}>Test1</MenuItem>
+                    <MenuItem value={undefined}>None</MenuItem>
+                    <MenuItem value={undefined}>None</MenuItem>
+                    <MenuItem value={undefined}>None</MenuItem>
                   </Select>
                 </FormControl>
               </div>
