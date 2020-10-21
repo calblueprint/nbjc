@@ -1,0 +1,22 @@
+.root {
+  display: flex;
+  border-color: black;
+  border: 2px solid black;
+  margin-right: 10px;
+  margin-bottom: 8px;
+  margin-left: 10px;
+  margin-top: 2px;
+}
+.content {
+  display: flex;
+  background-color: white;
+  flex-direction: column;
+  width: 75%;
+}
+.cardMain {
+  display: flex;
+}
+.media {
+  width: 25%;
+  margin: 8px;
+}
