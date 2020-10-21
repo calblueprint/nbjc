@@ -34,12 +34,13 @@ export function up(db: Base, callback: Base.CallbackFunction): void {
       CREATE TABLE users
         (
           id             SERIAL,
-          first_name     VARCHAR(255),
-          last_name      VARCHAR(255),
-          role           user_role,
-          email          VARCHAR(255),
+          first_name     VARCHAR(255) NOT NULL,
+          last_name      VARCHAR(255) NOT NULL,
+          role           user_role NOT NULL,
+          email          VARCHAR(255) NOT NULL,
           email_verified TIMESTAMPTZ,
           image          VARCHAR(255),
+          hashedPassword VARCHAR(255) NOT NULL,
           created_at     TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
           updated_at     TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
           PRIMARY KEY (id)

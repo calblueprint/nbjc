@@ -4,10 +4,12 @@
 //
 // import User from 'path/to/interfaces';
 
-export type User = {
-  id: number;
-  name: string;
-};
+// *****
+// THIS IS A POTENTIALLY BREAKING LINE-- USER WAS FORMERLY EXPORTED WITH 'ID' AND 'NAME'
+// *****
+import { User } from '@prisma/client';
+
+export type SanitizedUser = Omit<User, 'hashedPassword'>;
 
 export type Moderator = {
   id: number;

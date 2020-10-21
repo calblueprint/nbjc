@@ -15,7 +15,7 @@ export default async (
   }
 
   const { error, value } = OrganizationSchema.validate(req.body, {
-    context: { strict: true },
+    context: { strict: false },
   });
   if (error) {
     return CreateError(400, error.message, res);
