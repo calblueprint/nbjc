@@ -44,6 +44,7 @@ model Organization {
 
 
   @@map("organizations")
+  organization_applications organization_applications[]
 }
 
 model Session {
@@ -92,4 +93,25 @@ enum UserRole {
   organization
 
   @@map("user_role")
+}
+
+model organization_applications {
+  id              Int          @id @default(autoincrement())
+  status          status
+  organization_id Int
+  question        String
+  organizations   Organization @relation(fields: [organization_id], references: [id])
+}
+
+enum user_role {
+  admin
+  moderator
+  organization
+}
+
+enum status {
+  approved
+  draft
+  rejected
+  submitted
 }
