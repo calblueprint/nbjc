@@ -39,31 +39,40 @@ const Home: React.FC = () => {
             <div className={styles.keywords}>
               <div className={styles.keyButtonSpace}>
                 <FormControl className={styles.keyword} variant="outlined">
-                  <InputLabel aria-label="Keyword">Keyword</InputLabel>
-                  <Select>
-                    <MenuItem value={undefined}>None</MenuItem>
-                    <MenuItem value={undefined}>None</MenuItem>
-                    <MenuItem value={undefined}>None</MenuItem>
+                  <InputLabel>Keyword</InputLabel>
+                  <Select label="Keyword">
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={1}>One</MenuItem>
+                    <MenuItem value={2}>Two</MenuItem>
+                    <MenuItem value={3}>Three</MenuItem>
                   </Select>
                 </FormControl>
               </div>
               <div className={styles.keyButtonSpace}>
                 <FormControl className={styles.keyword} variant="outlined">
-                  <InputLabel aria-label="Keyword">Keyword</InputLabel>
-                  <Select>
-                    <MenuItem value={undefined}>None</MenuItem>
-                    <MenuItem value={undefined}>None</MenuItem>
-                    <MenuItem value={undefined}>None</MenuItem>
+                  <InputLabel>Keyword</InputLabel>
+                  <Select label="Keyword">
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={1}>One</MenuItem>
+                    <MenuItem value={2}>Two</MenuItem>
+                    <MenuItem value={3}>Three</MenuItem>
                   </Select>
                 </FormControl>
               </div>
               <div className={styles.keyButtonSpace}>
                 <FormControl className={styles.keyword} variant="outlined">
-                  <InputLabel aria-label="More">More</InputLabel>
-                  <Select>
-                    <MenuItem value={undefined}>None</MenuItem>
-                    <MenuItem value={undefined}>None</MenuItem>
-                    <MenuItem value={undefined}>None</MenuItem>
+                  <InputLabel>More</InputLabel>
+                  <Select label="More">
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={1}>One</MenuItem>
+                    <MenuItem value={2}>Two</MenuItem>
+                    <MenuItem value={3}>Three</MenuItem>
                   </Select>
                 </FormControl>
               </div>
