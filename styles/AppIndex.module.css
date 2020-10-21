@@ -1,0 +1,47 @@
+.page {
+  margin-top: 40px;
+  display: flex;
+  height: 80vh;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.buttons {
+  flex-direction: column;
+  justify-content: left;
+  margin-top: 60px;
+}
+
+.buttonFlex {
+  margin-left: 8px;
+}
+
+.leftCol {
+  width: 190px;
+  margin-right: 30px;
+}
+
+.rightCol {
+  width: 100%;
+}
+
+.table {
+  margin-top: 20px;
+  height: 100%;
+  width: 100%;
+}

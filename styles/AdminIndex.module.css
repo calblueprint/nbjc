@@ -1,0 +1,104 @@
+.layout {
+  flex-direction: row;
+  display: flex;
+  justify-content: space-between;
+}
+
+.page {
+  flex-direction: column;
+  display: flex;
+  padding: 20px;
+  padding-top: 0px;
+}
+
+.head {
+  flex-direction: row;
+  display: flex;
+  justify-content: space-between;
+}
+
+.titleSearch {
+  display: flex;
+  width: 500px;
+}
+
+.link {
+  font-size: 17px;
+  display: flex;
+  height: 40px;
+  margin-top: 25px;
+  width: 230px;
+  justify-content: space-between;
+}
+
+.linksHeader {
+  display: flex;
+  flex-direction: row;
+  width: 350px;
+  justify-content: space-between;
+}
+
+.admin {
+  display: flex;
+  height: 30px;
+  margin-top: 20px;
+}
+
+.pageTitle {
+  display: flex;
+  font-weight: 800;
+  font-size: 50px;
+  width: 150px;
+}
+
+.searchBar {
+  display: flex;
+  border-radius: 15px;
+  width: 300px;
+  height: 50px;
+  padding-top: 5px;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 40px;
+}
+
+.leftCol {
+  width: 200px;
+  display: flex;
+  margin-right: 30px;
+}
+
+.rightCol {
+  width: 80%;
+}
+
+.buttons {
+  flex-direction: column;
+  justify-content: left;
+  margin-top: 60px;
+}
+
+.buttonFlex {
+  margin-left: 8px;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.table {
+  margin-top: 20px;
+  height: 100%;
+  width: 100%;
+}
