@@ -29,7 +29,7 @@ const Home: React.FC = () => {
       <Link href="/adminDash_orgIndex">
         <a>Org Index,</a>
       </Link>{' '}
-      <Link href="/adminDash_orgIndex">
+      <Link href="/adminDash_usersIndex">
         <a>Users Index</a>
       </Link>
     </Box>
