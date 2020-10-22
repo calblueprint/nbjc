@@ -170,15 +170,6 @@ enum RaceDemographic {
   @@map("race_demographic")
 }
 
-enum Status {
-  approved
-  draft
-  rejected
-  submitted
-
-  @@map("status")
-}
-
 enum WorkType {
   advocacy       @map("Advocacy")
   directService  @map("Direct Service")
