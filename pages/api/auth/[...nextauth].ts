@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import hashPassword from 'utils/hashPassword';
 import sanitizeUser from 'utils/sanitizeUser';
+import Adapters from 'next-auth/adapters';
 
 type AuthorizeDTO = {
   email: string;
@@ -26,24 +27,36 @@ const options = {
         password: { label: 'Password', type: 'password' },
       },
       authorize: async (credentials: AuthorizeDTO) => {
+        console.log(credentials);
         const user = await prisma.user.findOne({
           // error line
           where: { email: credentials.email },
         });
         if (!user) {
+          // Change this to be an error page
           throw new Error('No account exists');
         }
         // Verify that their password matches
         // if (user.hashedPassword === hashPassword(credentials.password)) {
         //   return sanitizeUser(user);
         // }
+
         // Password mismatch
+        // Change this to be an error page
         throw new Error('Invalid password');
       },
     }),
   ],
-
-  database: process.env.DATABASE_URL,
+  adapter: Adapters.Prisma.Adapter({
+    prisma,
+    modelMapping: {
+      User: 'user',
+      Account: 'account',
+      Session: 'session',
+      VerificationRequest: 'verificationRequest',
+    },
+  }),
+  // database: process.env.DATABASE_URL,
   session: {
     jwt: true,
   },
