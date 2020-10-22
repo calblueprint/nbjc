@@ -1,4 +1,4 @@
-import { PrismaClient, Organization } from '@prisma/client';
+import { PrismaClient, organizations } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import OrganizationSchema from 'interfaces/organization';
@@ -21,10 +21,10 @@ export default async (
     return CreateError(400, error.message, res);
   }
 
-  const data = value as Organization;
+  const data = value as organizations;
 
   try {
-    const newOrg = await prisma.organization.create({
+    const newOrg = await prisma.organizations.create({
       data: {
         name: data.name,
         long: data.long,
