@@ -1,9 +1,8 @@
 import { GetStaticProps, GetStaticPaths } from 'next';
-
 import { OrgApp } from 'interfaces';
 import { sampleOrgAppData } from 'utils/sample-data';
 import Layout from 'components/Layout';
-import OrgDetail from 'components/OrgDetail';
+import OrgDetail from 'components/moderator/OrgDetail';
 
 type Props = {
   item?: OrgApp;
