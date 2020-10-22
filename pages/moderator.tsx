@@ -8,7 +8,7 @@ import { Button } from '@material-ui/core';
 
 import { sampleOrgAppData } from 'utils/sample-data';
 
-import styles from '../../styles/Moderator.module.css';
+import styles from '../styles/Moderator.module.css';
 
 type Props = {
   items: OrgApp[];
