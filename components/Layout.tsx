@@ -1,5 +1,7 @@
-import Link from 'next/link';
 import Head from 'next/head';
+import Link from 'next/link';
+import { Button } from '@material-ui/core';
+import styles from '../styles/Layout.module.css';
 
 type Props = {
   title?: string;
@@ -7,7 +9,7 @@ type Props = {
 
 const Layout: React.FunctionComponent<Props> = ({
   children,
-  title = 'This is the default title',
+  title = 'NBJC',
 }) => (
   <div>
     <Head>
@@ -16,33 +18,50 @@ const Layout: React.FunctionComponent<Props> = ({
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
     </Head>
     <header>
-      <nav>
+      <nav className={styles.pageTitle}>
+        <h1>NBJC</h1>
         <Link href="/">
           <a>Home</a>
-        </Link>{' '}
-        |{' '}
+        </Link>
         <Link href="/about">
           <a>About</a>
-        </Link>{' '}
-        |{' '}
+        </Link>
         <Link href="/users">
           <a>Users List</a>
-        </Link>{' '}
-        |{' '}
+        </Link>
         <Link href="/moderator">
-          <a>Moderator Dash</a>
-        </Link>{' '}
-        |{' '}
+          <a>Moderator Dashboard</a>
+        </Link>
         <Link href="/orgs">
           <a>Orgs List</a>
-        </Link>{' '}
-        | <a href="/api/users">Users API</a>
+        </Link>
+        <Link href="/api/users">
+          <a>Users API</a>
+        </Link>
+        <div>
+          <Button
+            className={styles.logButtonSpace}
+            variant="contained"
+            color="primary"
+          >
+            Log In
+          </Button>{' '}
+          <Button
+            className={styles.logButtonSpace}
+            variant="contained"
+            color="primary"
+          >
+            Join Us
+          </Button>
+        </div>
       </nav>
     </header>
     {children}
     <footer>
       <hr />
-      <span>I&apos;m here to stay (Footer)</span>
+      <Link href="/">
+        <a>NBJC</a>
+      </Link>
     </footer>
   </div>
 );
