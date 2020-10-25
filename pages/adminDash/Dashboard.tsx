@@ -2,7 +2,7 @@ import { Tab, Tabs, Button, IconButton } from '@material-ui/core';
 import AdminDash from 'components/AdminDash';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import KeyboardArrowLeftSharpIcon from '@material-ui/icons/KeyboardArrowLeftSharp';
-import styles from '../styles/AppReview.module.css';
+import styles from '../../styles/AppReview.module.css';
 
 const AdminDashboardAppReview: React.FunctionComponent = () => (
   <AdminDash>

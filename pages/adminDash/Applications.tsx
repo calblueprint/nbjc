@@ -3,13 +3,13 @@ import AdminIndex from 'components/AdminIndex';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import AdminTable from 'components/AdminTable';
-import styles from '../styles/AppIndex.module.css';
+import styles from '../../styles/AppIndex.module.css';
 
 const appButton = (
   <Button
     variant="contained"
     color="primary"
-    href="/adminDash_appIndex"
+    href="../adminDash/Applications"
     startIcon={<FiberManualRecordIcon />}
   >
     Applications
@@ -18,7 +18,10 @@ const appButton = (
 
 const orgButton = (
   <div className={styles.buttonFlex}>
-    <Button href="/adminDash_orgIndex" startIcon={<FiberManualRecordIcon />}>
+    <Button
+      href="../adminDash/Organizations"
+      startIcon={<FiberManualRecordIcon />}
+    >
       Organizations
     </Button>
   </div>
@@ -34,7 +37,7 @@ const queButton = (
 
 const useButton = (
   <div className={styles.buttonFlex}>
-    <Button href="/adminDash_usersIndex" startIcon={<FiberManualRecordIcon />}>
+    <Button href="../adminDash/Users" startIcon={<FiberManualRecordIcon />}>
       Users
     </Button>
   </div>
