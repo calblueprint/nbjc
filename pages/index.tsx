@@ -20,16 +20,16 @@ const Home: React.FC = () => {
       <CircularProgress />
       <MapVisual />
       <p>Click link below:</p>
-      <Link href="/adminDash_appRev">
+      <Link href="adminDash/Dashboard">
         <a>Admin Review,</a>
       </Link>{' '}
-      <Link href="/adminDash_appIndex">
+      <Link href="adminDash/Applications">
         <a>Admin Index,</a>
       </Link>{' '}
-      <Link href="/adminDash_orgIndex">
+      <Link href="adminDash/Organizations">
         <a>Org Index,</a>
       </Link>{' '}
-      <Link href="/adminDash_usersIndex">
+      <Link href="adminDash/Users">
         <a>Users Index</a>
       </Link>
     </Box>

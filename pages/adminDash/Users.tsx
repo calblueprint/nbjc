@@ -2,11 +2,14 @@ import { Button } from '@material-ui/core';
 import AdminIndex from 'components/AdminIndex';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import styles from '../styles/AppIndex.module.css';
+import styles from '../../styles/AppIndex.module.css';
 
 const appButton = (
   <div className={styles.buttonFlex}>
-    <Button href="/adminDash_appIndex" startIcon={<FiberManualRecordIcon />}>
+    <Button
+      href="../adminDash/Applications"
+      startIcon={<FiberManualRecordIcon />}
+    >
       Applications
     </Button>
   </div>
@@ -14,7 +17,10 @@ const appButton = (
 
 const orgButton = (
   <div className={styles.buttonFlex}>
-    <Button href="/adminDash_orgIndex" startIcon={<FiberManualRecordIcon />}>
+    <Button
+      href="../adminDash/Organizations"
+      startIcon={<FiberManualRecordIcon />}
+    >
       Organizations
     </Button>
   </div>
@@ -32,7 +38,7 @@ const useButton = (
   <Button
     variant="contained"
     color="primary"
-    href="/adminDash_usersIndex"
+    href="../adminDash/Users"
     startIcon={<FiberManualRecordIcon />}
   >
     Users
