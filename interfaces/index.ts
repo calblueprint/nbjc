@@ -32,3 +32,7 @@ export type Organization = {
   id: number;
   name: string;
 };
+
+export type OrganizationApplication = {
+  id: number;
+};

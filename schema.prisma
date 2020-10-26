@@ -11,16 +11,16 @@ generator client {
 
 model Account {
   id                Int       @id @default(autoincrement())
-  compoundId        String    @unique
-  userId            Int
-  providerType      String
-  providerId        String
-  providerAccountId String
-  refreshToken      String?
-  accessToken       String?
-  accessTokenExpire DateTime?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @default(now()) @updatedAt
+  compoundId        String    @unique @map("compound_id")
+  userId            Int       @map("user_id")
+  providerType      String    @map("provider_type")
+  providerId        String    @map("provider_id")
+  providerAccountId String    @map("provider_account_id")
+  refreshToken      String?   @map("refresh_token")
+  accessToken       String?   @map("access_token")
+  accessTokenExpire DateTime? @map("access_token_expires")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at")
 
 
   @@map("accounts")
@@ -28,12 +28,12 @@ model Account {
 
 model Session {
   id           Int      @id @default(autoincrement())
-  userId       Int
-  expire       DateTime
-  sessionToken String   @unique
-  accessToken  String   @unique
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
+  userId       Int      @map("user_id")
+  expire       DateTime @map("expires")
+  sessionToken String   @unique @map("session_token")
+  accessToken  String   @unique @map("access_token")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
 
 
   @@map("sessions")
@@ -41,14 +41,14 @@ model Session {
 
 model User {
   id            Int       @id @default(autoincrement())
-  firstName     String?
-  lastName      String?
+  firstName     String?   @map("first_name")
+  lastName      String?   @map("last_name")
   role          UserRole?
   email         String?   @unique
-  emailVerified DateTime?
+  emailVerified DateTime? @map("email_verified")
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
 
 
   @@map("users")
@@ -58,9 +58,9 @@ model VerificationRequest {
   id         Int      @id @default(autoincrement())
   identifier String
   token      String   @unique
-  expire     DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
+  expire     DateTime @map("expires")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 
 
   @@map("verification_requests")
@@ -69,7 +69,7 @@ model VerificationRequest {
 model Migration {
   id    Int      @id @default(autoincrement())
   name  String
-  runOn DateTime @map("run_on")
+  runOn DateTime
 
 
   @@map("migrations")
