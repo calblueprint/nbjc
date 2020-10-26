@@ -6,8 +6,8 @@ export function up(db: Base, callback: Base.CallbackFunction): void {
   db.runSql(
     `
       CREATE TYPE application_status AS ENUM ('draft', 'submitted', 'approved', 'rejected');
-      CREATE TYPE organization_type AS ENUM ('510(c)(3)', 'Grassroots', 'Other');
-      CREATE TYPE work_type AS ENUM ('Advocacy', 'Direct Service', 'Networking');
+      CREATE TYPE organization_type AS ENUM ('510(c)(3)', 'Grassroots/Local', 'Statewide', 'National', 'Other');
+      CREATE TYPE work_type AS ENUM ('Advocacy', 'Direct Service', 'Networking/Social');
       CREATE TYPE lgbtq_demographic AS ENUM ('LGBTQ+ (All)', 'SGL', 'Transgender', 'Asexual/Aromantic', 'Other');
       CREATE TYPE race_demographic AS ENUM ('POC (All)', 'Black', 'Asian', 'Pacific Islander', 'Latinx', 'Native/Indigeneous', 'Other');
       CREATE TYPE age_demographic AS ENUM ('Children', 'Teens', 'Adults', 'Seniors');
@@ -21,16 +21,16 @@ export function up(db: Base, callback: Base.CallbackFunction): void {
           organization_type    organization_type NOT NULL,
           work_type            work_type NOT NULL,
           address              VARCHAR(255) NOT NULL,
-          lat                  INTEGER NOT NULL,
-          long                 INTEGER NOT NULL,
-          mission_statement    VARCHAR,
-          short_history        VARCHAR,
-          key_values           VARCHAR,
+          lat                  DECIMAL NOT NULL,
+          long                 DECIMAL NOT NULL,
+          mission_statement    TEXT,
+          short_history        TEXT,
+          key_values           TEXT,
           lgbtq_demographic    lgbtq_demographic NOT NULL,
           race_demographic     race_demographic NOT NULL,
           age_demographic      age_demographic NOT NULL,
           capacity             INTEGER,
-          EIN                  INTEGER NOT NULL,
+          ein                  INTEGER NOT NULL,
           founding_date        DATE NOT NULL,
           PRIMARY KEY (id),
           UNIQUE (organization_id),
