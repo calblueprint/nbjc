@@ -6,8 +6,8 @@ import { SanitizedUser } from 'interfaces';
  * @param user - the original User object fetched with Prisma
  */
 const sanitizeUser = (user: User): SanitizedUser => {
-  // Need to add 'hashedPassword' entry to users as a migration
-  const { hashedPassword: _hashedPassword, ...sanitizedUser } = user;
+  // Remove hashedPassword
+  const { hashed_password: _hashedPassword, ...sanitizedUser } = user;
   return sanitizedUser;
 };
 

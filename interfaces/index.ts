@@ -9,7 +9,7 @@
 // *****
 import { User } from '@prisma/client';
 
-export type SanitizedUser = Omit<User, 'hashedPassword'>;
+export type SanitizedUser = Omit<User, 'hashed_password'>;
 
 export type Moderator = {
   id: number;

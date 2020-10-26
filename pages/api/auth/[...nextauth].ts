@@ -27,9 +27,7 @@ const options = {
         password: { label: 'Password', type: 'password' },
       },
       authorize: async (credentials: AuthorizeDTO) => {
-        console.log(credentials);
         const user = await prisma.user.findOne({
-          // error line
           where: { email: credentials.email },
         });
         if (!user) {
@@ -37,40 +35,39 @@ const options = {
           throw new Error('No account exists');
         }
         // Verify that their password matches
-        // if (user.hashedPassword === hashPassword(credentials.password)) {
-        //   return sanitizeUser(user);
-        // }
-
+        if (user.hashed_password === hashPassword(credentials.password)) {
+          return sanitizeUser(user);
+        }
         // Password mismatch
         // Change this to be an error page
         throw new Error('Invalid password');
       },
     }),
   ],
-  adapter: Adapters.Prisma.Adapter({
-    prisma,
-    modelMapping: {
-      User: 'user',
-      Account: 'account',
-      Session: 'session',
-      VerificationRequest: 'verificationRequest',
-    },
-  }),
+  // adapter: Adapters.Prisma.Adapter({
+  //   prisma,
+  //   modelMapping: {
+  //     User: 'user',
+  //     Account: 'account',
+  //     Session: 'session',
+  //     VerificationRequest: 'verificationRequest',
+  //   },
+  // }),
   // database: process.env.DATABASE_URL,
-  session: {
-    jwt: true,
-  },
-  jwt: {
-    secret: process.env.JWT_SIGNING_PRIVATE_KEY,
-  },
+  // session: {
+  //   jwt: true,
+  // },
+  // jwt: {
+  //   secret: process.env.JWT_SIGNING_PRIVATE_KEY,
+  // },
 
-  pages: {
-    // signIn: '/credentials-signin', // Displays signin buttons
-    //   // signOut: '/api/auth/signout', // Displays form with sign out button
-    //   // error: '/api/auth/error', // Error code passed in query string as ?error=
-    //   // verifyRequest: '/api/auth/verify-request', // Used for check email page
-    // newUser: 'signin', // If set, new users will be directed here on first sign in
-  },
+  // pages: {
+  //   // signIn: '/credentials-signin', // Displays signin buttons
+  //   //   // signOut: '/api/auth/signout', // Displays form with sign out button
+  //   //   // error: '/api/auth/error', // Error code passed in query string as ?error=
+  //   //   // verifyRequest: '/api/auth/verify-request', // Used for check email page
+  //   // newUser: 'signin', // If set, new users will be directed here on first sign in
+  // },
 };
 
 export default (

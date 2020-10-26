@@ -37,11 +37,11 @@ export const updateUser = async (
   const updatedUser = await prisma.user.update({
     where: { id: Number(id) },
     data: {
-      firstName: data.firstName,
-      lastName: data.lastName,
+      first_name: data.first_name,
+      last_name: data.last_name,
       role: data.role,
       email: data.email,
-      emailVerified: data.emailVerified,
+      email_verified: data.email_verified,
       image: data.image,
     },
   });
@@ -96,7 +96,7 @@ export default async (
   }
   if (req.method === 'DELETE') {
     try {
-      const deletedUser = await userId;
+      const deletedUser = await deleteUser(userId);
       return res.json(deletedUser);
     } catch (err) {
       return CreateError(500, `Failed to delete user ${userId}`, res);

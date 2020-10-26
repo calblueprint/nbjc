@@ -36,11 +36,11 @@ export function up(db: Base, callback: Base.CallbackFunction): void {
           id             SERIAL,
           first_name     VARCHAR(255) NOT NULL,
           last_name      VARCHAR(255) NOT NULL,
-          role           user_role NOT NULL,
+          role           user_role,
           email          VARCHAR(255) NOT NULL,
           email_verified TIMESTAMPTZ,
           image          VARCHAR(255),
-          hashedPassword VARCHAR(255) NOT NULL,
+          hashed_password VARCHAR(255) NOT NULL,
           created_at     TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
           updated_at     TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
           PRIMARY KEY (id)

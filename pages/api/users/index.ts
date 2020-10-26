@@ -11,22 +11,18 @@ export default async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  // Index is only for POST requests
-  console.log(req.body);
-
+  // Index is only for POST request
   if (req.method !== 'POST') {
     return MethodNotAllowed(req.method, res);
   }
 
   // Construct payload
   const registerInfo = {
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
+    first_name: req.body.firstName,
+    last_name: req.body.lastName,
     email: req.body.email,
-    hashedPassword: hash(req.body.password),
+    hashed_password: hash(req.body.password), // I'm not sure why this has to be lowercase here
   };
-
-  console.log(registerInfo);
 
   // Validating the structure for the request
   const { error, value } = UserSchema.validate(registerInfo, {
@@ -43,6 +39,6 @@ export default async (
     });
     return res.json(sanitizeUser(newUser));
   } catch (err) {
-    return CreateError(500, 'Failed to create user', res);
+    return CreateError(500, 'Failed to create user due to repeated email', res); // This is temporarily the only error I can think of to reach this point for
   }
 };
