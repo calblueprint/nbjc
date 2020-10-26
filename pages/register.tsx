@@ -1,12 +1,12 @@
 import Tab from 'components/Tab';
 import { Button } from '@material-ui/core';
 import { useFormik } from 'formik';
+import { Form } from 'interfaces';
 
 const Register: React.FC = () => {
+  const initialValues: Form = { name: '', age: '' };
   const formik = useFormik({
-    initialValues: {
-      name: '',
-    },
+    initialValues,
     onSubmit: (values) => {
       console.log(values);
     },

@@ -32,3 +32,8 @@ export type Organization = {
   id: number;
   name: string;
 };
+
+export type Form = {
+  name: string;
+  age: number | string;
+};

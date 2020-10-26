@@ -1,15 +1,20 @@
-import { TextField } from '@material-ui/core';
+import {
+  TextField,
+  FormControl,
+  Select,
+  InputLabel,
+  MenuItem,
+} from '@material-ui/core';
 import { FormikHandlers } from 'formik';
+import { Form } from 'interfaces';
 
 type TabProps = {
   handleChange: FormikHandlers['handleChange'];
-  // Change this to an external type (probably will be a Prisma type later on)
-  values: {
-    name: string;
-  };
+  values: Form;
 };
 
 const Tab: React.FC<TabProps> = ({ handleChange, values }) => {
+  console.log(values.age);
   return (
     <>
       <TextField
@@ -18,6 +23,17 @@ const Tab: React.FC<TabProps> = ({ handleChange, values }) => {
         onChange={handleChange}
         value={values.name}
       />
+      <FormControl>
+        <InputLabel id="demo-simple-select-label">Age</InputLabel>
+        <Select value={values.age} name="age" onChange={handleChange}>
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          <MenuItem value={10}>Ten</MenuItem>
+          <MenuItem value={20}>Twenty</MenuItem>
+          <MenuItem value={30}>Thirty</MenuItem>
+        </Select>
+      </FormControl>
     </>
   );
 };
