@@ -3,6 +3,7 @@ import { FormikHandlers } from 'formik';
 
 type TabProps = {
   handleChange: FormikHandlers['handleChange'];
+  // Change this to an external type (probably will be a Prisma type later on)
   values: {
     name: string;
   };
