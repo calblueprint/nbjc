@@ -75,6 +75,18 @@ model Migration {
   @@map("migrations")
 }
 
+model Organization {
+  id                      Int                      @id @default(autoincrement())
+  name                    String
+  long                    Float?
+  lat                     Float?
+  type                    String?
+  organizationApplication OrganizationApplication? @relation(name: "organization_applicationsToorganizations")
+
+
+  @@map("organizations")
+}
+
 model OrganizationApplication {
   id                Int               @id @default(autoincrement())
   applicationStatus ApplicationStatus @map("application_status")
@@ -85,8 +97,8 @@ model OrganizationApplication {
   organizationType  OrganizationType  @map("organization_type")
   workType          WorkType          @map("work_type")
   address           String
-  lat               Int
-  long              Int
+  lat               Float
+  long              Float
   missionStatement  String?           @map("mission_statement")
   shortHistory      String?           @map("short_history")
   keyValue          String?           @map("key_values")
@@ -100,18 +112,6 @@ model OrganizationApplication {
 
 
   @@map("organization_applications")
-}
-
-model Organization {
-  id                      Int                      @id @default(autoincrement())
-  name                    String
-  long                    Float?
-  lat                     Float?
-  type                    String?
-  organizationApplication OrganizationApplication? @relation(name: "organization_applicationsToorganizations")
-
-
-  @@map("organizations")
 }
 
 enum UserRole {
@@ -151,9 +151,11 @@ enum LgbtqDemographic {
 }
 
 enum OrganizationType {
-  c3         @map("510(c)(3)")
-  grassroot  @map("Grassroots")
-  other      @map("Other")
+  c3               @map("510(c)(3)")
+  grassrootsLocal  @map("Grassroots/Local")
+  national         @map("National")
+  other            @map("Other")
+  statewide        @map("Statewide")
 
   @@map("organization_type")
 }
@@ -171,9 +173,9 @@ enum RaceDemographic {
 }
 
 enum WorkType {
-  advocacy       @map("Advocacy")
-  directService  @map("Direct Service")
-  networking     @map("Networking")
+  advocacy          @map("Advocacy")
+  directService     @map("Direct Service")
+  networkingSocial  @map("Networking/Social")
 
   @@map("work_type")
 }
