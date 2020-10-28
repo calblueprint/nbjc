@@ -4,9 +4,6 @@
 //
 // import User from 'path/to/interfaces';
 
-// *****
-// THIS IS A POTENTIALLY BREAKING LINE-- USER WAS FORMERLY EXPORTED WITH 'ID' AND 'NAME'
-// *****
 import { User } from '@prisma/client';
 
 export type SanitizedUser = Omit<User, 'hashed_password'>;

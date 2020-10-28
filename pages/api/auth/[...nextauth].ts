@@ -4,7 +4,6 @@ import { PrismaClient } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import hashPassword from 'utils/hashPassword';
 import sanitizeUser from 'utils/sanitizeUser';
-import Adapters from 'next-auth/adapters';
 
 type AuthorizeDTO = {
   email: string;
@@ -16,10 +15,6 @@ const prisma = new PrismaClient();
 const options = {
   // Configure one or more authentication providers
   providers: [
-    // Providers.Email({
-    //   server: process.env.EMAIL_SERVER,
-    //   from: process.env.EMAIL_FROM,
-    // }),
     Providers.Credentials({
       name: 'Credentials',
       credentials: {
@@ -44,29 +39,22 @@ const options = {
       },
     }),
   ],
-  // adapter: Adapters.Prisma.Adapter({
-  //   prisma,
-  //   modelMapping: {
-  //     User: 'user',
-  //     Account: 'account',
-  //     Session: 'session',
-  //     VerificationRequest: 'verificationRequest',
-  //   },
-  // }),
-  // database: process.env.DATABASE_URL,
-  // session: {
-  //   jwt: true,
-  // },
-  // jwt: {
-  //   secret: process.env.JWT_SIGNING_PRIVATE_KEY,
-  // },
+  database: process.env.DATABASE_URL,
+  session: {
+    jwt: true,
+  },
+  jwt: {
+    secret: process.env.JWT_SIGNING_PRIVATE_KEY,
+  },
+
+  // Below are used for placeholder for now, can be used to redirect to different pages in the app later.
 
   // pages: {
-  //   // signIn: '/credentials-signin', // Displays signin buttons
-  //   //   // signOut: '/api/auth/signout', // Displays form with sign out button
-  //   //   // error: '/api/auth/error', // Error code passed in query string as ?error=
-  //   //   // verifyRequest: '/api/auth/verify-request', // Used for check email page
-  //   // newUser: 'signin', // If set, new users will be directed here on first sign in
+  // signIn: '/credentials-signin', // Displays signin buttons
+  // signOut: '/api/auth/signout', // Displays form with sign out button
+  // error: '/api/auth/error', // Error code passed in query string as ?error=
+  // verifyRequest: '/api/auth/verify-request', // Used for check email page
+  // newUser: 'signin', // If set, new users will be directed here on first sign in
   // },
 };
 
