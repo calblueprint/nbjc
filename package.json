@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start -p $PORT",
     "cm": "cz",
-    "prisma:update": "prisma introspect && prisma generate && prisma-schema-transformer ./schema.prisma",
+    "prisma:update": "prisma introspect && prisma-schema-transformer ./schema.prisma && prisma generate",
     "db:create": "db-migrate db:create nbjc_development -e pg",
     "db:drop": "db-migrate db:drop nbjc_development -e pg",
     "db:reset": "yarn db:drop && yarn db:create",
@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
     "@prisma/client": "^2.9.0",
     "db-migrate": "^0.11.11",
     "db-migrate-base": "^2.3.0",
