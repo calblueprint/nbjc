@@ -1,59 +1,12 @@
-import { Button } from '@material-ui/core';
-import AdminIndex from 'components/AdminIndex';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import styles from '../../styles/AppIndex.module.css';
-
-const appButton = (
-  <div className={styles.buttonFlex}>
-    <Button
-      href="../adminDash/Applications"
-      startIcon={<FiberManualRecordIcon />}
-    >
-      Applications
-    </Button>
-  </div>
-);
-
-const orgButton = (
-  <div className={styles.buttonFlex}>
-    <Button
-      href="../adminDash/Organizations"
-      startIcon={<FiberManualRecordIcon />}
-    >
-      Organizations
-    </Button>
-  </div>
-);
-
-const queButton = (
-  <div className={styles.buttonFlex}>
-    <Button href={undefined} startIcon={<FiberManualRecordIcon />}>
-      Questions
-    </Button>
-  </div>
-);
-
-const useButton = (
-  <Button
-    variant="contained"
-    color="primary"
-    href="../adminDash/Users"
-    startIcon={<FiberManualRecordIcon />}
-  >
-    Users
-  </Button>
-);
+import AdminIndex from 'components/adminDash/AdminIndex';
+import AdminTable from 'components/adminDash/AdminTable';
+// eslint-disable-next-line import/extensions
+import { sampleUserData } from 'utils/sample-data.ts';
 
 const AdminDashboardAppIndex: React.FunctionComponent = () => (
-  <AdminIndex
-    head="User"
-    buttonApp={appButton}
-    buttonOrg={orgButton}
-    buttonQue={queButton}
-    buttonUse={useButton}
-    search="Look for a User"
-  />
+  <AdminIndex head="User" search="Look for a User">
+    <AdminTable useData={sampleUserData} />
+  </AdminIndex>
 );
 
 export default AdminDashboardAppIndex;

@@ -7,15 +7,12 @@ import {
   InputAdornment,
   TextField,
 } from '@material-ui/core';
-import styles from '../styles/AdminIndex.module.css';
+import AdminDrawer from 'components/adminDash/AdminDrawer';
+import styles from '../../styles/admin/AdminIndex.module.css';
 
 type Props = {
   title?: string;
   head?: string;
-  buttonApp: typeof Button;
-  buttonOrg: typeof Button;
-  buttonQue: typeof Button;
-  buttonUse: typeof Button;
   search: string;
 };
 
@@ -23,10 +20,6 @@ const AdminIndex: React.FunctionComponent<Props> = ({
   children,
   title = 'NBJC',
   head,
-  buttonApp,
-  buttonOrg,
-  buttonQue,
-  buttonUse,
   search,
 }) => (
   <div className={styles.page}>
@@ -66,14 +59,7 @@ const AdminIndex: React.FunctionComponent<Props> = ({
       </div>
     </header>
     <div className={styles.content}>
-      <div className={styles.leftCol}>
-        <div className={styles.buttons}>
-          {buttonApp}
-          {buttonOrg}
-          {buttonQue}
-          {buttonUse}
-        </div>
-      </div>
+      <AdminDrawer page={head} />
       <div className={styles.rightCol}>
         <div className={styles.header}>
           <div className={styles.title}>{head}s</div>
