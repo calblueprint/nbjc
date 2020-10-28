@@ -17,7 +17,7 @@ export const getOrganizationApp = async (
 };
 
 export const createOrganizationApp = async (
-  organizationId: string
+  body: OrganizationApplication
 ): Promise<OrganizationApplication | null> => {
   const { error, value } = OrganizationApplicationSchema.validate(body);
   if (error) {
@@ -26,10 +26,9 @@ export const createOrganizationApp = async (
 
   const data = value as OrganizationApplication;
 
-  const updatedOrgApp = await prisma.organizationApplication.create({
+  const createdOrgApp = await prisma.organizationApplication.create({
     data: {
       applicationStatus: data.applicationStatus,
-      organizationId: data.organizationId,
       organizationName: data.organizationName,
       contactName: data.contactName,
       contactEmail: data.contactEmail,
@@ -47,10 +46,9 @@ export const createOrganizationApp = async (
       capacity: data.capacity,
       ein: data.ein,
       foundingDate: data.foundingDate,
-      organization: data.organization,
     },
   });
-  return updatedOrgApp;
+  return createdOrgApp;
 };
 
 export const updateOrganizationApp = async (
@@ -68,7 +66,6 @@ export const updateOrganizationApp = async (
     where: { id: Number(id) },
     data: {
       applicationStatus: data.applicationStatus,
-      organizationId: data.organizationId,
       organizationName: data.organizationName,
       contactName: data.contactName,
       contactEmail: data.contactEmail,
@@ -86,7 +83,6 @@ export const updateOrganizationApp = async (
       capacity: data.capacity,
       ein: data.ein,
       foundingDate: data.foundingDate,
-      organization: data.organization,
     },
   });
   return updatedOrgApp;
@@ -130,7 +126,7 @@ export default async (
   }
   if (req.method === 'POST') {
     try {
-      const orgapp = await createOrganizationApp(orgAppId);
+      const orgapp = await createOrganizationApp(req.body);
 
       if (!orgapp) {
         res.status(204);
