@@ -2,7 +2,7 @@ import Link from 'next/link';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import SearchIcon from '@material-ui/icons/Search';
 import { Button, IconButton, TextField } from '@material-ui/core';
-import styles from '../styles/AdminDash.module.css';
+import styles from '../../styles/admin/AdminDash.module.css';
 
 type Props = {
   title?: string;
