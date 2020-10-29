@@ -1,4 +1,4 @@
-import { PrismaClient, organizations } from '@prisma/client';
+import { PrismaClient, Organization } from '@prisma/client';
 import Joi, { ValidationError } from 'joi';
 
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -13,8 +13,8 @@ const prisma = new PrismaClient();
  */
 export const getOrganization = async (
   id: string
-): Promise<organizations | null> => {
-  const org = await prisma.organizations.findOne({
+): Promise<Organization | null> => {
+  const org = await prisma.organization.findOne({
     where: { id: Number(id) },
   });
   return org;
@@ -27,16 +27,16 @@ export const getOrganization = async (
  */
 export const updateOrganization = async (
   id: string,
-  body: organizations
-): Promise<organizations | null> => {
+  body: Organization
+): Promise<Organization | null> => {
   const { error, value } = OrganizationSchema.validate(body);
   if (error) {
     throw error;
   }
 
-  const data = value as organizations;
+  const data = value as Organization;
 
-  const updatedOrg = await prisma.organizations.update({
+  const updatedOrg = await prisma.organization.update({
     where: { id: Number(id) },
     data: {
       name: data.name,
@@ -54,8 +54,8 @@ export const updateOrganization = async (
  */
 export const deleteOrganization = async (
   id: string
-): Promise<organizations | null> => {
-  const deletedOrg = await prisma.organizations.delete({
+): Promise<Organization | null> => {
+  const deletedOrg = await prisma.organization.delete({
     where: { id: Number(id) },
   });
   return deletedOrg;
