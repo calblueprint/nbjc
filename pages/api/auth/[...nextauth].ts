@@ -30,7 +30,7 @@ const options = {
           throw new Error('No account exists');
         }
         // Verify that their password matches
-        if (user.hashed_password === hashPassword(credentials.password)) {
+        if (user.hashedPassword === hashPassword(credentials.password)) {
           return sanitizeUser(user);
         }
         // Password mismatch

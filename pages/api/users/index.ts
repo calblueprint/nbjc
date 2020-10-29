@@ -18,10 +18,10 @@ export default async (
 
   // Construct payload
   const registerInfo = {
-    first_name: req.body.firstName,
-    last_name: req.body.lastName,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
     email: req.body.email,
-    hashed_password: hash(req.body.password), // I'm not sure why this has to be lowercase here
+    hashedPassword: hash(req.body.password), // I'm not sure why this has to be lowercase here
   };
 
   // Validating the structure for the request
