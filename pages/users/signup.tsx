@@ -1,8 +1,8 @@
 // import { csrfToken, signIn } from 'next-auth/client';
 // import { NextPageContext, GetStaticProps } from 'next';
 
-// Register page. Will need additional email verification to be able to create organizations.
-const Register: React.FC = () => {
+// UserSignUp page. Will need additional email verification to be able to create organizations.
+const UserSignUp: React.FC = () => {
   // const handleSubmit = (e: any): void => {
   //   console.log(e.target.value);
   // };
@@ -39,4 +39,4 @@ const Register: React.FC = () => {
 //   };
 // };
 
-export default Register;
+export default UserSignUp;
