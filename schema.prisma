@@ -1,19 +1,16 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
-
-
 }
 
 model Migration {
   id    Int      @id @default(autoincrement())
   name  String
   runOn DateTime @map("run_on")
-
 
   @@map("migrations")
 }
@@ -31,7 +28,9 @@ model Account {
   createdAt         DateTime  @default(now()) @map("created_at")
   updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at")
 
-
+  @@index([providerAccountId], name: "provider_account_id")
+  @@index([providerId], name: "provider_id")
+  @@index([userId], name: "user_id")
   @@map("accounts")
 }
 
@@ -41,7 +40,6 @@ model Organization {
   long Float?
   lat  Float?
   type String?
-
 
   @@map("organizations")
 }
@@ -54,7 +52,6 @@ model Session {
   accessToken  String   @unique @map("access_token")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
-
 
   @@map("sessions")
 }
@@ -71,7 +68,6 @@ model User {
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at")
 
-
   @@map("users")
 }
 
@@ -83,7 +79,6 @@ model VerificationRequest {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 
-
   @@map("verification_requests")
 }
 
@@ -92,5 +87,5 @@ enum UserRole {
   moderator
   organization
 
-  @@map("user_role")
+   @@map("user_role")
 }
