@@ -16,9 +16,5 @@
     "baseUrl": "."
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "rules": {
-    "no-use-before-define": "off",
-    "@typescript-eslint/no-use-before-define": ["error"]
-  },
   "exclude": ["node_modules"]
 }

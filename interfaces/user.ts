@@ -8,6 +8,6 @@ const schema = Joi.object({
   emailVerified: Joi.date(),
   image: Joi.string(),
   hashed_password: Joi.string(),
-}); // .when('$strict', { is: true, then: Joi.object().and('lat', 'long') });
+});
 
 export default schema;
