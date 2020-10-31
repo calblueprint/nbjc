@@ -3,15 +3,11 @@ import { Form } from 'interfaces';
 import { useState, ChangeEvent } from 'react';
 import styles from 'styles/register.module.css';
 import { Tabs, Tab, AppBar, Button } from '@material-ui/core';
-import { GetStaticProps } from 'next';
 import Layout from 'components/Layout';
-import TabShortR from 'components/TabShortR';
-import TabBasics from 'components/TabBasics';
-import TabProj from 'components/TabProj';
-
-// https://www.npmjs.com/package/material-ui-chip-input
-// https://material-ui.com/components/chips/#outlined-chips
-// https://material-ui.com/components/autocomplete/
+import TabShortR from 'components/Register/TabShortR';
+import TabBasics from 'components/Register/TabBasics';
+import TabProj from 'components/Register/TabProj';
+// import { GetStaticProps } from 'next';
 
 const Register: React.FC = () => {
   const [selected, setSelected] = useState<number>(0);
