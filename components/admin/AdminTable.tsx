@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -76,20 +75,21 @@ const AdminTable: React.FunctionComponent<Props> = ({ appData, useData }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {useData.map((row) => (
-              <TableRow key={row.name}>
-                <TableCell component="th" scope="row">
-                  {row.id}
-                </TableCell>
-                <TableCell align="left">{row.name}</TableCell>
-                <TableCell align="left">
-                  <div className={classes.actions}>
-                    <div className={classes.button}>{declineButton}</div>
-                    <div className={classes.button}>{viewButton}</div>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+            {useData &&
+              useData.map((row) => (
+                <TableRow key={row.name}>
+                  <TableCell component="th" scope="row">
+                    {row.id}
+                  </TableCell>
+                  <TableCell align="left">{row.name}</TableCell>
+                  <TableCell align="left">
+                    <div className={classes.actions}>
+                      <div className={classes.button}>{declineButton}</div>
+                      <div className={classes.button}>{viewButton}</div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
@@ -110,24 +110,25 @@ const AdminTable: React.FunctionComponent<Props> = ({ appData, useData }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {appData.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell component="th" scope="row">
-                {row.id}
-              </TableCell>
-              <TableCell align="left">{row.name}</TableCell>
-              <TableCell align="left">{row.logo}</TableCell>
-              <TableCell align="left">{row.date}</TableCell>
-              <TableCell align="left">{row.description}</TableCell>
-              <TableCell align="left">{row.question}</TableCell>
-              <TableCell align="right">
-                <div className={classes.actions}>
-                  <div className={classes.button}>{declineButton}</div>
-                  <div className={classes.button}>{acceptButton}</div>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
+          {appData &&
+            appData.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell component="th" scope="row">
+                  {row.id}
+                </TableCell>
+                <TableCell align="left">{row.name}</TableCell>
+                <TableCell align="left">{row.logo}</TableCell>
+                <TableCell align="left">{row.date}</TableCell>
+                <TableCell align="left">{row.description}</TableCell>
+                <TableCell align="left">{row.question}</TableCell>
+                <TableCell align="right">
+                  <div className={classes.actions}>
+                    <div className={classes.button}>{declineButton}</div>
+                    <div className={classes.button}>{acceptButton}</div>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </TableContainer>

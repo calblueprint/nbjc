@@ -8,18 +8,22 @@ export async function up(
   db: Base,
   callback: Base.CallbackFunction
 ): Promise<void> {
-  const createTable = promisify(db.createTable.bind(db));
-  try {
-    await createTable('organizations', {
-      id: { type: 'int', primaryKey: true, autoIncrement: true },
-      name: { type: 'string', notNull: true },
-      long: 'decimal',
-      lat: 'decimal',
-      type: 'string',
-    });
-  } catch (err) {
-    callback(err, null);
-  }
+  db.runSql(
+    `
+    CREATE TABLE organizations
+      (
+        id         SERIAL,
+        name       VARCHAR(255) NOT NULL,
+        long       DECIMAL,
+        lat        DECIMAL,
+        type       VARCHAR(255),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id)
+      );
+  `,
+    callback
+  );
 }
 
 /**

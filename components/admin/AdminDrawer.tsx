@@ -3,7 +3,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import List from '@material-ui/core/List';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { Button, Link } from '@material-ui/core';
 import AdminTable from './AdminTable';
@@ -39,46 +38,51 @@ const AdminDrawer: React.FunctionComponent<Props> = ({ table, page }) => (
               <List>
                 <div className={styles.selected}>
                   <Button
-                    href="../adminDash/Applications"
                     startIcon={<FiberManualRecordIcon />}
-                    variant={page === 'Application' ? 'contained' : ''}
-                    color={page === 'Application' ? 'primary' : ''}
+                    variant={page === 'Application' ? 'contained' : undefined}
+                    color={page === 'Application' ? 'primary' : undefined}
                     disableElevation
                   >
-                    Applications
+                    <Link color="inherit" href="/admin/applications">
+                      Applications
+                    </Link>
                   </Button>
                 </div>
                 <div className={styles.selected}>
                   <Button
-                    href="../adminDash/Organizations"
                     startIcon={<FiberManualRecordIcon />}
-                    variant={page === 'Organization' ? 'contained' : ''}
-                    color={page === 'Organization' ? 'primary' : ''}
+                    variant={page === 'Organization' ? 'contained' : undefined}
+                    color={page === 'Organization' ? 'primary' : undefined}
                     disableElevation
                   >
-                    Organizations
+                    <Link color="inherit" href="/admin/organizations">
+                      Organizations
+                    </Link>
                   </Button>
                 </div>
                 <div className={styles.selected}>
                   <Button
                     href="undefined"
                     startIcon={<FiberManualRecordIcon />}
-                    variant={page === 'Question' ? 'contained' : ''}
-                    color={page === 'Question' ? 'primary' : ''}
+                    variant={page === 'Question' ? 'contained' : undefined}
+                    color={page === 'Question' ? 'primary' : undefined}
                     disableElevation
                   >
-                    Questions
+                    <Link color="inherit" href={undefined}>
+                      Questions
+                    </Link>
                   </Button>
                 </div>
                 <div className={styles.selected}>
                   <Button
-                    href="../adminDash/Users"
                     startIcon={<FiberManualRecordIcon />}
-                    variant={page === 'User' ? 'contained' : ''}
-                    color={page === 'User' ? 'primary' : ''}
+                    variant={page === 'User' ? 'contained' : undefined}
+                    color={page === 'User' ? 'primary' : undefined}
                     disableElevation
                   >
-                    Users
+                    <Link color="inherit" href="/admin/users">
+                      Users
+                    </Link>
                   </Button>
                 </div>
               </List>

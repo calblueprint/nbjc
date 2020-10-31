@@ -1,5 +1,4 @@
 import Link from 'next/link';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import SearchIcon from '@material-ui/icons/Search';
 import {
   Button,
@@ -7,7 +6,7 @@ import {
   InputAdornment,
   TextField,
 } from '@material-ui/core';
-import AdminDrawer from 'components/adminDash/AdminDrawer';
+import AdminDrawer from 'components/admin/AdminDrawer';
 import styles from '../../styles/admin/AdminIndex.module.css';
 
 type Props = {
@@ -32,10 +31,21 @@ const AdminIndex: React.FunctionComponent<Props> = ({
         </div>
         <div className={styles.searchBar}>
           <div>
-            <IconButton color="primary">
-              <SearchIcon />
-            </IconButton>
-            <TextField id="standard-basic" label="Explore Organizations" />
+            <TextField
+              fullWidth
+              id={search}
+              label="Explore Organizations"
+              type="search"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton color="primary">
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
           </div>
         </div>
       </div>
@@ -47,7 +57,7 @@ const AdminIndex: React.FunctionComponent<Props> = ({
           <Link href="/">
             <a>Review</a>
           </Link>
-          <Link href="/">
+          <Link href="/admin/dashboard">
             <a>Dashboard</a>
           </Link>
         </div>
