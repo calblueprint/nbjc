@@ -18,7 +18,7 @@ const OrgCard: React.FunctionComponent<CardProps> = ({ items }) => {
           <CardMedia
             className={styles.media}
             image={items.logo}
-            title="Contemplative Reptile"
+            title="logo title"
           />
           <CardContent className={styles.content}>
             <Typography component="h5" variant="h5">
