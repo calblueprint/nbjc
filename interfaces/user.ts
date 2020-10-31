@@ -21,7 +21,8 @@ const schema = Joi.object({
     .when('$strict', {
       is: true,
       then: Joi.required(),
-    }),
+    })
+    .error(new Error('Your password is not strong enough.')),
 });
 
 export default schema;
