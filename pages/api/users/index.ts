@@ -16,22 +16,21 @@ export default async (
     return MethodNotAllowed(req.method, res);
   }
 
-  // Construct payload
-  const registerInfo = req.body;
-  registerInfo.hashedPassword = hash(registerInfo.password);
-  delete registerInfo.password;
-
   // Validating the structure for the request
-  const { error, value } = UserSchema.validate(registerInfo, {
+  const { error, value } = UserSchema.validate(req.body, {
     context: { strict: true },
   });
   if (error) {
     return CreateError(400, error.message, res);
   }
 
+  // Hashing password
+  value.hashedPassword = hash(value.password);
+  delete value.password;
+
+  // Casting value as a User
   const data = value as User;
 
-  // Constructing new user
   try {
     const newUser = await prisma.user.create({
       data,

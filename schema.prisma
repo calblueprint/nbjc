@@ -1,92 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
-model Migration {
-  id    Int      @id @default(autoincrement())
-  name  String
-  runOn DateTime
-
-
-  @@map("migrations")
-}
-
 model Account {
   id                Int       @id @default(autoincrement())
-  compoundId        String    @unique
-  userId            Int
-  providerType      String
-  providerId        String
-  providerAccountId String
-  refreshToken      String?
-  accessToken       String?
-  accessTokenExpire DateTime?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @default(now()) @updatedAt
+  compoundId        String    @unique @map("compound_id")
+  userId            Int       @map("user_id")
+  providerType      String    @map("provider_type")
+  providerId        String    @map("provider_id")
+  providerAccountId String    @map("provider_account_id")
+  refreshToken      String?   @map("refresh_token")
+  accessToken       String?   @map("access_token")
+  accessTokenExpire DateTime? @map("access_token_expires")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at")
 
-
+  @@index([providerAccountId], name: "provider_account_id")
+  @@index([providerId], name: "provider_id")
+  @@index([userId], name: "user_id")
   @@map("accounts")
-}
-
-model Organization {
-  id                        Int                      @id @default(autoincrement())
-  name                      String
-  long                      Float?
-  lat                       Float?
-  type                      String?
-  createdAt                 DateTime                 @default(now()) @map("created_at")
-  updatedAt                 DateTime                 @default(now()) @updatedAt @map("updated_at")
-  organizationApplicationId Int?                     @unique @map("organization_application_id")
-  organizationApplication   OrganizationApplication? @relation(name: "organization_applicationsToorganizations", fields: [organizationApplicationId], references: [id])
-
-
-  @@map("organizations")
-}
-
-model Session {
-  id           Int      @id @default(autoincrement())
-  userId       Int
-  expire       DateTime
-  sessionToken String   @unique
-  accessToken  String   @unique
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
-
-
-  @@map("sessions")
-}
-
-model User {
-  id             Int       @id @default(autoincrement())
-  firstName      String
-  lastName       String
-  role           UserRole?
-  email          String    @unique
-  emailVerified  DateTime?
-  image          String?
-  hashedPassword String
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @default(now()) @updatedAt
-
-
-  @@map("users")
-}
-
-model VerificationRequest {
-  id         Int      @id @default(autoincrement())
-  identifier String
-  token      String   @unique
-  expire     DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
-
-
-  @@map("verification_requests")
 }
 
 model OrganizationApplication {
@@ -109,27 +46,76 @@ model OrganizationApplication {
   capacity          Int?
   ein               Int?
   foundingDate      DateTime?         @map("founding_date")
-  organization      Organization?     @relation(name: "organization_applicationsToorganizations")
-
+  organization      Organization?     @relation("OrganizationApplicationsToOrganizations")
 
   @@map("organization_applications")
 }
 
-enum UserRole {
-  admin
-  moderator
-  organization
+model Organization {
+  id                        Int                      @id @default(autoincrement())
+  name                      String
+  long                      Float?
+  lat                       Float?
+  type                      String?
+  created_at                DateTime                 @default(now())
+  updated_at                DateTime                 @default(now())
+  organizationApplicationId Int?                     @unique @map("organization_application_id")
+  organizationApplication   OrganizationApplication? @relation("OrganizationApplicationsToOrganizations", fields: [organizationApplicationId], references: [id])
 
-  @@map("user_role")
+  @@map("organizations")
+}
+
+model Session {
+  id           Int      @id @default(autoincrement())
+  userId       Int      @map("user_id")
+  expire       DateTime @map("expires")
+  sessionToken String   @unique @map("session_token")
+  accessToken  String   @unique @map("access_token")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("sessions")
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  firstName      String    @map("first_name")
+  lastName       String    @map("last_name")
+  role           UserRole?
+  email          String    @unique
+  emailVerified  DateTime? @map("email_verified")
+  image          String?
+  hashedPassword String    @map("hashed_password")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model VerificationRequest {
+  id         Int      @id @default(autoincrement())
+  identifier String
+  token      String   @unique
+  expire     DateTime @map("expires")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("verification_requests")
+}
+
+model migrations {
+  id     Int      @id @default(autoincrement())
+  name   String
+  run_on DateTime
 }
 
 enum AgeDemographic {
-  adult   @map("Adults")
-  child   @map("Children")
-  senior  @map("Seniors")
-  teen    @map("Teens")
+  adult @map("Adults")
+  child @map("Children")
+  senior @map("Seniors")
+  teen @map("Teens")
 
-  @@map("age_demographic")
+   @@map("age_demographic")
 }
 
 enum ApplicationStatus {
@@ -138,45 +124,53 @@ enum ApplicationStatus {
   rejected
   submitted
 
-  @@map("application_status")
+   @@map("application_status")
 }
 
 enum LgbtqDemographic {
-  asexualAromantic  @map("Asexual/Aromantic")
-  lgbtqAll          @map("LGBTQ+ (All)")
-  other             @map("Other")
-  sgl               @map("SGL")
-  transgender       @map("Transgender")
+  asexualAromantic @map("Asexual/Aromantic")
+  lgbtqAll @map("LGBTQ+ (All)")
+  other @map("Other")
+  sgl @map("SGL")
+  transgender @map("Transgender")
 
-  @@map("lgbtq_demographic")
+   @@map("lgbtq_demographic")
 }
 
 enum OrganizationType {
-  c3               @map("510(c)(3)")
-  grassrootsLocal  @map("Grassroots/Local")
-  national         @map("National")
-  other            @map("Other")
-  statewide        @map("Statewide")
+  c3 @map("510(c)(3)")
+  grassrootsLocal @map("Grassroots/Local")
+  national @map("National")
+  other @map("Other")
+  statewide @map("Statewide")
 
-  @@map("organization_type")
+   @@map("organization_type")
 }
 
 enum RaceDemographic {
-  asian              @map("Asian")
-  black              @map("Black")
-  latinx             @map("Latinx")
-  nativeIndigeneous  @map("Native/Indigeneous")
-  other              @map("Other")
-  pocAll             @map("POC (All)")
-  pacificIslander    @map("Pacific Islander")
+  asian @map("Asian")
+  black @map("Black")
+  latinx @map("Latinx")
+  nativeIndigeneous @map("Native/Indigeneous")
+  other @map("Other")
+  pocAll @map("POC (All)")
+  pacificIslander @map("Pacific Islander")
 
-  @@map("race_demographic")
+   @@map("race_demographic")
+}
+
+enum UserRole {
+  admin
+  moderator
+  organization
+
+   @@map("user_role")
 }
 
 enum WorkType {
-  advocacy          @map("Advocacy")
-  directService     @map("Direct Service")
-  networkingSocial  @map("Networking/Social")
+  advocacy @map("Advocacy")
+  directService @map("Direct Service")
+  networkingSocial @map("Networking/Social")
 
-  @@map("work_type")
+   @@map("work_type")
 }
