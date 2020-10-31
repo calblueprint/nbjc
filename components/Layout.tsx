@@ -38,6 +38,9 @@ const Layout: React.FunctionComponent<Props> = ({
         <Link href="/api/users">
           <a>Users API</a>
         </Link>
+        <Link href="/users/profile_settings">
+          <a>User Profile</a>
+        </Link>
         <div>
           <Button
             className={styles.logButtonSpace}

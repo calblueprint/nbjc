@@ -1,0 +1,38 @@
+.drawer {
+  margin-top: 100px;
+  width: 240;
+}
+.root {
+  display: flex;
+}
+.expand {
+  width: 300;
+}
+.appBar {
+  margin-top: 90px;
+}
+.content {
+  flex-grow: 1;
+  padding-left: 190px;
+}
+.title {
+  display: flex;
+  font-weight: 800;
+  font-size: 50px;
+  width: 150px;
+  padding-left: 20px;
+}
+
+.selectedItemStyle {
+  background-color: rgb(0, 156, 143);
+}
+
+.buttonFlex {
+  margin-left: 8px;
+  margin-bottom: 10px;
+}
+
+.selected {
+  margin-bottom: 10px;
+  margin-right: 35px;
+}
