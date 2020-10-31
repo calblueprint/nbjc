@@ -29,7 +29,11 @@ export const updateUser = async (
 ): Promise<User | null> => {
   const { error, value } = UserSchema.validate(body);
   if (error) {
-    throw error;
+    throw new ValidationError(
+      'Failed to validate user payload for updating.',
+      null,
+      null
+    );
   }
 
   const data = value as User;

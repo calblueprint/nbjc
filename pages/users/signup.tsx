@@ -10,7 +10,6 @@ const UserSignUp: React.FC = () => {
   return (
     // Need to make post request, and on success, redirect to home page.
     <form onSubmit={handleSubmit}>
-      {/* <input name="csrfToken" type="hidden" /> */}
       <label htmlFor="firstName">
         First Name
         <input name="firstName" type="text" />
@@ -31,12 +30,5 @@ const UserSignUp: React.FC = () => {
     </form>
   );
 };
-
-// Not sure how to use csrfToken yet
-// export const getStaticProps: GetStaticProps = async () => {
-//   return {
-//     props: { csrfToken: await csrfToken() },
-//   };
-// };
 
 export default UserSignUp;

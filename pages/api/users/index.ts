@@ -17,12 +17,9 @@ export default async (
   }
 
   // Construct payload
-  const registerInfo = {
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    hashedPassword: hash(req.body.password), // I'm not sure why this has to be lowercase here
-  };
+  const registerInfo = req.body;
+  registerInfo.hashedPassword = hash(registerInfo.password);
+  delete registerInfo.password;
 
   // Validating the structure for the request
   const { error, value } = UserSchema.validate(registerInfo, {
@@ -32,13 +29,19 @@ export default async (
     return CreateError(400, error.message, res);
   }
 
+  const data = value as User;
+
   // Constructing new user
   try {
     const newUser = await prisma.user.create({
-      data: registerInfo,
+      data,
     });
     return res.json(sanitizeUser(newUser));
   } catch (err) {
-    return CreateError(500, 'Failed to create user due to repeated email', res); // This is temporarily the only error I can think of to reach this point for
+    return CreateError(
+      500,
+      'Failed to create user due to duplicate email',
+      res
+    ); // This is temporarily the only error I can think of that can reach this point in production.
   }
 };
