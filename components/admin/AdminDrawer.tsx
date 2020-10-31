@@ -49,41 +49,43 @@ const AdminDrawer: React.FunctionComponent<Props> = ({ table, page }) => (
                   </Button>
                 </div>
                 <div className={styles.selected}>
-                  <Button
-                    startIcon={<FiberManualRecordIcon />}
-                    variant={page === 'Organization' ? 'contained' : undefined}
-                    color={page === 'Organization' ? 'primary' : undefined}
-                    disableElevation
-                  >
-                    <Link color="inherit" href="/admin/organizations">
+                  <Link color="inherit" href="/admin/organizations">
+                    <Button
+                      startIcon={<FiberManualRecordIcon />}
+                      variant={
+                        page === 'Organization' ? 'contained' : undefined
+                      }
+                      color={page === 'Organization' ? 'primary' : undefined}
+                      disableElevation
+                    >
                       Organizations
-                    </Link>
-                  </Button>
+                    </Button>
+                  </Link>
                 </div>
                 <div className={styles.selected}>
-                  <Button
-                    href="undefined"
-                    startIcon={<FiberManualRecordIcon />}
-                    variant={page === 'Question' ? 'contained' : undefined}
-                    color={page === 'Question' ? 'primary' : undefined}
-                    disableElevation
-                  >
-                    <Link color="inherit" href={undefined}>
+                  <Link color="inherit" href={undefined}>
+                    <Button
+                      href="undefined"
+                      startIcon={<FiberManualRecordIcon />}
+                      variant={page === 'Question' ? 'contained' : undefined}
+                      color={page === 'Question' ? 'primary' : undefined}
+                      disableElevation
+                    >
                       Questions
-                    </Link>
-                  </Button>
+                    </Button>
+                  </Link>
                 </div>
                 <div className={styles.selected}>
-                  <Button
-                    startIcon={<FiberManualRecordIcon />}
-                    variant={page === 'User' ? 'contained' : undefined}
-                    color={page === 'User' ? 'primary' : undefined}
-                    disableElevation
-                  >
-                    <Link color="inherit" href="/admin/users">
+                  <Link color="inherit" href="/admin/users">
+                    <Button
+                      startIcon={<FiberManualRecordIcon />}
+                      variant={page === 'User' ? 'contained' : undefined}
+                      color={page === 'User' ? 'primary' : undefined}
+                      disableElevation
+                    >
                       Users
-                    </Link>
-                  </Button>
+                    </Button>
+                  </Link>
                 </div>
               </List>
             </div>
