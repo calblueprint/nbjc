@@ -1,4 +1,7 @@
 import Joi from 'joi';
+import { User } from '@prisma/client';
+
+export type SanitizedUser = Omit<User, 'hashedPassword'>;
 
 const schema = Joi.object({
   firstName: Joi.string()
@@ -17,8 +20,10 @@ const schema = Joi.object({
   emailVerified: Joi.date().error(new Error('Email verified error.')),
   image: Joi.string().error(new Error('Image error.')),
   password: Joi.string()
-    .pattern(/^[a-zA-Z0-9\s]+$/)
     .min(6)
+    .max(50)
+    // eslint-disable-next-line no-useless-escape
+    .pattern(/^[a-zA-Z0-9\s!"#\$%&'\(\)\*\+,-\.\/:;<=>\?@[\]\^_`\{\|}~]+$/)
     .when('$strict', {
       is: true,
       then: Joi.required(),
