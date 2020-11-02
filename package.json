@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && yarn db:migrate up",
     "start": "next start -p $PORT",
     "cm": "cz",
     "prisma:update": "prisma introspect && prisma generate",
