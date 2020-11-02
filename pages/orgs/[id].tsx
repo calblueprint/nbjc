@@ -13,6 +13,7 @@ const StaticPropsDetail: React.FunctionComponent<Props> = ({
   item,
   errors,
 }) => {
+  console.log(item);
   if (errors) {
     return (
       <Layout title="Error | Next.js + TypeScript Example">
@@ -29,7 +30,7 @@ const StaticPropsDetail: React.FunctionComponent<Props> = ({
         item ? item.name : 'Organization Detail'
       } | Next.js + TypeScript Example`}
     >
-      {item && <ListDetail item={item} />}
+      <h1>{item.name}</h1>
     </Layout>
   );
 };
@@ -53,7 +54,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   try {
     const id = params?.id;
-    const item = sampleOrgData.find((data) => data.id === Number(id));
+    const fetchURL = `http://localhost:3000/api/orgs/${id}`;
+    const item = await fetch(fetchURL).then((response) => response.json());
     // By returning { props: item }, the StaticPropsDetail component
     // will receive `item` as a prop at build time
     return { props: { item } };
