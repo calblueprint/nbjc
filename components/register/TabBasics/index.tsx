@@ -1,8 +1,8 @@
 import { TextField, FormControl, Select, MenuItem } from '@material-ui/core';
 import { FormikHandlers, FormikHelpers } from 'formik';
 import { Form } from 'interfaces';
-import styles from 'styles/TabBasics.module.css';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import styles from './TabBasics.module.css';
 
 type TabProps = {
   values: Form;

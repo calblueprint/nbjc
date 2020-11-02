@@ -1,7 +1,7 @@
 import { TextField } from '@material-ui/core';
 import { FormikHandlers } from 'formik';
 import { Form } from 'interfaces';
-import styles from 'styles/TabShortR.module.css';
+import styles from './TabShortR.module.css';
 
 type TabProps = {
   handleChange: FormikHandlers['handleChange'];

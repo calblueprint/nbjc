@@ -1,15 +1,15 @@
 import { useFormik } from 'formik';
 import { Form } from 'interfaces';
 import { useState, ChangeEvent } from 'react';
-import styles from 'styles/register.module.css';
 import { Tabs, Tab, AppBar, Button } from '@material-ui/core';
 import Layout from 'components/Layout';
-import TabShortR from 'components/Register/TabShortR';
-import TabBasics from 'components/Register/TabBasics';
-import TabProj from 'components/Register/TabProj';
+import TabShortR from 'components/register/TabShortR';
+import TabBasics from 'components/register/TabBasics';
+import TabProj from 'components/register/TabProj';
+import styles from '../styles/Register.module.css';
 // import { GetStaticProps } from 'next';
 
-const Register: React.FC = () => {
+const Register: React.FC = (props) => {
   const [selected, setSelected] = useState<number>(0);
   const handleChange = (
     event: ChangeEvent<unknown>,
