@@ -8,10 +8,7 @@
 }
 .appBar {
   margin-top: 90px;
-}
-.content {
-  flex-grow: 1;
-  padding-left: 190px;
+  width: 180px;
 }
 .title {
   display: flex;

@@ -5,17 +5,13 @@ import Hidden from '@material-ui/core/Hidden';
 import List from '@material-ui/core/List';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { Button, Link } from '@material-ui/core';
-import AdminTable from './AdminTable';
 import styles from '../../styles/admin/AdminDrawer.module.css';
 
-// try looking at Next.js documents to see if color can change depend on URL color
-
 type Props = {
-  table: typeof AdminTable;
   page: string;
 };
 
-const AdminDrawer: React.FunctionComponent<Props> = ({ table, page }) => (
+const AdminDrawer: React.FunctionComponent<Props> = ({ page }) => (
   <div className={styles.root}>
     <CssBaseline />
     <AppBar position="fixed" className={styles.appBar} />
@@ -93,10 +89,6 @@ const AdminDrawer: React.FunctionComponent<Props> = ({ table, page }) => (
         </Drawer>
       </Hidden>
     </nav>
-    <main className={styles.content}>
-      <div className={styles.toolbar} />
-      {table}
-    </main>
   </div>
 );
 

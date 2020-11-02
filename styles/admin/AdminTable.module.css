@@ -1,0 +1,11 @@
+.table {
+  min-width: 650;
+}
+.button {
+  display: 'flex';
+  margin-right: 10;
+}
+.actions {
+  display: 'flex';
+  flex-direction: 'row';
+}
