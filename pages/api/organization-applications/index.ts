@@ -1,6 +1,5 @@
 import { PrismaClient, OrganizationApplication } from '@prisma/client';
 import Joi, { ValidationError } from 'joi';
-
 import { NextApiRequest, NextApiResponse } from 'next';
 import CreateError, { MethodNotAllowed } from 'utils/error';
 import OrganizationApplicationSchema from '../../../interfaces/organization_application';
@@ -21,11 +20,10 @@ export const createOrganizationApp = async (
 ): Promise<OrganizationApplication | null> => {
   const { error, value } = OrganizationApplicationSchema.validate(body);
   if (error) {
+    console.log(error);
     throw error;
   }
-
   const data = value as OrganizationApplication;
-
   const createdOrgApp = await prisma.organizationApplication.create({
     data: {
       applicationStatus: data.applicationStatus,
@@ -59,9 +57,7 @@ export const updateOrganizationApp = async (
   if (error) {
     throw error;
   }
-
   const data = value as OrganizationApplication;
-
   const updatedOrgApp = await prisma.organizationApplication.update({
     where: { id: Number(id) },
     data: {
@@ -102,7 +98,6 @@ export default async (
   res: NextApiResponse
 ): Promise<void> => {
   const orgAppId = req.query.id as string;
-
   if (Joi.number().validate(orgAppId).error) {
     return CreateError(400, `ID ${orgAppId} is not a number`, res);
   }
@@ -110,11 +105,9 @@ export default async (
   if (req.method === 'GET') {
     try {
       const orgapp = await getOrganizationApp(orgAppId);
-
       if (!orgapp) {
         res.status(204);
       }
-
       return res.json(orgapp);
     } catch (err) {
       return CreateError(
@@ -124,14 +117,13 @@ export default async (
       );
     }
   }
+
   if (req.method === 'POST') {
     try {
       const orgapp = await createOrganizationApp(req.body);
-
       if (!orgapp) {
         res.status(204);
       }
-
       return res.json(orgapp);
     } catch (err) {
       return CreateError(
@@ -141,6 +133,7 @@ export default async (
       );
     }
   }
+
   if (req.method === 'PATCH') {
     try {
       const response = await updateOrganizationApp(orgAppId, req.body);
@@ -156,6 +149,7 @@ export default async (
       );
     }
   }
+
   if (req.method === 'DELETE') {
     try {
       const deletedOrgApp = await deleteOrganizationApp(orgAppId);
