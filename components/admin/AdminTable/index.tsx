@@ -1,14 +1,17 @@
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import { Button, ButtonGroup } from '@material-ui/core';
+import {
+  Button,
+  ButtonGroup,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from '@material-ui/core';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import InfoIcon from '@material-ui/icons/Info';
-import styles from 'styles/admin/AdminTable.module.css';
+import styles from './AdminTable.module.css';
 
 const declineButton = (
   <Button variant="outlined" size="small">
@@ -95,13 +98,15 @@ const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
   const table = (
     <TableContainer component={Paper}>
       <Table className={styles.table} aria-label="simple table">
-        <caption>No {pageType} in database</caption>
+        {data.length === 0 ? (
+          <caption>No {pageType} in database</caption>
+        ) : null}
         <TableHead>
           <TableRow>
             {headList.map((key) => (
               <TableCell align="left">{key}</TableCell>
             ))}
-            <TableCell align="left">actions</TableCell>
+            <TableCell align="right">actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -110,7 +115,7 @@ const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
               {Object.values(row).map((value) => (
                 <TableCell align="left">{value}</TableCell>
               ))}
-              <TableCell align="left">{actionButtons}</TableCell>
+              <TableCell align="right">{actionButtons}</TableCell>
             </TableRow>
           ))}
         </TableBody>

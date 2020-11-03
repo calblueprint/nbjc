@@ -18,7 +18,7 @@ const Layout: React.FunctionComponent<Props> = ({
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
     </Head>
     <header>
-      <nav className={styles.pageTitle}>
+      <nav className={styles.navbar}>
         <h1>NBJC</h1>
         <Link href="/">
           <a>Home</a>

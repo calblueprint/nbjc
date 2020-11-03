@@ -1,7 +1,7 @@
 import SearchIcon from '@material-ui/icons/Search';
-import { IconButton, InputAdornment, TextField } from '@material-ui/core';
+import { InputAdornment, TextField } from '@material-ui/core';
 import AdminDrawer from 'components/admin/AdminDrawer';
-import styles from '../../styles/admin/AdminIndex.module.css';
+import styles from './AdminIndex.module.css';
 
 type Props = {
   title?: string;
@@ -29,9 +29,7 @@ const AdminIndex: React.FunctionComponent<Props> = ({
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <IconButton color="primary">
-                      <SearchIcon />
-                    </IconButton>
+                    <SearchIcon />
                   </InputAdornment>
                 ),
               }}
