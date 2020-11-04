@@ -4,15 +4,14 @@ import { useState, ChangeEvent } from 'react';
 import styles from 'styles/register.module.css';
 import { Tabs, Tab, AppBar, Button } from '@material-ui/core';
 import Layout from 'components/Layout';
-import TabShortR from 'components/Register/TabShortR';
+import TabShortResponse from 'components/Register/TabShortResponse';
 import TabBasics from 'components/Register/TabBasics';
 import TabProj from 'components/Register/TabProj';
-// import { GetStaticProps } from 'next';
 
 const Register: React.FC = () => {
   const [selected, setSelected] = useState<number>(0);
   const handleChange = (
-    event: ChangeEvent<unknown>,
+    _event: ChangeEvent<unknown>,
     newValue: number
   ): void => {
     setSelected(newValue);
@@ -75,7 +74,7 @@ const Register: React.FC = () => {
             />
           )}
           {selected === 2 && (
-            <TabShortR
+            <TabShortResponse
               handleChange={formik.handleChange}
               values={formik.values}
             />

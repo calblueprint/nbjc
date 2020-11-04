@@ -8,7 +8,7 @@ type TabProps = {
   values: Form;
 };
 
-const TabShortR: React.FC<TabProps> = ({ handleChange, values }) => {
+const TabProj: React.FC<TabProps> = ({ handleChange, values }) => {
   const rowSize = 6;
   const placeholderText = 'Your short response';
   return (
@@ -53,4 +53,4 @@ const TabShortR: React.FC<TabProps> = ({ handleChange, values }) => {
   );
 };
 
-export default TabShortR;
+export default TabProj;

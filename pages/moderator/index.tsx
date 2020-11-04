@@ -4,11 +4,12 @@ import { OrgApp } from 'interfaces';
 import { GetStaticProps } from 'next';
 import { sampleOrgAppData } from 'utils/sample-data';
 import Layout from 'components/Layout';
-import styles from 'styles/index.module.css';
+import styles from 'styles/ModIndex.module.css';
 import OrgCard from 'components/OrgCard';
-import OrgDetail from 'components/OrgDetail';
 import { useState } from 'react';
 import Button from '@material-ui/core/Button';
+// import ModTabs from 'components/Moderator/ModTabs';
+import OrgDetail from 'components/OrgDetail';
 
 type Props = {
   items: OrgApp[];
@@ -33,7 +34,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
           ))}
         </div>
         <div className={styles.rightCol}>
-          <div className={styles.expandedApp}>
+          <div>
             <OrgDetail items={card} />
           </div>
           <div className={styles.acceptDecline}>

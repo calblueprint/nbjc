@@ -46,6 +46,9 @@ export type OrgApp = {
   email: string;
   website: string;
   workType: string;
+  ages: string[];
+  orientation: string[];
+  ethnicity: string[];
 };
 
 export type Organization = {
