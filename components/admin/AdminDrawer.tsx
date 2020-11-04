@@ -1,10 +1,6 @@
-import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
-import Hidden from '@material-ui/core/Hidden';
-import List from '@material-ui/core/List';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import { Button, Link } from '@material-ui/core';
+import { Button, Link, List, Hidden, Drawer, AppBar } from '@material-ui/core';
 import styles from '../../styles/admin/AdminDrawer.module.css';
 
 type Props = {

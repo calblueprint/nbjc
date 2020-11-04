@@ -1,14 +1,18 @@
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import { Button, ButtonGroup } from '@material-ui/core';
+import {
+  Button,
+  ButtonGroup,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from '@material-ui/core';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import InfoIcon from '@material-ui/icons/Info';
 import styles from 'styles/admin/AdminTable.module.css';
+import { OrgApp, Organization, User } from 'interfaces/index';
 
 const declineButton = (
   <Button variant="outlined" size="small">
@@ -65,26 +69,36 @@ const resetButton = (
 );
 
 type Props = {
-  data: Array<unknown>;
+  data: Array<OrgApp | Organization | User>;
   pageType: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function giveButton1(pT: string) {
+  if (pT === 'applications') {
+    return declineButton;
+  }
+  if (pT === 'organizations') {
+    return deleteButton;
+  }
+  return suspendButton;
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function giveButton2(pT: string) {
+  if (pT === 'applications') {
+    return acceptButton;
+  }
+  if (pT === 'organizations') {
+    return viewButton;
+  }
+  return resetButton;
+}
+
 const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
   const headList = Object.keys(data[0]);
-  const button1 =
-    // eslint-disable-next-line no-nested-ternary
-    pageType === 'applications'
-      ? declineButton
-      : pageType === 'organizations'
-      ? deleteButton
-      : suspendButton;
-  const button2 =
-    // eslint-disable-next-line no-nested-ternary
-    pageType === 'applications'
-      ? acceptButton
-      : pageType === 'organizations'
-      ? viewButton
-      : resetButton;
+  const button1 = giveButton1(pageType);
+  const button2 = giveButton2(pageType);
   const actionButtons = (
     <ButtonGroup>
       {button1}
