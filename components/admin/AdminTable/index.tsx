@@ -13,6 +13,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import InfoIcon from '@material-ui/icons/Info';
 import { OrgApp, Organization } from 'interfaces/index';
 import { User } from '@prisma/client';
+import computeDate from 'utils/computeDate';
 import styles from './AdminTable.module.css';
 
 const declineButton = (
@@ -113,7 +114,9 @@ const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
         <TableHead>
           <TableRow>
             {headList.map((key) => (
-              <TableCell align="left">{key}</TableCell>
+              <TableCell align="left" key={key}>
+                {key}
+              </TableCell>
             ))}
             <TableCell align="right">actions</TableCell>
           </TableRow>
@@ -121,9 +124,20 @@ const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
         <TableBody>
           {data.map((row) => (
             <TableRow key={row.id}>
-              {Object.values(row).map((value) => (
-                <TableCell align="left">{value}</TableCell>
-              ))}
+              {Object.values(row).map((value, index) => {
+                if (value instanceof Date) {
+                  return (
+                    <TableCell align="left" key={headList[index]}>
+                      {computeDate(value, 1)}
+                    </TableCell>
+                  );
+                }
+                return (
+                  <TableCell align="left" key={headList[index]}>
+                    {value}
+                  </TableCell>
+                );
+              })}
               <TableCell align="right">{actionButtons()}</TableCell>
             </TableRow>
           ))}
