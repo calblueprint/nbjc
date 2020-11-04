@@ -1,23 +1,91 @@
 import dynamic from 'next/dynamic';
-import Layout from 'components/Layout';
-import { Button, CircularProgress } from '@material-ui/core';
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  InputAdornment,
+} from '@material-ui/core';
 // import { signIn, signOut, useSession } from 'next-auth/client';
-// import styles from '../styles/Home.module.css';
+import SearchIcon from '@material-ui/icons/Search';
+import Layout from 'components/Layout';
+import styles from '../styles/Home.module.css';
 
-const MapVisual = dynamic(() => import('../components/Map'), {
+const Map = dynamic(() => import('../components/Map'), {
   ssr: false,
 });
 
 const Home: React.FC = () => {
   return (
-    <Layout title="NBJC Home">
-      <h1>Home</h1>
-      <p>FRED IS THE IMPOSTER!!!!!</p>
-      <Button variant="contained" color="primary">
-        Hello
-      </Button>
-      <CircularProgress />
-      <MapVisual />
+    <Layout>
+      <div className={styles.pageFlex}>
+        <TextField
+          id="outlined-size-small"
+          placeholder="Explore Organizations"
+          fullWidth
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          variant="outlined"
+        />
+
+        <div className={styles.pageContent}>
+          <div className={styles.leftCol}>
+            <div className={styles.keywords}>
+              <div className={styles.keyButtonSpace}>
+                <FormControl className={styles.keyword} variant="outlined">
+                  <InputLabel>Keyword</InputLabel>
+                  <Select label="Keyword">
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={1}>One</MenuItem>
+                    <MenuItem value={2}>Two</MenuItem>
+                    <MenuItem value={3}>Three</MenuItem>
+                  </Select>
+                </FormControl>
+              </div>
+              <div className={styles.keyButtonSpace}>
+                <FormControl className={styles.keyword} variant="outlined">
+                  <InputLabel>Keyword</InputLabel>
+                  <Select label="Keyword">
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={1}>One</MenuItem>
+                    <MenuItem value={2}>Two</MenuItem>
+                    <MenuItem value={3}>Three</MenuItem>
+                  </Select>
+                </FormControl>
+              </div>
+              <div className={styles.keyButtonSpace}>
+                <FormControl className={styles.keyword} variant="outlined">
+                  <InputLabel>More</InputLabel>
+                  <Select label="More">
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={1}>One</MenuItem>
+                    <MenuItem value={2}>Two</MenuItem>
+                    <MenuItem value={3}>Three</MenuItem>
+                  </Select>
+                </FormControl>
+              </div>
+            </div>
+
+            <div className={styles.cards}>Insert Cards Here</div>
+          </div>
+
+          <div className={styles.rightCol}>
+            <Map width="100%" height="100%" />
+          </div>
+        </div>
+      </div>
     </Layout>
   );
 };

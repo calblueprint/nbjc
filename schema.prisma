@@ -1,21 +1,10 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
-
-
-}
-
-model Migration {
-  id    Int      @id @default(autoincrement())
-  name  String
-  runOn DateTime @map("run_on")
-
-
-  @@map("migrations")
 }
 
 model Account {
@@ -31,17 +20,47 @@ model Account {
   createdAt         DateTime  @default(now()) @map("created_at")
   updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at")
 
-
+  @@index([providerAccountId], name: "provider_account_id")
+  @@index([providerId], name: "provider_id")
+  @@index([userId], name: "user_id")
   @@map("accounts")
 }
 
-model Organization {
-  id   Int     @id @default(autoincrement())
-  name String
-  long Float?
-  lat  Float?
-  type String?
+model OrganizationApplication {
+  id                Int               @id @default(autoincrement())
+  applicationStatus ApplicationStatus @map("application_status")
+  organizationName  String            @map("organization_name")
+  contactName       String            @map("contact_name")
+  contactEmail      String            @map("contact_email")
+  organizationType  OrganizationType? @map("organization_type")
+  workType          WorkType?         @map("work_type")
+  address           String?
+  lat               Float?
+  long              Float?
+  missionStatement  String?           @map("mission_statement")
+  shortHistory      String?           @map("short_history")
+  keyValue          String?           @map("key_values")
+  lgbtqDemographic  LgbtqDemographic? @map("lgbtq_demographic")
+  raceDemographic   RaceDemographic?  @map("race_demographic")
+  ageDemographic    AgeDemographic?   @map("age_demographic")
+  capacity          Int?
+  ein               Int?
+  foundingDate      DateTime?         @map("founding_date")
+  organization      Organization?     @relation("OrganizationApplicationsToOrganizations")
 
+  @@map("organization_applications")
+}
+
+model Organization {
+  id                        Int                      @id @default(autoincrement())
+  name                      String
+  long                      Float?
+  lat                       Float?
+  type                      String?
+  createdAt                 DateTime                 @default(now()) @map("created_at")
+  updatedAt                 DateTime                 @default(now()) @updatedAt @map("updated_at")
+  organizationApplicationId Int?                     @unique @map("organization_application_id")
+  organizationApplication   OrganizationApplication? @relation("OrganizationApplicationsToOrganizations", fields: [organizationApplicationId], references: [id])
 
   @@map("organizations")
 }
@@ -54,7 +73,6 @@ model Session {
   accessToken  String   @unique @map("access_token")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
-
 
   @@map("sessions")
 }
@@ -70,7 +88,6 @@ model User {
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
 
-
   @@map("users")
 }
 
@@ -82,8 +99,63 @@ model VerificationRequest {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 
-
   @@map("verification_requests")
+}
+
+model migrations {
+  id     Int      @id @default(autoincrement())
+  name   String
+  run_on DateTime
+}
+
+enum AgeDemographic {
+  adult @map("Adults")
+  child @map("Children")
+  senior @map("Seniors")
+  teen @map("Teens")
+
+   @@map("age_demographic")
+}
+
+enum ApplicationStatus {
+  approved
+  draft
+  rejected
+  submitted
+
+   @@map("application_status")
+}
+
+enum LgbtqDemographic {
+  asexualAromantic @map("Asexual/Aromantic")
+  lgbtqAll @map("LGBTQ+ (All)")
+  other @map("Other")
+  sgl @map("SGL")
+  transgender @map("Transgender")
+
+   @@map("lgbtq_demographic")
+}
+
+enum OrganizationType {
+  c3 @map("510(c)(3)")
+  grassrootsLocal @map("Grassroots/Local")
+  national @map("National")
+  other @map("Other")
+  statewide @map("Statewide")
+
+   @@map("organization_type")
+}
+
+enum RaceDemographic {
+  asian @map("Asian")
+  black @map("Black")
+  latinx @map("Latinx")
+  nativeIndigeneous @map("Native/Indigeneous")
+  other @map("Other")
+  pocAll @map("POC (All)")
+  pacificIslander @map("Pacific Islander")
+
+   @@map("race_demographic")
 }
 
 enum UserRole {
@@ -91,5 +163,13 @@ enum UserRole {
   moderator
   organization
 
-  @@map("user_role")
+   @@map("user_role")
+}
+
+enum WorkType {
+  advocacy @map("Advocacy")
+  directService @map("Direct Service")
+  networkingSocial @map("Networking/Social")
+
+   @@map("work_type")
 }

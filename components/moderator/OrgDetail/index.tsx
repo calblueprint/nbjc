@@ -1,5 +1,5 @@
 import { OrgApp } from 'interfaces';
-import styles from 'styles/OrgDetail.module.css';
+import styles from './OrgDetail.module.css';
 
 type DetailProps = {
   items: OrgApp;

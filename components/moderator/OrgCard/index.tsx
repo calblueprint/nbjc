@@ -1,10 +1,12 @@
 import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
+import {
+  CardContent,
+  CardMedia,
+  CardActionArea,
+  Typography,
+} from '@material-ui/core';
 import { OrgApp } from 'interfaces';
-import styles from 'styles/OrgCard.module.css';
-import CardActionArea from '@material-ui/core/CardActionArea';
+import styles from './OrgCard.module.css';
 
 type CardProps = {
   items: OrgApp;
@@ -18,7 +20,7 @@ const OrgCard: React.FunctionComponent<CardProps> = ({ items }) => {
           <CardMedia
             className={styles.media}
             image={items.logo}
-            title="logo title"
+            title="Contemplative Reptile"
           />
           <CardContent className={styles.content}>
             <Typography component="h5" variant="h5">
