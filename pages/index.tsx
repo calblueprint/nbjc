@@ -7,7 +7,7 @@ import {
   MenuItem,
   InputAdornment,
 } from '@material-ui/core';
-// import { signIn, signOut, useSession } from 'next-auth/client';
+// import { signIn, signOut, useSession } from 'next-auth/client'; -> See below comment for future functionality
 import SearchIcon from '@material-ui/icons/Search';
 import Layout from 'components/Layout';
 import styles from '../styles/Home.module.css';
@@ -17,6 +17,10 @@ const Map = dynamic(() => import('../components/Map'), {
 });
 
 const Home: React.FC = () => {
+  // This is to verify whether or not the current user has a proper session configured to see the page.
+  // Will be implemented in the next PR.
+  // const [session, loading] = useSession();
+
   return (
     <Layout>
       <div className={styles.pageFlex}>

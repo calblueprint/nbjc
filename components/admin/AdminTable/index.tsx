@@ -11,7 +11,8 @@ import {
 } from '@material-ui/core';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import InfoIcon from '@material-ui/icons/Info';
-import { OrgApp, Organization, User } from 'interfaces/index';
+import { OrgApp, Organization } from 'interfaces/index';
+import { User } from '@prisma/client';
 import styles from './AdminTable.module.css';
 
 const declineButton = (
