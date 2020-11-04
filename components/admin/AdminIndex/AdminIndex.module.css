@@ -1,0 +1,49 @@
+.page {
+  flex-direction: column;
+  display: flex;
+  padding: 20px;
+  padding-top: 0px;
+}
+
+.admin {
+  display: flex;
+  height: 30px;
+  margin-top: 20px;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.leftCol {
+  width: 200px;
+  display: flex;
+  margin-right: 30px;
+}
+
+.rightCol {
+  width: calc(100% - 200px);
+}
+
+.buttons {
+  flex-direction: column;
+  justify-content: left;
+  margin-top: 60px;
+}
+
+.buttonFlex {
+  margin-left: 8px;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
