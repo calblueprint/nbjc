@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import InfoIcon from '@material-ui/icons/Info';
+import { OrgApp, Organization, User } from 'interfaces/index';
 import styles from './AdminTable.module.css';
 
 const declineButton = (
@@ -72,38 +73,32 @@ type Props = {
   pageType: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function giveButton1(pT: string) {
-  if (pT === 'applications') {
-    return declineButton;
-  }
-  if (pT === 'organizations') {
-    return deleteButton;
-  }
-  return suspendButton;
-}
-
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function giveButton2(pT: string) {
-  if (pT === 'applications') {
-    return acceptButton;
-  }
-  if (pT === 'organizations') {
-    return viewButton;
-  }
-  return resetButton;
-}
-
 const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
   const headList = Object.keys(data[0]);
-  const button1 = giveButton1(pageType);
-  const button2 = giveButton2(pageType);
-  const actionButtons = (
-    <ButtonGroup>
-      {button1}
-      {button2}
-    </ButtonGroup>
-  );
+  const actionButtons = (): React.ReactElement => {
+    if (pageType === 'applications') {
+      return (
+        <ButtonGroup>
+          {declineButton}
+          {acceptButton}
+        </ButtonGroup>
+      );
+    }
+    if (pageType === 'organizations') {
+      return (
+        <ButtonGroup>
+          {deleteButton}
+          {viewButton}
+        </ButtonGroup>
+      );
+    }
+    return (
+      <ButtonGroup>
+        {suspendButton}
+        {resetButton}
+      </ButtonGroup>
+    );
+  };
 
   const table = (
     <TableContainer component={Paper}>
@@ -125,7 +120,7 @@ const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
               {Object.values(row).map((value) => (
                 <TableCell align="left">{value}</TableCell>
               ))}
-              <TableCell align="right">{actionButtons}</TableCell>
+              <TableCell align="right">{actionButtons()}</TableCell>
             </TableRow>
           ))}
         </TableBody>
