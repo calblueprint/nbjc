@@ -1,55 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-
-
-}
-
 model Account {
-  id                Int       @id @default(autoincrement())
-  compoundId        String    @unique
-  userId            Int
-  providerType      String
-  providerId        String
-  providerAccountId String
-  refreshToken      String?
-  accessToken       String?
-  accessTokenExpire DateTime?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @default(now()) @updatedAt
+  id                   Int       @id @default(autoincrement())
+  compound_id          String    @unique
+  user_id              Int
+  provider_type        String
+  provider_id          String
+  provider_account_id  String
+  refresh_token        String?
+  access_token         String?
+  access_token_expires DateTime?
+  created_at           DateTime  @default(now())
+  updated_at           DateTime  @default(now())
 
-
+  @@index([provider_account_id], name: "provider_account_id")
+  @@index([provider_id], name: "provider_id")
+  @@index([user_id], name: "user_id")
   @@map("accounts")
 }
 
 model Session {
-  id           Int      @id @default(autoincrement())
-  userId       Int
-  expire       DateTime
-  sessionToken String   @unique
-  accessToken  String   @unique
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
-
+  id            Int      @id @default(autoincrement())
+  user_id       Int
+  expires       DateTime
+  session_token String   @unique
+  access_token  String   @unique
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(now())
 
   @@map("sessions")
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  firstName     String?
-  lastName      String?
-  role          UserRole?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-
+  id             Int       @id @default(autoincrement())
+  first_name     String?
+  last_name      String?
+  role           UserRole?
+  email          String?   @unique
+  email_verified DateTime?
+  image          String?
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @default(now())
 
   @@map("users")
 }
@@ -58,10 +56,9 @@ model VerificationRequest {
   id         Int      @id @default(autoincrement())
   identifier String
   token      String   @unique
-  expire     DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
-
+  expires    DateTime
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
 
   @@map("verification_requests")
 }
@@ -70,7 +67,6 @@ model Migration {
   id    Int      @id @default(autoincrement())
   name  String
   runOn DateTime @map("run_on")
-
 
   @@map("migrations")
 }
@@ -81,35 +77,33 @@ model Organization {
   long                    Float?
   lat                     Float?
   type                    String?
-  organizationApplication OrganizationApplication? @relation(name: "organization_applicationsToorganizations")
-
+  organizationApplication OrganizationApplication? @relation("organization_applicationsToorganizations")
 
   @@map("organizations")
 }
 
 model OrganizationApplication {
-  id                Int               @id @default(autoincrement())
-  applicationStatus ApplicationStatus
-  organizationId    Int               @unique @map("organization_id")
-  organizationName  String
-  contactName       String?
-  contactEmail      String?
-  organizationType  OrganizationType
-  workType          WorkType
-  address           String
-  lat               Float
-  long              Float
-  missionStatement  String?
-  shortHistory      String?
-  keyValue          String?
-  lgbtqDemographic  LgbtqDemographic
-  raceDemographic   RaceDemographic
-  ageDemographic    AgeDemographic
-  capacity          Int?
-  ein               Int
-  foundingDate      DateTime
-  organization      Organization      @relation(name: "organization_applicationsToorganizations", fields: [organizationId], references: [id])
-
+  id                 Int               @id @default(autoincrement())
+  application_status ApplicationStatus @map("applicationStatus")
+  organizationId     Int               @unique @map("organization_id")
+  organization_name  String
+  contact_name       String?
+  contact_email      String?
+  organization_type  OrganizationType
+  work_type          WorkType
+  address            String
+  lat                Float
+  long               Float
+  mission_statement  String?
+  short_history      String?
+  key_values         String?
+  lgbtq_demographic  LgbtqDemographic
+  race_demographic   RaceDemographic
+  age_demographic    AgeDemographic
+  capacity           Int?
+  ein                Int
+  founding_date      DateTime
+  organization       Organization      @relation("organization_applicationsToorganizations", fields: [organizationId], references: [id])
 
   @@map("organization_applications")
 }
@@ -137,7 +131,7 @@ enum ApplicationStatus {
   rejected
   submitted
 
-  @@map("application_status")
+  @@map("applicationStatus")
 }
 
 enum LgbtqDemographic {

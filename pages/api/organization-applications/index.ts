@@ -44,7 +44,11 @@ export const createOrganizationApp = async (
       capacity: data.capacity,
       ein: data.ein,
       foundingDate: data.foundingDate,
-      organization: { create: undefined },
+      organization: {
+        create: {
+          name: 'cindy',
+        },
+      },
     },
   });
   return createdOrgApp;
