@@ -1,0 +1,25 @@
+.root {
+  margin: 30px;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-right: 15%;
+  margin-left: 15%;
+  margin-bottom: 50px;
+  margin-top: 50px;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.textField {
+  width: 100%;
+  height: 100px;
+  margin-top: 10px;
+}
+
+.descriptor {
+  display: flex;
+}
