@@ -1,7 +1,8 @@
 import CssBaseline from '@material-ui/core/CssBaseline';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { Button, Link, List, Hidden, Drawer, AppBar } from '@material-ui/core';
-import styles from '../../styles/admin/AdminDrawer.module.css';
+// eslint-disable-next-line import/no-unresolved
+import styles from './adminDrawer/AdminDrawer.module.css';
 
 type Props = {
   page: string;
