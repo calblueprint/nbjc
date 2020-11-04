@@ -6,9 +6,9 @@ import Layout from 'components/Layout';
 import TabShortResponse from 'components/registration/TabShortResponse';
 import TabBasics from 'components/registration/TabBasics';
 import TabProj from 'components/registration/TabProj';
-import styles from 'styles/register.module.css';
+import styles from 'styles/Registration.module.css';
 
-const Register: React.FC = () => {
+const Registration: React.FC = () => {
   const [selected, setSelected] = useState<number>(0);
   const handleChange = (
     _event: ChangeEvent<unknown>,
@@ -103,4 +103,4 @@ const Register: React.FC = () => {
   );
 };
 
-export default Register;
+export default Registration;
