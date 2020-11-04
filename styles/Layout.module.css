@@ -7,6 +7,19 @@
   margin-bottom: 20px;
 }
 
+.nav {
+  display: flex;
+  align-items: center;
+}
+
+.link {
+  margin: 0px 10px;
+}
+
+.buttons {
+  margin-left: 10px;
+}
+
 .logButtonSpace {
   margin-right: 10px;
   margin-top: 10px;
