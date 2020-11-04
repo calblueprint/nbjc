@@ -75,7 +75,7 @@ type Props = {
 
 const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
   const headList = Object.keys(data[0]);
-  const actionButtons = (): React.ReactElement => {
+  const actionButtons = (): React.ReactElement | null => {
     if (pageType === 'applications') {
       return (
         <ButtonGroup>
@@ -92,15 +92,18 @@ const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
         </ButtonGroup>
       );
     }
-    return (
-      <ButtonGroup>
-        {suspendButton}
-        {resetButton}
-      </ButtonGroup>
-    );
+    if (pageType === 'users') {
+      return (
+        <ButtonGroup>
+          {suspendButton}
+          {resetButton}
+        </ButtonGroup>
+      );
+    }
+    return null;
   };
 
-  const table = (
+  return (
     <TableContainer component={Paper}>
       <Table className={styles.table} aria-label="simple table">
         {data.length === 0 ? (
@@ -127,8 +130,6 @@ const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
       </Table>
     </TableContainer>
   );
-
-  return table;
 };
 
 export default AdminTable;

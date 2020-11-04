@@ -7,7 +7,7 @@ type Props = {
   page: string;
 };
 
-const AdminDrawer: React.FunctionComponent<Props> = ({ page = '' }) => {
+const AdminDrawer: React.FunctionComponent<Props> = ({ page }) => {
   const router = useRouter();
   return (
     <div className={styles.root}>
