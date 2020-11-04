@@ -10,6 +10,7 @@ type TabProps = {
   setFieldValue: FormikHelpers<string>['setFieldValue'];
 };
 
+// TODO: use Prisma enums
 const orientation = ['LGBTQ+ (all)', 'SGL', 'Transgender', 'Asexual/Aromantic'];
 const ethnicity = [
   'LGBTQ',
