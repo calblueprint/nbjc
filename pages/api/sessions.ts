@@ -14,7 +14,7 @@ export default async (
     });
   }
   return CreateError(
-    400,
+    401,
     'You must be sign in to retrieve sessions on this page.',
     res
   );

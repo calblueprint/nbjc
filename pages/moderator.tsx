@@ -5,9 +5,7 @@ import Layout from 'components/Layout';
 import OrgCard from 'components/moderator/OrgCard';
 import OrgDetail from 'components/moderator/OrgDetail';
 import { Button } from '@material-ui/core';
-
 import { sampleOrgAppData } from 'utils/sample-data';
-
 import styles from '../styles/Moderator.module.css';
 
 type Props = {
@@ -35,7 +33,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
           ))}
         </div>
         <div className={styles.rightCol}>
-          <div className={styles.expandedApp}>
+          <div>
             <OrgDetail items={card} />
           </div>
           <div className={styles.acceptDecline}>

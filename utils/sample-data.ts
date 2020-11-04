@@ -67,7 +67,10 @@ export const sampleOrgAppData: OrgApp[] = [
     logo: '/logo2.png',
     date: 10122000,
     description: 'Description for Org 1 here',
-    contact: 'Skyler White',
+    contact: 'Jane Doe',
+    ages: ['Teens', 'Adults'],
+    orientation: ['LGBT', 'Adults'],
+    ethnicity: ['Asian', 'Native'],
   },
   {
     id: 108,
@@ -80,6 +83,9 @@ export const sampleOrgAppData: OrgApp[] = [
     date: 10102000,
     description: 'Description for Org 2 here',
     contact: 'Walter White',
+    ages: ['All'],
+    orientation: ['LGBT'],
+    ethnicity: ['Asian'],
   },
   {
     id: 109,
@@ -92,6 +98,9 @@ export const sampleOrgAppData: OrgApp[] = [
     date: 10112000,
     description: 'Description for Org 3 here',
     contact: 'Jesse Pinkman',
+    ages: ['children'],
+    orientation: ['Adults'],
+    ethnicity: ['Native'],
   },
 ];
 

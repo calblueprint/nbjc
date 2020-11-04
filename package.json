@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && yarn db:migrate up",
     "start": "next start -p $PORT",
     "cm": "cz",
     "prisma:update": "prisma introspect && prisma generate",
@@ -35,6 +35,7 @@
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.56",
     "@prisma/client": "^2.9.0",
     "db-migrate": "^0.11.11",
     "db-migrate-base": "^2.3.0",
