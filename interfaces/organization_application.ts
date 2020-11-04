@@ -20,7 +20,6 @@ const schema = Joi.object({
   capacity: Joi.number(),
   ein: Joi.number(),
   foundingDate: Joi.date(),
-  organization: Joi.string(),
 }).when('$strict', { is: true, then: Joi.object().and('lat', 'long') });
 
 export default schema;

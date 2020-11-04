@@ -126,6 +126,7 @@ export default async (
       }
       return res.json(orgapp);
     } catch (err) {
+      console.log(err);
       return CreateError(
         500,
         `Failed to create organization application ${orgAppId}`,
