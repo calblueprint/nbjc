@@ -5,21 +5,21 @@ import styles from './AdminIndex.module.css';
 
 type Props = {
   title?: string;
-  head?: string;
+  page: string;
   search: string;
 };
 
 const AdminIndex: React.FunctionComponent<Props> = ({
   children,
-  head,
+  page,
   search,
 }) => (
   <div className={styles.page}>
     <div className={styles.content}>
-      <AdminDrawer page={head} />
+      <AdminDrawer page={page} />
       <div className={styles.rightCol}>
         <div className={styles.header}>
-          <div className={styles.title}>{head}s</div>
+          <div className={styles.title}>{page}s</div>
           <div>
             <TextField
               fullWidth

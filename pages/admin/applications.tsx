@@ -5,7 +5,7 @@ import { sampleOrgAppData } from '../../utils/sample-data';
 
 const AdminDashboardAppIndex: React.FunctionComponent = () => (
   <Layout>
-    <AdminIndex head="Application" search="Look for an Application">
+    <AdminIndex page="Application" search="Look for an Application">
       <AdminTable data={sampleOrgAppData} pageType="applications" />
     </AdminIndex>
   </Layout>

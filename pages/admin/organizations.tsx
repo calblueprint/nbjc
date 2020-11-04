@@ -5,7 +5,7 @@ import { sampleOrgData } from 'utils/sample-data';
 
 const AdminDashboardOrgIndex: React.FunctionComponent = () => (
   <Layout>
-    <AdminIndex head="Organization" search="Look for an Organization">
+    <AdminIndex page="Organization" search="Look for an Organization">
       <AdminTable data={sampleOrgData} pageType="organizations" />
     </AdminIndex>
   </Layout>

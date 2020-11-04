@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import styles from './AdminDrawer.module.css';
 
 type Props = {
-  page: string | undefined;
+  page: string;
 };
 
 const AdminDrawer: React.FunctionComponent<Props> = ({ page = '' }) => {

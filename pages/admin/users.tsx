@@ -5,7 +5,7 @@ import { sampleUserData } from 'utils/sample-data';
 
 const AdminDashboardAppIndex: React.FunctionComponent = () => (
   <Layout title="Admin Users">
-    <AdminIndex head="User" search="Look for a User">
+    <AdminIndex page="User" search="Look for a User">
       <AdminTable data={sampleUserData} pageType="users" />
     </AdminIndex>
   </Layout>
