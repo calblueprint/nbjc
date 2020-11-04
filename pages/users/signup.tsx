@@ -3,9 +3,9 @@
 
 // UserSignUp page. Will need additional email verification to be able to create organizations.
 const UserSignUp: React.FC = () => {
-  // const handleSubmit = (e: any): void => {
-  //   console.log(e.target.value);
-  // };
+  const handleSubmit = (e: any): void => {
+    console.log(e.target.value);
+  };
 
   return (
     // Need to make post request, and on success, redirect to home page.

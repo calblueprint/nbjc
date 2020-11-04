@@ -1,5 +1,5 @@
 import { User } from '@prisma/client';
-import { SanitizedUser } from 'interfaces';
+import { SanitizedUser } from 'interfaces/user';
 
 /**
  * Remove unsafe fields from our internal DB representation of a user, for use on the client.
@@ -7,7 +7,7 @@ import { SanitizedUser } from 'interfaces';
  */
 const sanitizeUser = (user: User): SanitizedUser => {
   // Remove hashedPassword
-  const { hashed_password: _hashedPassword, ...sanitizedUser } = user;
+  const { hashedPassword: _hashedPassword, ...sanitizedUser } = user;
   return sanitizedUser;
 };
 

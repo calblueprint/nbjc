@@ -57,8 +57,8 @@ model Organization {
   long                      Float?
   lat                       Float?
   type                      String?
-  created_at                DateTime                 @default(now())
-  updated_at                DateTime                 @default(now())
+  createdAt                 DateTime                 @default(now()) @map("created_at")
+  updatedAt                 DateTime                 @default(now()) @updatedAt @map("updated_at")
   organizationApplicationId Int?                     @unique @map("organization_application_id")
   organizationApplication   OrganizationApplication? @relation("OrganizationApplicationsToOrganizations", fields: [organizationApplicationId], references: [id])
 

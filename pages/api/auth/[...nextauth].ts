@@ -18,7 +18,7 @@ const options = {
     Providers.Credentials({
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'text', placeholder: '' },
+        email: { label: 'Email', type: 'email', placeholder: '' },
         password: { label: 'Password', type: 'password' },
       },
       authorize: async (credentials: AuthorizeDTO) => {

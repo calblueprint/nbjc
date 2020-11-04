@@ -4,10 +4,6 @@
 //
 // import User from 'path/to/interfaces';
 
-import { User } from '@prisma/client';
-
-export type SanitizedUser = Omit<User, 'hashed_password'>;
-
 export type Moderator = {
   id: number;
   name: string;
