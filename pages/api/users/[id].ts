@@ -4,6 +4,7 @@ import Joi, { ValidationError } from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import UserSchema from 'interfaces/user';
 import CreateError, { MethodNotAllowed } from 'utils/error';
+import sanitizeUser from 'utils/sanitizeUser';
 
 const prisma = new PrismaClient();
 
@@ -15,7 +16,10 @@ export const getUser = async (id: string): Promise<User | null> => {
   const user = await prisma.user.findOne({
     where: { id: Number(id) },
   });
-  return user;
+  if (user) {
+    return sanitizeUser(user);
+  }
+  return null;
 };
 
 /**
@@ -29,11 +33,7 @@ export const updateUser = async (
 ): Promise<User | null> => {
   const { error, value } = UserSchema.validate(body);
   if (error) {
-    throw new ValidationError(
-      'Failed to validate user payload for updating.',
-      null,
-      null
-    );
+    throw error;
   }
 
   const data = value as User;
@@ -77,7 +77,6 @@ export default async (
   if (req.method === 'GET') {
     try {
       const user = await getUser(userId);
-
       if (!user) {
         res.status(204);
       }

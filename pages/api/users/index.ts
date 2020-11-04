@@ -41,6 +41,6 @@ export default async (
       500,
       'Failed to create user due to duplicate email',
       res
-    ); // This is temporarily the only error I can think of that can reach this point in production.
+    ); // TODO: This is temporarily the only error I can think of that can reach this point in production. Find if there's other cases.
   }
 };

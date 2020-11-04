@@ -11,7 +11,7 @@ const schema = Joi.object({
     .valid('admin', 'moderator', 'organization')
     .error(new Error('Valid role required.')),
   email: Joi.string()
-    .email() // Not sure what parameters to use here, if at all. Should be ok with default email requirements.
+    .email()
     .when('$strict', { is: true, then: Joi.required() })
     .error(new Error('Valid email required.')),
   emailVerified: Joi.date().error(new Error('Email verified error.')),
