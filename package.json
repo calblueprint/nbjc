@@ -7,7 +7,7 @@
     "build": "next build && yarn db:migrate up",
     "start": "next start -p $PORT",
     "cm": "cz",
-    "eslint": "eslint --ignore-path .gitignore .",
+    "db:up": "yarn db:migrate up && prisma generate",
     "prisma:update": "prisma introspect && prisma generate",
     "prisma:transform": "prisma-schema-transformer ./schema.prisma",
     "db:create": "db-migrate db:create nbjc_development -e pg",

@@ -110,29 +110,29 @@ model migrations {
 }
 
 enum AgeDemographic {
-  adult @map("Adults")
   child @map("Children")
-  senior @map("Seniors")
   teen @map("Teens")
+  adult @map("Adults")
+  senior @map("Seniors")
 
    @@map("age_demographic")
 }
 
 enum ApplicationStatus {
-  approved
   draft
-  rejected
   submitted
+  approved
+  rejected
 
    @@map("application_status")
 }
 
 enum LgbtqDemographic {
-  asexualAromantic @map("Asexual/Aromantic")
   lgbtqAll @map("LGBTQ+ (All)")
-  other @map("Other")
   sgl @map("SGL")
   transgender @map("Transgender")
+  asexualAromantic @map("Asexual/Aromantic")
+  other @map("Other")
 
    @@map("lgbtq_demographic")
 }
@@ -140,29 +140,29 @@ enum LgbtqDemographic {
 enum OrganizationType {
   c3 @map("510(c)(3)")
   grassrootsLocal @map("Grassroots/Local")
+  statewide @map("Statewide")
   national @map("National")
   other @map("Other")
-  statewide @map("Statewide")
 
    @@map("organization_type")
 }
 
 enum RaceDemographic {
-  asian @map("Asian")
+  pocAll @map("POC (All)")
   black @map("Black")
+  asian @map("Asian")
+  pacificIslander @map("Pacific Islander")
   latinx @map("Latinx")
   nativeIndigeneous @map("Native/Indigeneous")
   other @map("Other")
-  pocAll @map("POC (All)")
-  pacificIslander @map("Pacific Islander")
 
    @@map("race_demographic")
 }
 
 enum UserRole {
-  admin
-  moderator
   organization
+  moderator
+  admin
 
    @@map("user_role")
 }
