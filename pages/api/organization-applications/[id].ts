@@ -2,7 +2,7 @@ import { PrismaClient, OrganizationApplication } from '@prisma/client';
 import Joi, { ValidationError } from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import CreateError, { MethodNotAllowed } from 'utils/error';
-import OrganizationApplicationSchema from '../../../interfaces/organizationApplication';
+import OrganizationApplicationSchema from 'interfaces/organizationApplication';
 
 const prisma = new PrismaClient();
 
@@ -19,9 +19,7 @@ export const updateOrganizationApp = async (
   id: string,
   body: OrganizationApplication
 ): Promise<OrganizationApplication | null> => {
-  const { error, value } = OrganizationApplicationSchema.validate(body, {
-    context: { strict: true },
-  });
+  const { error, value } = OrganizationApplicationSchema.validate(body);
   if (error) {
     throw error;
   }

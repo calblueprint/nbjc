@@ -1,8 +1,8 @@
 import { PrismaClient, OrganizationApplication } from '@prisma/client';
-import Joi, { ValidationError } from 'joi';
+import { ValidationError } from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import CreateError, { MethodNotAllowed } from 'utils/error';
-import OrganizationApplicationSchema from '../../../interfaces/organizationApplication';
+import OrganizationApplicationSchema from 'interfaces/organizationApplication';
 
 const prisma = new PrismaClient();
 
