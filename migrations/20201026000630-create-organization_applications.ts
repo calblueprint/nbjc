@@ -31,8 +31,8 @@ export function up(db: Base, callback: Base.CallbackFunction): void {
         capacity             INTEGER,
         ein                  INTEGER,
         founding_date        DATE,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        created_at           TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at           TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (id)
     );
     `,
