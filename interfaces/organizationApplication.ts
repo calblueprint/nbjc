@@ -9,11 +9,18 @@ import {
 } from '@prisma/client';
 
 const schema = Joi.object({
-  applicationStatus: Joi.string().valid(...Object.values(ApplicationStatus)),
+  applicationStatus: Joi.string()
+    .valid(...Object.values(ApplicationStatus))
+    .when('$strict', { is: true, then: Joi.required() }),
   organizationId: Joi.number(),
-  organizationName: Joi.string(),
-  contactName: Joi.string(),
-  contactEmail: Joi.string().email(),
+  organizationName: Joi.string().when('$strict', {
+    is: true,
+    then: Joi.required(),
+  }),
+  contactName: Joi.string().when('$strict', { is: true, then: Joi.required() }),
+  contactEmail: Joi.string()
+    .email()
+    .when('$strict', { is: true, then: Joi.required() }),
   organizationType: Joi.string().valid(...Object.values(OrganizationType)),
   workType: Joi.string().valid(...Object.values(WorkType)),
   address: Joi.string(),
@@ -28,6 +35,6 @@ const schema = Joi.object({
   capacity: Joi.number(),
   ein: Joi.number(),
   foundingDate: Joi.date(),
-}).when('$strict', { is: true, then: Joi.required() });
+}).when('$strict', { is: true, then: Joi.object().and('lat', 'long') });
 
 export default schema;
