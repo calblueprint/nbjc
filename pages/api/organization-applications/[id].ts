@@ -2,7 +2,7 @@ import { PrismaClient, OrganizationApplication } from '@prisma/client';
 import Joi, { ValidationError } from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import CreateError, { MethodNotAllowed } from 'utils/error';
-import OrganizationApplicationSchema from '../../../interfaces/organization_application';
+import OrganizationApplicationSchema from '../../../interfaces/organizationApplication';
 
 const prisma = new PrismaClient();
 
@@ -19,33 +19,16 @@ export const updateOrganizationApp = async (
   id: string,
   body: OrganizationApplication
 ): Promise<OrganizationApplication | null> => {
-  const { error, value } = OrganizationApplicationSchema.validate(body);
+  const { error, value } = OrganizationApplicationSchema.validate(body, {
+    context: { strict: true },
+  });
   if (error) {
     throw error;
   }
   const data = value as OrganizationApplication;
   const updatedOrgApp = await prisma.organizationApplication.update({
     where: { id: Number(id) },
-    data: {
-      applicationStatus: data.applicationStatus,
-      organizationName: data.organizationName,
-      contactName: data.contactName,
-      contactEmail: data.contactEmail,
-      organizationType: data.organizationType,
-      workType: data.workType,
-      address: data.address,
-      lat: data.lat,
-      long: data.long,
-      missionStatement: data.missionStatement,
-      shortHistory: data.shortHistory,
-      keyValue: data.keyValue,
-      lgbtqDemographic: data.lgbtqDemographic,
-      raceDemographic: data.raceDemographic,
-      ageDemographic: data.ageDemographic,
-      capacity: data.capacity,
-      ein: data.ein,
-      foundingDate: data.foundingDate,
-    },
+    data,
   });
   return updatedOrgApp;
 };
