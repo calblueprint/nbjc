@@ -28,7 +28,7 @@ model Account {
 
 model OrganizationApplication {
   id                Int               @id @default(autoincrement())
-  applicationStatus ApplicationStatus @map("application_status")
+  applicationStatus ApplicationStatus @default(draft) @map("application_status")
   organizationName  String            @map("organization_name")
   contactName       String            @map("contact_name")
   contactEmail      String            @map("contact_email")
@@ -46,6 +46,8 @@ model OrganizationApplication {
   capacity          Int?
   ein               Int?
   foundingDate      DateTime?         @map("founding_date")
+  created_at        DateTime          @default(now())
+  updated_at        DateTime          @default(now())
   organization      Organization?     @relation("OrganizationApplicationsToOrganizations")
 
   @@map("organization_applications")
