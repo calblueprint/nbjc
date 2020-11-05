@@ -105,7 +105,6 @@ export default async (
       const deletedOrgApp = await deleteOrganizationApp(orgAppId);
       return res.json(deletedOrgApp);
     } catch (err) {
-      console.log(err);
       return CreateError(
         500,
         `Failed to delete organization application ${orgAppId}`,
