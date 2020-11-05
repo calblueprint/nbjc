@@ -46,8 +46,8 @@ model OrganizationApplication {
   capacity          Int?
   ein               Int?
   foundingDate      DateTime?         @map("founding_date")
-  created_at        DateTime          @default(now())
-  updated_at        DateTime          @default(now())
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @default(now()) @map("updated_at")
   organization      Organization?     @relation("OrganizationApplicationsToOrganizations")
 
   @@map("organization_applications")
@@ -112,12 +112,12 @@ model migrations {
 }
 
 enum AgeDemographic {
-  child @map("Children")
-  teen @map("Teens")
-  adult @map("Adults")
-  senior @map("Seniors")
+  child   @map("Children")
+  teen    @map("Teens")
+  adult   @map("Adults")
+  senior  @map("Seniors")
 
-   @@map("age_demographic")
+  @@map("age_demographic")
 }
 
 enum ApplicationStatus {
@@ -126,39 +126,39 @@ enum ApplicationStatus {
   approved
   rejected
 
-   @@map("application_status")
+  @@map("application_status")
 }
 
 enum LgbtqDemographic {
-  lgbtqAll @map("LGBTQ+ (All)")
-  sgl @map("SGL")
-  transgender @map("Transgender")
-  asexualAromantic @map("Asexual/Aromantic")
-  other @map("Other")
+  lgbtqAll          @map("LGBTQ+ (All)")
+  sgl               @map("SGL")
+  transgender       @map("Transgender")
+  asexualAromantic  @map("Asexual/Aromantic")
+  other             @map("Other")
 
-   @@map("lgbtq_demographic")
+  @@map("lgbtq_demographic")
 }
 
 enum OrganizationType {
-  c3 @map("510(c)(3)")
-  grassrootsLocal @map("Grassroots/Local")
-  statewide @map("Statewide")
-  national @map("National")
-  other @map("Other")
+  c3               @map("510(c)(3)")
+  grassrootsLocal  @map("Grassroots/Local")
+  statewide        @map("Statewide")
+  national         @map("National")
+  other            @map("Other")
 
-   @@map("organization_type")
+  @@map("organization_type")
 }
 
 enum RaceDemographic {
-  pocAll @map("POC (All)")
-  black @map("Black")
-  asian @map("Asian")
-  pacificIslander @map("Pacific Islander")
-  latinx @map("Latinx")
-  nativeIndigeneous @map("Native/Indigeneous")
-  other @map("Other")
+  pocAll             @map("POC (All)")
+  black              @map("Black")
+  asian              @map("Asian")
+  pacificIslander    @map("Pacific Islander")
+  latinx             @map("Latinx")
+  nativeIndigeneous  @map("Native/Indigeneous")
+  other              @map("Other")
 
-   @@map("race_demographic")
+  @@map("race_demographic")
 }
 
 enum UserRole {
@@ -166,13 +166,13 @@ enum UserRole {
   moderator
   admin
 
-   @@map("user_role")
+  @@map("user_role")
 }
 
 enum WorkType {
-  advocacy @map("Advocacy")
-  directService @map("Direct Service")
-  networkingSocial @map("Networking/Social")
+  advocacy          @map("Advocacy")
+  directService     @map("Direct Service")
+  networkingSocial  @map("Networking/Social")
 
-   @@map("work_type")
+  @@map("work_type")
 }
