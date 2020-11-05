@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import type { AppProps } from 'next/app';
 import '../styles/globals.css';
+import { StylesProvider } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { Provider } from 'next-auth/client';
@@ -18,11 +19,13 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <>
       <CssBaseline />
-      <ThemeProvider theme={theme}>
-        <Provider session={pageProps.session}>
-          <Component {...pageProps} />
-        </Provider>
-      </ThemeProvider>
+      <StylesProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <Provider session={pageProps.session}>
+            <Component {...pageProps} />
+          </Provider>
+        </ThemeProvider>
+      </StylesProvider>
     </>
   );
 };

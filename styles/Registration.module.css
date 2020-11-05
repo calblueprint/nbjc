@@ -1,0 +1,26 @@
+.root {
+  border-color: black;
+  border: 2px solid black;
+  margin: 30px;
+}
+
+.header {
+  margin-left: 30px;
+}
+
+.tab {
+  font-weight: bold;
+}
+
+.bottomButtons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  margin-left: 25px;
+  margin-right: 25px;
+}
+
+.autoField {
+  margin-right: 20px;
+}

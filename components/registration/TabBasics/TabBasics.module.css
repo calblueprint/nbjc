@@ -1,0 +1,94 @@
+.root {
+  border-color: black;
+  border: 2px solid black;
+  margin: 30px;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  margin-right: 15%;
+  margin-left: 15%;
+  margin-bottom: 50px;
+  margin-top: 50px;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.descriptor {
+  display: flex;
+  width: 25%;
+  align-self: center;
+  margin-right: 15px;
+}
+
+.addressDescriptor {
+  display: flex;
+  width: 25%;
+  align-self: center;
+  margin-right: 15px;
+}
+
+.textField {
+  display: flex;
+  align-self: center;
+  width: 75%;
+}
+
+.selectField {
+  width: 75%;
+  display: flex;
+  align-self: center;
+}
+
+.addressBlock {
+  width: 75%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.addressRow {
+  display: flex;
+  justify-content: flex-start;
+  margin-right: 15px;
+}
+
+.street {
+  width: 70%;
+}
+
+.city {
+  width: 30%;
+}
+
+.zip {
+  width: 20%;
+}
+
+.state {
+  width: 10%;
+}
+
+.short {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-right: 15%;
+  margin-left: 15%;
+  margin-bottom: 50px;
+  margin-top: 50px;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.auto {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.autoField {
+  width: 100%;
+  margin-right: 20px;
+}
