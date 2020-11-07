@@ -13,6 +13,7 @@ import {
   Typography,
   Paper,
   Box,
+  Card,
 } from '@material-ui/core';
 import clsx from 'clsx';
 import {
@@ -44,6 +45,7 @@ type Props = {
 };
 
 const drawerWidth = 340;
+const test = 100;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -52,6 +54,7 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: 50,
     },
     appBar: {
+      marginTop: test,
       transition: theme.transitions.create(['margin', 'width'], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
@@ -60,6 +63,7 @@ const useStyles = makeStyles((theme: Theme) =>
     appBarShift: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
+      marginTop: test,
       transition: theme.transitions.create(['margin', 'width'], {
         easing: theme.transitions.easing.easeOut,
         duration: theme.transitions.duration.enteringScreen,
@@ -135,7 +139,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
   return (
     <Layout title="Moderator Dashboard">
       <h1>Moderator Dash</h1>
-      <div className={classes.root}>
+      <Card className={classes.root}>
         <CssBaseline />
         <AppBar
           position="fixed"
@@ -205,11 +209,11 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
           })}
         >
           <div className={classes.drawerHeader} />
-          <Paper>
+          <Box>
             <OrgDetail items={card} />
-          </Paper>
+          </Box>
         </main>
-      </div>
+      </Card>
       <div className={styles.root}>
         <div className={styles.leftCol}>here</div>
         <div className={styles.rightCol}>
@@ -222,7 +226,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
             </Button>
           </div>
         </div>
-      </div>
+    </div>
     </Layout>
   );
 };
