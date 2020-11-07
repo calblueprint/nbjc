@@ -13,7 +13,7 @@ export function up(db: Base, callback: Base.CallbackFunction): void {
       CREATE TYPE age_demographic AS ENUM ('Children', 'Teens', 'Adults', 'Seniors');
       CREATE TABLE organization_applications (
         id                   SERIAL,
-        application_status   application_status NOT NULL,
+        application_status   application_status NOT NULL DEFAULT 'draft',
         organization_name    VARCHAR(255) NOT NULL,
         contact_name         VARCHAR(255) NOT NULL,
         contact_email        VARCHAR(255) NOT NULL,
@@ -31,6 +31,8 @@ export function up(db: Base, callback: Base.CallbackFunction): void {
         capacity             INTEGER,
         ein                  INTEGER,
         founding_date        DATE,
+        created_at           TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at           TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (id)
     );
     `,

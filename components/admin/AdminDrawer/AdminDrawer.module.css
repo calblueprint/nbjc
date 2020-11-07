@@ -1,0 +1,13 @@
+.root {
+  display: flex;
+}
+
+.drawer {
+  flex-shrink: 0;
+  width: 180px;
+  margin-right: 20px;
+}
+
+.drawerItem {
+  margin-bottom: 10px;
+}

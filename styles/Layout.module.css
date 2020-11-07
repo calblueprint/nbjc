@@ -1,15 +1,22 @@
-.pageTitle {
+.navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-left: 25px;
   padding-right: 25px;
+  margin-bottom: 20px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+}
+
+.link {
+  margin: 0px 10px;
 }
 
 .logButtonSpace {
-  margin-right: 10px;
-  margin-top: 10px;
-  margin-bottom: 10px;
   margin-left: 10px;
   height: 50%;
 }
