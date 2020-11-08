@@ -1,0 +1,14 @@
+.outerBox {
+  padding: 15px;
+  width: 270px;
+  margin-top: 20px;
+  margin-right: 60px;
+}
+
+.innerBox {
+  padding: 5px;
+}
+
+.bottomTitleMargin {
+  margin-bottom: 15px;
+}

@@ -1,0 +1,37 @@
+.orgMargins {
+  margin: 25px;
+}
+
+.titleColumns {
+  display: flex;
+  flex-direction: row;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 2;
+  width: 60%;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 40%;
+  margin-top: 25px;
+}
+
+.projects {
+  display: flex;
+  flex-direction: row;
+}
+
+.keyWords {
+  display: flex;
+  flex-direction: row;
+}
+
+.Header {
+  margin-bottom: 0px;
+}
