@@ -54,7 +54,6 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: 50,
     },
     appBar: {
-      marginTop: test,
       transition: theme.transitions.create(['margin', 'width'], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
@@ -63,7 +62,6 @@ const useStyles = makeStyles((theme: Theme) =>
     appBarShift: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
-      marginTop: test,
       transition: theme.transitions.create(['margin', 'width'], {
         easing: theme.transitions.easing.easeOut,
         duration: theme.transitions.duration.enteringScreen,
@@ -141,27 +139,20 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
       <h1>Moderator Dash</h1>
       <Card className={classes.root}>
         <CssBaseline />
-        <AppBar
-          position="fixed"
-          className={clsx(classes.appBar, {
-            [classes.appBarShift]: open,
-          })}
-        >
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              className={clsx(classes.menuButton, open && classes.hide)}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap>
-              Persistent drawer
-            </Typography>
-          </Toolbar>
-        </AppBar>
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            className={clsx(classes.menuButton, open && classes.hide)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap>
+            Persistent drawer
+          </Typography>
+        </Toolbar>
         <Drawer
           className={classes.drawer}
           variant="persistent"
@@ -209,9 +200,10 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
           })}
         >
           <div className={classes.drawerHeader} />
-          <Box>
+          <div>
+            <div className="stick">Header</div>
             <OrgDetail items={card} />
-          </Box>
+          </div>
         </main>
       </Card>
       <div className={styles.root}>
@@ -226,7 +218,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
             </Button>
           </div>
         </div>
-    </div>
+      </div>
     </Layout>
   );
 };

@@ -1,3 +1,8 @@
+.top {
+  display: flex;
+  width: 50%;
+}
+
 .root {
   display: flex;
   background-color: white;
@@ -12,12 +17,21 @@
   margin-left: 15px;
   margin-right: 15px;
 }
+
 .rightCol {
   display: flex;
   flex-direction: column;
   width: 70%;
   margin-left: 20px;
   margin-top: 10px;
+  background-color: lightpink;
+}
+
+.stick {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  background-color: lightblue;
 }
 
 .expandedApp {
@@ -27,6 +41,7 @@
   margin-bottom: 10px;
   height: 100%;
   padding-right: 15px;
+  background-color: lightgreen;
 }
 
 .acceptDecline {

@@ -2,11 +2,11 @@ import { useState, ChangeEvent } from 'react';
 import { GetStaticProps } from 'next';
 import { OrgApp } from 'interfaces';
 import Layout from 'components/Layout';
-import { Tabs, Tab, AppBar, Button, Paper } from '@material-ui/core';
+import { Tabs, Tab, AppBar, Button, Paper, Card, Box } from '@material-ui/core';
 import OrgCard from 'components/moderator/OrgCard';
 import OrgDetail from 'components/moderator/OrgDetail';
 import { sampleOrgAppData } from 'utils/sample-data';
-import styles from '../styles/Moderator.module.css';
+import styles from 'styles/Moderator.module.css';
 
 type Props = {
   items: OrgApp[];
@@ -51,9 +51,10 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
           {selected === 1 && 'Event list, mimic the Org mapping on first tab?'}
         </div>
         <div className={styles.rightCol}>
-          <Paper>
+          <div>
+            <h1 className={styles.stick}>Header</h1>
             <OrgDetail items={card} />
-          </Paper>
+          </div>
           <div className={styles.acceptDecline}>
             <Button variant="contained" color="primary">
               Accept
