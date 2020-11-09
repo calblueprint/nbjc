@@ -9,9 +9,7 @@ import {
 } from '@prisma/client';
 
 const schema = Joi.object({
-  applicationStatus: Joi.string()
-    .valid(...Object.values(ApplicationStatus))
-    .when('$strict', { is: true, then: Joi.required() }),
+  applicationStatus: Joi.string().valid(...Object.values(ApplicationStatus)),
   organizationName: Joi.string().when('$strict', {
     is: true,
     then: Joi.required(),

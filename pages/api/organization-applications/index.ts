@@ -9,7 +9,9 @@ const prisma = new PrismaClient();
 export const createOrganizationApp = async (
   body: OrganizationApplication
 ): Promise<OrganizationApplication | null> => {
-  const { error, value } = OrganizationApplicationSchema.validate(body);
+  const { error, value } = OrganizationApplicationSchema.validate(body, {
+    context: { strict: true },
+  });
   if (error) {
     throw error;
   }
