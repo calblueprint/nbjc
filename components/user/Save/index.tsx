@@ -1,5 +1,5 @@
-import styles from 'styles/users/SettingsEdit.module.css';
 import { TextField } from '@material-ui/core';
+import styles from './Save.module.css';
 
 type Props = {
   userType: string;

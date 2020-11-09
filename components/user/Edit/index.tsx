@@ -1,4 +1,4 @@
-import styles from 'styles/users/SettingsEdit.module.css';
+import styles from './Edit.module.css';
 
 type Props = {
   userType: string;

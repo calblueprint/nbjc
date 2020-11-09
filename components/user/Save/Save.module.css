@@ -1,0 +1,14 @@
+.userInfo {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.text {
+  margin-bottom: 8px;
+}
+
+.middle {
+  margin-top: 20px;
+  margin-bottom: 40px;
+}

@@ -110,3 +110,9 @@ export const sampleOrgData: Organization[] = [
   { id: 3, name: 'Greenprint' },
   { id: 420, name: 'Yellowprint' },
 ];
+
+export const SampleUser = {
+  ProfileType: 'Organization',
+  Email: 'oskibear@berkeley.edu',
+  Password: 'goldenbears',
+};
