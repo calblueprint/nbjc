@@ -40,7 +40,6 @@ const AdminDrawer: React.FunctionComponent<Props> = ({ page }) => {
                 </div>
                 <div className={styles.drawerItem}>
                   <Button
-                    href="undefined"
                     startIcon={<FiberManualRecordIcon />}
                     variant={page === 'Question' ? 'contained' : undefined}
                     color={page === 'Question' ? 'primary' : undefined}
