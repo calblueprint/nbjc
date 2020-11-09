@@ -1,12 +1,3 @@
-.outerBox {
-  padding: 15px;
-  margin-top: 45px;
-}
-
-.innerBox {
-  padding: 5px;
-}
-
-.bottomTitleMargin {
-  margin-bottom: 15px;
+.projectTitle {
+  margin-bottom: 8px;
 }

@@ -1,9 +1,9 @@
 .wordBox {
-  padding: 8px;
+  padding: 3px 8px 3px 8px;
   margin-top: 10px;
   border-radius: 30px;
 }
 
 .wordMargin {
-  margin-left: 5px;
+  margin-right: 5px;
 }

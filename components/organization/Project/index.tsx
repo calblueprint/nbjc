@@ -9,13 +9,9 @@ type ProjectProps = {
 
 const Project: React.FC<ProjectProps> = ({ name, description }) => {
   return (
-    <div>
-      <Card className={styles.outerBox}>
-        <div className={styles.bottomTitleMargin}>{name}</div>
-        <Paper variant="outlined" className={styles.innerBox}>
-          {description}
-        </Paper>
-      </Card>
+    <div className={styles.project}>
+      <h3 className={styles.projectTitle}>{name}</h3>
+      {description}
     </div>
   );
 };

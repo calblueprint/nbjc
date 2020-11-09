@@ -23,8 +23,7 @@
 }
 
 .projects {
-  display: flex;
-  flex-direction: row;
+  margin-top: 36px;
 }
 
 .keyWords {
@@ -33,7 +32,7 @@
 }
 
 .Header {
-  margin-top: 20px;
+  margin-top: 15px;
   margin-bottom: 5px;
 }
 
@@ -61,6 +60,7 @@
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
+  margin-bottom: 0px;
 }
 
 .buttonGroup {
@@ -69,11 +69,29 @@
 
 .buttonInd {
   width: 50%;
+  background-color: #f8f4ff;
+  color: #71579c;
+}
+
+.buttonIndSelected {
+  width: 50%;
+  background-color: #a793c8;
+}
+
+.buttonInd:hover {
+  width: 50%;
+  background-color: #71579c;
+  color: #fafafa;
+}
+
+.buttonIndSelected:hover {
+  width: 50%;
+  background-color: #a793c8;
 }
 
 .headerButton {
   width: 100%;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 .audienceHeader {
@@ -83,4 +101,32 @@
 
 .infoContent {
   margin-top: 0;
+}
+
+.demographicSection {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.demographic {
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+}
+
+.demographicTags {
+  display: flex;
+  flex-direction: row;
+  margin-left: 0px;
+}
+
+.editButtonStyles {
+  border-radius: 20px;
+  background-color: #fafafa;
+  color: #908d93;
+  border: solid #908d93;
+  border-width: 1px;
+  box-shadow: none;
+  padding: 1px;
 }

@@ -14,31 +14,36 @@ type Props = {
   errors?: string;
 };
 
-const keyWords = ['Grassroots', 'POC All', 'LGBTQ+ All'];
-const keyWordsList = keyWords.map((keyWord) => {
+const orientation = ['LGBTQ+', 'SGL'];
+const orientationList = orientation.map((keyWord) => {
+  return <KeyWord word={keyWord} />;
+});
+
+const background = ['POC', 'Black', 'Latix'];
+const backgroundList = background.map((keyWord) => {
+  return <KeyWord word={keyWord} />;
+});
+
+const age = ['All Ages'];
+const ageList = age.map((keyWord) => {
   return <KeyWord word={keyWord} />;
 });
 
 const projects = [
   {
-    name: '1project',
+    name: 'Project 1 Name',
     description:
-      'it was a project, in fact, a really great project, perhaps the greatest project of all time. no one has ever seen such a project.',
+      'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
   },
   {
-    name: '2 project',
+    name: 'Project 2 Name',
     description:
-      'it was a project, in fact, a really great project, perhaps the greatest project of all time. no one has ever seen such a project.',
+      'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
   },
   {
-    name: '3 project',
+    name: 'Annual Event 1 Name',
     description:
-      'it was a project, in fact, a really great project, perhaps the greatest project of all time. no one has ever seen such a project.',
-  },
-  {
-    name: '4 project',
-    description:
-      'it was a project, in fact, a really great project, perhaps the greatest project of all time. no one has ever seen such a project.',
+      'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
   },
 ];
 const projectsList = projects.map((project) => {
@@ -75,9 +80,9 @@ const StaticPropsDetail: React.FunctionComponent<Props> = ({
         </div>
         <div className={styles.editButton}>
           <Button
-            onClick={console.log('do nothing')}
             variant="contained"
-            color="primary"
+            className={styles.editButtonStyles}
+            disableElevation
           >
             Edit
           </Button>
@@ -103,24 +108,35 @@ const StaticPropsDetail: React.FunctionComponent<Props> = ({
               <b>Founded:</b> MM/DD/YYYY
             </p>
             <h3 className={styles.infoHeader}>Members</h3>
+            <p className={styles.info}>Fred Kim, CEO of redprint</p>
+            <p className={styles.info}>Cindy Zhang, CEO of redprint</p>
+            <p className={styles.info}>Calvin Chen, CEO of redprint</p>
+            <p className={styles.info}>Sonja Johanson, CEO of redprint</p>
+            <p className={styles.info}>Elizabeth Wu, CEO of redprint</p>
+            <p className={styles.info}>Bryanna Gavino, CEO of redprint</p>
           </div>
           <div className={styles.rightColumn}>
             <div className={styles.headerButton}>
               <ButtonGroup
                 variant="contained"
                 color="primary"
-                disableElevation
                 className={styles.buttonGroup}
               >
                 <Button
-                  className={styles.buttonInd}
+                  className={
+                    showInfo ? styles.buttonIndSelected : styles.buttonInd
+                  }
                   onClick={() => setshowInfo(true)}
+                  disableElevation
                 >
                   Information
                 </Button>
                 <Button
-                  className={styles.buttonInd}
+                  className={
+                    showInfo ? styles.buttonInd : styles.buttonIndSelected
+                  }
                   onClick={() => setshowInfo(false)}
+                  disableElevation
                 >
                   Project and Events
                 </Button>
@@ -129,13 +145,31 @@ const StaticPropsDetail: React.FunctionComponent<Props> = ({
             {showInfo ? (
               <div className={styles.rightContent}>
                 <h3 className={styles.audienceHeader}>Audience Demographics</h3>
+                <div className={styles.demographicSection}>
+                  <div className={styles.demographic}>
+                    Orientation
+                    <div className={styles.demographicTags}>
+                      {orientationList}
+                    </div>
+                  </div>
+                  <div className={styles.demographic}>
+                    Background
+                    <div className={styles.demographicTags}>
+                      {backgroundList}
+                    </div>
+                  </div>
+                  <div className={styles.demographic}>
+                    Age Range
+                    <div className={styles.demographicTags}>{ageList}</div>
+                  </div>
+                </div>
                 <h3 className={styles.audienceHeader}>Our Mission</h3>
                 <p className={styles.infoContent}>Organization mission!</p>
                 <h3 className={styles.audienceHeader}>Our History</h3>
                 <p className={styles.infoContent}>Organization history!</p>
               </div>
             ) : (
-              projectsList
+              <div className={styles.projects}>{projectsList}</div>
             )}
           </div>
         </div>
