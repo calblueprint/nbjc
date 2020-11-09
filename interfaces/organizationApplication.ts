@@ -12,7 +12,6 @@ const schema = Joi.object({
   applicationStatus: Joi.string()
     .valid(...Object.values(ApplicationStatus))
     .when('$strict', { is: true, then: Joi.required() }),
-  organizationId: Joi.number(),
   organizationName: Joi.string().when('$strict', {
     is: true,
     then: Joi.required(),
