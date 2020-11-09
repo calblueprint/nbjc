@@ -23,31 +23,20 @@
   flex-direction: column;
   width: 70%;
   margin-left: 20px;
-  margin-top: 10px;
   background-color: lightpink;
 }
 
-.stick {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  background-color: lightblue;
-}
-
-.expandedApp {
-  display: flex;
-  border: 2px solid black;
-  padding-left: 10px;
-  margin-bottom: 10px;
-  height: 100%;
-  padding-right: 15px;
+.detailContent {
+  overflow-y: scroll;
+  height: 80%;
   background-color: lightgreen;
 }
 
-.acceptDecline {
+.footerButtons {
   display: flex;
   justify-content: space-between;
   align-items: right;
+  background-color: silver;
 }
 
 .accept {

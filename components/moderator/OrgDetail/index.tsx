@@ -8,7 +8,7 @@ type DetailProps = {
 const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
   return (
     <div className={styles.root}>
-      <h1 className={styles.tab}>Basic</h1>
+      <h1 className={styles.tab}>{items.name}</h1>
       <div className={styles.row}>
         <div className={styles.response}>
           Organization Name <br />
@@ -21,6 +21,34 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
         <div className={styles.response}>
           Work Type <br />
           <div className={styles.infoBox}>{items.workType}</div>
+        </div>
+      </div>
+      <div className={styles.row}>
+        <div className={styles.response}>
+          Contact Name <br />
+          <div className={styles.infoBox}>{items.contact}</div>
+        </div>
+        <div className={styles.response}>
+          Contact Email <br />
+          <div className={styles.infoBox}>{items.email}</div>
+        </div>
+        <div className={styles.response}>
+          Website <br />
+          <div className={styles.infoBox}>{items.website}</div>
+        </div>
+      </div>
+      <div className={styles.row}>
+        <div className={styles.response}>
+          Contact Name <br />
+          <div className={styles.infoBox}>{items.contact}</div>
+        </div>
+        <div className={styles.response}>
+          Contact Email <br />
+          <div className={styles.infoBox}>{items.email}</div>
+        </div>
+        <div className={styles.response}>
+          Website <br />
+          <div className={styles.infoBox}>{items.website}</div>
         </div>
       </div>
       <div className={styles.row}>
