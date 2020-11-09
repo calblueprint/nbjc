@@ -47,7 +47,8 @@
     "next-auth": "^3.1.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "react-map-gl": "^5.2.9"
+    "react-map-gl": "^5.2.9",
+    "yup": "^0.29.3"
   },
   "devDependencies": {
     "@prisma/cli": "^2.9.0",

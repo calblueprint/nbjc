@@ -9,7 +9,6 @@
   justify-content: center;
   margin-right: 15%;
   margin-left: 15%;
-  margin-bottom: 50px;
   margin-top: 50px;
   font-weight: bold;
   font-size: 20px;
@@ -18,7 +17,7 @@
 .descriptor {
   display: flex;
   width: 25%;
-  align-self: center;
+  align-self: left;
   margin-right: 15px;
 }
 
@@ -91,4 +90,12 @@
 .autoField {
   width: 100%;
   margin-right: 20px;
+}
+
+.errorMsg {
+  font-size: 0.9rem;
+  font-weight: 300;
+  display: flex;
+  color: red;
+  margin-left: 35%;
 }

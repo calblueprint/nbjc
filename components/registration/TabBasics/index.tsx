@@ -8,6 +8,9 @@ type TabProps = {
   values: Form;
   handleChange: FormikHandlers['handleChange'];
   setFieldValue: FormikHelpers<string>['setFieldValue'];
+  handleBlur: FormikHandlers['handleBlur'];
+  orgName: string | undefined;
+  contactName: string | undefined;
 };
 
 // TODO: use Prisma enums
@@ -34,17 +37,25 @@ const TabBasics: React.FC<TabProps> = ({
   handleChange,
   values,
   setFieldValue,
+  handleBlur,
+  orgName,
+  contactName,
 }) => {
   const rowSize = 1;
-  const placeholderText = ' ';
+  const placeholderText = '';
+  const orgError = orgName;
+  const contactError = contactName;
 
   return (
     <>
       <div className={styles.row}>
-        <p className={styles.descriptor}>Organization Name</p>
+        <p className={styles.descriptor}>Org Name</p>
         <TextField
           className={styles.textField}
+          id="orgName"
           onChange={handleChange}
+          onBlur={handleBlur}
+          type="text"
           value={values.orgName}
           name="orgName"
           variant="outlined"
@@ -53,6 +64,7 @@ const TabBasics: React.FC<TabProps> = ({
           placeholder={placeholderText}
         />
       </div>
+      {orgError ? <div className={styles.errorMsg}>orgError</div> : null}
       <div className={styles.row}>
         <p className={styles.descriptor}>Work Type</p>
         <Autocomplete
@@ -91,7 +103,10 @@ const TabBasics: React.FC<TabProps> = ({
         <p className={styles.descriptor}>Contact Name</p>
         <TextField
           className={styles.textField}
+          id="contactName"
           onChange={handleChange}
+          onBlur={handleBlur}
+          type="text"
           value={values.contactName}
           name="contactName"
           variant="outlined"
@@ -100,6 +115,9 @@ const TabBasics: React.FC<TabProps> = ({
           placeholder={placeholderText}
         />
       </div>
+      {contactError ? (
+        <div className={styles.errorMsg}>contactError</div>
+      ) : null}
       <div className={styles.row}>
         <p className={styles.descriptor}>Contact Email</p>
         <TextField

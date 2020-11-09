@@ -8,6 +8,17 @@ import TabBasics from 'components/registration/TabBasics';
 import TabProj from 'components/registration/TabProj';
 import styles from 'styles/Registration.module.css';
 
+const validate = (values: any): { [k: string]: any } => {
+  const errors: { [k: string]: any } = {};
+  if (!values.orgName) {
+    errors.orgName = '*Required';
+  }
+  if (!values.contactName) {
+    errors.contactName = '*Required';
+  }
+  return errors;
+};
+
 const Registration: React.FC = () => {
   const [selected, setSelected] = useState<number>(0);
   const handleChange = (
@@ -44,10 +55,12 @@ const Registration: React.FC = () => {
 
   const formik = useFormik({
     initialValues,
+    validate,
     onSubmit: (values) => {
       console.log(values);
     },
   });
+
   return (
     <Layout title="Register">
       <h1 className={styles.header}>Registration Form</h1>
@@ -65,6 +78,9 @@ const Registration: React.FC = () => {
               handleChange={formik.handleChange}
               values={formik.values}
               setFieldValue={formik.setFieldValue}
+              handleBlur={formik.handleBlur}
+              orgName={formik.errors.orgName}
+              contactName={formik.errors.contactName}
             />
           )}
           {selected === 1 && (
