@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { Organization } from 'interfaces';
 import { sampleOrgData } from 'utils/sample-data';
 import Layout from 'components/Layout';
@@ -47,7 +49,7 @@ const StaticPropsDetail: React.FunctionComponent<Props> = ({
   item,
   errors,
 }) => {
-  console.log(item);
+  const [showInfo, setshowInfo] = useState<boolean>(true);
   if (errors) {
     return (
       <Layout title="Error | Next.js + TypeScript Example">
@@ -65,33 +67,78 @@ const StaticPropsDetail: React.FunctionComponent<Props> = ({
       } | Next.js + TypeScript Example`}
     >
       <div className={styles.orgMargins}>
-        <img src="../../public/sampleCover.png" alt="Organization" />
+        <div className={styles.orgImages}>
+          <img
+            src="https://1mktxg24rspz19foqjixu9rl-wpengine.netdna-ssl.com/wp-content/uploads/2020/01/eia-berkeley-Cover.png"
+            alt="Organization"
+          />
+        </div>
+        <div className={styles.editButton}>
+          <Button
+            onClick={console.log('do nothing')}
+            variant="contained"
+            color="primary"
+          >
+            Edit
+          </Button>
+        </div>
         <div className={styles.titleColumns}>
           <div className={styles.leftColumn}>
             <h1 className={styles.Header}>{item.name}</h1>
-            <h3 className={styles.Header}>
-              Location Type ● Address here ● Type of Work, Type of Org
-            </h3>
-            <h3 className={styles.Header}>Mission</h3>
-            <p>
-              Some really long text goes here about what the organization does
-              and stuff. In the case of what redprint does, it aims to make
-              mostly a lot of money and then direct deposit it into Cindy bank
-              account.
+            <h3 className={styles.subHeader}>Type of Work ● Type of Org</h3>
+            <h3 className={styles.infoHeader}>Location</h3>
+            <p className={styles.info}>
+              <b>Type:</b> Headquarters
             </p>
+            <p className={styles.info}>123 Street Name</p>
+            <p className={styles.info}>City, State 123456</p>
+            <h3 className={styles.infoHeader}>Basics</h3>
+            <p className={styles.info}>
+              <b>Site:</b> currentwebsite.org
+            </p>
+            <p className={styles.info}>
+              <b>EIN:</b> 12341234123412
+            </p>
+            <p className={styles.info}>
+              <b>Founded:</b> MM/DD/YYYY
+            </p>
+            <h3 className={styles.infoHeader}>Members</h3>
           </div>
           <div className={styles.rightColumn}>
-            <Button
-              onClick={console.log('do nothing')}
-              variant="contained"
-              color="primary"
-            >
-              Edit
-            </Button>
-            <div className={styles.keyWords}>{keyWordsList}</div>
+            <div className={styles.headerButton}>
+              <ButtonGroup
+                variant="contained"
+                color="primary"
+                disableElevation
+                className={styles.buttonGroup}
+              >
+                <Button
+                  className={styles.buttonInd}
+                  onClick={() => setshowInfo(true)}
+                >
+                  Information
+                </Button>
+                <Button
+                  className={styles.buttonInd}
+                  onClick={() => setshowInfo(false)}
+                >
+                  Project and Events
+                </Button>
+              </ButtonGroup>
+            </div>
+            {showInfo ? (
+              <div className={styles.rightContent}>
+                <h3 className={styles.audienceHeader}>Audience Demographics</h3>
+                <h3 className={styles.audienceHeader}>Our Mission</h3>
+                <p className={styles.infoContent}>Organization mission!</p>
+                <h3 className={styles.audienceHeader}>Our History</h3>
+                <p className={styles.infoContent}>Organization history!</p>
+              </div>
+            ) : (
+              projectsList
+            )}
           </div>
         </div>
-        <div className={styles.projects}>{projectsList}</div>
       </div>
     </Layout>
   );

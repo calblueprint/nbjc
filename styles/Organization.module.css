@@ -1,5 +1,7 @@
 .orgMargins {
-  margin: 25px;
+  margin-left: 142px;
+  margin-right: 142px;
+  margin-bottom: 90px;
 }
 
 .titleColumns {
@@ -11,15 +13,13 @@
   display: flex;
   flex-direction: column;
   flex-grow: 2;
-  width: 60%;
+  width: 30%;
 }
 
 .rightColumn {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  width: 40%;
-  margin-top: 25px;
+  width: 70%;
 }
 
 .projects {
@@ -33,5 +33,54 @@
 }
 
 .Header {
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+
+.subHeader {
+  margin-top: 5px;
   margin-bottom: 0px;
+}
+
+.info {
+  margin-top: 5px;
+  margin-bottom: 0px;
+}
+
+.infoHeader {
+  margin-bottom: 5px;
+  margin-top: 20px;
+}
+
+.orgImages {
+  display: flex;
+  justify-content: center;
+}
+
+.editButton {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.buttonGroup {
+  width: 100%;
+}
+
+.buttonInd {
+  width: 50%;
+}
+
+.headerButton {
+  width: 100%;
+  margin-top: 30px;
+}
+
+.audienceHeader {
+  margin-top: 48px;
+  margin-bottom: 5px;
+}
+
+.infoContent {
+  margin-top: 0;
 }
