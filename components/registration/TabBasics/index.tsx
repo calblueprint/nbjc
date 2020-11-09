@@ -10,6 +10,7 @@ type TabProps = {
   setFieldValue: FormikHelpers<string>['setFieldValue'];
   handleBlur: FormikHandlers['handleBlur'];
   orgName: string | undefined;
+  workTypeSelect: string | undefined;
   contactName: string | undefined;
 };
 
@@ -37,14 +38,15 @@ const TabBasics: React.FC<TabProps> = ({
   handleChange,
   values,
   setFieldValue,
-  handleBlur,
   orgName,
+  workTypeSelect,
   contactName,
 }) => {
   const rowSize = 1;
   const placeholderText = '';
   const orgError = orgName;
   const contactError = contactName;
+  const workError = workTypeSelect;
 
   return (
     <>
@@ -54,7 +56,6 @@ const TabBasics: React.FC<TabProps> = ({
           className={styles.textField}
           id="orgName"
           onChange={handleChange}
-          onBlur={handleBlur}
           type="text"
           value={values.orgName}
           name="orgName"
@@ -64,7 +65,7 @@ const TabBasics: React.FC<TabProps> = ({
           placeholder={placeholderText}
         />
       </div>
-      {orgError ? <div className={styles.errorMsg}>orgError</div> : null}
+      {orgError ? <div className={styles.errorMsg}>{orgError}</div> : null}
       <div className={styles.row}>
         <p className={styles.descriptor}>Work Type</p>
         <Autocomplete
@@ -82,6 +83,7 @@ const TabBasics: React.FC<TabProps> = ({
           )}
         />
       </div>
+      {workError ? <div className={styles.errorMsg}>{workError}</div> : null}
       <div className={styles.row}>
         <p className={styles.descriptor}>Org Type</p>
         <Autocomplete
@@ -105,7 +107,6 @@ const TabBasics: React.FC<TabProps> = ({
           className={styles.textField}
           id="contactName"
           onChange={handleChange}
-          onBlur={handleBlur}
           type="text"
           value={values.contactName}
           name="contactName"
@@ -116,7 +117,7 @@ const TabBasics: React.FC<TabProps> = ({
         />
       </div>
       {contactError ? (
-        <div className={styles.errorMsg}>contactError</div>
+        <div className={styles.errorMsg}>{contactError}</div>
       ) : null}
       <div className={styles.row}>
         <p className={styles.descriptor}>Contact Email</p>

@@ -13,6 +13,9 @@ const validate = (values: any): { [k: string]: any } => {
   if (!values.orgName) {
     errors.orgName = '*Required';
   }
+  if (!values.workType) {
+    errors.workType = '*Required';
+  }
   if (!values.contactName) {
     errors.contactName = '*Required';
   }
@@ -78,8 +81,8 @@ const Registration: React.FC = () => {
               handleChange={formik.handleChange}
               values={formik.values}
               setFieldValue={formik.setFieldValue}
-              handleBlur={formik.handleBlur}
               orgName={formik.errors.orgName}
+              workTypeSelect={formik.errors.workType}
               contactName={formik.errors.contactName}
             />
           )}
