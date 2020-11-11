@@ -1,4 +1,4 @@
-import { Organization, OrgApp } from 'interfaces';
+import { Organization, OrgApp, Question } from 'interfaces';
 import { User } from '@prisma/client';
 
 /** Dummy user data. */
@@ -111,8 +111,16 @@ export const sampleOrgData: Organization[] = [
   { id: 420, name: 'Yellowprint' },
 ];
 
+
 export const SampleUser = {
   ProfileType: 'Organization',
   Email: 'oskibear@berkeley.edu',
   Password: 'goldenbears',
 };
+
+export const sampleQuestionData: Question[] = [
+  { id: 1, content: 'asdfsdfdfasdf' },
+  { id: 2, content: 'testing' },
+  { id: 3, content: 'helloheloooeoeoeoe' },
+  { id: 4, content: 'Yellowprint!!!!' },
+];
