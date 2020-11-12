@@ -1,4 +1,4 @@
-import styles from './Edit.module.css';
+import styles from './User.module.css';
 
 type Props = {
   userType: string;
@@ -6,11 +6,7 @@ type Props = {
   password: string;
 };
 
-const SettingsEdit: React.FunctionComponent<Props> = ({
-  userType,
-  email,
-  password,
-}) => (
+const SettingsEdit: React.FunctionComponent<Props> = ({ email, password }) => (
   <div className={styles.middle}>
     <div className={styles.userInfo}>
       <div className={styles.text}>Email</div>

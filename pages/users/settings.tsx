@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import Layout from 'components/Layout';
-import styles from 'styles/users/SettingsEdit.module.css';
+import styles from 'styles/users/Settings.module.css';
 import { Button, Link } from '@material-ui/core';
 import CreateIcon from '@material-ui/icons/Create';
-import SettingsSave from '../../components/user/Save/index';
-import SettingsEdit from '../../components/user/Edit/index';
+import SettingsShow from '../../components/user/save';
+import SettingsEdit from '../../components/user/edit';
 import { SampleUser } from '../../utils/sample-data';
 
 const UserProfSettings: React.FC = () => {
   const [setting, setSetting] = useState(0);
   const hiddenPassword = '******';
-  const editButton: typeof Button =
+  const editButton =
     setting === 0 ? (
       <Button
         variant="outlined"
@@ -21,9 +21,9 @@ const UserProfSettings: React.FC = () => {
       >
         Edit
       </Button>
-    ) : undefined;
+    ) : null;
 
-  const userComponent: React.ReactElement =
+  const userComponent =
     setting === 0 ? (
       <SettingsEdit
         userType={SampleUser.ProfileType}
@@ -31,15 +31,15 @@ const UserProfSettings: React.FC = () => {
         password={hiddenPassword}
       />
     ) : (
-      <SettingsSave
+      <SettingsShow
         userType={SampleUser.ProfileType}
         email={SampleUser.Email}
         password={hiddenPassword}
       />
     );
 
-  const saveButton: typeof Button =
-    setting === 0 ? undefined : (
+  const showButton =
+    setting === 0 ? null : (
       <Button
         onClick={() => setSetting(0)}
         variant="contained"
@@ -64,7 +64,7 @@ const UserProfSettings: React.FC = () => {
           {userComponent}
 
           <div className={styles.delete}>
-            <Link>Delete User Account</Link> {saveButton}
+            <Link>Delete User Account</Link> {showButton}
           </div>
         </div>
       </div>

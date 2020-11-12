@@ -2,10 +2,8 @@
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
-}
-
-.text {
-  margin-bottom: 8px;
+  height: 40px;
+  align-items: center;
 }
 
 .middle {
