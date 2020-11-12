@@ -1,33 +1,55 @@
 .root {
   background-color: white;
   width: 100%;
-}
-
-.tab {
-  margin-left: 10px;
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
+  height: 100%;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 
 .row {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 10px;
+  margin-top: 10px;
   margin-bottom: 25px;
 }
 
-.response {
+.leftMedia {
+  width: 50%;
+  height: 200px;
+  margin: 8px;
+}
+
+.colMedia {
+  width: 50%;
+  margin: 8px;
+}
+
+.rightMedia {
+  height: 100px;
+  margin-bottom: 2px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+.full {
+  width: 100%;
+}
+
+.big {
   font-size: 20px;
   font-weight: bold;
 }
 
-.infoBox {
-  border: 2px solid grey;
-  border-radius: 8px;
-  padding: 6px;
-  margin: 2px;
+.small {
   font-size: 15px;
-  font-weight: 100;
+  font-weight: 300;
+}
+
+.chips {
+  display: flex;
+  flex-direction: row;
 }

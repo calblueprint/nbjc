@@ -50,6 +50,7 @@ export type OrgApp = {
   ages: string[];
   orientation: string[];
   ethnicity: string[];
+  EIN: number;
 };
 
 export type Organization = {
