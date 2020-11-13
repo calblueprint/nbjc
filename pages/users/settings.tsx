@@ -3,9 +3,12 @@ import Layout from 'components/Layout';
 import styles from 'styles/users/Settings.module.css';
 import { Button, Link } from '@material-ui/core';
 import CreateIcon from '@material-ui/icons/Create';
-import SettingsShow from '../../components/user/save';
-import SettingsEdit from '../../components/user/edit';
+import SettingsShow from '../../components/user/Save';
+import SettingsEdit from '../../components/user/Edit';
 import { SampleUser } from '../../utils/sample-data';
+import ProgressStepper from '../../components/user/ProgressStepper/index';
+import React from 'react';
+import EmailVerify from '../../components/user/EmailVerify/index';
 
 const UserProfSettings: React.FC = () => {
   const [setting, setSetting] = useState(0);
@@ -51,6 +54,7 @@ const UserProfSettings: React.FC = () => {
     );
   return (
     <Layout title="User Profile Settings">
+      <EmailVerify />
       <div className={styles.content}>
         <div className={styles.box}>
           <div className={styles.top}>
