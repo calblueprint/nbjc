@@ -111,13 +111,6 @@ export const sampleOrgData: Organization[] = [
   { id: 420, name: 'Yellowprint' },
 ];
 
-
-export const SampleUser = {
-  ProfileType: 'Organization',
-  Email: 'oskibear@berkeley.edu',
-  Password: 'goldenbears',
-};
-
 export const sampleQuestionData: Question[] = [
   { id: 1, content: 'asdfsdfdfasdf' },
   { id: 2, content: 'testing' },
