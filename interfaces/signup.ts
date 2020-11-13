@@ -8,9 +8,8 @@ const schema = Joi.object({
       'string.email': 'Not a valid email address.',
       'string.empty': 'Email is required.',
     }),
-  password: Joi.string().min(1).messages({
-    'string.pattern.base':
-      'Password must be at least 8 characters and contain at least 1 lowercase, 1 uppercase, 1 number and 1 special character.',
+  password: Joi.string().min(6).max(50).messages({
+    'string.pattern.base': 'Password must be between 6 and 50 characters.',
   }),
   confirmPassword: Joi.valid(Joi.ref('password')).messages({
     'any.only': 'Passwords must match.',

@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { Button } from '@material-ui/core';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/client';
 import styles from '../styles/Layout.module.css';
 
 type Props = {
@@ -13,6 +14,10 @@ const Layout: React.FunctionComponent<Props> = ({
   title = 'NBJC',
 }) => {
   const router = useRouter();
+  const [session, loading] = useSession();
+
+  // When rendering client side don't display anything until loading is complete
+  if (typeof window !== 'undefined' && loading) return null;
 
   return (
     <div>
@@ -39,19 +44,30 @@ const Layout: React.FunctionComponent<Props> = ({
               <a className={styles.link}>Orgs List</a>
             </Link>
             <div className={styles.buttons}>
+              {!session ? (
+                <Button
+                  className={styles.logButtonSpace}
+                  variant="contained"
+                  color="primary"
+                  onClick={() => router.push('/users/signin')}
+                >
+                  Log In
+                </Button>
+              ) : (
+                <Button
+                  className={styles.logButtonSpace}
+                  variant="contained"
+                  color="primary"
+                  onClick={() => router.push('/api/auth/signout')}
+                >
+                  Sign Out
+                </Button>
+              )}
               <Button
                 className={styles.logButtonSpace}
                 variant="contained"
                 color="primary"
-                onClick={() => router.push('/api/auth/signin')}
-              >
-                Log In
-              </Button>
-              <Button
-                className={styles.logButtonSpace}
-                variant="contained"
-                color="primary"
-                onClick={() => router.push('/registration')}
+                onClick={() => router.push('/users/signup')}
               >
                 Join Us
               </Button>
