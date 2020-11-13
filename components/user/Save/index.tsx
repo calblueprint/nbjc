@@ -1,5 +1,5 @@
 import { TextField } from '@material-ui/core';
-import styles from './User.module.css';
+import styles from '../User.module.css';
 
 type Props = {
   userType: string | null;
