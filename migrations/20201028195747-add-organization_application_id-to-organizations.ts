@@ -26,10 +26,13 @@ export async function down(
   db: Base,
   callback: Base.CallbackFunction
 ): Promise<void> {
-  db.runSql(`
+  db.runSql(
+    `
     ALTER TABLE organizations
     DROP COLUMN organization_application_id;
-  `);
+  `,
+    callback
+  );
 }
 
 // eslint-disable-next-line no-underscore-dangle
