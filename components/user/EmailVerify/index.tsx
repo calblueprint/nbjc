@@ -1,12 +1,14 @@
-import React from 'react';
-import CloseIcon from '@material-ui/icons/Close';
-import { Link, Button, IconButton, Snackbar } from '@material-ui/core';
+import { Link, Snackbar, Button } from '@material-ui/core';
 import styles from './EmailVerify.module.css';
 
-export default function EmailVerify() {
+const EmailVerify: React.FC = () => {
   const [open, setOpen] = React.useState(true);
+  const msg = "Can't find it? Resend Verification Email";
 
-  const handleClose = (event: React.SyntheticEvent | React.MouseEvent, reason?: string) => {
+  const handleClose = (
+    event: React.SyntheticEvent | React.MouseEvent,
+    reason?: string
+  ): undefined => {
     if (reason === 'clickaway') {
       return;
     }
@@ -29,22 +31,20 @@ export default function EmailVerify() {
           your account and begin the organization application!'
         }
         action={
-          <React.Fragment>
-            <div className={styles.buttons}>
-              <div>
-            <Link color="primary" className={styles.button}>
-              Can't find it? Resend Verification Email
-            </Link>
-            </div>
+          <>
             <div>
-            <Link color="inherit" onClick={handleClose}>
+              <Link color="primary" className={styles.button}>
+                {msg}
+              </Link>
+            </div>
+            <Button color="inherit" onClick={handleClose}>
               Dismiss
-            </Link>
-            </div>
-            </div>
-          </React.Fragment>
+            </Button>
+          </>
         }
       />
     </div>
   );
-}
+};
+
+export default EmailVerify;

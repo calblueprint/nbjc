@@ -1,9 +1,4 @@
 .button {
-    margin-right: 200px;
-    display: flex;
-}
-
-.buttons {
-    justify-content: space-between;
-    display: flex;
+  margin-right: 250px;
+  display: flex;
 }

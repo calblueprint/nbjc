@@ -5,6 +5,7 @@
   width: 100%;
   height: calc(100vh - 85px);
   align-items: center;
+  flex-direction: column;
 }
 
 .box {
@@ -12,6 +13,9 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding-bottom: 50px;
+  border-bottom: solid 1px;
+  border-color: silver;
 }
 
 .title {
@@ -28,8 +32,8 @@
 }
 
 .settings {
-  font-size: 1.25rem;
-  margin-top: 10px;
+  font-size: 1.45rem;
+  margin-bottom: 25px;
 }
 
 .userInfo {
@@ -50,4 +54,26 @@
 .delete {
   justify-content: space-between;
   display: flex;
+}
+
+.emailEdit {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 1rem;
+}
+
+.emailButton {
+  width: 270px;
+  justify-content: space-between;
+  display: flex;
+}
+
+.textfield {
+  margin-right: 10px;
+}
+
+.passwordButton {
+  margin-top: 10px;
+  margin-bottom: 40px;
 }

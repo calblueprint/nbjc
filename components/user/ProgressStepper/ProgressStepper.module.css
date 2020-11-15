@@ -1,0 +1,32 @@
+.title {
+  font-size: 1.7rem;
+  font-weight: 600;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  display: flex;
+}
+
+.content {
+  margin-top: 50px;
+  width: 60%;
+}
+
+.stepper {
+  margin-top: 10px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 4em;
+}
+
+.button {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 5px;
+}
+
+.wording {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
