@@ -26,17 +26,20 @@ model Account {
   @@map("accounts")
 }
 
-model OrganizationApplication {
+model Organization {
   id                   Int                   @id @default(autoincrement())
+  name                 String
+  long                 Float?
+  lat                  Float?
+  createdAt            DateTime              @default(now()) @map("created_at")
+  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
   applicationStatus    ApplicationStatus     @default(draft) @map("application_status")
-  organizationName     String                @map("organization_name")
+  active               Boolean               @default(false)
   contactName          String                @map("contact_name")
   contactEmail         String                @map("contact_email")
   organizationType     OrganizationType?     @map("organization_type")
   workType             WorkType?             @map("work_type")
   address              String?
-  lat                  Float?
-  long                 Float?
   missionStatement     String?               @map("mission_statement")
   shortHistory         String?               @map("short_history")
   keyValue             String?               @map("key_values")
@@ -46,26 +49,7 @@ model OrganizationApplication {
   capacity             Int?
   ein                  Int?
   foundingDate         DateTime?             @map("founding_date")
-  createdAt            DateTime              @default(now()) @map("created_at")
-  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
-  userId               Int?                  @map("user_id")
-  user                 User?                 @relation("OrganizationApplicationsToUsers", fields: [userId], references: [id])
-  applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizationApplications")
-  organization         Organization?         @relation("OrganizationApplicationsToOrganizations")
-
-  @@map("organization_applications")
-}
-
-model Organization {
-  id                        Int                      @id @default(autoincrement())
-  name                      String
-  long                      Float?
-  lat                       Float?
-  type                      String?
-  createdAt                 DateTime                 @default(now()) @map("created_at")
-  updatedAt                 DateTime                 @default(now()) @updatedAt @map("updated_at")
-  organizationApplicationId Int?                     @unique @map("organization_application_id")
-  organizationApplication   OrganizationApplication? @relation("OrganizationApplicationsToOrganizations", fields: [organizationApplicationId], references: [id])
+  applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
 
   @@map("organizations")
 }
@@ -83,17 +67,16 @@ model Session {
 }
 
 model User {
-  id                       Int                       @id @default(autoincrement())
-  firstName                String                    @map("first_name")
-  lastName                 String                    @map("last_name")
-  role                     UserRole?
-  email                    String                    @unique
-  emailVerified            DateTime?                 @map("email_verified")
-  image                    String?
-  hashedPassword           String                    @map("hashed_password")
-  createdAt                DateTime                  @default(now()) @map("created_at")
-  updatedAt                DateTime                  @default(now()) @updatedAt @map("updated_at")
-  organizationApplications OrganizationApplication[] @relation("OrganizationApplicationsToUsers")
+  id             Int       @id @default(autoincrement())
+  firstName      String    @map("first_name")
+  lastName       String    @map("last_name")
+  role           UserRole?
+  email          String    @unique
+  emailVerified  DateTime? @map("email_verified")
+  image          String?
+  hashedPassword String    @map("hashed_password")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at")
 
   @@map("users")
 }
@@ -124,14 +107,14 @@ model ApplicationQuestion {
 }
 
 model ApplicationResponse {
-  id                        Int                      @id @default(autoincrement())
-  answer                    String
-  questionId                Int                      @map("question_id")
-  organizationApplicationId Int?                     @map("organization_application_id")
-  createdAt                 DateTime                 @default(now()) @map("created_at")
-  updatedAt                 DateTime                 @default(now()) @updatedAt @map("updated_at")
-  organizationApplication   OrganizationApplication? @relation("ApplicationResponsesToOrganizationApplications", fields: [organizationApplicationId], references: [id])
-  applicationQuestion       ApplicationQuestion      @relation("ApplicationQuestionsToApplicationResponses", fields: [questionId], references: [id])
+  id                  Int                 @id @default(autoincrement())
+  answer              String
+  questionId          Int                 @map("question_id")
+  organizationId      Int?                @map("organization_id")
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @default(now()) @updatedAt @map("updated_at")
+  organization        Organization?       @relation("ApplicationResponsesToOrganizations", fields: [organizationId], references: [id])
+  applicationQuestion ApplicationQuestion @relation("ApplicationQuestionsToApplicationResponses", fields: [questionId], references: [id])
 
   @@map("application_responses")
 }
