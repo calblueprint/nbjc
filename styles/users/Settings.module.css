@@ -3,19 +3,20 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: calc(100vh - 85px);
+  height: calc(100vh - 105px);
   align-items: center;
   flex-direction: column;
 }
 
 .box {
   width: 60%;
+}
+
+.settingsBox {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-bottom: 50px;
-  border-bottom: solid 1px;
-  border-color: silver;
+  margin-bottom: 50px;
 }
 
 .title {
@@ -56,21 +57,22 @@
   display: flex;
 }
 
-.emailEdit {
+.field {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   font-size: 1rem;
+  align-items: center;
+  height: 40px;
 }
 
-.emailButton {
-  width: 270px;
-  justify-content: space-between;
+.fieldRight {
   display: flex;
+  align-items: center;
 }
 
-.textfield {
-  margin-right: 10px;
+.fieldButton {
+  margin-left: 45px;
 }
 
 .passwordButton {

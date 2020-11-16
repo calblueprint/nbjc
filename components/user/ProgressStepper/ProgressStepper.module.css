@@ -1,15 +1,15 @@
+.content {
+  padding-top: 50px;
+  border-top: solid 1px;
+  border-color: silver;
+}
+
 .title {
   font-size: 1.7rem;
   font-weight: 600;
-  width: 100%;
   flex-direction: row;
   justify-content: space-between;
   display: flex;
-}
-
-.content {
-  margin-top: 50px;
-  width: 60%;
 }
 
 .stepper {

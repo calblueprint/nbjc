@@ -1,6 +1,6 @@
 import Layout from 'components/Layout';
-import styles from 'styles/users/PasswordChange.module.css';
 import { Button, TextField, Link } from '@material-ui/core';
+import styles from '../../styles/users/PasswordChange.module.css';
 import { sampleUserData } from '../../utils/sample-data';
 
 const PasswordChange: React.FC = () => {
