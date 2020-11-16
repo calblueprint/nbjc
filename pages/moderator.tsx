@@ -2,28 +2,28 @@ import { useState, ChangeEvent } from 'react';
 import { GetStaticProps } from 'next';
 import { OrgApp } from 'interfaces';
 import Layout from 'components/Layout';
+import OrgCard from 'components/moderator/OrgCard';
+import OrgDetail from 'components/moderator/OrgDetail';
+import { sampleOrgAppData } from 'utils/sample-data';
+import clsx from 'clsx';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import SearchIcon from '@material-ui/icons/Search';
 import {
   Tabs,
   Tab,
-  AppBar,
   Button,
-  Paper,
-  Card,
   InputAdornment,
   TextField,
+  Drawer,
+  Toolbar,
+  IconButton,
 } from '@material-ui/core';
-import OrgCard from 'components/moderator/OrgCard';
-import OrgDetail from 'components/moderator/OrgDetail';
-import { sampleOrgAppData } from 'utils/sample-data';
 import styles from 'styles/Moderator.module.css';
 
 type Props = {
   items: OrgApp[];
 };
-
-// to highlight cards when selected, for future use?
-// https://stackoverflow.com/questions/52305490/react-material-design-onclick-list-item-highlight-the-item-active
 
 const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
   const [card, setCard] = useState<OrgApp>(items[0]);
@@ -39,75 +39,146 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
     setSelected(newValue);
   };
 
+  const [openLeft, setOpenLeft] = useState<boolean>(false);
+
+  const handleDrawerOpenLeft = (): void => {
+    setOpenLeft(true);
+  };
+
+  const handleDrawerCloseLeft = (): void => {
+    setOpenLeft(false);
+  };
+
+  const [openRight, setOpenRight] = useState<boolean>(false);
+
+  const handleDrawerOpenRight = (): void => {
+    setOpenRight(true);
+  };
+
+  const handleDrawerCloseRight = (): void => {
+    setOpenRight(false);
+  };
+
   return (
     <Layout title="Moderator Dashboard">
       <div className={styles.root}>
         <div className={styles.leftCol}>
-          <div>
-            <TextField
-              fullWidth
-              id="search"
-              label="Search for an Organization"
-              type="search"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-              variant="outlined"
-              size="small"
-            />
-          </div>
-          <AppBar position="static" color="default" className={styles.appBar}>
-            <Tabs value={selected} onChange={handleChange}>
-              <Tab label="Orgs" />
-              <Tab label="Events" />
-            </Tabs>
-          </AppBar>
-          {selected === 0 && (
-            <div className={styles.content}>
-              {items.map((item) => (
-                // TODO: Add accessibility support
-                // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-                <div key={item.id} onClick={() => clickCard(item)}>
-                  <OrgCard items={item} />
-                </div>
-              ))}
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpenLeft}
+              edge="start"
+              className={clsx(styles.menuButton, openLeft && styles.hide)}
+            >
+              <ChevronRightIcon />
+            </IconButton>
+          </Toolbar>
+          <Drawer
+            className={styles.drawer}
+            variant="persistent"
+            anchor="left"
+            open={openLeft}
+            classes={{
+              paper: styles.drawerPaperLeft,
+            }}
+          >
+            <div className={styles.tabs}>
+              <Tabs value={selected} onChange={handleChange}>
+                <Tab label="Orgs" />
+                <Tab label="Events" />
+              </Tabs>
+              <IconButton onClick={handleDrawerCloseLeft}>
+                <ChevronLeftIcon />
+              </IconButton>
             </div>
-          )}
-          {selected === 1 && 'Event list, mimic the Org mapping on first tab?'}
+            <div className={styles.textField}>
+              <TextField
+                fullWidth
+                id="search"
+                type="search"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                variant="outlined"
+                size="small"
+              />
+            </div>
+            {selected === 0 && (
+              <div className={styles.content}>
+                {items.map((item) => (
+                  // TODO: Add accessibility support
+                  // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+                  <div key={item.id} onClick={() => clickCard(item)}>
+                    <OrgCard items={item} />
+                  </div>
+                ))}
+              </div>
+            )}
+            {selected === 1 &&
+              'Event list, mimic the Org mapping on first tab?'}
+          </Drawer>
         </div>
-        <div className={styles.rightCol}>
-          <div className={styles.header}>
-            <div>
-              <div className={styles.large}>{card.name}</div>
-              <div className={styles.med}>
-                {card.workType} {card.orgType}
+        <main
+          className={clsx(styles.main, {
+            [styles.mainShift]: openLeft,
+          })}
+        >
+          <div className={styles.rightCol}>
+            <div className={styles.header}>
+              <div>
+                <div className={styles.large}>{card.name}</div>
+                <div className={styles.med}>
+                  {card.workType} {card.orgType}
+                </div>
+              </div>
+              <div>
+                <Button variant="outlined" color="primary">
+                  Rejection history
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={handleDrawerOpenRight}
+                  className={styles.menuButton}
+                >
+                  Notepad
+                </Button>
               </div>
             </div>
-            <div>
-              <Button variant="outlined" color="primary">
-                Rejection history
+            <Drawer
+              className={styles.drawer}
+              variant="persistent"
+              anchor="right"
+              open={openRight}
+              classes={{
+                paper: styles.drawerPaperRight,
+              }}
+            >
+              <div>
+                <IconButton onClick={handleDrawerCloseRight}>
+                  <ChevronRightIcon />
+                </IconButton>
+              </div>
+              <div className={styles.textField}>notes for {card.name}</div>
+            </Drawer>
+            <div className={styles.content}>
+              <OrgDetail items={card} />
+            </div>
+            <div className={styles.footer}>
+              <Button variant="contained" color="secondary">
+                Decline
               </Button>
-              <Button variant="outlined" color="secondary">
-                Notepad
+              <Button variant="contained" color="primary">
+                Accept
               </Button>
             </div>
           </div>
-          <div className={styles.content}>
-            <OrgDetail items={card} />
-          </div>
-          <div className={styles.footer}>
-            <Button variant="contained" color="primary">
-              Accept
-            </Button>
-            <Button variant="contained" color="secondary">
-              Decline
-            </Button>
-          </div>
-        </div>
+        </main>
       </div>
     </Layout>
   );
@@ -117,5 +188,5 @@ export const getStaticProps: GetStaticProps = async () => {
   const items: OrgApp[] = sampleOrgAppData;
   return { props: { items } };
 };
-// <h1 className={styles.stick}>Header</h1>
+
 export default ModeratorDashBoard;
