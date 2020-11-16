@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { GetStaticProps, GetStaticPaths } from 'next';
+import { GetStaticProps, GetStaticPaths, GetServerSideProps } from 'next';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { Organization } from 'interfaces';
@@ -8,6 +8,7 @@ import Layout from 'components/Layout';
 import styles from '../../styles/Organization.module.css';
 import KeyWord from '../../components/organization/KeyWord/index';
 import Project from '../../components/organization/Project/index';
+import { getOrganization } from '../api/orgs/[id]';
 
 type Props = {
   item?: Organization;
@@ -89,7 +90,7 @@ const StaticPropsDetail: React.FunctionComponent<Props> = ({
         </div>
         <div className={styles.titleColumns}>
           <div className={styles.leftColumn}>
-            <h1 className={styles.Header}>{item.name}</h1>
+            <h2 className={styles.Header}>{item.name}</h2>
             <h3 className={styles.subHeader}>Type of Work ● Type of Org</h3>
             <h3 className={styles.infoHeader}>Location</h3>
             <p className={styles.info}>
@@ -180,28 +181,58 @@ const StaticPropsDetail: React.FunctionComponent<Props> = ({
 
 export default StaticPropsDetail;
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  // Get the paths we want to pre-render based on users
-  const paths = sampleOrgData.map((user) => ({
-    params: { id: user.id.toString() },
-  }));
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   // Get the paths we want to pre-render based on users
+//   const paths = sampleOrgData.map((user) => ({
+//     params: { id: user.id.toString() },
+//   }));
 
-  // We'll pre-render only these paths at build time.
-  // { fallback: false } means other routes should 404.
-  return { paths, fallback: false };
-};
+//   // We'll pre-render only these paths at build time.
+//   // { fallback: false } means other routes should 404.
+//   return { paths, fallback: false };
+// };
 
-// This function gets called at build time on server-side.
-// It won't be called on client-side, so you can even do
-// direct database queries.
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+// // This function gets called at build time on server-side.
+// // It won't be called on client-side, so you can even do
+// // direct database queries.
+// export const getStaticProps: GetStaticProps = async ({ params }) => {
+//   try {
+//     const id = params?.id;
+//     const fetchURL = `http://localhost:3000/api/orgs/${id}`;
+//     const item = await fetch(fetchURL).then((response) => response.json());
+//     // By returning { props: item }, the StaticPropsDetail component
+//     // will receive `item` as a prop at build time
+//     return { props: { item } };
+//   } catch (err) {
+//     return { props: { errors: err.message } };
+//   }
+// };
+
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  req,
+  res,
+}) => {
   try {
-    const id = params?.id;
-    const fetchURL = `http://localhost:3000/api/orgs/${id}`;
-    const item = await fetch(fetchURL).then((response) => response.json());
-    // By returning { props: item }, the StaticPropsDetail component
-    // will receive `item` as a prop at build time
-    return { props: { item } };
+    const { id } = params.id;
+    console.log(id);
+    if (!id) {
+      return { notFound: true };
+    }
+    // await orgAPI(req, res);
+    const {
+      createdAt: _createdAt,
+      updatedAt: _updatedAt,
+      ...item
+    } = await getOrganization(id);
+
+    console.log(item);
+    if (!item) {
+      return { notFound: true };
+    }
+    return {
+      props: item,
+    };
   } catch (err) {
     return { props: { errors: err.message } };
   }
