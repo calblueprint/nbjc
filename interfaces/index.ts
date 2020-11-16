@@ -56,3 +56,8 @@ export type Organization = {
   id: number;
   name: string;
 };
+
+export type Question = {
+  id: number;
+  content: string;
+};
