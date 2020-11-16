@@ -25,8 +25,7 @@ export async function up(
     ADD COLUMN  age_demographic     age_demographic,
     ADD COLUMN  capacity            INTEGER,
     ADD COLUMN  ein                 INTEGER,
-    ADD COLUMN  founding_date       DATE,
-    DROP COLUMN type;
+    ADD COLUMN  founding_date       DATE;
   `,
     callback
   );
@@ -57,8 +56,7 @@ export async function down(
     DROP COLUMN age_demographic,
     DROP COLUMN capacity,
     DROP COLUMN ein,
-    DROP COLUMN founding_date,
-    ADD COLUMN type VARCHAR(255);
+    DROP COLUMN founding_date;
   `,
     callback
   );
