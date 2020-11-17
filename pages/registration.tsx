@@ -13,11 +13,56 @@ const validate = (values: any): { [k: string]: any } => {
   if (!values.orgName) {
     errors.orgName = '*Required';
   }
-  if (!values.workType) {
+  if (values.workType.length === 0) {
     errors.workType = '*Required';
+  }
+  if (values.orgType.length === 0) {
+    errors.orgType = '*Required';
   }
   if (!values.contactName) {
     errors.contactName = '*Required';
+  }
+  if (!values.contactEmail) {
+    errors.contactEmail = '*Required';
+  } else if (
+    values.contactEmail.includes(' ') ||
+    !values.contactEmail.includes('@') ||
+    !values.contactEmail.includes('.')
+  ) {
+    errors.contactEmail = '*Invalid Email';
+  }
+  if (!values.website) {
+    errors.website = '*Required';
+  }
+  if (!values.location) {
+    errors.location = '*Required';
+  }
+  if (!values.street) {
+    errors.street = '*Required';
+  }
+  if (!values.city) {
+    errors.city = '*Required';
+  }
+  if (!values.state) {
+    errors.state = '*Required';
+  }
+  if (!values.zipcode) {
+    errors.zipcode = '*Required';
+  }
+  if (values.EIN.length === 0) {
+    errors.EIN = '*Required';
+  }
+  if (!values.foundingDate) {
+    errors.foundingDate = '*Required';
+  }
+  if (values.ages.length === 0) {
+    errors.ages = '*Required';
+  }
+  if (values.orientation.length === 0) {
+    errors.orientation = '*Required';
+  }
+  if (values.ethnicity.length === 0) {
+    errors.ethnicity = '*Required';
   }
   return errors;
 };
@@ -79,11 +124,11 @@ const Registration: React.FC = () => {
           {selected === 0 && (
             <TabBasics
               handleChange={formik.handleChange}
+              handleBlur={formik.handleBlur}
               values={formik.values}
               setFieldValue={formik.setFieldValue}
-              orgName={formik.errors.orgName}
-              workTypeSelect={formik.errors.workType}
-              contactName={formik.errors.contactName}
+              touch={formik.touched}
+              formikErrors={formik.errors}
             />
           )}
           {selected === 1 && (
