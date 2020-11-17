@@ -3,16 +3,17 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import styles from './ProgressStepper.module.css';
+import { useState } from 'react';
 
 function getSteps(): Array<string> {
   return ['Not Started', 'In Progress', 'Submitted', 'Results'];
 }
 
 const ProgressStepper: React.FC = () => {
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = useState(0);
   const steps = getSteps();
 
-  const handleNext: void = () => {
+  const handleNext = (): void => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 

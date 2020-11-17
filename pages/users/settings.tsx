@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import Layout from 'components/Layout';
 import styles from 'styles/users/Settings.module.css';
-import { Button, Link, TextField } from '@material-ui/core';
-import { sampleUserData } from '../../utils/sample-data';
+import { Button, TextField, Link } from '@material-ui/core';
+import { useRouter } from 'next/router';
 import ProgressStepper from '../../components/user/ProgressStepper/index';
-import EmailVerify from '../../components/user/EmailVerify/index';
 
-function capitalizeFirstLetter(string: string): string {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+const email = "oskibear@berkeley.edu";
+const profileType = "admin";
 
 const UserProfSettings: React.FC = () => {
   const [setting, setSetting] = useState(0);
@@ -18,7 +16,7 @@ const UserProfSettings: React.FC = () => {
       <div className={styles.emailEdit}>
         <div>Email</div>
         <div className={styles.emailButton}>
-          {sampleUserData[0].email}
+          {email}
           <Button
             variant="outlined"
             color="primary"
@@ -35,7 +33,7 @@ const UserProfSettings: React.FC = () => {
         <div className={styles.emailButton}>
           <TextField
             id="email"
-            defaultValue={sampleUserData[0].email}
+            defaultValue={email}
             variant="outlined"
             size="small"
             className={styles.textfield}
@@ -58,24 +56,23 @@ const UserProfSettings: React.FC = () => {
         <div>Password</div>
         <div className={styles.emailButton}>
           {hiddenPassword}
-          <Link href="../users/password_change">
-            <Button variant="outlined" color="primary" disableElevation>
+            <Button variant="outlined" color="primary"  onClick={() => router.push('../users/change-password')}  disableElevation>
               Edit
             </Button>
-          </Link>
         </div>
       </div>
     </div>
   );
 
+  const router = useRouter();
+
   return (
     <Layout title="User Profile Settings">
-      <EmailVerify />
       <div className={styles.content}>
         <div className={styles.box}>
           <div className={styles.top}>
             <div className={styles.title}>
-              <div>{capitalizeFirstLetter(sampleUserData[0].role)} Profile</div>
+              <div className={styles.caps}>{profileType} Profile</div>
             </div>
             <div className={styles.settings}>Settings</div>
           </div>

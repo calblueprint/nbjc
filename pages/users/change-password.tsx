@@ -1,9 +1,12 @@
 import Layout from 'components/Layout';
 import styles from 'styles/users/PasswordChange.module.css';
-import { Button, TextField, Link } from '@material-ui/core';
-import { sampleUserData } from '../../utils/sample-data';
+import { Button, TextField } from '@material-ui/core';
+import { useRouter } from 'next/router';
 
-const PasswordChange: React.FC = () => {
+const email = "oskibear@berkeley.edu"
+
+const ChangePassword: React.FC = () => {
+  const router = useRouter();
   return (
     <Layout>
       <div className={styles.page}>
@@ -14,8 +17,8 @@ const PasswordChange: React.FC = () => {
               Old Password
               <TextField
                 size="small"
-                id="outlined-basic"
-                label={sampleUserData[0].email}
+                id="email"
+                label={email}
                 variant="outlined"
               />
             </div>
@@ -23,7 +26,7 @@ const PasswordChange: React.FC = () => {
               New Password
               <TextField
                 size="small"
-                id="outlined-basic"
+                id="new-password"
                 label="******"
                 variant="outlined"
               />
@@ -32,18 +35,16 @@ const PasswordChange: React.FC = () => {
               Confirm Password
               <TextField
                 size="small"
-                id="outlined-basic"
+                id="confirm-password"
                 label="******"
                 variant="outlined"
               />
             </div>
           </div>
           <div className={styles.save}>
-            <Link href="../users/settings">
-              <Button color="primary" variant="contained" disableElevation>
+              <Button color="primary" variant="contained" onClick={() => router.push('../users/settings')} disableElevation>
                 Save Changes
               </Button>
-            </Link>
           </div>
         </div>
       </div>
@@ -51,4 +52,4 @@ const PasswordChange: React.FC = () => {
   );
 };
 
-export default PasswordChange;
+export default ChangePassword;

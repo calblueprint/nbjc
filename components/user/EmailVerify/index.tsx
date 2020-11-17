@@ -1,8 +1,9 @@
 import { Link, Snackbar, Button } from '@material-ui/core';
 import styles from './EmailVerify.module.css';
+import { useState } from 'react'
 
 const EmailVerify: React.FC = () => {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState(true);
   const msg = "Can't find it? Resend Verification Email";
 
   const handleClose = (

@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: calc(100vh - 85px);
+  min-height: calc(100vh - 85px);
   align-items: center;
   flex-direction: column;
 }
@@ -76,4 +76,8 @@
 .passwordButton {
   margin-top: 10px;
   margin-bottom: 40px;
+}
+
+.caps {
+  text-transform: capitalize;
 }
