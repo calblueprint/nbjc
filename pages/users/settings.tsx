@@ -1,14 +1,15 @@
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Layout from 'components/Layout';
 import styles from 'styles/users/Settings.module.css';
 import { Button, TextField, Link } from '@material-ui/core';
-import { useRouter } from 'next/router';
 import ProgressStepper from '../../components/user/ProgressStepper/index';
 
-const email = "oskibear@berkeley.edu";
-const profileType = "admin";
+const email = 'oskibear@berkeley.edu';
+const profileType = 'admin';
 
 const UserProfSettings: React.FC = () => {
+  const router = useRouter();
   const [setting, setSetting] = useState(0);
   const hiddenPassword = '******';
   const emailButton =
@@ -56,15 +57,18 @@ const UserProfSettings: React.FC = () => {
         <div>Password</div>
         <div className={styles.emailButton}>
           {hiddenPassword}
-            <Button variant="outlined" color="primary"  onClick={() => router.push('../users/change-password')}  disableElevation>
-              Edit
-            </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => router.push('../users/change-password')}
+            disableElevation
+          >
+            Edit
+          </Button>
         </div>
       </div>
     </div>
   );
-
-  const router = useRouter();
 
   return (
     <Layout title="User Profile Settings">

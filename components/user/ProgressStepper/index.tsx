@@ -1,33 +1,44 @@
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
+import { useState } from 'react';
+import MobileStepper from '@material-ui/core/MobileStepper';
 import Button from '@material-ui/core/Button';
 import styles from './ProgressStepper.module.css';
-import { useState } from 'react';
 
-function getSteps(): Array<string> {
-  return ['Not Started', 'In Progress', 'Submitted', 'Results'];
-}
-
-const ProgressStepper: React.FC = () => {
-  const [activeStep, setActiveStep] = useState(0);
-  const steps = getSteps();
+export default function ProgressMobileStepper(): React.ReactElement {
+  const [activeStep, setActiveStep] = useState(1);
 
   const handleNext = (): void => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
+  function stepText(text: string, step: number): React.ReactElement {
+    if (activeStep === step) {
+      return <div className={styles.current}>{text}</div>;
+    }
+    if (activeStep < step) {
+      return <div className={styles.untouched}>{text}</div>;
+    }
+    return <div className={styles.complete}>{text}</div>;
+  }
+
   return (
     <div className={styles.content}>
       <div className={styles.title}>Application Status </div>
       <div className={styles.stepper}>
-        <Stepper activeStep={activeStep} alternativeLabel>
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
+        <MobileStepper
+          variant="progress"
+          steps={5}
+          position="static"
+          activeStep={activeStep}
+          className={styles.bar}
+          nextButton={undefined}
+          backButton={undefined}
+        />
+      </div>
+      <div className={styles.steps}>
+        {stepText('Not Started', 1)}
+        {stepText('In Progress', 2)}
+        {stepText('Submitted', 3)}
+        {stepText('Results', 4)}
       </div>
       <div className={styles.wording}>
         Verify email address to begin application.
@@ -39,6 +50,4 @@ const ProgressStepper: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default ProgressStepper;
+}

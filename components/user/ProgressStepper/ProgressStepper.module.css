@@ -13,9 +13,7 @@
 }
 
 .stepper {
-  margin-top: 10px;
-  background-color: white;
-  padding: 10px;
+  margin-top: 15px;
   border-radius: 4em;
 }
 
@@ -29,4 +27,28 @@
   display: flex;
   justify-content: flex-end;
   margin-top: 20px;
+}
+
+.bar {
+  width: 200%;
+}
+
+.steps {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-bottom: 30px;
+}
+
+.complete {
+  color: rgb(183, 146, 241);
+}
+
+.current {
+  color: rgb(144, 86, 239);
+  font-weight: 800;
+}
+
+.untouched {
+  color: rgb(143, 143, 143);
 }
