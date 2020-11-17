@@ -55,6 +55,29 @@ export const sampleUserData: User[] = [
   },
 ];
 
+export const joiSampleOrgAppData: joiSampleApp[] = [
+  {
+    applicationStatus: '',
+    organizationName: '',
+    contactName: '',
+    contactEmail: '',
+    organizationType: '',
+    workType: '',
+    address: '',
+    lat: 22,
+    long: -132,
+    missionStatement: '',
+    shortHistory: '',
+    keyValue: '',
+    lgbtqDemographic: '',
+    raceDemographic: '',
+    ageDemographic: '',
+    capacity: 50,
+    ein: 109123,
+    foundingDate: 10082010,
+  },
+];
+
 // TODO: implement logo and date differently...?
 export const sampleOrgAppData: OrgApp[] = [
   {

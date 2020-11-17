@@ -35,6 +35,27 @@ export type Form = {
   orientation: string[];
 };
 
+export type SchemaForJoi = {
+  applicationStatus: string;
+  organizationName: string;
+  contactName: string;
+  contactEmail: string;
+  organizationType: string;
+  workType: string;
+  address: string;
+  lat: number;
+  long: number;
+  missionStatement: string;
+  shortHistory: string;
+  keyValue: string;
+  lgbtqDemographic: string;
+  raceDemographic: string;
+  ageDemographic: string;
+  capacity: number;
+  ein: number;
+  foundingDate: number;
+};
+
 // TODO: logo needs to be type of an image.... saving as string for now
 export type OrgApp = {
   id: number;
