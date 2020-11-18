@@ -1,0 +1,85 @@
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: calc(100vh - 105px);
+  align-items: center;
+  flex-direction: column;
+}
+
+.box {
+  width: 60%;
+}
+
+.settingsBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 50px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  display: flex;
+}
+
+.top {
+  margin-bottom: 20px;
+}
+
+.settings {
+  font-size: 1.45rem;
+  margin-bottom: 25px;
+}
+
+.userInfo {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.text {
+  margin-bottom: 8px;
+}
+
+.middle {
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+.delete {
+  justify-content: space-between;
+  display: flex;
+}
+
+.field {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 1rem;
+  align-items: center;
+  height: 40px;
+}
+
+.fieldRight {
+  display: flex;
+  align-items: center;
+}
+
+.fieldButton {
+  margin-left: 45px;
+}
+
+.passwordButton {
+  margin-top: 10px;
+  margin-bottom: 40px;
+}
+
+.caps {
+  text-transform: capitalize;
+}
