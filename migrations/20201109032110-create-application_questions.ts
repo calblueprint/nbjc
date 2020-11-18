@@ -2,7 +2,7 @@ import Base from 'db-migrate-base';
 import { promisify } from 'util';
 
 /**
- * Describe what your `up` migration does.
+ * Create the Application Questions table for custom questions
  */
 export async function up(
   db: Base,
@@ -10,14 +10,16 @@ export async function up(
 ): Promise<void> {
   db.runSql(
     `
-    CREATE TABLE organizations
+    CREATE TABLE application_questions
       (
-        id         SERIAL,
-        name       VARCHAR(255) NOT NULL,
-        long       DECIMAL,
-        lat        DECIMAL,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        id           SERIAL,
+        question     VARCHAR(255) NOT NULL,
+        hint         TEXT,
+        placeholder  TEXT,
+        required     BOOLEAN NOT NULL DEFAULT FALSE,
+        word_limit   INTEGER,
+        created_at   TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at   TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (id)
       );
   `,
@@ -26,7 +28,7 @@ export async function up(
 }
 
 /**
- * Describe what your `down` migration does.
+ * Drop the Application Questions table
  */
 export async function down(
   db: Base,
@@ -34,7 +36,7 @@ export async function down(
 ): Promise<void> {
   const dropTable = promisify<string>(db.dropTable.bind(db));
   try {
-    await dropTable('organizations');
+    await dropTable('application_questions');
   } catch (err) {
     callback(err, null);
   }

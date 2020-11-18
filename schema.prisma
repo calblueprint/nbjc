@@ -26,41 +26,31 @@ model Account {
   @@map("accounts")
 }
 
-model OrganizationApplication {
-  id                Int               @id @default(autoincrement())
-  applicationStatus ApplicationStatus @map("application_status")
-  organizationName  String            @map("organization_name")
-  contactName       String            @map("contact_name")
-  contactEmail      String            @map("contact_email")
-  organizationType  OrganizationType? @map("organization_type")
-  workType          WorkType?         @map("work_type")
-  address           String?
-  lat               Float?
-  long              Float?
-  missionStatement  String?           @map("mission_statement")
-  shortHistory      String?           @map("short_history")
-  keyValue          String?           @map("key_values")
-  lgbtqDemographic  LgbtqDemographic? @map("lgbtq_demographic")
-  raceDemographic   RaceDemographic?  @map("race_demographic")
-  ageDemographic    AgeDemographic?   @map("age_demographic")
-  capacity          Int?
-  ein               Int?
-  foundingDate      DateTime?         @map("founding_date")
-  organization      Organization?     @relation("OrganizationApplicationsToOrganizations")
-
-  @@map("organization_applications")
-}
-
 model Organization {
-  id                        Int                      @id @default(autoincrement())
-  name                      String
-  long                      Float?
-  lat                       Float?
-  type                      String?
-  createdAt                 DateTime                 @default(now()) @map("created_at")
-  updatedAt                 DateTime                 @default(now()) @updatedAt @map("updated_at")
-  organizationApplicationId Int?                     @unique @map("organization_application_id")
-  organizationApplication   OrganizationApplication? @relation("OrganizationApplicationsToOrganizations", fields: [organizationApplicationId], references: [id])
+  id                   Int                   @id @default(autoincrement())
+  name                 String
+  long                 Float?
+  lat                  Float?
+  createdAt            DateTime              @default(now()) @map("created_at")
+  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
+  applicationStatus    ApplicationStatus     @default(draft) @map("application_status")
+  active               Boolean               @default(false)
+  contactName          String                @map("contact_name")
+  contactEmail         String                @map("contact_email")
+  organizationType     OrganizationType?     @map("organization_type")
+  workType             WorkType?             @map("work_type")
+  address              String?
+  missionStatement     String?               @map("mission_statement")
+  shortHistory         String?               @map("short_history")
+  keyValue             String?               @map("key_values")
+  lgbtqDemographic     LgbtqDemographic[]    @map("lgbtq_demographic")
+  raceDemographic      RaceDemographic[]     @map("race_demographic")
+  ageDemographic       AgeDemographic[]      @map("age_demographic")
+  capacity             Int?
+  ein                  Int?
+  foundingDate         DateTime?             @map("founding_date")
+  is501c3              Boolean               @default(false) @map("is_501c3")
+  applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
 
   @@map("organizations")
 }
@@ -101,6 +91,33 @@ model VerificationRequest {
   @@map("verification_requests")
 }
 
+model ApplicationQuestion {
+  id                   Int                   @id @default(autoincrement())
+  question             String
+  hint                 String?
+  placeholder          String?
+  required             Boolean               @default(false)
+  wordLimit            Int?                  @map("word_limit")
+  createdAt            DateTime              @default(now()) @map("created_at")
+  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
+  applicationResponses ApplicationResponse[] @relation("ApplicationQuestionsToApplicationResponses")
+
+  @@map("application_questions")
+}
+
+model ApplicationResponse {
+  id                  Int                 @id @default(autoincrement())
+  answer              String
+  questionId          Int                 @map("question_id")
+  organizationId      Int?                @map("organization_id")
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @default(now()) @updatedAt @map("updated_at")
+  organization        Organization?       @relation("ApplicationResponsesToOrganizations", fields: [organizationId], references: [id])
+  applicationQuestion ApplicationQuestion @relation("ApplicationQuestionsToApplicationResponses", fields: [questionId], references: [id])
+
+  @@map("application_responses")
+}
+
 model migrations {
   id     Int      @id @default(autoincrement())
   name   String
@@ -136,7 +153,6 @@ enum LgbtqDemographic {
 }
 
 enum OrganizationType {
-  c3               @map("510(c)(3)")
   grassrootsLocal  @map("Grassroots/Local")
   statewide        @map("Statewide")
   national         @map("National")

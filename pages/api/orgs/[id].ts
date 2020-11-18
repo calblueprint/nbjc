@@ -38,12 +38,7 @@ export const updateOrganization = async (
 
   const updatedOrg = await prisma.organization.update({
     where: { id: Number(id) },
-    data: {
-      name: data.name,
-      long: data.long,
-      lat: data.lat,
-      type: data.type,
-    },
+    data,
   });
   return updatedOrg;
 };

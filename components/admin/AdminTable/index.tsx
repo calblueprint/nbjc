@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import InfoIcon from '@material-ui/icons/Info';
-import { OrgApp, Organization } from 'interfaces/index';
+import { OrgApp, Organization, Question } from 'interfaces/index';
 import { User } from '@prisma/client';
 import computeDate from 'utils/computeDate';
 import styles from './AdminTable.module.css';
@@ -58,6 +58,18 @@ const viewButton = (
   </Button>
 );
 
+const editButton = (
+  <Button
+    variant="contained"
+    color="primary"
+    size="small"
+    startIcon={<InfoIcon />}
+    disableElevation
+  >
+    Edit
+  </Button>
+);
+
 const resetButton = (
   <Button
     variant="contained"
@@ -71,7 +83,7 @@ const resetButton = (
 );
 
 type Props = {
-  data: Array<OrgApp | Organization | User>;
+  data: Array<OrgApp | Organization | User | Question>;
   pageType: string;
 };
 
@@ -99,6 +111,14 @@ const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
         <ButtonGroup>
           {suspendButton}
           {resetButton}
+        </ButtonGroup>
+      );
+    }
+    if (pageType === 'questions') {
+      return (
+        <ButtonGroup>
+          {deleteButton}
+          {editButton}
         </ButtonGroup>
       );
     }
