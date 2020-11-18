@@ -14,7 +14,7 @@ const UserProfSettings: React.FC = () => {
   const hiddenPassword = '******';
   const emailButton =
     setting === 0 ? (
-      <div className={styles.emailEdit}>
+      <div className={styles.field}>
         <div>Email</div>
         <div className={styles.emailButton}>
           {email}
@@ -23,23 +23,24 @@ const UserProfSettings: React.FC = () => {
             color="primary"
             disableElevation
             onClick={() => setSetting(1)}
+            className={styles.fieldButton}
           >
             Edit
           </Button>
         </div>
       </div>
     ) : (
-      <div className={styles.emailEdit}>
+      <div className={styles.field}>
         <div>Email</div>
-        <div className={styles.emailButton}>
+        <div className={styles.fieldRight}>
           <TextField
             id="email"
             defaultValue={email}
             variant="outlined"
             size="small"
-            className={styles.textfield}
           />
           <Button
+            className={styles.fieldButton}
             variant="contained"
             color="primary"
             disableElevation
@@ -53,15 +54,16 @@ const UserProfSettings: React.FC = () => {
 
   const passwordButton = (
     <div className={styles.passwordButton}>
-      <div className={styles.emailEdit}>
+      <div className={styles.field}>
         <div>Password</div>
-        <div className={styles.emailButton}>
+        <div className={styles.fieldRight}>
           {hiddenPassword}
           <Button
             variant="outlined"
             color="primary"
             onClick={() => router.push('../users/change-password')}
             disableElevation
+            className={styles.fieldButton}
           >
             Edit
           </Button>
@@ -78,16 +80,15 @@ const UserProfSettings: React.FC = () => {
             <div className={styles.title}>
               <div className={styles.caps}>{profileType} Profile</div>
             </div>
-            <div className={styles.settings}>Settings</div>
-          </div>
-          {emailButton}
-          {passwordButton}
+            {emailButton}
+            {passwordButton}
 
-          <div className={styles.delete}>
-            <Link>Delete User Account</Link>
+            <div className={styles.delete}>
+              <Link>Delete User Account</Link>
+            </div>
           </div>
+          <ProgressStepper />
         </div>
-        <ProgressStepper />
       </div>
     </Layout>
   );

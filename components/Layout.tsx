@@ -63,6 +63,7 @@ const Layout: React.FunctionComponent<Props> = ({
         </nav>
       </header>
       {children}
+      <footer className={styles.footer} />
     </div>
   );
 };
