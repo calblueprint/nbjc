@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import {
+  Organization,
   ApplicationStatus,
   OrganizationType,
   WorkType,
@@ -7,6 +8,11 @@ import {
   RaceDemographic,
   AgeDemographic,
 } from '@prisma/client';
+
+export type PublicOrganization = Pick<
+  Organization,
+  'id' | 'name' | 'lat' | 'long'
+>;
 
 const schema = Joi.object({
   name: Joi.string().when('$strict', { is: true, then: Joi.required() }),

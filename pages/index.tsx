@@ -1,4 +1,6 @@
+import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
+import { PublicOrganization } from 'interfaces/organization';
 import {
   TextField,
   FormControl,
@@ -11,12 +13,17 @@ import {
 import SearchIcon from '@material-ui/icons/Search';
 import Layout from 'components/Layout';
 import styles from '../styles/Home.module.css';
+import { getAllPublicOrganizations } from './api/orgs';
 
 const Map = dynamic(() => import('../components/Map'), {
   ssr: false,
 });
 
-const Home: React.FC = () => {
+type HomeProps = {
+  orgs: PublicOrganization[];
+};
+
+const Home: React.FC<HomeProps> = ({ orgs }) => {
   // This is to verify whether or not the current user has a proper session configured to see the page.
   // Will be implemented in the next PR.
   // const [session, loading] = useSession();
@@ -86,7 +93,7 @@ const Home: React.FC = () => {
           </div>
 
           <div className={styles.rightCol}>
-            <Map width="100%" height="100%" />
+            <Map orgs={orgs} width="100%" height="100%" />
           </div>
         </div>
       </div>
@@ -95,3 +102,18 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  try {
+    const resp = await getAllPublicOrganizations();
+    const orgs = JSON.parse(JSON.stringify(resp));
+    console.log(orgs);
+    return {
+      props: {
+        orgs,
+      },
+    };
+  } catch (err) {
+    return { props: { errors: err.message } };
+  }
+};

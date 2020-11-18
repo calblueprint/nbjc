@@ -1,10 +1,32 @@
 import { PrismaClient, Organization } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import OrganizationSchema from 'interfaces/organization';
+import OrganizationSchema, {
+  PublicOrganization,
+} from 'interfaces/organization';
 import CreateError, { MethodNotAllowed } from 'utils/error';
 
 const prisma = new PrismaClient();
+
+export const getAllOrganizations = async (): Promise<Organization[] | null> => {
+  const orgs = await prisma.organization.findMany();
+  return orgs;
+};
+
+export const getAllPublicOrganizations = async (): Promise<
+  PublicOrganization[] | null
+> => {
+  const orgs = await prisma.organization.findMany({
+    where: { active: true },
+    select: {
+      id: true,
+      name: true,
+      lat: true,
+      long: true,
+    },
+  });
+  return orgs;
+};
 
 export default async (
   req: NextApiRequest,
