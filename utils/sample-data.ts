@@ -1,5 +1,5 @@
-import { Organization, OrgApp, Question } from 'interfaces';
-import { User } from '@prisma/client';
+import { OrgApp, Question } from 'interfaces';
+import { User, Organization } from '@prisma/client';
 
 /** Dummy user data. */
 // eslint-disable-next-line import/prefer-default-export
@@ -55,26 +55,31 @@ export const sampleUserData: User[] = [
   },
 ];
 
-export const joiSampleOrgAppData: joiSampleApp[] = [
+export const sampleOrgData: Organization[] = [
   {
-    applicationStatus: '',
-    organizationName: '',
-    contactName: '',
-    contactEmail: '',
-    organizationType: '',
-    workType: '',
-    address: '',
-    lat: 22,
-    long: -132,
-    missionStatement: '',
-    shortHistory: '',
-    keyValue: '',
-    lgbtqDemographic: '',
-    raceDemographic: '',
-    ageDemographic: '',
-    capacity: 50,
-    ein: 109123,
-    foundingDate: 10082010,
+    id: 1,
+    name: 'The DEA',
+    long: 60,
+    lat: 61,
+    createdAt: new Date('2020-11-18T05:10:26.416Z'),
+    updatedAt: new Date('2020-11-18T05:10:26.416Z'),
+    applicationStatus: 'draft',
+    active: false,
+    contactName: 'Sonja Johanson',
+    contactEmail: 'skylerwhite@gmail.com',
+    organizationType: null,
+    workType: null,
+    address: '120 Sproul Hall',
+    missionStatement: null,
+    shortHistory: null,
+    keyValue: null,
+    lgbtqDemographic: ['lgbtqAll', 'sgl'],
+    raceDemographic: ['asian', 'black'],
+    ageDemographic: ['teen', 'adult'],
+    capacity: null,
+    ein: null,
+    foundingDate: null,
+    is501c3: false,
   },
 ];
 
@@ -208,13 +213,6 @@ export const sampleOrgAppData: OrgApp[] = [
     ethnicity: ['Native'],
     EIN: 123123,
   },
-];
-
-export const sampleOrgData: Organization[] = [
-  { id: 1, name: 'Blueprint' },
-  { id: 2, name: 'Redprint' },
-  { id: 3, name: 'Greenprint' },
-  { id: 420, name: 'Yellowprint' },
 ];
 
 export const sampleQuestionData: Question[] = [

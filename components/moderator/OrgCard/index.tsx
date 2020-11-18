@@ -5,11 +5,11 @@ import {
   CardActionArea,
   Typography,
 } from '@material-ui/core';
-import { OrgApp } from 'interfaces';
+import { Organization } from '@prisma/client';
 import styles from './OrgCard.module.css';
 
 type CardProps = {
-  items: OrgApp;
+  items: Organization;
 };
 
 const OrgCard: React.FunctionComponent<CardProps> = ({ items }) => {
@@ -27,7 +27,7 @@ const OrgCard: React.FunctionComponent<CardProps> = ({ items }) => {
               {items.name}
             </Typography>
             <Typography variant="subtitle1" color="textSecondary">
-              {items.description}
+              {items.missionStatement}
             </Typography>
           </CardContent>
         </div>
