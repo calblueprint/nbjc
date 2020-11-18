@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Grid, TextField } from '@material-ui/core';
-import { Formik, Form, Field } from 'formik';
-import CreateError from 'utils/error';
-import { useRouter } from 'next/router';
+import { Grid, TextField, Button } from '@material-ui/core';
+import { Formik, Form } from 'formik';
 import SignupSchema from 'interfaces/signup';
 import Layout from 'components/Layout';
+import { signIn } from 'next-auth/client';
 import styles from './signup.module.css';
 
 interface FormValues {
@@ -21,7 +20,6 @@ interface ErrorValues {
 
 // UserSignUp page. Will need additional email verification to be able to create organizations.
 const UserSignUp: React.FC = () => {
-  const router = useRouter();
   const [emailExists, setEmailExists] = useState(false);
 
   const handleSubmit = async (values: FormValues): Promise<any> => {
@@ -35,14 +33,25 @@ const UserSignUp: React.FC = () => {
         email: values.email,
         password: values.password,
       }),
-    }).then((response) => {
-      if (response.ok) {
-        router.push('/');
-        return res;
-      }
+    });
+
+    // Check if email exists
+    if (!res) {
       setEmailExists(true);
       return new Error('Email already exists.');
-    });
+    }
+
+    // Sign in user
+    try {
+      signIn('credentials', {
+        email: values.email,
+        password: values.password,
+        callbackUrl: 'http://localhost:3000',
+      });
+    } catch {
+      throw new Error('Could not sign in.');
+    }
+    return res;
   };
 
   // Validates inputs
@@ -73,7 +82,7 @@ const UserSignUp: React.FC = () => {
       <Grid item xs={4}>
         <div className={styles.entryName}>* {title}</div>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={5}>
         <TextField
           className={styles.entryField}
           size="small"
@@ -127,7 +136,7 @@ const UserSignUp: React.FC = () => {
                       &nbsp;
                     </>
                   ) : null}
-                  <Grid container xs={9} spacing={2}>
+                  <Grid container spacing={2}>
                     {constructRow('Email', 'email', handleChange, errors.email)}
                     {constructRow(
                       'Password',
@@ -146,10 +155,17 @@ const UserSignUp: React.FC = () => {
                         Already Registered? Log in
                       </a>
                     </Grid>
-                    <Grid item xs={6}>
-                      <button className={styles.submit} type="submit">
+                    <Grid item xs={5}>
+                      <Button
+                        disableRipple
+                        disableFocusRipple
+                        disableTouchRipple
+                        disableElevation
+                        className={styles.submit}
+                        type="submit"
+                      >
                         Create
-                      </button>
+                      </Button>
                     </Grid>
                   </Grid>
                 </Form>

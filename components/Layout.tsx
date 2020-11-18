@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { Button } from '@material-ui/core';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/client';
+import { useSession, signOut } from 'next-auth/client';
 import styles from '../styles/Layout.module.css';
 
 type Props = {
@@ -58,7 +58,7 @@ const Layout: React.FunctionComponent<Props> = ({
                   className={styles.logButtonSpace}
                   variant="contained"
                   color="primary"
-                  onClick={() => router.push('/api/auth/signout')}
+                  onClick={() => signOut()}
                 >
                   Sign Out
                 </Button>

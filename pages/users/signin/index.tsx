@@ -1,9 +1,6 @@
-import { csrfToken, signIn } from 'next-auth/client';
-// import { NextPageContext, GetStaticProps } from 'next';
-import { Grid, TextField } from '@material-ui/core';
-import { Formik, Form, Field } from 'formik';
-import CreateError from 'utils/error';
-import { useRouter } from 'next/router';
+import { signIn } from 'next-auth/client';
+import { Grid, TextField, Button } from '@material-ui/core';
+import { Formik, Form } from 'formik';
 import SigninSchema from 'interfaces/signin';
 import Layout from 'components/Layout';
 import styles from './signin.module.css';
@@ -18,10 +15,8 @@ interface ErrorValues {
   password?: string;
 }
 
-// UserSignUp page. Will need additional email verification to be able to create organizations.
-const UserSignUp: React.FC = () => {
-  const router = useRouter();
-
+// UserSignIn page. Will need additional email verification to be able to create organizations.
+const UserSignIn: React.FC = () => {
   const handleSubmit = async (values: FormValues): Promise<any> => {
     // Sign in with credentials
     try {
@@ -31,7 +26,7 @@ const UserSignUp: React.FC = () => {
         callbackUrl: 'http://localhost:3000',
       });
     } catch {
-      console.log('error');
+      throw new Error('Could not sign in.');
     }
   };
 
@@ -62,7 +57,7 @@ const UserSignUp: React.FC = () => {
       <Grid item xs={4}>
         <div className={styles.entryName}>{varName}</div>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={5}>
         <TextField
           className={styles.entryField}
           size="small"
@@ -84,7 +79,7 @@ const UserSignUp: React.FC = () => {
   );
 
   return (
-    <Layout title="Sign Up">
+    <Layout title="Sign In">
       <div className={styles.wrapper}>
         <div className={styles.titles}>
           <h1>Welcome Back!</h1>
@@ -101,14 +96,13 @@ const UserSignUp: React.FC = () => {
             validateOnChange={false}
             validateOnBlur={false}
             onSubmit={(values) => {
-              console.log(values);
               handleSubmit(values);
             }}
           >
             {({ errors, handleChange }) => {
               return (
                 <Form>
-                  <Grid container xs={9} spacing={3}>
+                  <Grid container spacing={4}>
                     {constructRow('email', handleChange, errors.email)}
                     {constructRow('password', handleChange, errors.password)}
                     <Grid item xs={4}>
@@ -116,10 +110,17 @@ const UserSignUp: React.FC = () => {
                         Not Registered? Sign Up
                       </a>
                     </Grid>
-                    <Grid item xs={6}>
-                      <button className={styles.submit} type="submit">
+                    <Grid item xs={5}>
+                      <Button
+                        disableRipple
+                        disableFocusRipple
+                        disableTouchRipple
+                        disableElevation
+                        className={styles.submit}
+                        type="submit"
+                      >
                         Log In
-                      </button>
+                      </Button>
                     </Grid>
                   </Grid>
                 </Form>
@@ -132,4 +133,4 @@ const UserSignUp: React.FC = () => {
   );
 };
 
-export default UserSignUp;
+export default UserSignIn;

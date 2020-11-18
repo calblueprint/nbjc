@@ -1,27 +1,19 @@
-.body {
-  font-family: Verdana;
-}
-
 .entries {
   width: 100%;
   text-align: left;
 }
 
 .wrapper {
-  /* margin: auto; */
+  margin: auto;
   margin-top: 200px;
   text-align: center;
-  margin-left: 37%;
-  margin-right: 17%;
+  width: 60%;
   height: 400px;
-  font-family: 'Montserrat', sans-serif;
   font-weight: 800;
 }
 
 .titles {
-  /* width: 30%; */
   text-align: left;
-  /* margin: auto; */
 }
 
 .errorText {
@@ -48,6 +40,7 @@
   color: white;
   padding: 5px;
   width: 70px;
+  text-transform: none;
   border-width: 0.5px;
 }
 

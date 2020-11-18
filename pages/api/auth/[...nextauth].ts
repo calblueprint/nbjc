@@ -46,16 +46,6 @@ const options = {
   jwt: {
     secret: process.env.JWT_SIGNING_PRIVATE_KEY,
   },
-
-  // Below are used for placeholder for now, can be used to redirect to different pages in the app later.
-
-  // pages: {
-  // signIn: '/credentials-signin', // Displays signin buttons
-  // signOut: '/api/auth/signout', // Displays form with sign out button
-  // error: '/api/auth/error', // Error code passed in query string as ?error=
-  // verifyRequest: '/api/auth/verify-request', // Used for check email page
-  // newUser: 'signin', // If set, new users will be directed here on first sign in
-  // },
 };
 
 export default (
