@@ -8,6 +8,10 @@ import {
   Select,
   MenuItem,
   InputAdornment,
+  Card,
+  CardContent,
+  Typography,
+  CardActionArea,
 } from '@material-ui/core';
 // import { signIn, signOut, useSession } from 'next-auth/client'; -> See below comment for future functionality
 import SearchIcon from '@material-ui/icons/Search';
@@ -47,49 +51,58 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
 
         <div className={styles.pageContent}>
           <div className={styles.leftCol}>
-            <div className={styles.keywords}>
-              <div className={styles.keyButtonSpace}>
-                <FormControl className={styles.keyword} variant="outlined">
-                  <InputLabel>Keyword</InputLabel>
-                  <Select label="Keyword">
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={1}>One</MenuItem>
-                    <MenuItem value={2}>Two</MenuItem>
-                    <MenuItem value={3}>Three</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
-              <div className={styles.keyButtonSpace}>
-                <FormControl className={styles.keyword} variant="outlined">
-                  <InputLabel>Keyword</InputLabel>
-                  <Select label="Keyword">
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={1}>One</MenuItem>
-                    <MenuItem value={2}>Two</MenuItem>
-                    <MenuItem value={3}>Three</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
-              <div className={styles.keyButtonSpace}>
-                <FormControl className={styles.keyword} variant="outlined">
-                  <InputLabel>More</InputLabel>
-                  <Select label="More">
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={1}>One</MenuItem>
-                    <MenuItem value={2}>Two</MenuItem>
-                    <MenuItem value={3}>Three</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
+            <div className={styles.filters}>
+              <FormControl className={styles.filter} variant="outlined">
+                <InputLabel>Keyword</InputLabel>
+                <Select label="Keyword">
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value={1}>One</MenuItem>
+                  <MenuItem value={2}>Two</MenuItem>
+                  <MenuItem value={3}>Three</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl className={styles.filter} variant="outlined">
+                <InputLabel>Keyword</InputLabel>
+                <Select label="Keyword">
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value={1}>One</MenuItem>
+                  <MenuItem value={2}>Two</MenuItem>
+                  <MenuItem value={3}>Three</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl className={styles.filter} variant="outlined">
+                <InputLabel>More</InputLabel>
+                <Select label="More">
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value={1}>One</MenuItem>
+                  <MenuItem value={2}>Two</MenuItem>
+                  <MenuItem value={3}>Three</MenuItem>
+                </Select>
+              </FormControl>
             </div>
 
-            <div className={styles.cards}>Insert Cards Here</div>
+            <div className={styles.cards}>
+              {orgs.map((org) => (
+                <Card className={styles.card}>
+                  <CardActionArea>
+                    <CardContent>
+                      <Typography variant="h5">{org.name}</Typography>
+                      <Typography variant="body2">
+                        {org.organizationType}
+                        {org.organizationType && org.workType ? ' • ' : null}
+                        {org.workType}
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              ))}
+            </div>
           </div>
 
           <div className={styles.rightCol}>

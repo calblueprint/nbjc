@@ -21,6 +21,8 @@ export const getAllPublicOrganizations = async (): Promise<
     select: {
       id: true,
       name: true,
+      organizationType: true,
+      workType: true,
       lat: true,
       long: true,
     },
