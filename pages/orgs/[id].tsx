@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { GetStaticProps, GetStaticPaths, GetServerSideProps } from 'next';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
-import { Organization } from 'interfaces';
+import { Organization } from '@prisma/client';
 import { sampleOrgData } from 'utils/sample-data';
 import Layout from 'components/Layout';
 import styles from '../../styles/Organization.module.css';
@@ -208,30 +208,28 @@ export default StaticPropsDetail;
 //   }
 // };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  params,
-  req,
-  res,
-}) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {
-    const { id } = params.id;
-    console.log(id);
+    const id = params?.id as string | undefined;
+
     if (!id) {
       return { notFound: true };
     }
     // await orgAPI(req, res);
-    const {
-      createdAt: _createdAt,
-      updatedAt: _updatedAt,
-      ...item
-    } = await getOrganization(id);
-
-    console.log(item);
-    if (!item) {
-      return { notFound: true };
+    const org = await getOrganization(id);
+    if (org) {
+      const { createdAt: _createdAt, updatedAt: _updatedAt, ...item } = org;
+      if (!item) {
+        return {
+          notFound: true,
+        };
+      }
+      return {
+        props: { item },
+      };
     }
     return {
-      props: item,
+      notFound: true,
     };
   } catch (err) {
     return { props: { errors: err.message } };
