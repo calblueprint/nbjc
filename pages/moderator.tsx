@@ -1,10 +1,8 @@
 import { useState, ChangeEvent } from 'react';
-import { GetStaticProps, GetServerSideProps } from 'next';
-import { OrgApp } from 'interfaces';
+import { GetServerSideProps } from 'next';
 import Layout from 'components/Layout';
 import OrgCard from 'components/moderator/OrgCard';
 import OrgDetail from 'components/moderator/OrgDetail';
-import { sampleOrgAppData } from 'utils/sample-data';
 import clsx from 'clsx';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -23,14 +21,14 @@ import {
 import styles from 'styles/Moderator.module.css';
 
 type Props = {
-  items: OrgApp[];
+  items: Organization[];
 };
 
 const prisma = new PrismaClient();
 
 const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
-  const [card, setCard] = useState<OrgApp>(items[0]);
-  const clickCard = (newCard: OrgApp): void => {
+  const [card, setCard] = useState<Organization>(items[0]);
+  const clickCard = (newCard: Organization): void => {
     setCard(newCard);
   };
 
@@ -138,7 +136,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
               <div>
                 <div className={styles.large}>{card.name}</div>
                 <div className={styles.med}>
-                  {card.workType} {card.orgType}
+                  {card.workType} {card.organizationType}
                 </div>
               </div>
               <div>
