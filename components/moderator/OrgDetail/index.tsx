@@ -1,9 +1,9 @@
-import { OrgApp } from 'interfaces';
+import { Organization } from '@prisma/client';
 import { CardMedia, Chip, TextField } from '@material-ui/core';
 import styles from './OrgDetail.module.css';
 
 type DetailProps = {
-  items: OrgApp;
+  items: Organization;
 };
 
 const response =
@@ -35,21 +35,21 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
         <div className={styles.section}>
           <div className={styles.big}>Basics</div>
           <div>Website: {items.website}</div>
-          <div>EIN: {items.EIN}</div>
+          <div>EIN: {items.ein}</div>
           <div>Founded: {items.date}</div>
         </div>
         <div className={styles.section}>
           <div className={styles.big}>Point of Contact</div>
-          <div>Name: {items.contact}</div>
+          <div>Name: {items.contactName}</div>
           <div>Phone: {items.id}</div>
-          <div>Email: {items.email}</div>
+          <div>Email: {items.contactEmail}</div>
         </div>
         <div className={styles.section}>
           <div className={styles.big}>Location</div>
-          <div>Type: {items.orgType}</div>
+          <div>Type: {items.organizationType}</div>
           <div>
             Still need sample address data: <br />
-            {items.description}
+            {items.missionStatement}
           </div>
         </div>
       </div>
@@ -58,7 +58,7 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
         <div className={styles.section}>
           <div className={styles.small}>Orientation</div>
           <div className={styles.chips}>
-            {items.orientation.map((item) => (
+            {items.lgbtqDemographic.map((item) => (
               // TODO: Add accessibility support
               // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
               <div key={0}>
@@ -70,7 +70,7 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
         <div className={styles.section}>
           <div className={styles.small}>Ethnicity</div>
           <div className={styles.chips}>
-            {items.ethnicity.map((item) => (
+            {items.raceDemographic.map((item) => (
               // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
               <div key={0}>
                 <Chip label={item} variant="outlined" />
@@ -81,7 +81,7 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
         <div className={styles.section}>
           <div className={styles.small}>Ages</div>
           <div className={styles.chips}>
-            {items.ages.map((item) => (
+            {items.ageDemographic.map((item) => (
               // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
               <div key={0}>
                 <Chip label={item} variant="outlined" />

@@ -1,5 +1,5 @@
 import { useState, ChangeEvent } from 'react';
-import { GetStaticProps } from 'next';
+import { GetStaticProps, GetServerSideProps } from 'next';
 import { OrgApp } from 'interfaces';
 import Layout from 'components/Layout';
 import OrgCard from 'components/moderator/OrgCard';
@@ -9,6 +9,7 @@ import clsx from 'clsx';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import SearchIcon from '@material-ui/icons/Search';
+import { PrismaClient, Organization } from '@prisma/client';
 import {
   Tabs,
   Tab,
@@ -24,6 +25,8 @@ import styles from 'styles/Moderator.module.css';
 type Props = {
   items: OrgApp[];
 };
+
+const prisma = new PrismaClient();
 
 const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
   const [card, setCard] = useState<OrgApp>(items[0]);
@@ -58,6 +61,8 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
   const handleDrawerCloseRight = (): void => {
     setOpenRight(false);
   };
+
+  console.log(items);
 
   return (
     <Layout title="Moderator Dashboard">
@@ -184,8 +189,14 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
-  const items: OrgApp[] = sampleOrgAppData;
+// export const getStaticProps: GetStaticProps = async () => {
+//   const items: OrgApp[] = sampleOrgAppData;
+//   return { props: { items } };
+// };
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const res: Organization[] = await prisma.organization.findMany();
+  const items = JSON.parse(JSON.stringify(res));
   return { props: { items } };
 };
 
