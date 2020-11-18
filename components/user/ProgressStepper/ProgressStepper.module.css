@@ -1,0 +1,55 @@
+.content {
+  padding-top: 50px;
+  border-top: solid 1px;
+  border-color: silver;
+}
+
+.title {
+  font-size: 1.7rem;
+  font-weight: 600;
+  flex-direction: row;
+  justify-content: space-between;
+  display: flex;
+}
+
+.stepper {
+  margin-bottom: 30px;
+}
+
+.button {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 5px;
+}
+
+.wording {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.steps {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: 15px;
+}
+
+.complete {
+  color: rgb(183, 146, 241);
+}
+
+.current {
+  color: rgb(144, 86, 239);
+  font-weight: 800;
+}
+
+.untouched {
+  color: rgb(143, 143, 143);
+}
+
+.progress {
+  width: 100%;
+  height: 12px;
+  border-radius: 36px;
+}
