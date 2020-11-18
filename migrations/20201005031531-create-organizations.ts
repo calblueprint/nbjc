@@ -16,7 +16,6 @@ export async function up(
         name       VARCHAR(255) NOT NULL,
         long       DECIMAL,
         lat        DECIMAL,
-        type       VARCHAR(255),
         created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (id)

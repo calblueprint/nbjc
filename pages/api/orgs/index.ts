@@ -25,12 +25,7 @@ export default async (
 
   try {
     const newOrg = await prisma.organization.create({
-      data: {
-        name: data.name,
-        long: data.long,
-        lat: data.lat,
-        type: data.type,
-      },
+      data,
     });
     return res.json(newOrg);
   } catch (err) {

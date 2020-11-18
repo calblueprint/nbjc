@@ -15,14 +15,14 @@ export async function up(
         id                           SERIAL,
         answer                       TEXT NOT NULL,
         question_id                  INTEGER NOT NULL,
-        organization_application_id  INTEGER,
+        organization_id              INTEGER,
         created_at                   TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at                   TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (id),
         FOREIGN KEY (question_id)
           REFERENCES application_questions(id),
-        FOREIGN KEY (organization_application_id)
-          REFERENCES organization_applications(id)
+        FOREIGN KEY (organization_id)
+          REFERENCES organizations(id)
       );
   `,
     callback
