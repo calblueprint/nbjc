@@ -61,7 +61,7 @@ const UserProfSettings: React.FC = () => {
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => router.push('../users/change-password')}
+            onClick={() => router.push('/users/change-password')}
             disableElevation
             className={styles.fieldButton}
           >

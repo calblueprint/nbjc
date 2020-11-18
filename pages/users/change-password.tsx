@@ -45,7 +45,7 @@ const ChangePassword: React.FC = () => {
             <Button
               color="primary"
               variant="contained"
-              onClick={() => router.push('../users/settings')}
+              onClick={() => router.push('/users/settings')}
               disableElevation
             >
               Save Changes
