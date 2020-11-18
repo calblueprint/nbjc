@@ -45,14 +45,24 @@ const Layout: React.FunctionComponent<Props> = ({
             </Link>
             <div className={styles.buttons}>
               {!session ? (
-                <Button
-                  className={styles.logButtonSpace}
-                  variant="contained"
-                  color="primary"
-                  onClick={() => router.push('/users/signin')}
-                >
-                  Log In
-                </Button>
+                <div>
+                  <Button
+                    className={styles.logButtonSpace}
+                    variant="contained"
+                    color="primary"
+                    onClick={() => router.push('/users/signin')}
+                  >
+                    Log In
+                  </Button>
+                  <Button
+                    className={styles.logButtonSpace}
+                    variant="contained"
+                    color="primary"
+                    onClick={() => router.push('/users/signup')}
+                  >
+                    Join Us
+                  </Button>
+                </div>
               ) : (
                 <Button
                   className={styles.logButtonSpace}
@@ -63,14 +73,6 @@ const Layout: React.FunctionComponent<Props> = ({
                   Sign Out
                 </Button>
               )}
-              <Button
-                className={styles.logButtonSpace}
-                variant="contained"
-                color="primary"
-                onClick={() => router.push('/users/signup')}
-              >
-                Join Us
-              </Button>
             </div>
           </div>
         </nav>
