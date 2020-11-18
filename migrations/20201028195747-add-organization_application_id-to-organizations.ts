@@ -20,12 +20,13 @@ export async function up(
     ADD COLUMN  mission_statement   TEXT,
     ADD COLUMN  short_history       TEXT,
     ADD COLUMN  key_values          TEXT,
-    ADD COLUMN  lgbtq_demographic   lgbtq_demographic,
-    ADD COLUMN  race_demographic    race_demographic,
-    ADD COLUMN  age_demographic     age_demographic,
+    ADD COLUMN  lgbtq_demographic   lgbtq_demographic[],
+    ADD COLUMN  race_demographic    race_demographic[],
+    ADD COLUMN  age_demographic     age_demographic[],
     ADD COLUMN  capacity            INTEGER,
     ADD COLUMN  ein                 INTEGER,
-    ADD COLUMN  founding_date       DATE;
+    ADD COLUMN  founding_date       DATE,
+    ADD COLUMN  is_501c3            BOOLEAN             NOT NULL DEFAULT false;
   `,
     callback
   );

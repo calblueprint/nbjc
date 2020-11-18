@@ -43,12 +43,13 @@ model Organization {
   missionStatement     String?               @map("mission_statement")
   shortHistory         String?               @map("short_history")
   keyValue             String?               @map("key_values")
-  lgbtqDemographic     LgbtqDemographic?     @map("lgbtq_demographic")
-  raceDemographic      RaceDemographic?      @map("race_demographic")
-  ageDemographic       AgeDemographic?       @map("age_demographic")
+  lgbtqDemographic     LgbtqDemographic[]    @map("lgbtq_demographic")
+  raceDemographic      RaceDemographic[]     @map("race_demographic")
+  ageDemographic       AgeDemographic[]      @map("age_demographic")
   capacity             Int?
   ein                  Int?
   foundingDate         DateTime?             @map("founding_date")
+  is501c3              Boolean               @default(false) @map("is_501c3")
   applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
 
   @@map("organizations")
@@ -154,7 +155,6 @@ enum LgbtqDemographic {
 }
 
 enum OrganizationType {
-  c3 @map("510(c)(3)")
   grassrootsLocal @map("Grassroots/Local")
   statewide @map("Statewide")
   national @map("National")

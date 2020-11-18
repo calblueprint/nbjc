@@ -24,12 +24,19 @@ const schema = Joi.object({
   missionStatement: Joi.string(),
   shortHistory: Joi.string(),
   keyValue: Joi.string(),
-  lgbtqDemographic: Joi.string().valid(...Object.values(LgbtqDemographic)),
-  raceDemographic: Joi.string().valid(...Object.values(RaceDemographic)),
-  ageDemographic: Joi.string().valid(...Object.values(AgeDemographic)),
+  lgbtqDemographic: Joi.array()
+    .unique()
+    .items(Joi.string().valid(...Object.values(LgbtqDemographic))),
+  raceDemographic: Joi.array()
+    .unique()
+    .items(Joi.string().valid(...Object.values(RaceDemographic))),
+  ageDemographic: Joi.array()
+    .unique()
+    .items(Joi.string().valid(...Object.values(AgeDemographic))),
   capacity: Joi.number(),
   ein: Joi.number(),
   foundingDate: Joi.date(),
+  is501c3: Joi.boolean(),
 }).when('$strict', { is: true, then: Joi.object().and('lat', 'long') });
 
 export default schema;

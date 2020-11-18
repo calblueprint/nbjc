@@ -6,7 +6,7 @@ export function up(db: Base, callback: Base.CallbackFunction): void {
   db.runSql(
     `
       CREATE TYPE application_status AS ENUM ('draft', 'submitted', 'approved', 'rejected');
-      CREATE TYPE organization_type AS ENUM ('510(c)(3)', 'Grassroots/Local', 'Statewide', 'National', 'Other');
+      CREATE TYPE organization_type AS ENUM ('Grassroots/Local', 'Statewide', 'National', 'Other');
       CREATE TYPE work_type AS ENUM ('Advocacy', 'Direct Service', 'Networking/Social');
       CREATE TYPE lgbtq_demographic AS ENUM ('LGBTQ+ (All)', 'SGL', 'Transgender', 'Asexual/Aromantic', 'Other');
       CREATE TYPE race_demographic AS ENUM ('POC (All)', 'Black', 'Asian', 'Pacific Islander', 'Latinx', 'Native/Indigeneous', 'Other');
