@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { PublicOrganization } from 'interfaces/organization';
 import {
@@ -29,6 +30,8 @@ type HomeProps = {
 };
 
 const Home: React.FC<HomeProps> = ({ orgs }) => {
+  const router = useRouter();
+
   // This is to verify whether or not the current user has a proper session configured to see the page.
   // Will be implemented in the next PR.
   // const [session, loading] = useSession();
@@ -91,8 +94,10 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
             <div className={styles.cards}>
               {orgs.length !== 0 ? (
                 orgs.map((org) => (
-                  <Card className={styles.card}>
-                    <CardActionArea>
+                  <Card className={styles.card} key={org.id}>
+                    <CardActionArea
+                      onClick={() => router.push(`/orgs/${org.id}`)}
+                    >
                       <CardContent>
                         <Typography variant="h5">{org.name}</Typography>
                         <Typography variant="body2">

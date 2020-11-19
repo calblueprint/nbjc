@@ -1,16 +1,33 @@
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { Button, ButtonGroup, Chip } from '@material-ui/core';
-import { Organization } from '@prisma/client';
+import { Organization, PrismaClient } from '@prisma/client';
 import Layout from 'components/Layout';
-import KeyWord from 'components/organization/KeyWord/index';
 import Project from 'components/organization/Project/index';
 import computeDate from 'utils/computeDate';
-import { getOrganization } from '../api/orgs/[id]';
 import styles from '../../styles/Organization.module.css';
 
+const prisma = new PrismaClient();
+
 type Props = {
-  org: Organization;
+  org: Pick<
+    Organization,
+    | 'id'
+    | 'name'
+    | 'organizationType'
+    | 'workType'
+    | 'address'
+    | 'missionStatement'
+    | 'shortHistory'
+    | 'keyValue'
+    | 'lgbtqDemographic'
+    | 'raceDemographic'
+    | 'ageDemographic'
+    | 'capacity'
+    | 'ein'
+    | 'foundingDate'
+    | 'is501c3'
+  >;
   errors?: string;
 };
 
@@ -105,6 +122,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
             )}
             {org.foundingDate && (
               <p className={styles.info}>
+                {/* TODO: add hydration to convert dates to date objects beforehand */}
                 <b>Founded:</b> {computeDate(new Date(org.foundingDate), 0)}
               </p>
             )}
@@ -180,8 +198,27 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       return { notFound: true };
     }
 
-    const resp = await getOrganization(id);
-    const org = JSON.parse(JSON.stringify(resp)) as Organization;
+    const resp = await await prisma.organization.findOne({
+      where: { id: Number(id) },
+      select: {
+        id: true,
+        name: true,
+        organizationType: true,
+        workType: true,
+        address: true,
+        missionStatement: true,
+        shortHistory: true,
+        keyValue: true,
+        lgbtqDemographic: true,
+        raceDemographic: true,
+        ageDemographic: true,
+        capacity: true,
+        ein: true,
+        foundingDate: true,
+        is501c3: true,
+      },
+    });
+    const org = JSON.parse(JSON.stringify(resp));
     if (!org) {
       return {
         notFound: true,
