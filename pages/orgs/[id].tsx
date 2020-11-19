@@ -1,34 +1,18 @@
 import { useState } from 'react';
-import { GetStaticProps, GetStaticPaths, GetServerSideProps } from 'next';
-import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
+import { GetServerSideProps } from 'next';
+import { Button, ButtonGroup, Chip } from '@material-ui/core';
 import { Organization } from '@prisma/client';
-import { sampleOrgData } from 'utils/sample-data';
 import Layout from 'components/Layout';
-import styles from '../../styles/Organization.module.css';
-import KeyWord from '../../components/organization/KeyWord/index';
-import Project from '../../components/organization/Project/index';
+import KeyWord from 'components/organization/KeyWord/index';
+import Project from 'components/organization/Project/index';
+import computeDate from 'utils/computeDate';
 import { getOrganization } from '../api/orgs/[id]';
+import styles from '../../styles/Organization.module.css';
 
 type Props = {
-  item?: Organization;
+  org: Organization;
   errors?: string;
 };
-
-const orientation = ['LGBTQ+', 'SGL'];
-const orientationList = orientation.map((keyWord) => {
-  return <KeyWord word={keyWord} />;
-});
-
-const background = ['POC', 'Black', 'Latix'];
-const backgroundList = background.map((keyWord) => {
-  return <KeyWord word={keyWord} />;
-});
-
-const age = ['All Ages'];
-const ageList = age.map((keyWord) => {
-  return <KeyWord word={keyWord} />;
-});
 
 const projects = [
   {
@@ -51,14 +35,27 @@ const projectsList = projects.map((project) => {
   return <Project name={project.name} description={project.description} />;
 });
 
-const StaticPropsDetail: React.FunctionComponent<Props> = ({
-  item,
-  errors,
-}) => {
+const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
   const [showInfo, setshowInfo] = useState<boolean>(true);
+
+  const demographics = (category: string, groups: string[]): JSX.Element => {
+    return (
+      <div className={styles.demographic}>
+        {category}
+        <div className={styles.demographicTags}>
+          {groups.length !== 0 ? (
+            groups.map((group) => <Chip label={group} variant="outlined" />)
+          ) : (
+            <Chip label="None" variant="outlined" />
+          )}
+        </div>
+      </div>
+    );
+  };
+
   if (errors) {
     return (
-      <Layout title="Error | Next.js + TypeScript Example">
+      <Layout title="Error | NBJC">
         <p>
           <span style={{ color: 'red' }}>Error:</span> {errors}
         </p>
@@ -67,11 +64,7 @@ const StaticPropsDetail: React.FunctionComponent<Props> = ({
   }
 
   return (
-    <Layout
-      title={`${
-        item ? item.name : 'Organization Detail'
-      } | Next.js + TypeScript Example`}
-    >
+    <Layout title={`${org.name} Profile`}>
       <div className={styles.orgMargins}>
         <div className={styles.orgImages}>
           <img
@@ -90,24 +83,31 @@ const StaticPropsDetail: React.FunctionComponent<Props> = ({
         </div>
         <div className={styles.titleColumns}>
           <div className={styles.leftColumn}>
-            <h2 className={styles.Header}>{item.name}</h2>
-            <h3 className={styles.subHeader}>Type of Work ● Type of Org</h3>
+            <h2 className={styles.Header}>{org.name}</h2>
+            <h3 className={styles.subHeader}>
+              {org.workType}
+              {org.workType && org.organizationType ? ' ● ' : null}
+              {org.organizationType}
+            </h3>
             <h3 className={styles.infoHeader}>Location</h3>
             <p className={styles.info}>
               <b>Type:</b> Headquarters
             </p>
-            <p className={styles.info}>123 Street Name</p>
-            <p className={styles.info}>City, State 123456</p>
+            {org.address && <p className={styles.info}>{org.address}</p>}
             <h3 className={styles.infoHeader}>Basics</h3>
             <p className={styles.info}>
               <b>Site:</b> currentwebsite.org
             </p>
-            <p className={styles.info}>
-              <b>EIN:</b> 12341234123412
-            </p>
-            <p className={styles.info}>
-              <b>Founded:</b> MM/DD/YYYY
-            </p>
+            {org.ein && (
+              <p className={styles.info}>
+                <b>EIN:</b> {org.ein}
+              </p>
+            )}
+            {org.foundingDate && (
+              <p className={styles.info}>
+                <b>Founded:</b> {computeDate(new Date(org.foundingDate), 0)}
+              </p>
+            )}
             <h3 className={styles.infoHeader}>Members</h3>
             <p className={styles.info}>Fred Kim, CEO of redprint</p>
             <p className={styles.info}>Cindy Zhang, CEO of redprint</p>
@@ -147,27 +147,18 @@ const StaticPropsDetail: React.FunctionComponent<Props> = ({
               <div className={styles.rightContent}>
                 <h3 className={styles.audienceHeader}>Audience Demographics</h3>
                 <div className={styles.demographicSection}>
-                  <div className={styles.demographic}>
-                    Orientation
-                    <div className={styles.demographicTags}>
-                      {orientationList}
-                    </div>
-                  </div>
-                  <div className={styles.demographic}>
-                    Background
-                    <div className={styles.demographicTags}>
-                      {backgroundList}
-                    </div>
-                  </div>
-                  <div className={styles.demographic}>
-                    Age Range
-                    <div className={styles.demographicTags}>{ageList}</div>
-                  </div>
+                  {demographics('Orientation', org.lgbtqDemographic)}
+                  {demographics('Background', org.raceDemographic)}
+                  {demographics('Age Range', org.ageDemographic)}
                 </div>
                 <h3 className={styles.audienceHeader}>Our Mission</h3>
-                <p className={styles.infoContent}>Organization mission!</p>
+                {org.missionStatement && (
+                  <p className={styles.infoContent}>{org.missionStatement}</p>
+                )}
                 <h3 className={styles.audienceHeader}>Our History</h3>
-                <p className={styles.infoContent}>Organization history!</p>
+                {org.shortHistory && (
+                  <p className={styles.infoContent}>{org.shortHistory}</p>
+                )}
               </div>
             ) : (
               <div className={styles.projects}>{projectsList}</div>
@@ -179,34 +170,7 @@ const StaticPropsDetail: React.FunctionComponent<Props> = ({
   );
 };
 
-export default StaticPropsDetail;
-
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   // Get the paths we want to pre-render based on users
-//   const paths = sampleOrgData.map((user) => ({
-//     params: { id: user.id.toString() },
-//   }));
-
-//   // We'll pre-render only these paths at build time.
-//   // { fallback: false } means other routes should 404.
-//   return { paths, fallback: false };
-// };
-
-// // This function gets called at build time on server-side.
-// // It won't be called on client-side, so you can even do
-// // direct database queries.
-// export const getStaticProps: GetStaticProps = async ({ params }) => {
-//   try {
-//     const id = params?.id;
-//     const fetchURL = `http://localhost:3000/api/orgs/${id}`;
-//     const item = await fetch(fetchURL).then((response) => response.json());
-//     // By returning { props: item }, the StaticPropsDetail component
-//     // will receive `item` as a prop at build time
-//     return { props: { item } };
-//   } catch (err) {
-//     return { props: { errors: err.message } };
-//   }
-// };
+export default OrgProfile;
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {
@@ -215,21 +179,16 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     if (!id) {
       return { notFound: true };
     }
-    // await orgAPI(req, res);
-    const org = await getOrganization(id);
-    if (org) {
-      const { createdAt: _createdAt, updatedAt: _updatedAt, ...item } = org;
-      if (!item) {
-        return {
-          notFound: true,
-        };
-      }
+
+    const resp = await getOrganization(id);
+    const org = JSON.parse(JSON.stringify(resp)) as Organization;
+    if (!org) {
       return {
-        props: { item },
+        notFound: true,
       };
     }
     return {
-      notFound: true,
+      props: { org },
     };
   } catch (err) {
     return { props: { errors: err.message } };
