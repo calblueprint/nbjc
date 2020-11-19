@@ -6,7 +6,19 @@ import {
   LgbtqDemographic,
   RaceDemographic,
   AgeDemographic,
+  OrganizationGetPayload,
 } from '@prisma/client';
+
+export type PublicOrganization = OrganizationGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    organizationType: true;
+    workType: true;
+    lat: true;
+    long: true;
+  };
+}>;
 
 const schema = Joi.object({
   name: Joi.string().when('$strict', { is: true, then: Joi.required() }),
