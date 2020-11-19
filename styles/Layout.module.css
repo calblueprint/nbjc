@@ -5,6 +5,7 @@
   padding-left: 25px;
   padding-right: 25px;
   margin-bottom: 20px;
+  height: 64px;
 }
 
 .nav {
@@ -19,4 +20,8 @@
 .logButtonSpace {
   margin-left: 10px;
   height: 50%;
+}
+
+.footer {
+  height: 20px;
 }

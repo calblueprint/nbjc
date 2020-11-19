@@ -26,46 +26,31 @@ model Account {
   @@map("accounts")
 }
 
-model OrganizationApplication {
+model Organization {
   id                   Int                   @id @default(autoincrement())
+  name                 String
+  long                 Float?
+  lat                  Float?
+  createdAt            DateTime              @default(now()) @map("created_at")
+  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
   applicationStatus    ApplicationStatus     @default(draft) @map("application_status")
-  organizationName     String                @map("organization_name")
+  active               Boolean               @default(false)
   contactName          String                @map("contact_name")
   contactEmail         String                @map("contact_email")
   organizationType     OrganizationType?     @map("organization_type")
   workType             WorkType?             @map("work_type")
   address              String?
-  lat                  Float?
-  long                 Float?
   missionStatement     String?               @map("mission_statement")
   shortHistory         String?               @map("short_history")
   keyValue             String?               @map("key_values")
-  lgbtqDemographic     LgbtqDemographic?     @map("lgbtq_demographic")
-  raceDemographic      RaceDemographic?      @map("race_demographic")
-  ageDemographic       AgeDemographic?       @map("age_demographic")
+  lgbtqDemographic     LgbtqDemographic[]    @map("lgbtq_demographic")
+  raceDemographic      RaceDemographic[]     @map("race_demographic")
+  ageDemographic       AgeDemographic[]      @map("age_demographic")
   capacity             Int?
   ein                  Int?
   foundingDate         DateTime?             @map("founding_date")
-  createdAt            DateTime              @default(now()) @map("created_at")
-  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
-  userId               Int?                  @map("user_id")
-  user                 User?                 @relation("OrganizationApplicationsToUsers", fields: [userId], references: [id])
-  applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizationApplications")
-  organization         Organization?         @relation("OrganizationApplicationsToOrganizations")
-
-  @@map("organization_applications")
-}
-
-model Organization {
-  id                        Int                      @id @default(autoincrement())
-  name                      String
-  long                      Float?
-  lat                       Float?
-  type                      String?
-  createdAt                 DateTime                 @default(now()) @map("created_at")
-  updatedAt                 DateTime                 @default(now()) @updatedAt @map("updated_at")
-  organizationApplicationId Int?                     @unique @map("organization_application_id")
-  organizationApplication   OrganizationApplication? @relation("OrganizationApplicationsToOrganizations", fields: [organizationApplicationId], references: [id])
+  is501c3              Boolean               @default(false) @map("is_501c3")
+  applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
 
   @@map("organizations")
 }
@@ -83,17 +68,16 @@ model Session {
 }
 
 model User {
-  id                       Int                       @id @default(autoincrement())
-  firstName                String                    @map("first_name")
-  lastName                 String                    @map("last_name")
-  role                     UserRole?
-  email                    String                    @unique
-  emailVerified            DateTime?                 @map("email_verified")
-  image                    String?
-  hashedPassword           String                    @map("hashed_password")
-  createdAt                DateTime                  @default(now()) @map("created_at")
-  updatedAt                DateTime                  @default(now()) @updatedAt @map("updated_at")
-  organizationApplications OrganizationApplication[] @relation("OrganizationApplicationsToUsers")
+  id             Int       @id @default(autoincrement())
+  firstName      String    @map("first_name")
+  lastName       String    @map("last_name")
+  role           UserRole?
+  email          String    @unique
+  emailVerified  DateTime? @map("email_verified")
+  image          String?
+  hashedPassword String    @map("hashed_password")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at")
 
   @@map("users")
 }
@@ -124,14 +108,14 @@ model ApplicationQuestion {
 }
 
 model ApplicationResponse {
-  id                        Int                      @id @default(autoincrement())
-  answer                    String
-  questionId                Int                      @map("question_id")
-  organizationApplicationId Int?                     @map("organization_application_id")
-  createdAt                 DateTime                 @default(now()) @map("created_at")
-  updatedAt                 DateTime                 @default(now()) @updatedAt @map("updated_at")
-  organizationApplication   OrganizationApplication? @relation("ApplicationResponsesToOrganizationApplications", fields: [organizationApplicationId], references: [id])
-  applicationQuestion       ApplicationQuestion      @relation("ApplicationQuestionsToApplicationResponses", fields: [questionId], references: [id])
+  id                  Int                 @id @default(autoincrement())
+  answer              String
+  questionId          Int                 @map("question_id")
+  organizationId      Int?                @map("organization_id")
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @default(now()) @updatedAt @map("updated_at")
+  organization        Organization?       @relation("ApplicationResponsesToOrganizations", fields: [organizationId], references: [id])
+  applicationQuestion ApplicationQuestion @relation("ApplicationQuestionsToApplicationResponses", fields: [questionId], references: [id])
 
   @@map("application_responses")
 }
@@ -143,12 +127,12 @@ model migrations {
 }
 
 enum AgeDemographic {
-  child @map("Children")
-  teen @map("Teens")
-  adult @map("Adults")
-  senior @map("Seniors")
+  child   @map("Children")
+  teen    @map("Teens")
+  adult   @map("Adults")
+  senior  @map("Seniors")
 
-   @@map("age_demographic")
+  @@map("age_demographic")
 }
 
 enum ApplicationStatus {
@@ -157,39 +141,38 @@ enum ApplicationStatus {
   approved
   rejected
 
-   @@map("application_status")
+  @@map("application_status")
 }
 
 enum LgbtqDemographic {
-  lgbtqAll @map("LGBTQ+ (All)")
-  sgl @map("SGL")
-  transgender @map("Transgender")
-  asexualAromantic @map("Asexual/Aromantic")
-  other @map("Other")
+  lgbtqAll          @map("LGBTQ+ (All)")
+  sgl               @map("SGL")
+  transgender       @map("Transgender")
+  asexualAromantic  @map("Asexual/Aromantic")
+  other             @map("Other")
 
-   @@map("lgbtq_demographic")
+  @@map("lgbtq_demographic")
 }
 
 enum OrganizationType {
-  c3 @map("510(c)(3)")
-  grassrootsLocal @map("Grassroots/Local")
-  statewide @map("Statewide")
-  national @map("National")
-  other @map("Other")
+  grassrootsLocal  @map("Grassroots/Local")
+  statewide        @map("Statewide")
+  national         @map("National")
+  other            @map("Other")
 
-   @@map("organization_type")
+  @@map("organization_type")
 }
 
 enum RaceDemographic {
-  pocAll @map("POC (All)")
-  black @map("Black")
-  asian @map("Asian")
-  pacificIslander @map("Pacific Islander")
-  latinx @map("Latinx")
-  nativeIndigeneous @map("Native/Indigeneous")
-  other @map("Other")
+  pocAll             @map("POC (All)")
+  black              @map("Black")
+  asian              @map("Asian")
+  pacificIslander    @map("Pacific Islander")
+  latinx             @map("Latinx")
+  nativeIndigeneous  @map("Native/Indigeneous")
+  other              @map("Other")
 
-   @@map("race_demographic")
+  @@map("race_demographic")
 }
 
 enum UserRole {
@@ -197,13 +180,13 @@ enum UserRole {
   moderator
   admin
 
-   @@map("user_role")
+  @@map("user_role")
 }
 
 enum WorkType {
-  advocacy @map("Advocacy")
-  directService @map("Direct Service")
-  networkingSocial @map("Networking/Social")
+  advocacy          @map("Advocacy")
+  directService     @map("Direct Service")
+  networkingSocial  @map("Networking/Social")
 
-   @@map("work_type")
+  @@map("work_type")
 }
