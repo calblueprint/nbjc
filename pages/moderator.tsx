@@ -113,13 +113,14 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
             </div>
             {selected === 0 && (
               <div className={styles.content}>
-                {items.map((item) => (
-                  // TODO: Add accessibility support
-                  // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-                  <div key={item.id} onClick={() => clickCard(item)}>
-                    <OrgCard items={item} />
-                  </div>
-                ))}
+                {items &&
+                  items.map((item) => (
+                    // TODO: Add accessibility support
+                    // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+                    <div key={item.id} onClick={() => clickCard(item)}>
+                      <OrgCard items={item} />
+                    </div>
+                  ))}
               </div>
             )}
             {selected === 1 &&
@@ -134,10 +135,12 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
           <div className={styles.rightCol}>
             <div className={styles.header}>
               <div>
-                <div className={styles.large}>{card.name}</div>
-                <div className={styles.med}>
-                  {card.workType} {card.organizationType}
-                </div>
+                <div className={styles.large}>{card && card.name}</div>
+                {card.workType && card.organizationType && (
+                  <div className={styles.med}>
+                    {card.workType} {card.organizationType}
+                  </div>
+                )}
               </div>
               <div>
                 <Button variant="outlined" color="primary">
@@ -167,7 +170,9 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
                   <ChevronRightIcon />
                 </IconButton>
               </div>
-              <div className={styles.textField}>notes for {card.name}</div>
+              <div className={styles.textField}>
+                notes for {card && card.name}
+              </div>
             </Drawer>
             <div className={styles.content}>
               <OrgDetail items={card} />
@@ -195,6 +200,11 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const res: Organization[] = await prisma.organization.findMany();
   const items = JSON.parse(JSON.stringify(res));
+  if (!items) {
+    return {
+      notFound: true,
+    };
+  }
   return { props: { items } };
 };
 
