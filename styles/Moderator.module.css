@@ -1,94 +1,93 @@
 .root {
-    display: flex;
-    flex-direction: row;
-    height: calc(100vh - 84px);
-  }
-  .leftCol {
-    display: flex;
-    justify-content: flex-start;
-    flex-direction: column;
-    height: 100%;
-    margin-left: 10px;
-  }
-  
-  .rightCol {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding-right: 30px;
-    padding-left: 30px;
-  }
-  
-  .header {
-    background-color: white;
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-  }
-  
-  .footer {
-    background-color: white;
-    display: flex;
-    padding: 10px;
-    justify-content: flex-end;
-  }
-  
-  .content {
-    flex: 1;
-    overflow: auto;
-    background-color: white;
-  }
-  
-  .large {
-    font-size: 30px;
-    font-weight: bold;
-  }
-  
-  .med {
-    font-size: 20px;
-    font-weight: 400;
-  }
-  
-  .tabs {
-    display: flex;
-    justify-content: space-between;
-    padding-bottom: 5px;
-  }
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 104px);
+}
+.leftCol {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  height: 100%;
+  margin-left: 10px;
+}
+
+.rightCol {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-right: 30px;
+  padding-left: 30px;
+}
+
+.header {
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.footer {
+  background-color: white;
+  display: flex;
+  padding: 10px;
+  justify-content: flex-end;
+}
+
+.content {
+  flex: 1;
+  overflow: auto;
+  background-color: white;
+}
+
+.large {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.med {
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 5px;
+}
 
 .menuButton {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .hide {
-    display: none;
+  display: none;
 }
 
 .drawer {
-    width: 350px;
+  width: 350px;
 }
 
 .drawerPaperLeft {
-    width: 350px;
-    height: calc(100% - 80px);
-    top: 105px;
+  width: 350px;
+  height: calc(100% - 80px);
+  top: 105px;
 }
 
 .drawerPaperRight {
-    width: 350px;
-    height: calc(100% - 22%);
-    top: 110px;
-    background-color: lightgray;
+  width: 350px;
+  height: calc(100% - 22%);
+  top: 110px;
+  background-color: lightgray;
 }
 
 .main {
-    flex-grow: 1;
-    padding-left: 20px;
-    margin-left: -350px;
-    transition-property: margin-left;
-    transition-duration: 250ms;
+  flex-grow: 1;
+  padding-left: 20px;
+  margin-left: -350px;
+  transition-property: margin-left;
+  transition-duration: 250ms;
 }
 
 .mainShift {
-    margin-left: 0px;
+  margin-left: 0px;
 }
-  
