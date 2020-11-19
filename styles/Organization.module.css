@@ -1,7 +1,5 @@
 .orgMargins {
-  margin-left: 142px;
-  margin-right: 142px;
-  margin-bottom: 90px;
+  padding: 0px 40px;
 }
 
 .titleColumns {
@@ -14,12 +12,14 @@
   flex-direction: column;
   flex-grow: 2;
   width: 30%;
+  margin-right: 20px;
 }
 
 .rightColumn {
   display: flex;
   flex-direction: column;
   width: 70%;
+  margin-left: 20px;
 }
 
 .projects {
