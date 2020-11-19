@@ -1,5 +1,5 @@
 import { useFormik } from 'formik';
-import { Form } from 'interfaces/index';
+import { Form } from 'interfaces';
 import { useState, ChangeEvent } from 'react';
 import { Tabs, Tab, AppBar, Button } from '@material-ui/core';
 import Layout from 'components/Layout';
