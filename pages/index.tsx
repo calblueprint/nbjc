@@ -1,4 +1,6 @@
+import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
+import { PublicOrganization } from 'interfaces/organization';
 import {
   TextField,
   FormControl,
@@ -6,17 +8,27 @@ import {
   Select,
   MenuItem,
   InputAdornment,
+  Card,
+  CardContent,
+  Typography,
+  CardActionArea,
 } from '@material-ui/core';
-// import { signIn, signOut, useSession } from 'next-auth/client'; -> See below comment for future functionality
 import SearchIcon from '@material-ui/icons/Search';
 import Layout from 'components/Layout';
+import { PrismaClient } from '@prisma/client';
 import styles from '../styles/Home.module.css';
+
+const prisma = new PrismaClient();
 
 const Map = dynamic(() => import('../components/Map'), {
   ssr: false,
 });
 
-const Home: React.FC = () => {
+type HomeProps = {
+  orgs: PublicOrganization[];
+};
+
+const Home: React.FC<HomeProps> = ({ orgs }) => {
   // This is to verify whether or not the current user has a proper session configured to see the page.
   // Will be implemented in the next PR.
   // const [session, loading] = useSession();
@@ -40,53 +52,66 @@ const Home: React.FC = () => {
 
         <div className={styles.pageContent}>
           <div className={styles.leftCol}>
-            <div className={styles.keywords}>
-              <div className={styles.keyButtonSpace}>
-                <FormControl className={styles.keyword} variant="outlined">
-                  <InputLabel>Keyword</InputLabel>
-                  <Select label="Keyword">
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={1}>One</MenuItem>
-                    <MenuItem value={2}>Two</MenuItem>
-                    <MenuItem value={3}>Three</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
-              <div className={styles.keyButtonSpace}>
-                <FormControl className={styles.keyword} variant="outlined">
-                  <InputLabel>Keyword</InputLabel>
-                  <Select label="Keyword">
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={1}>One</MenuItem>
-                    <MenuItem value={2}>Two</MenuItem>
-                    <MenuItem value={3}>Three</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
-              <div className={styles.keyButtonSpace}>
-                <FormControl className={styles.keyword} variant="outlined">
-                  <InputLabel>More</InputLabel>
-                  <Select label="More">
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={1}>One</MenuItem>
-                    <MenuItem value={2}>Two</MenuItem>
-                    <MenuItem value={3}>Three</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
+            <div className={styles.filters}>
+              <FormControl className={styles.filter} variant="outlined">
+                <InputLabel>Keyword</InputLabel>
+                <Select label="Keyword">
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value={1}>One</MenuItem>
+                  <MenuItem value={2}>Two</MenuItem>
+                  <MenuItem value={3}>Three</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl className={styles.filter} variant="outlined">
+                <InputLabel>Keyword</InputLabel>
+                <Select label="Keyword">
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value={1}>One</MenuItem>
+                  <MenuItem value={2}>Two</MenuItem>
+                  <MenuItem value={3}>Three</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl className={styles.filter} variant="outlined">
+                <InputLabel>More</InputLabel>
+                <Select label="More">
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value={1}>One</MenuItem>
+                  <MenuItem value={2}>Two</MenuItem>
+                  <MenuItem value={3}>Three</MenuItem>
+                </Select>
+              </FormControl>
             </div>
 
-            <div className={styles.cards}>Insert Cards Here</div>
+            <div className={styles.cards}>
+              {orgs.length !== 0 ? (
+                orgs.map((org) => (
+                  <Card className={styles.card}>
+                    <CardActionArea>
+                      <CardContent>
+                        <Typography variant="h5">{org.name}</Typography>
+                        <Typography variant="body2">
+                          {org.organizationType}
+                          {org.organizationType && org.workType ? ' • ' : null}
+                          {org.workType}
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                ))
+              ) : (
+                <Typography>No Organizations</Typography>
+              )}
+            </div>
           </div>
 
           <div className={styles.rightCol}>
-            <Map width="100%" height="100%" />
+            <Map orgs={orgs} width="100%" height="100%" />
           </div>
         </div>
       </div>
@@ -95,3 +120,30 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  try {
+    const resp = await prisma.organization.findMany({
+      where: { active: true },
+      orderBy: {
+        name: 'asc',
+      },
+      select: {
+        id: true,
+        name: true,
+        organizationType: true,
+        workType: true,
+        lat: true,
+        long: true,
+      },
+    });
+    const orgs = JSON.parse(JSON.stringify(resp)) as PublicOrganization[];
+    return {
+      props: {
+        orgs,
+      },
+    };
+  } catch (err) {
+    return { props: { errors: err.message } };
+  }
+};
