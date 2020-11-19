@@ -35,6 +35,9 @@ const Layout: React.FunctionComponent<Props> = ({
             <Link href="/moderator">
               <a className={styles.link}>Moderator Dashboard</a>
             </Link>
+            <Link href="/users/settings">
+              <a className={styles.link}>Users</a>
+            </Link>
             <div className={styles.buttons}>
               <Button
                 className={styles.logButtonSpace}
@@ -57,6 +60,7 @@ const Layout: React.FunctionComponent<Props> = ({
         </nav>
       </header>
       {children}
+      <footer className={styles.footer} />
     </div>
   );
 };
