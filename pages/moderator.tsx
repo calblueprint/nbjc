@@ -60,8 +60,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
     setOpenRight(false);
   };
 
-  console.log(items);
-
   return (
     <Layout title="Moderator Dashboard">
       <div className={styles.root}>
@@ -192,12 +190,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
   );
 };
 
-// export const getStaticProps: GetStaticProps = async () => {
-//   const items: OrgApp[] = sampleOrgAppData;
-//   return { props: { items } };
-// };
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const res: Organization[] = await prisma.organization.findMany();
   const items = JSON.parse(JSON.stringify(res)) as Organization[];
   return { props: { items } };
