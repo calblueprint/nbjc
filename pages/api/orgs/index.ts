@@ -13,23 +13,6 @@ export const getAllOrganizations = async (): Promise<Organization[] | null> => {
   return orgs;
 };
 
-export const getAllPublicOrganizations = async (): Promise<
-  PublicOrganization[] | null
-> => {
-  const orgs = await prisma.organization.findMany({
-    where: { active: true },
-    select: {
-      id: true,
-      name: true,
-      organizationType: true,
-      workType: true,
-      lat: true,
-      long: true,
-    },
-  });
-  return orgs;
-};
-
 export default async (
   req: NextApiRequest,
   res: NextApiResponse

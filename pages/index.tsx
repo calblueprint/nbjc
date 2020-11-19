@@ -13,11 +13,12 @@ import {
   Typography,
   CardActionArea,
 } from '@material-ui/core';
-// import { signIn, signOut, useSession } from 'next-auth/client'; -> See below comment for future functionality
 import SearchIcon from '@material-ui/icons/Search';
 import Layout from 'components/Layout';
+import { PrismaClient } from '@prisma/client';
 import styles from '../styles/Home.module.css';
-import { getAllPublicOrganizations } from './api/orgs';
+
+const prisma = new PrismaClient();
 
 const Map = dynamic(() => import('../components/Map'), {
   ssr: false,
@@ -88,20 +89,24 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
             </div>
 
             <div className={styles.cards}>
-              {orgs.map((org) => (
-                <Card className={styles.card}>
-                  <CardActionArea>
-                    <CardContent>
-                      <Typography variant="h5">{org.name}</Typography>
-                      <Typography variant="body2">
-                        {org.organizationType}
-                        {org.organizationType && org.workType ? ' • ' : null}
-                        {org.workType}
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              ))}
+              {orgs.length !== 0 ? (
+                orgs.map((org) => (
+                  <Card className={styles.card}>
+                    <CardActionArea>
+                      <CardContent>
+                        <Typography variant="h5">{org.name}</Typography>
+                        <Typography variant="body2">
+                          {org.organizationType}
+                          {org.organizationType && org.workType ? ' • ' : null}
+                          {org.workType}
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                ))
+              ) : (
+                <Typography>No Organizations</Typography>
+              )}
             </div>
           </div>
 
@@ -118,9 +123,21 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    const resp = await getAllPublicOrganizations();
-    const orgs = JSON.parse(JSON.stringify(resp));
-    console.log(orgs);
+    const resp = await prisma.organization.findMany({
+      where: { active: true },
+      orderBy: {
+        name: 'asc',
+      },
+      select: {
+        id: true,
+        name: true,
+        organizationType: true,
+        workType: true,
+        lat: true,
+        long: true,
+      },
+    });
+    const orgs = JSON.parse(JSON.stringify(resp)) as PublicOrganization[];
     return {
       props: {
         orgs,
