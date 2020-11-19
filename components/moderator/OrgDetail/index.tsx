@@ -1,13 +1,10 @@
-import { PrismaClient, Organization } from '@prisma/client';
-import { GetServerSideProps } from 'next';
+import { Organization } from '@prisma/client';
 import { CardMedia, Chip, TextField } from '@material-ui/core';
 import styles from './OrgDetail.module.css';
 
 type DetailProps = {
   items: Organization;
 };
-
-const prisma = new PrismaClient();
 
 const response =
   "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.";
@@ -131,12 +128,6 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
       </div>
     </div>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const res: Organization[] = await prisma.organization.findMany();
-  const items = JSON.parse(JSON.stringify(res));
-  return { props: { items } };
 };
 
 export default OrgDetail;

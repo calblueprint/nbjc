@@ -199,12 +199,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const res: Organization[] = await prisma.organization.findMany();
-  const items = JSON.parse(JSON.stringify(res));
-  if (!items) {
-    return {
-      notFound: true,
-    };
-  }
+  const items = JSON.parse(JSON.stringify(res)) as Organization[];
   return { props: { items } };
 };
 

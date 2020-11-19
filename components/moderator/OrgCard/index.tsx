@@ -5,15 +5,12 @@ import {
   CardActionArea,
   Typography,
 } from '@material-ui/core';
-import { PrismaClient, Organization } from '@prisma/client';
-import { GetServerSideProps } from 'next';
+import { Organization } from '@prisma/client';
 import styles from './OrgCard.module.css';
 
 type CardProps = {
   items: Organization;
 };
-
-const prisma = new PrismaClient();
 
 const OrgCard: React.FunctionComponent<CardProps> = ({ items }) => {
   return (
@@ -43,12 +40,6 @@ const OrgCard: React.FunctionComponent<CardProps> = ({ items }) => {
       </CardActionArea>
     </Card>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const res: Organization[] = await prisma.organization.findMany();
-  const items = JSON.parse(JSON.stringify(res));
-  return { props: { items } };
 };
 
 export default OrgCard;
