@@ -1,47 +1,93 @@
 .root {
   display: flex;
-  background-color: white;
   flex-direction: row;
+  height: calc(100vh - 104px);
 }
 .leftCol {
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
-  width: 25%;
-  margin-top: 8px;
-  margin-left: 15px;
-  margin-right: 15px;
+  height: 100%;
+  margin-left: 10px;
 }
+
 .rightCol {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  width: 70%;
-  margin-left: 20px;
-  margin-top: 10px;
+  padding-right: 30px;
+  padding-left: 30px;
 }
 
-.expandedApp {
-  display: flex;
-  border: 2px solid black;
-  padding-left: 10px;
-  margin-bottom: 10px;
-  height: 100%;
-  padding-right: 15px;
-}
-
-.acceptDecline {
+.header {
+  background-color: white;
   display: flex;
   justify-content: space-between;
-  align-items: right;
+  padding: 10px;
 }
 
-.accept {
-  border-radius: 8px;
-  font-size: 15px;
+.footer {
+  background-color: white;
+  display: flex;
+  padding: 10px;
+  justify-content: flex-end;
 }
 
-.decline {
-  border-radius: 8px;
-  color: white;
-  font-size: 15px;
+.content {
+  flex: 1;
+  overflow: auto;
+  background-color: white;
+}
+
+.large {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.med {
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 5px;
+}
+
+.menuButton {
+  margin-right: 10px;
+}
+
+.hide {
+  display: none;
+}
+
+.drawer {
+  width: 350px;
+}
+
+.drawerPaperLeft {
+  width: 350px;
+  height: calc(100% - 80px);
+  top: 105px;
+}
+
+.drawerPaperRight {
+  width: 350px;
+  height: calc(100% - 22%);
+  top: 110px;
+  background-color: lightgray;
+}
+
+.main {
+  flex-grow: 1;
+  padding-left: 20px;
+  margin-left: -350px;
+  transition-property: margin-left;
+  transition-duration: 250ms;
+}
+
+.mainShift {
+  margin-left: 0px;
 }
