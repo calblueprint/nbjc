@@ -47,49 +47,99 @@ const TabBasics: React.FC<TabProps> = ({
   const placeholderText = '';
 
   function streetCityError(): React.ReactElement | null {
-    if ('street' in touched && touched.street && errors.street) {
-      if ('city' in touched && touched.city && errors.city) {
-        return (
-          <div className={styles.errorGroup}>
-            <div className={styles.errorStreet}>{errors.street}</div>
-            <div className={styles.errorCity}>{errors.city}</div>
-          </div>
-        );
-      }
-      return <div className={styles.errorStreet}>{errors.street}</div>;
+    let empty = true;
+    let street = null;
+    let city = null;
+    if ('state' in touched && touched.street && errors.street) {
+      empty = false;
+      street = <div className={styles.errorStreet}>{errors.street}</div>;
+    } else {
+      street = <div className={styles.errorStreet} />;
     }
     if ('city' in touched && touched.city && errors.city) {
-      return (
-        <div className={styles.errorGroup}>
-          <div className={styles.errorStreet} />
-          <div className={styles.errorCity}>{errors.city}</div>
-        </div>
-      );
+      empty = false;
+      city = <div>{errors.orientation}</div>;
+    } else {
+      city = <div />;
     }
-    return null;
+
+    if (empty) {
+      return null;
+    }
+    return (
+      <div className={styles.errorGroup}>
+        {street}
+        {city}
+      </div>
+    );
   }
 
   function stateZipcodeError(): React.ReactElement | null {
+    let empty = true;
+    let state = null;
+    let zipcode = null;
     if ('state' in touched && touched.state && errors.state) {
-      if ('zipcode' in touched && touched.zipcode && errors.zipcode) {
-        return (
-          <div className={styles.errorGroup}>
-            <div className={styles.errorState}>{errors.state}</div>
-            <div className={styles.errorZipcode}>{errors.zipcode}</div>
-          </div>
-        );
-      }
-      return <div className={styles.errorState}>{errors.state}</div>;
+      empty = false;
+      state = <div className={styles.errorState}>{errors.state}</div>;
+    } else {
+      state = <div className={styles.errorState} />;
     }
     if ('zipcode' in touched && touched.zipcode && errors.zipcode) {
-      return (
-        <div className={styles.errorGroup}>
-          <div className={styles.errorState} />
-          <div className={styles.errorZipcode}>{errors.zipcode}</div>
-        </div>
-      );
+      empty = false;
+      zipcode = <div className={styles.errorState}>{errors.orientation}</div>;
+    } else {
+      zipcode = <div className={styles.errorState} />;
     }
-    return null;
+
+    if (empty) {
+      return null;
+    }
+    return (
+      <div className={styles.errorGroup}>
+        {state}
+        {zipcode}
+      </div>
+    );
+  }
+
+  function demographicErrors(): React.ReactElement | null {
+    let empty = true;
+    let agesError = null;
+    let orientationError = null;
+    let ethnicityError = null;
+    if ('ages' in touched && touched.ages && errors.ages) {
+      empty = false;
+      agesError = <div className={styles.errorDemo}>{errors.ages}</div>;
+    } else {
+      agesError = <div className={styles.errorDemo} />;
+    }
+    if ('orientation' in touched && touched.orientation && errors.orientation) {
+      empty = false;
+      orientationError = (
+        <div className={styles.errorDemo}>{errors.orientation}</div>
+      );
+    } else {
+      orientationError = <div className={styles.errorDemo} />;
+    }
+    if ('ethnicity' in touched && touched.ethnicity && errors.ethnicity) {
+      empty = false;
+      ethnicityError = (
+        <div className={styles.errorDemo}>{errors.ethnicity}</div>
+      );
+    } else {
+      ethnicityError = <div className={styles.errorDemo} />;
+    }
+
+    if (empty) {
+      return null;
+    }
+    return (
+      <div className={styles.errorGroup}>
+        {agesError}
+        {orientationError}
+        {ethnicityError}
+      </div>
+    );
   }
 
   return (
@@ -391,6 +441,7 @@ const TabBasics: React.FC<TabProps> = ({
             )}
           />
         </div>
+        {demographicErrors()}
       </div>
       <div className={styles.short}>
         <p>Mission History</p>
@@ -404,6 +455,11 @@ const TabBasics: React.FC<TabProps> = ({
           rows={6}
           placeholder={placeholderText}
         />
+        {'missionHistory' in touched &&
+        touched.missionHistory &&
+        errors.missionHistory ? (
+          <div className={styles.errorPara}>{errors.missionHistory}</div>
+        ) : null}
       </div>
     </>
   );

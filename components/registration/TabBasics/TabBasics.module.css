@@ -101,63 +101,33 @@
 }
 
 .errorStreet {
-  font-size: 0.9rem;
-  font-weight: 300;
-  display: flex;
-  color: red;
-  width: 67%;
+  width: 68%;
   margin-left: 3%;
-}
-
-.errorCity {
-  font-size: 0.9rem;
-  font-weight: 300;
-  display: flex;
-  color: red;
-  width: 30%;
-}
-
-.errorCity2 {
-  font-size: 0.9rem;
-  font-weight: 300;
-  display: flex;
-  color: red;
-  margin-left: 70%;
 }
 
 .errorGroup {
   display: flex;
   flex-direction: row;
+  display: flex;
+  color: red;
+  font-size: 0.9rem;
+  font-weight: 300;
 }
 
 .errorState {
-  font-size: 0.9rem;
-  font-weight: 300;
-  display: flex;
-  color: red;
-  width: 20%;
+  width: 17%;
   margin-left: 3%;
 }
 
-.errorZipcode {
-  font-size: 0.9rem;
-  font-weight: 300;
-  display: flex;
-  color: red;
-  width: 20%;
+.errorDemo {
+  width: 33.33%;
+  margin-left: 2%;
 }
 
-.errorZipcode2 {
+.errorPara {
   font-size: 0.9rem;
   font-weight: 300;
   display: flex;
   color: red;
-  margin-left: 23%;
-}
-
-.errorAges {
-  font-size: 0.9rem;
-  font-weight: 300;
-  display: flex;
-  color: red;
+  margin-left: 2%;
 }

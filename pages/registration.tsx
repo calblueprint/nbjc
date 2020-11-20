@@ -8,22 +8,23 @@ import TabBasics from 'components/registration/TabBasics';
 import TabProj from 'components/registration/TabProj';
 import styles from 'styles/Registration.module.css';
 
-const validate = (values: any): { [k: string]: any } => {
-  const errors: { [k: string]: any } = {};
+const validate = (values: string): { [k: string]: string } => {
+  const errors: { [k: string]: string } = {};
+  const r = '*Required';
   if (!values.orgName) {
-    errors.orgName = '*Required';
+    errors.orgName = r;
   }
   if (values.workType.length === 0) {
-    errors.workType = '*Required';
+    errors.workType = r;
   }
   if (values.orgType.length === 0) {
-    errors.orgType = '*Required';
+    errors.orgType = r;
   }
   if (!values.contactName) {
-    errors.contactName = '*Required';
+    errors.contactName = r;
   }
   if (!values.contactEmail) {
-    errors.contactEmail = '*Required';
+    errors.contactEmail = r;
   } else if (
     values.contactEmail.includes(' ') ||
     !values.contactEmail.includes('@') ||
@@ -32,37 +33,58 @@ const validate = (values: any): { [k: string]: any } => {
     errors.contactEmail = '*Invalid Email';
   }
   if (!values.website) {
-    errors.website = '*Required';
+    errors.website = r;
   }
   if (!values.location) {
-    errors.location = '*Required';
+    errors.location = r;
   }
   if (!values.street) {
-    errors.street = '*Required';
+    errors.street = r;
   }
   if (!values.city) {
-    errors.city = '*Required';
+    errors.city = r;
   }
   if (!values.state) {
-    errors.state = '*Required';
+    errors.state = r;
   }
   if (!values.zipcode) {
-    errors.zipcode = '*Required';
+    errors.zipcode = r;
   }
   if (values.EIN.length === 0) {
-    errors.EIN = '*Required';
+    errors.EIN = r;
   }
   if (!values.foundingDate) {
-    errors.foundingDate = '*Required';
+    errors.foundingDate = r;
   }
   if (values.ages.length === 0) {
-    errors.ages = '*Required';
+    errors.ages = r;
   }
   if (values.orientation.length === 0) {
-    errors.orientation = '*Required';
+    errors.orientation = r;
   }
   if (values.ethnicity.length === 0) {
-    errors.ethnicity = '*Required';
+    errors.ethnicity = r;
+  }
+  if (!values.missionHistory) {
+    errors.missionHistory = r;
+  }
+  if (!values.proj1) {
+    errors.proj1 = r;
+  }
+  if (!values.proj2) {
+    errors.proj2 = r;
+  }
+  if (!values.proj3) {
+    errors.proj3 = r;
+  }
+  if (!values.short1) {
+    errors.short1 = r;
+  }
+  if (!values.short2) {
+    errors.short2 = r;
+  }
+  if (!values.short3) {
+    errors.short3 = r;
   }
   return errors;
 };
@@ -134,13 +156,21 @@ const Registration: React.FC = () => {
           {selected === 1 && (
             <TabProj
               handleChange={formik.handleChange}
+              handleBlur={formik.handleBlur}
               values={formik.values}
+              setFieldValue={formik.setFieldValue}
+              touch={formik.touched}
+              formikErrors={formik.errors}
             />
           )}
           {selected === 2 && (
             <TabShortResponse
               handleChange={formik.handleChange}
+              handleBlur={formik.handleBlur}
               values={formik.values}
+              setFieldValue={formik.setFieldValue}
+              touch={formik.touched}
+              formikErrors={formik.errors}
             />
           )}
         </div>
