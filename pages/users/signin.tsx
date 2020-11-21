@@ -1,6 +1,6 @@
 import { signIn } from 'next-auth/client';
 import { Grid, TextField, Button } from '@material-ui/core';
-import { Formik, Form } from 'formik';
+import { Formik, Form, FormikHandlers } from 'formik';
 import SigninSchema from 'interfaces/signin';
 import Layout from 'components/Layout';
 import styles from '../../styles/users/Signin.module.css';
@@ -17,13 +17,13 @@ interface ErrorValues {
 
 // UserSignIn page. Will need additional email verification to be able to create organizations.
 const UserSignIn: React.FC = () => {
-  const handleSubmit = async (values: FormValues): Promise<any> => {
+  const handleSubmit = async (values: FormValues): Promise<void> => {
     // Sign in with credentials
     try {
       signIn('credentials', {
         email: values.email,
         password: values.password,
-        callbackUrl: 'http://localhost:3000',
+        callbackUrl: '/',
       });
     } catch {
       throw new Error('Could not sign in.');
@@ -50,14 +50,14 @@ const UserSignIn: React.FC = () => {
 
   const constructRow = (
     varName: string,
-    handleChange: any,
+    handleChange: FormikHandlers['handleChange'],
     error?: string
-  ): any => (
+  ): JSX.Element => (
     <>
-      <Grid item xs={4}>
+      <Grid item xs={6}>
         <div className={styles.entryName}>{varName}</div>
       </Grid>
-      <Grid item xs={5}>
+      <Grid item xs={6}>
         <TextField
           className={styles.entryField}
           size="small"
@@ -105,12 +105,12 @@ const UserSignIn: React.FC = () => {
                   <Grid container spacing={4}>
                     {constructRow('email', handleChange, errors.email)}
                     {constructRow('password', handleChange, errors.password)}
-                    <Grid item xs={4}>
+                    <Grid item xs={6}>
                       <a className={styles.login} href="/users/signup">
                         Not Registered? Sign Up
                       </a>
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={6}>
                       <Button
                         disableRipple
                         disableFocusRipple

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Grid, TextField, Button } from '@material-ui/core';
-import { Formik, Form } from 'formik';
+import { Formik, Form, FormikHandlers } from 'formik';
 import SignupSchema from 'interfaces/signup';
 import Layout from 'components/Layout';
 import { signIn } from 'next-auth/client';
+import CreateError from 'utils/error';
 import styles from '../../styles/users/Signup.module.css';
 
 interface FormValues {
@@ -20,11 +21,12 @@ interface ErrorValues {
 
 // UserSignUp page. Will need additional email verification to be able to create organizations.
 const UserSignUp: React.FC = () => {
-  const [emailExists, setEmailExists] = useState(false);
+  // const [emailExists, setEmailExists] = useState(false);
+  const [errorBanner, setErrorBanner] = useState('');
 
-  const handleSubmit = async (values: FormValues): Promise<any> => {
+  const handleSubmit = async (values: FormValues): Promise<void> => {
     // Make post request
-    const res: any = await fetch('/api/users/', {
+    const res = await fetch('/api/users/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,9 +38,11 @@ const UserSignUp: React.FC = () => {
     });
 
     // Check if email exists
-    if (!res) {
-      setEmailExists(true);
-      return new Error('Email already exists.');
+    if (!res.ok) {
+      setErrorBanner(
+        'Email exists. Sign in with this email or sign up with a different email.'
+      );
+      return;
     }
 
     // Sign in user
@@ -46,12 +50,12 @@ const UserSignUp: React.FC = () => {
       signIn('credentials', {
         email: values.email,
         password: values.password,
-        callbackUrl: 'http://localhost:3000',
+        callbackUrl: '/',
       });
     } catch {
-      throw new Error('Could not sign in.');
+      // Not sure if this error will ever appear, and if so, not something the user can do about it.
+      setErrorBanner('Could not sign you in after logging in.');
     }
-    return res;
   };
 
   // Validates inputs
@@ -75,14 +79,14 @@ const UserSignUp: React.FC = () => {
   const constructRow = (
     title: string,
     varName: string,
-    handleChange: any,
+    handleChange: FormikHandlers['handleChange'],
     error?: string
-  ): any => (
+  ): JSX.Element => (
     <>
-      <Grid item xs={4}>
+      <Grid item xs={6}>
         <div className={styles.entryName}>* {title}</div>
       </Grid>
-      <Grid item xs={5}>
+      <Grid item xs={6}>
         <TextField
           className={styles.entryField}
           size="small"
@@ -128,11 +132,9 @@ const UserSignUp: React.FC = () => {
             {({ errors, handleChange }) => {
               return (
                 <Form>
-                  {emailExists ? (
+                  {errorBanner ? (
                     <>
-                      <div className={styles.emailExists}>
-                        Email exists. Try to join with a different email.
-                      </div>
+                      <div className={styles.errorBanner}>{errorBanner}</div>
                       &nbsp;
                     </>
                   ) : null}
@@ -150,12 +152,12 @@ const UserSignUp: React.FC = () => {
                       handleChange,
                       errors.confirmPassword
                     )}
-                    <Grid item xs={4}>
+                    <Grid item xs={6}>
                       <a className={styles.login} href="/users/signin">
                         Already Registered? Log in
                       </a>
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={6}>
                       <Button
                         disableRipple
                         disableFocusRipple

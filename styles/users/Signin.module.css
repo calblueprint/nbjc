@@ -6,8 +6,9 @@
 .wrapper {
   margin: auto;
   margin-top: 200px;
-  text-align: center;
-  width: 60%;
+  justify-content: center;
+  padding: 15px;
+  width: 40%;
   height: 400px;
   font-weight: 800;
 }
