@@ -27,24 +27,38 @@ const options = {
         });
         if (!user) {
           // Change this to be an error page
-          throw new Error('No account exists');
+          // return Promise.resolve(Error('No account exists'));
+          return Promise.reject(new Error('No accout exists'));
         }
         // Verify that their password matches
         if (user.hashedPassword === hashPassword(credentials.password)) {
-          return sanitizeUser(user);
+          return Promise.resolve(sanitizeUser(user));
         }
-        // Password mismatch
-        // Change this to be an error page
-        throw new Error('Invalid password');
+
+        // return Promise.resolve(Error('Invalid password'));
+        return Promise.reject(new Error('Invalid password'));
+        // ;new Error('Invalid password'));
+        // // Password mismatch
+        // // Change this to be an error page
+        // return { message: 'wrong' };
+        // return new Error('Invalid password');
       },
     }),
   ],
+  // callbacks: {
+  //   signIn: async (user: any, account: any, profile: any) => {
+  //     return Promise.resolve(false);
+  //   },
+  // },
   database: process.env.DATABASE_URL,
   session: {
     jwt: true,
   },
   jwt: {
     secret: process.env.JWT_SIGNING_PRIVATE_KEY,
+  },
+  pages: {
+    error: '/users/signin',
   },
 };
 

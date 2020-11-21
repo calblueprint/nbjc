@@ -4,7 +4,6 @@ import { Formik, Form, FormikHandlers } from 'formik';
 import SignupSchema from 'interfaces/signup';
 import Layout from 'components/Layout';
 import { signIn } from 'next-auth/client';
-import CreateError from 'utils/error';
 import styles from '../../styles/users/Signup.module.css';
 
 interface FormValues {

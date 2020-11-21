@@ -3,6 +3,7 @@ import { Grid, TextField, Button } from '@material-ui/core';
 import { Formik, Form, FormikHandlers } from 'formik';
 import SigninSchema from 'interfaces/signin';
 import Layout from 'components/Layout';
+import { useRouter } from 'next/router';
 import styles from '../../styles/users/Signin.module.css';
 
 interface FormValues {
@@ -17,17 +18,20 @@ interface ErrorValues {
 
 // UserSignIn page. Will need additional email verification to be able to create organizations.
 const UserSignIn: React.FC = () => {
+  // Get URL params for error callbacks.
+  const router = useRouter();
+  const errorBanner = router.query.error;
+
   const handleSubmit = async (values: FormValues): Promise<void> => {
     // Sign in with credentials
-    try {
-      signIn('credentials', {
-        email: values.email,
-        password: values.password,
-        callbackUrl: '/',
-      });
-    } catch {
-      throw new Error('Could not sign in.');
-    }
+
+    // NOTE: If the below method fails because of 'Invalid password' or 'Unknown email', the error will be passed
+    // into the URL params.
+    signIn('credentials', {
+      email: values.email,
+      password: values.password,
+      callbackUrl: '/',
+    });
   };
 
   // Validates inputs
@@ -102,6 +106,12 @@ const UserSignIn: React.FC = () => {
             {({ errors, handleChange }) => {
               return (
                 <Form>
+                  {errorBanner ? (
+                    <>
+                      <div className={styles.errorBanner}>{errorBanner}</div>
+                      &nbsp;
+                    </>
+                  ) : null}
                   <Grid container spacing={4}>
                     {constructRow('email', handleChange, errors.email)}
                     {constructRow('password', handleChange, errors.password)}
