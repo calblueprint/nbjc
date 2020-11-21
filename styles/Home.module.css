@@ -8,7 +8,7 @@
   height: calc(100vh - 115px);
   border-radius: 25px;
   padding: 80px;
-  background-image: url('public/homepage.png');
+  background-image: url('public/homepage2.png');
 }
 
 .leftCol {
@@ -24,6 +24,52 @@
   padding-left: 50px;
 }
 
-.searchField {
+/* TODO: fix styling for search bar, add hover color*/
+.searchCard {
   background-color: white;
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+}
+
+.big {
+  margin-top: 10px;
+  margin-left: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 10px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+}
+
+.textField {
+  display: flex;
+  width: 75%;
+  justify-self: flex-start;
+  padding-right: 5%;
+}
+
+.button {
+  display: flex;
+  justify-self: flex-end;
+  width: 20%;
+  border-radius: 25px;
+  padding-left: 10px;
+}
+
+.auto {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.autoField {
+  width: 100%;
+  margin: 3px;
 }

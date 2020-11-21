@@ -9,6 +9,13 @@ export type Moderator = {
   name: string;
 };
 
+export type homepageFields = {
+  orgName: string;
+  ages: string[];
+  ethnicity: string[];
+  orientation: string[];
+};
+
 export type Form = {
   workType: string[];
   orgType: string[];
