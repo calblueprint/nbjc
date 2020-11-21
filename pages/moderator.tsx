@@ -59,7 +59,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
   const handleDrawerCloseRight = (): void => {
     setOpenRight(false);
   };
-
   return (
     <Layout title="Moderator Dashboard">
       <div className={styles.root}>
