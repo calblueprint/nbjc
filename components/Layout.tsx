@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Button } from '@material-ui/core';
 import { useRouter } from 'next/router';
+import { Button, Typography } from '@material-ui/core';
 import styles from '../styles/Layout.module.css';
 
 type Props = {
@@ -30,13 +30,19 @@ const Layout: React.FunctionComponent<Props> = ({
           </Link>
           <div className={styles.nav}>
             <Link href="/">
-              <a className={styles.link}>Home</a>
+              <a className={styles.link}>
+                <Typography variant="h5">Home</Typography>
+              </a>
             </Link>
             <Link href="/moderator">
-              <a className={styles.link}>Moderator Dashboard</a>
+              <a className={styles.link}>
+                <Typography variant="h5">Moderator Dashboard</Typography>
+              </a>
             </Link>
             <Link href="/users/settings">
-              <a className={styles.link}>Users</a>
+              <a className={styles.link}>
+                <Typography variant="h5">Users</Typography>
+              </a>
             </Link>
             <div className={styles.buttons}>
               <Button
