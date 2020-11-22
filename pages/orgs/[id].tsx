@@ -6,6 +6,7 @@ import Layout from 'components/Layout';
 import Project from 'components/organization/Project/index';
 import computeDate from 'utils/computeDate';
 import styles from '../../styles/Organization.module.css';
+import Tab from '../../components/Tab';
 
 const prisma = new PrismaClient();
 
@@ -53,7 +54,14 @@ const projectsList = projects.map((project) => {
 });
 
 const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
-  const [showInfo, setshowInfo] = useState<boolean>(true);
+  const [showInfo, setShowInfo] = useState<boolean>(true);
+
+  const infoButton = (): void => {
+    setShowInfo(true);
+  };
+  const projectsButton = (): void => {
+    setShowInfo(false);
+  };
 
   const demographics = (category: string, groups: string[]): JSX.Element => {
     return (
@@ -136,30 +144,12 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
           </div>
           <div className={styles.rightColumn}>
             <div className={styles.headerButton}>
-              <ButtonGroup
-                variant="contained"
-                color="primary"
-                className={styles.buttonGroup}
-              >
-                <Button
-                  className={
-                    showInfo ? styles.buttonIndSelected : styles.buttonInd
-                  }
-                  onClick={() => setshowInfo(true)}
-                  disableElevation
-                >
-                  Information
-                </Button>
-                <Button
-                  className={
-                    showInfo ? styles.buttonInd : styles.buttonIndSelected
-                  }
-                  onClick={() => setshowInfo(false)}
-                  disableElevation
-                >
-                  Project and Events
-                </Button>
-              </ButtonGroup>
+              <Tab
+                buttonName1="information"
+                buttonName2="project and events"
+                buttonSetState1={infoButton}
+                buttonSetState2={projectsButton}
+              />
             </div>
             {showInfo ? (
               <div className={styles.rightContent}>
