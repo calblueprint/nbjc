@@ -126,6 +126,10 @@ model migrations {
   run_on DateTime
 }
 
+model AppNotes {
+  notes   String
+}
+
 enum AgeDemographic {
   child   @map("Children")
   teen    @map("Teens")
