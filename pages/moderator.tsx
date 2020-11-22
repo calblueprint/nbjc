@@ -60,6 +60,34 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
     setOpenRight(false);
   };
 
+  const [errorBanner, setErrorBanner] = useState('');
+
+  const handleSubmit = async (status: string): Promise<void> => {
+    if (status === 'rejected') {
+      try {
+        await fetch(`/api/app/orgs/reject/${card.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: card.id }),
+        });
+      } catch (ex) {
+        setErrorBanner('We could not process the rejection');
+      }
+    } else if (status === 'approved') {
+      try {
+        await fetch(`/api/app/orgs/approve/${card.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: card.id }),
+        });
+      } catch (ex) {
+        setErrorBanner('We could not process the approval');
+      }
+    } else {
+      setErrorBanner('We could not process your request');
+    }
+  };
+
   return (
     <Layout title="Moderator Dashboard">
       <div className={styles.root}>
@@ -176,10 +204,26 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
               <OrgDetail items={card} />
             </div>
             <div className={styles.footer}>
-              <Button variant="contained" color="secondary">
-                Decline
+              {errorBanner ? (
+                <>
+                  <div className={styles.errorBanner}>{errorBanner}</div>
+                  &nbsp;
+                </>
+              ) : null}
+              <Button
+                onClick={() => handleSubmit('rejected')}
+                variant="contained"
+                color="secondary"
+                type="submit"
+              >
+                Reject
               </Button>
-              <Button variant="contained" color="primary">
+              <Button
+                onClick={() => handleSubmit('approved')}
+                variant="contained"
+                color="primary"
+                type="submit"
+              >
                 Accept
               </Button>
             </div>
