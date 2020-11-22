@@ -26,10 +26,6 @@ type Props = {
 
 const prisma = new PrismaClient();
 
-interface appStatus {
-  status: string;
-}
-
 const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
   const [card, setCard] = useState<Organization>(items[0]);
   const clickCard = (newCard: Organization): void => {
@@ -64,28 +60,31 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
     setOpenRight(false);
   };
 
-  const handleSubmit = async (status: appStatus): Promise<void> => {
-    // Make post request
-    if (status.status === 'reject') {
+  const [errorBanner, setErrorBanner] = useState('');
+
+  const handleSubmit = async (status: string): Promise<void> => {
+    if (status === 'rejected') {
       try {
-        await fetch('/api/app/orgs/reject', {
+        await fetch(`/api/app/orgs/reject/${card.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: status.status }),
+          body: JSON.stringify({ id: card.id }),
         });
       } catch (ex) {
-        console.error('ex:', ex);
+        setErrorBanner('We could not process the rejection');
+      }
+    } else if (status === 'approved') {
+      try {
+        await fetch(`/api/app/orgs/approve/${card.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: card.id }),
+        });
+      } catch (ex) {
+        setErrorBanner('We could not process the approval');
       }
     } else {
-      try {
-        await fetch('/api/app/orgs/approve', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: status.status }),
-        });
-      } catch (ex) {
-        console.error('ex:', ex);
-      }
+      setErrorBanner('We could not process your request');
     }
   };
 
@@ -204,22 +203,30 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
             <div className={styles.content}>
               <OrgDetail items={card} />
             </div>
-            <form
-              onSubmit={(values) => {
-                handleSubmit(values);
-              }} /* need buttons to submit either approve or reject, not values */
-              noValidate
-              autoComplete="off"
-            >
-              <div className={styles.footer}>
-                <Button variant="contained" color="secondary" type="submit">
-                  Decline
-                </Button>
-                <Button variant="contained" color="primary" type="submit">
-                  Accept
-                </Button>
-              </div>
-            </form>
+            <div className={styles.footer}>
+              {errorBanner ? (
+                <>
+                  <div className={styles.errorBanner}>{errorBanner}</div>
+                  &nbsp;
+                </>
+              ) : null}
+              <Button
+                onClick={() => handleSubmit('rejected')}
+                variant="contained"
+                color="secondary"
+                type="submit"
+              >
+                Reject
+              </Button>
+              <Button
+                onClick={() => handleSubmit('approved')}
+                variant="contained"
+                color="primary"
+                type="submit"
+              >
+                Accept
+              </Button>
+            </div>
           </div>
         </main>
       </div>
