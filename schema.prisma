@@ -51,6 +51,7 @@ model Organization {
   foundingDate         DateTime?             @map("founding_date")
   is501c3              Boolean               @default(false) @map("is_501c3")
   applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
+  users                User[]                @relation("organizationsTousers")
 
   @@map("organizations")
 }
@@ -68,14 +69,16 @@ model Session {
 }
 
 model User {
-  id             Int       @id @default(autoincrement())
-  role           UserRole?
-  email          String    @unique
-  emailVerified  DateTime? @map("email_verified")
-  image          String?
-  hashedPassword String    @map("hashed_password")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at")
+  id              Int           @id @default(autoincrement())
+  role            UserRole?
+  email           String        @unique
+  emailVerified   DateTime?     @map("email_verified")
+  image           String?
+  hashedPassword  String        @map("hashed_password")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @default(now()) @updatedAt @map("updated_at")
+  organization_id Int?
+  organizations   Organization? @relation("organizationsTousers", fields: [organization_id], references: [id])
 
   @@map("users")
 }
