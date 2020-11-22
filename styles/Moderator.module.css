@@ -91,3 +91,7 @@
 .mainShift {
   margin-left: 0px;
 }
+
+.errorBanner {
+  color: red;
+}

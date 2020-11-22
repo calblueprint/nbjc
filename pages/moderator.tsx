@@ -74,6 +74,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
         setErrorBanner('We could not process the rejection');
       }
     } else if (status === 'approved') {
+      /** put in form of const res so you can say if res === ok then display this banner */
       try {
         await fetch(`/api/app/orgs/approve/${card.id}`, {
           method: 'PATCH',
