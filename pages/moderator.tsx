@@ -26,6 +26,10 @@ type Props = {
 
 const prisma = new PrismaClient();
 
+interface appStatus {
+  status: string;
+}
+
 const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
   const [card, setCard] = useState<Organization>(items[0]);
   const clickCard = (newCard: Organization): void => {
@@ -58,6 +62,31 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
 
   const handleDrawerCloseRight = (): void => {
     setOpenRight(false);
+  };
+
+  const handleSubmit = async (status: appStatus): Promise<void> => {
+    // Make post request
+    if (status.status === 'reject') {
+      try {
+        await fetch('/api/app/orgs/reject', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: status.status }),
+        });
+      } catch (ex) {
+        console.error('ex:', ex);
+      }
+    } else {
+      try {
+        await fetch('/api/app/orgs/approve', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: status.status }),
+        });
+      } catch (ex) {
+        console.error('ex:', ex);
+      }
+    }
   };
 
   return (
@@ -175,14 +204,22 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
             <div className={styles.content}>
               <OrgDetail items={card} />
             </div>
-            <div className={styles.footer}>
-              <Button variant="contained" color="secondary">
-                Decline
-              </Button>
-              <Button variant="contained" color="primary">
-                Accept
-              </Button>
-            </div>
+            <form
+              onSubmit={(values) => {
+                handleSubmit(values);
+              }} /* need buttons to submit either approve or reject, not values */
+              noValidate
+              autoComplete="off"
+            >
+              <div className={styles.footer}>
+                <Button variant="contained" color="secondary" type="submit">
+                  Decline
+                </Button>
+                <Button variant="contained" color="primary" type="submit">
+                  Accept
+                </Button>
+              </div>
+            </form>
           </div>
         </main>
       </div>
