@@ -12,6 +12,8 @@ type TabProps = {
   formikErrors: Array<{ [field: string]: string }>;
 };
 
+const requiredError = '*Required';
+
 const TabShortResponse: React.FC<TabProps> = ({
   handleChange,
   handleBlur,
@@ -28,6 +30,7 @@ const TabShortResponse: React.FC<TabProps> = ({
       <div className={styles.row}>
         <p>Short 1</p>
         <TextField
+          error={'short1' in touched && touched.short1 && errors.short1}
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.short1}
@@ -38,12 +41,13 @@ const TabShortResponse: React.FC<TabProps> = ({
           placeholder={placeholderText}
         />
         {'short1' in touched && touched.short1 && errors.short1 ? (
-          <div className={styles.errorPara}>{errors.short1}</div>
+          <div className={styles.errorPara}>{requiredError}</div>
         ) : null}
       </div>
       <div className={styles.row}>
         <p>Short 2</p>
         <TextField
+          error={'short2' in touched && touched.short2 && errors.short2}
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.short2}
@@ -54,12 +58,13 @@ const TabShortResponse: React.FC<TabProps> = ({
           placeholder={placeholderText}
         />
         {'short2' in touched && touched.short2 && errors.short2 ? (
-          <div className={styles.errorPara}>{errors.short2}</div>
+          <div className={styles.errorPara}>{requiredError}</div>
         ) : null}
       </div>
       <div className={styles.row}>
         <p>Short 3</p>
         <TextField
+          error={'short3' in touched && touched.short3 && errors.short3}
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.short3}
@@ -70,7 +75,7 @@ const TabShortResponse: React.FC<TabProps> = ({
           placeholder={placeholderText}
         />
         {'short3' in touched && touched.short3 && errors.short3 ? (
-          <div className={styles.errorPara}>{errors.short3}</div>
+          <div className={styles.errorPara}>{requiredError}</div>
         ) : null}
       </div>
     </>

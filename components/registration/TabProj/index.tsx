@@ -12,6 +12,8 @@ type TabProps = {
   formikErrors: Array<{ [field: string]: string }>;
 };
 
+const requiredError = '*Required';
+
 const TabProj: React.FC<TabProps> = ({
   handleChange,
   handleBlur,
@@ -28,6 +30,7 @@ const TabProj: React.FC<TabProps> = ({
       <div className={styles.row}>
         <p>Project 1</p>
         <TextField
+          error={'proj1' in touched && touched.proj1 && errors.proj1}
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.proj1}
@@ -38,12 +41,13 @@ const TabProj: React.FC<TabProps> = ({
           placeholder={placeholderText}
         />
         {'proj1' in touched && touched.proj1 && errors.proj1 ? (
-          <div className={styles.errorPara}>{errors.proj1}</div>
+          <div className={styles.errorPara}>{requiredError}</div>
         ) : null}
       </div>
       <div className={styles.row}>
         <p>Project 2</p>
         <TextField
+          error={'proj2' in touched && touched.proj2 && errors.proj2}
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.proj2}
@@ -54,12 +58,13 @@ const TabProj: React.FC<TabProps> = ({
           placeholder={placeholderText}
         />
         {'proj2' in touched && touched.proj2 && errors.proj2 ? (
-          <div className={styles.errorPara}>{errors.proj2}</div>
+          <div className={styles.errorPara}>{requiredError}</div>
         ) : null}
       </div>
       <div className={styles.row}>
         <p>Project 3</p>
         <TextField
+          error={'proj3' in touched && touched.proj3 && errors.proj3}
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.proj3}
@@ -70,7 +75,7 @@ const TabProj: React.FC<TabProps> = ({
           placeholder={placeholderText}
         />
         {'proj3' in touched && touched.proj3 && errors.proj3 ? (
-          <div className={styles.errorPara}>{errors.proj3}</div>
+          <div className={styles.errorPara}>{requiredError}</div>
         ) : null}
       </div>
     </>

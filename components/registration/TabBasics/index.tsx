@@ -45,20 +45,28 @@ const TabBasics: React.FC<TabProps> = ({
   const errors = formikErrors;
   const rowSize = 1;
   const placeholderText = '';
+  const requiredError = '*Required';
+
+  function emailError(): string {
+    if (errors.contactEmail.indexOf('valid') > -1) {
+      return '*Invalid Email';
+    }
+    return '*Required';
+  }
 
   function streetCityError(): React.ReactElement | null {
     let empty = true;
     let street = null;
     let city = null;
-    if ('state' in touched && touched.street && errors.street) {
+    if ('street' in touched && touched.street && errors.street) {
       empty = false;
-      street = <div className={styles.errorStreet}>{errors.street}</div>;
+      street = <div className={styles.errorStreet}>{requiredError}</div>;
     } else {
       street = <div className={styles.errorStreet} />;
     }
     if ('city' in touched && touched.city && errors.city) {
       empty = false;
-      city = <div>{errors.orientation}</div>;
+      city = <div>{requiredError}</div>;
     } else {
       city = <div />;
     }
@@ -80,13 +88,13 @@ const TabBasics: React.FC<TabProps> = ({
     let zipcode = null;
     if ('state' in touched && touched.state && errors.state) {
       empty = false;
-      state = <div className={styles.errorState}>{errors.state}</div>;
+      state = <div className={styles.errorState}>{requiredError}</div>;
     } else {
       state = <div className={styles.errorState} />;
     }
     if ('zipcode' in touched && touched.zipcode && errors.zipcode) {
       empty = false;
-      zipcode = <div className={styles.errorState}>{errors.orientation}</div>;
+      zipcode = <div className={styles.errorState}>*Must be a number.</div>;
     } else {
       zipcode = <div className={styles.errorState} />;
     }
@@ -109,23 +117,21 @@ const TabBasics: React.FC<TabProps> = ({
     let ethnicityError = null;
     if ('ages' in touched && touched.ages && errors.ages) {
       empty = false;
-      agesError = <div className={styles.errorDemo}>{errors.ages}</div>;
+      agesError = <div className={styles.errorDemo}>{requiredError}</div>;
     } else {
       agesError = <div className={styles.errorDemo} />;
     }
     if ('orientation' in touched && touched.orientation && errors.orientation) {
       empty = false;
       orientationError = (
-        <div className={styles.errorDemo}>{errors.orientation}</div>
+        <div className={styles.errorDemo}>{requiredError}</div>
       );
     } else {
       orientationError = <div className={styles.errorDemo} />;
     }
     if ('ethnicity' in touched && touched.ethnicity && errors.ethnicity) {
       empty = false;
-      ethnicityError = (
-        <div className={styles.errorDemo}>{errors.ethnicity}</div>
-      );
+      ethnicityError = <div className={styles.errorDemo}>{requiredError}</div>;
     } else {
       ethnicityError = <div className={styles.errorDemo} />;
     }
@@ -147,6 +153,7 @@ const TabBasics: React.FC<TabProps> = ({
       <div className={styles.row}>
         <p className={styles.descriptor}>Org Name</p>
         <TextField
+          error={'orgName' in touched && touched.orgName && errors.orgName}
           className={styles.textField}
           id="orgName"
           onChange={handleChange}
@@ -161,7 +168,7 @@ const TabBasics: React.FC<TabProps> = ({
         />
       </div>
       {'orgName' in touched && touched.orgName && errors.orgName ? (
-        <div className={styles.errorMsg}>{errors.orgName}</div>
+        <div className={styles.errorMsg}>{requiredError}</div>
       ) : null}
       <div className={styles.row}>
         <p className={styles.descriptor}>Work Type</p>
@@ -182,12 +189,15 @@ const TabBasics: React.FC<TabProps> = ({
               onBlur={handleBlur}
               variant="outlined"
               placeholder="Work Type"
+              error={
+                'workType' in touched && touched.workType && errors.workType
+              }
             />
           )}
         />
       </div>
       {'workType' in touched && touched.workType && errors.workType ? (
-        <div className={styles.errorMsg}>{errors.workType}</div>
+        <div className={styles.errorMsg}>{requiredError}</div>
       ) : null}
       <div className={styles.row}>
         <p className={styles.descriptor}>Org Type</p>
@@ -203,12 +213,17 @@ const TabBasics: React.FC<TabProps> = ({
           onBlur={handleBlur}
           className={styles.selectField}
           renderInput={(params) => (
-            <TextField {...params} variant="outlined" placeholder="Org Type" />
+            <TextField
+              {...params}
+              variant="outlined"
+              placeholder="Org Type"
+              error={'orgType' in touched && touched.orgType && errors.orgType}
+            />
           )}
         />
       </div>
       {'orgType' in touched && touched.orgType && errors.orgType ? (
-        <div className={styles.errorMsg}>{errors.orgType}</div>
+        <div className={styles.errorMsg}>{requiredError}</div>
       ) : null}
       <div className={styles.row}>
         <p className={styles.descriptor}>Contact Name</p>
@@ -224,14 +239,24 @@ const TabBasics: React.FC<TabProps> = ({
           multiline
           rows={rowSize}
           placeholder={placeholderText}
+          error={
+            'contactName' in touched &&
+            touched.contactName &&
+            errors.contactName
+          }
         />
       </div>
       {'contactName' in touched && touched.contactName && errors.contactName ? (
-        <div className={styles.errorMsg}>{errors.contactName}</div>
+        <div className={styles.errorMsg}>{requiredError}</div>
       ) : null}
       <div className={styles.row}>
         <p className={styles.descriptor}>Contact Email</p>
         <TextField
+          error={
+            'contactEmail' in touched &&
+            touched.contactEmail &&
+            errors.contactEmail
+          }
           className={styles.textField}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -246,11 +271,12 @@ const TabBasics: React.FC<TabProps> = ({
       {'contactEmail' in touched &&
       touched.contactEmail &&
       errors.contactEmail ? (
-        <div className={styles.errorMsg}>{errors.contactEmail}</div>
+        <div className={styles.errorMsg}>{emailError()}</div>
       ) : null}
       <div className={styles.row}>
         <p className={styles.descriptor}>Website</p>
         <TextField
+          error={'website' in touched && touched.website && errors.website}
           className={styles.textField}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -263,11 +289,12 @@ const TabBasics: React.FC<TabProps> = ({
         />
       </div>
       {'website' in touched && touched.website && errors.website ? (
-        <div className={styles.errorMsg}>{errors.website}</div>
+        <div className={styles.errorMsg}>{requiredError}</div>
       ) : null}
       <div className={styles.row}>
         <p className={styles.descriptor}>Location Type</p>
         <TextField
+          error={'location' in touched && touched.location && errors.location}
           className={styles.textField}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -280,13 +307,14 @@ const TabBasics: React.FC<TabProps> = ({
         />
       </div>
       {'location' in touched && touched.location && errors.location ? (
-        <div className={styles.errorMsg}>{errors.location}</div>
+        <div className={styles.errorMsg}>{requiredError}</div>
       ) : null}
       <div className={styles.row}>
         <p className={styles.addressDescriptor}>Address</p>
         <div className={styles.addressBlock}>
           <div className={styles.addressRow}>
             <TextField
+              error={'street' in touched && touched.street && errors.street}
               className={styles.street}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -298,6 +326,7 @@ const TabBasics: React.FC<TabProps> = ({
               placeholder="Street"
             />
             <TextField
+              error={'city' in touched && touched.city && errors.city}
               className={styles.city}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -312,6 +341,7 @@ const TabBasics: React.FC<TabProps> = ({
           {streetCityError()}
           <div className={styles.addressRow}>
             <TextField
+              error={'state' in touched && touched.state && errors.state}
               className={styles.zip}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -323,6 +353,7 @@ const TabBasics: React.FC<TabProps> = ({
               placeholder="State"
             />
             <TextField
+              error={'zipcode' in touched && touched.zipcode && errors.zipcode}
               className={styles.zip}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -341,6 +372,7 @@ const TabBasics: React.FC<TabProps> = ({
         <p className={styles.descriptor}>EIN</p>
         <FormControl variant="outlined" className={styles.selectField}>
           <Select
+            error={'EIN' in touched && touched.EIN && errors.EIN}
             value={values.EIN}
             name="EIN"
             onChange={handleChange}
@@ -356,11 +388,16 @@ const TabBasics: React.FC<TabProps> = ({
         </FormControl>
       </div>
       {'EIN' in touched && touched.EIN && errors.EIN ? (
-        <div className={styles.errorMsg}>{errors.EIN}</div>
+        <div className={styles.errorMsg}>{requiredError}</div>
       ) : null}
       <div className={styles.row}>
         <p className={styles.descriptor}>founding Date</p>
         <TextField
+          error={
+            'foundingDate' in touched &&
+            touched.foundingDate &&
+            errors.foundingDate
+          }
           className={styles.textField}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -375,7 +412,7 @@ const TabBasics: React.FC<TabProps> = ({
       {'foundingDate' in touched &&
       touched.foundingDate &&
       errors.foundingDate ? (
-        <div className={styles.errorMsg}>{errors.foundingDate}</div>
+        <div className={styles.errorMsg}>{requiredError}</div>
       ) : null}
       <div className={styles.short}>
         <p>Audience Demographics</p>
@@ -397,6 +434,7 @@ const TabBasics: React.FC<TabProps> = ({
                 variant="outlined"
                 placeholder="Ages"
                 onBlur={handleBlur}
+                error={'ages' in touched && touched.ages && errors.ages}
               />
             )}
           />
@@ -413,6 +451,11 @@ const TabBasics: React.FC<TabProps> = ({
             className={styles.autoField}
             renderInput={(params) => (
               <TextField
+                error={
+                  'orientation' in touched &&
+                  touched.orientation &&
+                  errors.orientation
+                }
                 {...params}
                 variant="outlined"
                 placeholder="Orientation"
@@ -433,6 +476,11 @@ const TabBasics: React.FC<TabProps> = ({
             className={styles.autoField}
             renderInput={(params) => (
               <TextField
+                error={
+                  'ethnicity' in touched &&
+                  touched.ethnicity &&
+                  errors.ethnicity
+                }
                 {...params}
                 variant="outlined"
                 placeholder="Ethnicity"
@@ -446,6 +494,11 @@ const TabBasics: React.FC<TabProps> = ({
       <div className={styles.short}>
         <p>Mission History</p>
         <TextField
+          error={
+            'missionHistory' in touched &&
+            touched.missionHistory &&
+            errors.missionHistory
+          }
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.missionHistory}
@@ -458,7 +511,7 @@ const TabBasics: React.FC<TabProps> = ({
         {'missionHistory' in touched &&
         touched.missionHistory &&
         errors.missionHistory ? (
-          <div className={styles.errorPara}>{errors.missionHistory}</div>
+          <div className={styles.errorPara}>{requiredError}</div>
         ) : null}
       </div>
     </>
