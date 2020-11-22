@@ -1,6 +1,12 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Button, LinearProgress, Menu, MenuItem } from '@material-ui/core';
+import {
+  Button,
+  Typography,
+  LinearProgress,
+  Menu,
+  MenuItem,
+} from '@material-ui/core';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import { signOut } from 'next-auth/client';
@@ -38,11 +44,25 @@ const Layout: React.FunctionComponent<Props> = ({
           </Link>
           <div className={styles.nav}>
             <Link href="/">
-              <a className={styles.link}>Map</a>
+              <a className={styles.link}>
+                <Typography variant="h5">Home</Typography>
+              </a>
+            </Link>
+            <Link href="/moderator">
+              <a className={styles.link}>
+                <Typography variant="h5">Moderator Dashboard</Typography>
+              </a>
+            </Link>
+            <Link href="/users/settings">
+              <a className={styles.link}>
+                <Typography variant="h5">Users</Typography>
+              </a>
             </Link>
             {session && session.user.role === 'organization' ? (
               <Link href="/orgs">
-                <a className={styles.link}>Profile</a>
+                <a className={styles.link}>
+                  <Typography variant="h5">Profile</Typography>
+                </a>
               </Link>
             ) : null}
             {session &&
