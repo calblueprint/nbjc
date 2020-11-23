@@ -88,6 +88,10 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
     }
   };
 
+  const [lastText, setLastText] = useState('');
+  const [text, setText] = useState('');
+  const [updateContent] = useMutation(UPDATE_CHAPTER_CONTENT.MUTATION);
+
   return (
     <Layout title="Moderator Dashboard">
       <div className={styles.root}>
