@@ -162,7 +162,6 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.orgName}
           name="orgName"
           variant="outlined"
-          multiline
           rows={rowSize}
           placeholder={placeholderText}
         />
@@ -236,7 +235,6 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.contactName}
           name="contactName"
           variant="outlined"
-          multiline
           rows={rowSize}
           placeholder={placeholderText}
           error={
@@ -263,7 +261,6 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.contactEmail}
           name="contactEmail"
           variant="outlined"
-          multiline
           rows={rowSize}
           placeholder={placeholderText}
         />
@@ -283,7 +280,6 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.website}
           name="website"
           variant="outlined"
-          multiline
           rows={rowSize}
           placeholder={placeholderText}
         />
@@ -301,7 +297,6 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.location}
           name="location"
           variant="outlined"
-          multiline
           rows={rowSize}
           placeholder="location"
         />
@@ -321,7 +316,6 @@ const TabBasics: React.FC<TabProps> = ({
               value={values.street}
               name="street"
               variant="outlined"
-              multiline
               rows={rowSize}
               placeholder="Street"
             />
@@ -333,7 +327,6 @@ const TabBasics: React.FC<TabProps> = ({
               value={values.city}
               name="city"
               variant="outlined"
-              multiline
               rows={rowSize}
               placeholder="City"
             />
@@ -348,7 +341,6 @@ const TabBasics: React.FC<TabProps> = ({
               value={values.state}
               name="state"
               variant="outlined"
-              multiline
               rows={rowSize}
               placeholder="State"
             />
@@ -360,7 +352,6 @@ const TabBasics: React.FC<TabProps> = ({
               value={values.zipcode}
               name="zipcode"
               variant="outlined"
-              multiline
               rows={rowSize}
               placeholder="Zipcode"
             />
@@ -370,28 +361,23 @@ const TabBasics: React.FC<TabProps> = ({
       </div>
       <div className={styles.row}>
         <p className={styles.descriptor}>EIN</p>
-        <FormControl variant="outlined" className={styles.selectField}>
-          <Select
-            error={'EIN' in touched && touched.EIN && errors.EIN}
-            value={values.EIN}
-            name="EIN"
-            onChange={handleChange}
-            onBlur={handleBlur}
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            <MenuItem value={10}>EIN 1</MenuItem>
-            <MenuItem value={20}>EIN 2</MenuItem>
-            <MenuItem value={30}>EIN 3</MenuItem>
-          </Select>
-        </FormControl>
+        <TextField
+          error={'EIN' in touched && touched.EIN && errors.EIN}
+          className={styles.textField}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.EIN}
+          name="EIN"
+          variant="outlined"
+          rows={rowSize}
+          placeholder={placeholderText}
+        />
       </div>
       {'EIN' in touched && touched.EIN && errors.EIN ? (
         <div className={styles.errorMsg}>{requiredError}</div>
       ) : null}
       <div className={styles.row}>
-        <p className={styles.descriptor}>founding Date</p>
+        <p className={styles.descriptor}>Founding Date</p>
         <TextField
           error={
             'foundingDate' in touched &&
@@ -404,7 +390,6 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.foundingDate}
           name="foundingDate"
           variant="outlined"
-          multiline
           rows={rowSize}
           placeholder={placeholderText}
         />
@@ -504,7 +489,6 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.missionHistory}
           name="missionHistory"
           variant="outlined"
-          multiline
           rows={6}
           placeholder={placeholderText}
         />
