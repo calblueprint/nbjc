@@ -61,6 +61,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
   };
 
   const [errorBanner, setErrorBanner] = useState('');
+  const [successBanner, setSuccessBanner] = useState('');
 
   const handleSubmit = async (status: string): Promise<void> => {
     if (status === 'rejected') {
@@ -70,6 +71,8 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: card.id }),
         });
+        setSuccessBanner('Successfully rejected.');
+        console.log(6);
       } catch (ex) {
         setErrorBanner('We could not process the rejection');
       }
@@ -81,6 +84,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: card.id }),
         });
+        setSuccessBanner('Successfully approved.');
       } catch (ex) {
         setErrorBanner('We could not process the approval');
       }
@@ -207,7 +211,13 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
             <div className={styles.footer}>
               {errorBanner ? (
                 <>
-                  <div className={styles.errorBanner}>{errorBanner}</div>
+                  <div className={styles.banner}>{errorBanner}</div>
+                  &nbsp;
+                </>
+              ) : null}
+              {successBanner ? (
+                <>
+                  <div className={styles.banner}>{successBanner}</div>
                   &nbsp;
                 </>
               ) : null}
