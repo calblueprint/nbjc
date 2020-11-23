@@ -3,10 +3,10 @@ import { GetServerSideProps } from 'next';
 import { Button, Chip } from '@material-ui/core';
 import { Organization, PrismaClient } from '@prisma/client';
 import Layout from 'components/Layout';
-import Project from 'components/organization/Project/index';
+import Project from 'components/organization/Project';
+import Tab from 'components/Tab';
 import computeDate from 'utils/computeDate';
 import styles from '../../styles/Organization.module.css';
-import Tab from '../../components/Tab';
 
 const prisma = new PrismaClient();
 
