@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
-import { Button, ButtonGroup, Chip } from '@material-ui/core';
+import { Button, Chip } from '@material-ui/core';
 import { Organization, PrismaClient } from '@prisma/client';
 import Layout from 'components/Layout';
 import Project from 'components/organization/Project/index';
@@ -54,14 +54,7 @@ const projectsList = projects.map((project) => {
 });
 
 const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
-  const [showInfo, setShowInfo] = useState<boolean>(true);
-
-  const infoButton = (): void => {
-    setShowInfo(true);
-  };
-  const projectsButton = (): void => {
-    setShowInfo(false);
-  };
+  const [tabState, setTabState] = useState<0 | 1 | 2>(0);
 
   const demographics = (category: string, groups: string[]): JSX.Element => {
     return (
@@ -145,13 +138,13 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
           <div className={styles.rightColumn}>
             <div className={styles.headerButton}>
               <Tab
-                buttonName1="information"
-                buttonName2="project and events"
-                buttonSetState1={infoButton}
-                buttonSetState2={projectsButton}
+                tabName1="information"
+                tabName2="project and events"
+                tabState={tabState}
+                setTabState={setTabState}
               />
             </div>
-            {showInfo ? (
+            {tabState === 0 ? (
               <div className={styles.rightContent}>
                 <h3 className={styles.audienceHeader}>Audience Demographics</h3>
                 <div className={styles.demographicSection}>
