@@ -28,7 +28,7 @@ const options = {
         if (!user) {
           // Change this to be an error page
           // return Promise.resolve(Error('No account exists'));
-          return Promise.reject(new Error('No accout exists'));
+          return Promise.reject(new Error('No account exists'));
         }
         // Verify that their password matches
         if (user.hashedPassword === hashPassword(credentials.password)) {
