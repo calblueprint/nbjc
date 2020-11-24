@@ -1,20 +1,26 @@
 import { signIn } from 'next-auth/client';
-import { Grid, TextField, Button } from '@material-ui/core';
-import { Formik, Form, FormikHandlers } from 'formik';
-import SigninSchema from 'interfaces/signin';
+import Link from 'next/link';
+import {
+  TextField,
+  Button,
+  Typography,
+  CircularProgress,
+} from '@material-ui/core';
+import { Formik, Form, FormikHandlers, FormikHelpers } from 'formik';
+import { signinSchema } from 'interfaces/auth';
 import Layout from 'components/Layout';
 import { useRouter } from 'next/router';
-import styles from '../../styles/users/Signin.module.css';
+import styles from '../../styles/users/Auth.module.css';
 
-interface FormValues {
+type FormValues = {
   email: string;
   password: string;
-}
+};
 
-interface ErrorValues {
+type ErrorValues = {
   email?: string;
   password?: string;
-}
+};
 
 // UserSignIn page. Will need additional email verification to be able to create organizations.
 const UserSignIn: React.FC = () => {
@@ -22,22 +28,31 @@ const UserSignIn: React.FC = () => {
   const router = useRouter();
   const errorBanner = router.query.error;
 
-  const handleSubmit = async (values: FormValues): Promise<void> => {
-    // Sign in with credentials
+  const handleSubmit = async (
+    values: FormValues,
+    actions: FormikHelpers<FormValues>
+  ): Promise<void> => {
+    try {
+      // Sign in with credentials
 
-    // NOTE: If the below method fails because of 'Invalid password' or 'Unknown email', the error will be passed
-    // into the URL params.
-    signIn('credentials', {
-      email: values.email,
-      password: values.password,
-      callbackUrl: '/',
-    });
+      // NOTE: If the below method fails because of 'Invalid password' or 'Unknown email', the error will be passed
+      // into the URL params.
+      await signIn('credentials', {
+        email: values.email,
+        password: values.password,
+        callbackUrl: '/',
+      });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      actions.setSubmitting(false);
+    }
   };
 
   // Validates inputs
   const validate = (values: FormValues): ErrorValues => {
     const errors: { [k: string]: string } = {};
-    const { error } = SigninSchema.validate(values, {
+    const { error } = signinSchema.validate(values, {
       context: { strict: true },
       abortEarly: false,
     });
@@ -53,44 +68,37 @@ const UserSignIn: React.FC = () => {
   };
 
   const constructRow = (
-    varName: string,
+    varName: 'email' | 'password',
     handleChange: FormikHandlers['handleChange'],
     error?: string
   ): JSX.Element => (
-    <>
-      <Grid item xs={6}>
-        <div className={styles.entryName}>{varName}</div>
-      </Grid>
-      <Grid item xs={6}>
-        <TextField
-          className={styles.entryField}
-          size="small"
-          error={Boolean(error)}
-          name={varName}
-          variant="outlined"
-          onChange={handleChange}
-          id={varName}
-          label={varName}
-          type={
-            varName === 'password' || varName === 'confirmPassword'
-              ? 'password'
-              : undefined
-          }
-          helperText={error}
-        />
-      </Grid>
-    </>
+    <div className={styles.field}>
+      <div className={styles.entryName}>
+        <Typography>{varName}</Typography>
+      </div>
+      <TextField
+        className={styles.textField}
+        size="small"
+        error={Boolean(error)}
+        name={varName}
+        variant="outlined"
+        onChange={handleChange}
+        id={varName}
+        placeholder={varName === 'password' ? '******' : 'email@example.com'}
+        type={varName === 'password' ? 'password' : undefined}
+        helperText={error}
+      />
+    </div>
   );
 
   return (
     <Layout title="Sign In">
-      <div className={styles.wrapper}>
-        <div className={styles.titles}>
-          <h1>Welcome Back!</h1>
-          <h2>Organization Log In</h2>
-          &nbsp;
-        </div>
-        <div className={styles.entries}>
+      <div className={styles.root}>
+        <div className={styles.content}>
+          <div className={styles.titles}>
+            <Typography variant="h3">Welcome Back!</Typography>
+            <Typography variant="h5">Sign In</Typography>
+          </div>
           <Formik
             initialValues={{
               email: '',
@@ -99,40 +107,51 @@ const UserSignIn: React.FC = () => {
             validate={validate}
             validateOnChange={false}
             validateOnBlur={false}
-            onSubmit={(values) => {
-              handleSubmit(values);
-            }}
+            onSubmit={handleSubmit}
           >
-            {({ errors, handleChange }) => {
+            {({ errors, handleChange, isSubmitting }) => {
               return (
                 <Form>
                   {errorBanner ? (
-                    <>
-                      <div className={styles.errorBanner}>{errorBanner}</div>
-                      &nbsp;
-                    </>
+                    <div className={styles.errorBanner}>{errorBanner}</div>
                   ) : null}
-                  <Grid container spacing={4}>
+                  <div className={styles.fields}>
                     {constructRow('email', handleChange, errors.email)}
                     {constructRow('password', handleChange, errors.password)}
-                    <Grid item xs={6}>
-                      <a className={styles.login} href="/users/signup">
-                        Not Registered? Sign Up
-                      </a>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Button
-                        disableRipple
-                        disableFocusRipple
-                        disableTouchRipple
-                        disableElevation
-                        className={styles.submit}
-                        type="submit"
-                      >
-                        Log In
-                      </Button>
-                    </Grid>
-                  </Grid>
+                    <div>
+                      <Link href="/users/forgot-password">
+                        <a className={styles.link}>
+                          <Typography variant="caption">
+                            Forgot your password?
+                          </Typography>
+                        </a>
+                      </Link>
+                    </div>
+                    <div className={`${styles.field} ${styles.actions}`}>
+                      <Link href="/users/signup">
+                        <a className={styles.link}>
+                          <Typography variant="caption">
+                            Not Registered? Sign Up
+                          </Typography>
+                        </a>
+                      </Link>
+                      <div className={styles.submitButton}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          type="submit"
+                        >
+                          Log In
+                        </Button>
+                        {isSubmitting && (
+                          <CircularProgress
+                            size={24}
+                            className={styles.submitProgress}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </Form>
               );
             }}
