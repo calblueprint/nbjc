@@ -63,21 +63,6 @@
   margin-bottom: 0px;
 }
 
-.buttonGroup {
-  width: 100%;
-}
-
-.buttonInd {
-  width: 50%;
-  background-color: #f8f4ff;
-  color: #71579c;
-}
-
-.buttonIndSelected {
-  width: 50%;
-  background-color: #a793c8;
-}
-
 .buttonInd:hover {
   width: 50%;
   background-color: #71579c;
