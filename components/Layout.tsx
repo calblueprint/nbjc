@@ -14,11 +14,9 @@ const Layout: React.FunctionComponent<Props> = ({
   title = 'NBJC',
 }) => {
   const router = useRouter();
-  const [session, loading] = useSession();
+  const [session, sessionLoading] = useSession();
 
-  if (loading) {
-    return <LinearProgress />;
-  }
+  if (sessionLoading) return <LinearProgress />;
   return (
     <div>
       <Head>
