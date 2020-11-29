@@ -171,7 +171,7 @@ const UserSignUp: React.FC = () => {
                         errors.confirmPassword
                       )}
                       <div className={`${styles.field} ${styles.actions}`}>
-                        <Link href="/users/signin">
+                        <Link href="/signin">
                           <a className={styles.link}>
                             <Typography variant="caption">
                               Already Registered? Log in

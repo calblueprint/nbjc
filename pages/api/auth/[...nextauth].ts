@@ -44,7 +44,7 @@ const options = {
     secret: process.env.JWT_SIGNING_PRIVATE_KEY,
   },
   pages: {
-    error: '/users/signin',
+    error: '/signin',
   },
 };
 

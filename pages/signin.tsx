@@ -132,7 +132,7 @@ const UserSignIn: React.FC = () => {
                         </Link>
                       </div>
                       <div className={`${styles.field} ${styles.actions}`}>
-                        <Link href="/users/signup">
+                        <Link href="/signup">
                           <a className={styles.link}>
                             <Typography variant="caption">
                               Not Registered? Sign Up

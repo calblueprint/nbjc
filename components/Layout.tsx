@@ -48,7 +48,7 @@ const Layout: React.FunctionComponent<Props> = ({
                     className={styles.logButtonSpace}
                     variant="contained"
                     color="primary"
-                    onClick={() => router.push('/users/signin')}
+                    onClick={() => router.push('/signin')}
                   >
                     Log In
                   </Button>
@@ -56,7 +56,7 @@ const Layout: React.FunctionComponent<Props> = ({
                     className={styles.logButtonSpace}
                     variant="contained"
                     color="primary"
-                    onClick={() => router.push('/users/signup')}
+                    onClick={() => router.push('/signup')}
                   >
                     Join Us
                   </Button>
