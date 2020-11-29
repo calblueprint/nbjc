@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Button } from '@material-ui/core';
+import { Button, LinearProgress } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import { useSession, signOut } from 'next-auth/client';
 import styles from '../styles/Layout.module.css';
@@ -16,9 +16,9 @@ const Layout: React.FunctionComponent<Props> = ({
   const router = useRouter();
   const [session, loading] = useSession();
 
-  // When rendering client side don't display anything until loading is complete
-  if (typeof window !== 'undefined' && loading) return null;
-
+  if (loading) {
+    return <LinearProgress />;
+  }
   return (
     <div>
       <Head>
