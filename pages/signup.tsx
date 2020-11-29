@@ -7,7 +7,7 @@ import {
   CircularProgress,
   LinearProgress,
 } from '@material-ui/core';
-import { Formik, Form, FormikHandlers, FormikHelpers } from 'formik';
+import { useFormik, FormikHandlers, FormikHelpers } from 'formik';
 import { signupSchema } from 'interfaces/auth';
 import Layout from 'components/Layout';
 import { signIn, useSession } from 'next-auth/client';
@@ -124,6 +124,18 @@ const UserSignUp: React.FC = () => {
     </div>
   );
 
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+    validate,
+    validateOnChange: false,
+    validateOnBlur: false,
+    onSubmit: handleSubmit,
+  });
+
   if (!sessionLoading && session) router.push('/');
   if (!sessionLoading && !session)
     return (
@@ -134,72 +146,56 @@ const UserSignUp: React.FC = () => {
               <Typography variant="h3">Join Us!</Typography>
               <Typography variant="h5">Add your organization!</Typography>
             </div>
-            <Formik
-              initialValues={{
-                email: '',
-                password: '',
-                confirmPassword: '',
-              }}
-              validate={validate}
-              validateOnChange={false}
-              validateOnBlur={false}
-              onSubmit={handleSubmit}
-            >
-              {({ errors, handleChange, isSubmitting }) => {
-                return (
-                  <Form>
-                    {errorBanner ? (
-                      <div className={styles.errorBanner}>{errorBanner}</div>
-                    ) : null}
-                    <div className={styles.fields}>
-                      {constructRow(
-                        'Email',
-                        'email',
-                        handleChange,
-                        errors.email
-                      )}
-                      {constructRow(
-                        'Password',
-                        'password',
-                        handleChange,
-                        errors.password
-                      )}
-                      {constructRow(
-                        'Confirm Password',
-                        'confirmPassword',
-                        handleChange,
-                        errors.confirmPassword
-                      )}
-                      <div className={`${styles.field} ${styles.actions}`}>
-                        <Link href="/signin">
-                          <a className={styles.link}>
-                            <Typography variant="caption">
-                              Already Registered? Log in
-                            </Typography>
-                          </a>
-                        </Link>
-                        <div className={styles.submitButton}>
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            type="submit"
-                            disabled={isSubmitting}
-                          >
-                            Create
-                          </Button>
-                          {isSubmitting && (
-                            <CircularProgress
-                              size={24}
-                              className={styles.submitProgress}
-                            />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </Form>
-                );
-              }}
-            </Formik>
+            <form onSubmit={formik.handleSubmit}>
+              {errorBanner ? (
+                <div className={styles.errorBanner}>{errorBanner}</div>
+              ) : null}
+              <div className={styles.fields}>
+                {constructRow(
+                  'Email',
+                  'email',
+                  formik.handleChange,
+                  formik.errors.email
+                )}
+                {constructRow(
+                  'Password',
+                  'password',
+                  formik.handleChange,
+                  formik.errors.password
+                )}
+                {constructRow(
+                  'Confirm Password',
+                  'confirmPassword',
+                  formik.handleChange,
+                  formik.errors.confirmPassword
+                )}
+                <div className={`${styles.field} ${styles.actions}`}>
+                  <Link href="/signin">
+                    <a className={styles.link}>
+                      <Typography variant="caption">
+                        Already Registered? Log in
+                      </Typography>
+                    </a>
+                  </Link>
+                  <div className={styles.submitButton}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      type="submit"
+                      disabled={formik.isSubmitting}
+                    >
+                      Create
+                    </Button>
+                    {formik.isSubmitting && (
+                      <CircularProgress
+                        size={24}
+                        className={styles.submitProgress}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </Layout>

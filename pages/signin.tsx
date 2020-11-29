@@ -7,7 +7,7 @@ import {
   CircularProgress,
   LinearProgress,
 } from '@material-ui/core';
-import { Formik, Form, FormikHandlers, FormikHelpers } from 'formik';
+import { useFormik, FormikHandlers, FormikHelpers } from 'formik';
 import { signinSchema } from 'interfaces/auth';
 import Layout from 'components/Layout';
 import { useRouter } from 'next/router';
@@ -93,6 +93,17 @@ const UserSignIn: React.FC = () => {
     </div>
   );
 
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validate,
+    validateOnChange: false,
+    validateOnBlur: false,
+    onSubmit: handleSubmit,
+  });
+
   if (!sessionLoading && session) router.push('/');
   if (!sessionLoading && !session)
     return (
@@ -103,63 +114,52 @@ const UserSignIn: React.FC = () => {
               <Typography variant="h3">Welcome Back!</Typography>
               <Typography variant="h5">Sign In</Typography>
             </div>
-            <Formik
-              initialValues={{
-                email: '',
-                password: '',
-              }}
-              validate={validate}
-              validateOnChange={false}
-              validateOnBlur={false}
-              onSubmit={handleSubmit}
-            >
-              {({ errors, handleChange, isSubmitting }) => {
-                return (
-                  <Form>
-                    {errorBanner ? (
-                      <div className={styles.errorBanner}>{errorBanner}</div>
-                    ) : null}
-                    <div className={styles.fields}>
-                      {constructRow('email', handleChange, errors.email)}
-                      {constructRow('password', handleChange, errors.password)}
-                      <div>
-                        <Link href="/users/forgot-password">
-                          <a className={styles.link}>
-                            <Typography variant="caption">
-                              Forgot your password?
-                            </Typography>
-                          </a>
-                        </Link>
-                      </div>
-                      <div className={`${styles.field} ${styles.actions}`}>
-                        <Link href="/signup">
-                          <a className={styles.link}>
-                            <Typography variant="caption">
-                              Not Registered? Sign Up
-                            </Typography>
-                          </a>
-                        </Link>
-                        <div className={styles.submitButton}>
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            type="submit"
-                          >
-                            Log In
-                          </Button>
-                          {isSubmitting && (
-                            <CircularProgress
-                              size={24}
-                              className={styles.submitProgress}
-                            />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </Form>
-                );
-              }}
-            </Formik>
+            <form onSubmit={formik.handleSubmit}>
+              {errorBanner ? (
+                <div className={styles.errorBanner}>{errorBanner}</div>
+              ) : null}
+              <div className={styles.fields}>
+                {constructRow(
+                  'email',
+                  formik.handleChange,
+                  formik.errors.email
+                )}
+                {constructRow(
+                  'password',
+                  formik.handleChange,
+                  formik.errors.password
+                )}
+                <div>
+                  <Link href="/users/forgot-password">
+                    <a className={styles.link}>
+                      <Typography variant="caption">
+                        Forgot your password?
+                      </Typography>
+                    </a>
+                  </Link>
+                </div>
+                <div className={`${styles.field} ${styles.actions}`}>
+                  <Link href="/signup">
+                    <a className={styles.link}>
+                      <Typography variant="caption">
+                        Not Registered? Sign Up
+                      </Typography>
+                    </a>
+                  </Link>
+                  <div className={styles.submitButton}>
+                    <Button variant="contained" color="primary" type="submit">
+                      Log In
+                    </Button>
+                    {formik.isSubmitting && (
+                      <CircularProgress
+                        size={24}
+                        className={styles.submitProgress}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </Layout>
