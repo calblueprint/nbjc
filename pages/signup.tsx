@@ -5,12 +5,14 @@ import {
   Button,
   Typography,
   CircularProgress,
+  LinearProgress,
 } from '@material-ui/core';
 import { Formik, Form, FormikHandlers, FormikHelpers } from 'formik';
 import { signupSchema } from 'interfaces/auth';
 import Layout from 'components/Layout';
-import { signIn } from 'next-auth/client';
-import styles from '../../styles/users/Auth.module.css';
+import { signIn, useSession } from 'next-auth/client';
+import { useRouter } from 'next/router';
+import styles from '../styles/Auth.module.css';
 
 type FormValues = {
   email: string;
@@ -26,6 +28,8 @@ type ErrorValues = {
 
 // UserSignUp page. Will need additional email verification to be able to create organizations.
 const UserSignUp: React.FC = () => {
+  const router = useRouter();
+  const [session, sessionLoading] = useSession();
   const [errorBanner, setErrorBanner] = useState('');
 
   const handleSubmit = async (
@@ -120,79 +124,87 @@ const UserSignUp: React.FC = () => {
     </div>
   );
 
-  return (
-    <Layout title="Sign Up">
-      <div className={styles.root}>
-        <div className={styles.content}>
-          <div className={styles.titles}>
-            <Typography variant="h3">Join Us!</Typography>
-            <Typography variant="h5">Add your organization!</Typography>
-          </div>
-          <Formik
-            initialValues={{
-              email: '',
-              password: '',
-              confirmPassword: '',
-            }}
-            validate={validate}
-            validateOnChange={false}
-            validateOnBlur={false}
-            onSubmit={handleSubmit}
-          >
-            {({ errors, handleChange, isSubmitting }) => {
-              return (
-                <Form>
-                  {errorBanner ? (
-                    <div className={styles.errorBanner}>{errorBanner}</div>
-                  ) : null}
-                  <div className={styles.fields}>
-                    {constructRow('Email', 'email', handleChange, errors.email)}
-                    {constructRow(
-                      'Password',
-                      'password',
-                      handleChange,
-                      errors.password
-                    )}
-                    {constructRow(
-                      'Confirm Password',
-                      'confirmPassword',
-                      handleChange,
-                      errors.confirmPassword
-                    )}
-                    <div className={`${styles.field} ${styles.actions}`}>
-                      <Link href="/users/signin">
-                        <a className={styles.link}>
-                          <Typography variant="caption">
-                            Already Registered? Log in
-                          </Typography>
-                        </a>
-                      </Link>
-                      <div className={styles.submitButton}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          type="submit"
-                          disabled={isSubmitting}
-                        >
-                          Create
-                        </Button>
-                        {isSubmitting && (
-                          <CircularProgress
-                            size={24}
-                            className={styles.submitProgress}
-                          />
-                        )}
+  if (!sessionLoading && session) router.push('/');
+  if (!sessionLoading && !session)
+    return (
+      <Layout title="Sign Up">
+        <div className={styles.root}>
+          <div className={styles.content}>
+            <div className={styles.titles}>
+              <Typography variant="h3">Join Us!</Typography>
+              <Typography variant="h5">Add your organization!</Typography>
+            </div>
+            <Formik
+              initialValues={{
+                email: '',
+                password: '',
+                confirmPassword: '',
+              }}
+              validate={validate}
+              validateOnChange={false}
+              validateOnBlur={false}
+              onSubmit={handleSubmit}
+            >
+              {({ errors, handleChange, isSubmitting }) => {
+                return (
+                  <Form>
+                    {errorBanner ? (
+                      <div className={styles.errorBanner}>{errorBanner}</div>
+                    ) : null}
+                    <div className={styles.fields}>
+                      {constructRow(
+                        'Email',
+                        'email',
+                        handleChange,
+                        errors.email
+                      )}
+                      {constructRow(
+                        'Password',
+                        'password',
+                        handleChange,
+                        errors.password
+                      )}
+                      {constructRow(
+                        'Confirm Password',
+                        'confirmPassword',
+                        handleChange,
+                        errors.confirmPassword
+                      )}
+                      <div className={`${styles.field} ${styles.actions}`}>
+                        <Link href="/users/signin">
+                          <a className={styles.link}>
+                            <Typography variant="caption">
+                              Already Registered? Log in
+                            </Typography>
+                          </a>
+                        </Link>
+                        <div className={styles.submitButton}>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                            disabled={isSubmitting}
+                          >
+                            Create
+                          </Button>
+                          {isSubmitting && (
+                            <CircularProgress
+                              size={24}
+                              className={styles.submitProgress}
+                            />
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Form>
-              );
-            }}
-          </Formik>
+                  </Form>
+                );
+              }}
+            </Formik>
+          </div>
         </div>
-      </div>
-    </Layout>
-  );
+      </Layout>
+    );
+  return <LinearProgress />;
 };
 
 export default UserSignUp;
