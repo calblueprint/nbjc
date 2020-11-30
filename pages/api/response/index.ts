@@ -20,22 +20,9 @@ export default async (
     return CreateError(400, error.message, res);
   }
   const data = value as ApplicationResponse;
-
-  //   const connectOrg = data.organizationId
-  //     ? {
-  //         organization: {
-  //           connect: { id: data.organizationId },
-  //         },
-  //       }
-  //     : undefined;
-
   try {
-    const newResponse = await prisma.applicationResponse.upsert({
-      where: { id: data.id },
-      update: {
-        answer: data.answer,
-      },
-      create: {
+    const newResponse = await prisma.applicationResponse.create({
+      data: {
         answer: data.answer,
         organization: {
           connect: { id: data.organizationId },
@@ -47,6 +34,7 @@ export default async (
     });
     return res.json(newResponse);
   } catch (err) {
+    console.log(data);
     console.log(err);
     return CreateError(500, 'Failed to create response', res);
   }
