@@ -251,79 +251,86 @@ const TabBasics: React.FC<TabProps> = ({
       <div className={styles.short}>
         <p>Audience Demographics</p>
         <div className={styles.auto}>
-          <Autocomplete
-            multiple
-            id="ageDemographic"
-            options={ages}
-            getOptionLabel={(option) => option}
-            filterSelectedOptions
-            onChange={(event, newValue) => {
-              setFieldValue('ageDemographic', newValue);
-            }}
-            onBlur={handleBlur}
-            className={styles.autoField}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="outlined"
-                placeholder="Ages"
-                error={Boolean(touched.ageDemographic && errors.ageDemographic)}
-                helperText={
-                  touched.ageDemographic ? errors.ageDemographic : undefined
-                }
-              />
-            )}
-          />
-          <Autocomplete
-            multiple
-            id="lgbtqDemographic"
-            options={orientation}
-            getOptionLabel={(option) => option}
-            filterSelectedOptions
-            onChange={(event, newValue) => {
-              setFieldValue('lgbtqDemographic', newValue);
-            }}
-            onBlur={handleBlur}
-            className={styles.autoField}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="outlined"
-                placeholder="Orientation"
-                error={Boolean(
-                  touched.lgbtqDemographic && errors.lgbtqDemographic
-                )}
-                helperText={
-                  touched.lgbtqDemographic ? errors.lgbtqDemographic : undefined
-                }
-              />
-            )}
-          />
-          <Autocomplete
-            multiple
-            id="raceDemographic"
-            options={ethnicity}
-            getOptionLabel={(option) => option}
-            filterSelectedOptions
-            onChange={(event, newValue) => {
-              setFieldValue('raceDemographic', newValue);
-            }}
-            onBlur={handleBlur}
-            className={styles.autoField}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="outlined"
-                placeholder="Ethnicity"
-                error={Boolean(
-                  touched.raceDemographic && errors.raceDemographic
-                )}
-                helperText={
-                  touched.raceDemographic ? errors.raceDemographic : undefined
-                }
-              />
-            )}
-          />
+          <div className={styles.autoField}>
+            <p>Orientation</p>
+            <Autocomplete
+              multiple
+              id="lgbtqDemographic"
+              options={orientation}
+              getOptionLabel={(option) => option}
+              filterSelectedOptions
+              onChange={(event, newValue) => {
+                setFieldValue('lgbtqDemographic', newValue);
+              }}
+              onBlur={handleBlur}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  error={Boolean(
+                    touched.lgbtqDemographic && errors.lgbtqDemographic
+                  )}
+                  helperText={
+                    touched.lgbtqDemographic
+                      ? errors.lgbtqDemographic
+                      : undefined
+                  }
+                />
+              )}
+            />
+          </div>
+          <div className={styles.autoField}>
+            <p>Background</p>
+            <Autocomplete
+              multiple
+              id="raceDemographic"
+              options={ethnicity}
+              getOptionLabel={(option) => option}
+              filterSelectedOptions
+              onChange={(event, newValue) => {
+                setFieldValue('raceDemographic', newValue);
+              }}
+              onBlur={handleBlur}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  error={Boolean(
+                    touched.raceDemographic && errors.raceDemographic
+                  )}
+                  helperText={
+                    touched.raceDemographic ? errors.raceDemographic : undefined
+                  }
+                />
+              )}
+            />
+          </div>
+          <div className={styles.autoField}>
+            <p>Age Range</p>
+            <Autocomplete
+              multiple
+              id="ageDemographic"
+              options={ages}
+              getOptionLabel={(option) => option}
+              filterSelectedOptions
+              onChange={(event, newValue) => {
+                setFieldValue('ageDemographic', newValue);
+              }}
+              onBlur={handleBlur}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  error={Boolean(
+                    touched.ageDemographic && errors.ageDemographic
+                  )}
+                  helperText={
+                    touched.ageDemographic ? errors.ageDemographic : undefined
+                  }
+                />
+              )}
+            />
+          </div>
         </div>
       </div>
       <div className={styles.short}>
