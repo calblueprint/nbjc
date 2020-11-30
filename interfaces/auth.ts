@@ -22,6 +22,7 @@ export const signupSchema = Joi.object({
       'string.empty': 'Email is required.',
     }),
   password: Joi.string().min(6).max(50).messages({
+    'string.empty': 'Password is required.',
     'string.min': 'Password must be at least 6 characters.',
     'string.max': 'Password must be 50 characters or fewer.',
   }),

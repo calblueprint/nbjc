@@ -7,7 +7,7 @@ import {
   CircularProgress,
   LinearProgress,
 } from '@material-ui/core';
-import { useFormik, FormikHandlers, FormikHelpers } from 'formik';
+import { useFormik, FormikHandlers, FormikHelpers, FormikErrors } from 'formik';
 import { signupSchema } from 'interfaces/auth';
 import Layout from 'components/Layout';
 import { signIn, useSession } from 'next-auth/client';
@@ -18,12 +18,6 @@ type FormValues = {
   email: string;
   password: string;
   confirmPassword: string;
-};
-
-type ErrorValues = {
-  email?: string;
-  password?: string;
-  confirmPassword?: string;
 };
 
 // UserSignUp page. Will need additional email verification to be able to create organizations.
@@ -75,20 +69,22 @@ const UserSignUp: React.FC = () => {
   };
 
   // Validates inputs
-  const validate = (values: FormValues): ErrorValues => {
-    const errors: { [k: string]: string } = {};
+  const validate = (values: FormValues): FormikErrors<FormValues> => {
     const { error } = signupSchema.validate(values, {
       abortEarly: false,
     });
 
-    // Fill out the errors payload with the correct messaging
-    if (error) {
-      for (let i = 0; i < error.details.length; i += 1) {
-        const val = error.details[i];
-        errors[val.path[0]] = val.message;
-      }
-    }
-    return errors;
+    const msg: { [k: string]: string } = error
+      ? error.details.reduce(
+          (acc, curr) => ({
+            ...acc,
+            [curr.path[0]]: curr.message,
+          }),
+          {}
+        )
+      : {};
+
+    return msg;
   };
 
   const constructRow = (
@@ -124,12 +120,14 @@ const UserSignUp: React.FC = () => {
     </div>
   );
 
+  const initialValues: FormValues = {
+    email: '',
+    password: '',
+    confirmPassword: '',
+  };
+
   const formik = useFormik({
-    initialValues: {
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
+    initialValues,
     validate,
     validateOnChange: false,
     validateOnBlur: false,
