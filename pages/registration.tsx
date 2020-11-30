@@ -1,4 +1,4 @@
-import { useFormik } from 'formik';
+import { FormikErrors, useFormik } from 'formik';
 import { Form } from 'interfaces';
 import { useState, ChangeEvent } from 'react';
 import { Tabs, Tab, AppBar, Button } from '@material-ui/core';
@@ -10,44 +10,57 @@ import styles from 'styles/Registration.module.css';
 import schema from 'interfaces/registration';
 
 const Registration: React.FC = () => {
-  const validate = (values: string): Promise<{ [k: string]: string }> => {
-    const errors: { [k: string]: string } = {};
+  const [selected, setSelected] = useState(0);
+
+  const validate = (values: Form): FormikErrors<Form> => {
     const { error } = schema.validate(values, {
-      context: { strict: true },
       abortEarly: false,
+      context: {
+        strict: false,
+      },
     });
-    if (error) {
-      for (let i = 0; i < error.details.length; i += 1) {
-        const val = error.details[i];
-        errors[val.path[0]] = val.message;
-      }
-    }
-    return errors;
+
+    const msg: { [k: string]: string } = error
+      ? error.details.reduce(
+          (acc, curr) => ({
+            ...acc,
+            [curr.path[0]]: curr.message,
+          }),
+          {}
+        )
+      : {};
+
+    return msg;
   };
-  const [selected, setSelected] = useState<number>(0);
+
   const handleChange = (
     _event: ChangeEvent<unknown>,
     newValue: number
   ): void => {
     setSelected(newValue);
   };
+
   const initialValues: Form = {
-    workType: [],
-    orgType: [],
-    EIN: '',
-    ages: [],
-    orientation: [],
-    ethnicity: [],
-    foundingDate: '',
+    name: '',
+    contactName: '',
+    contactEmail: '',
+    organizationType: '',
+    workType: '',
+    address: '',
+    missionStatement: '',
+    shortHistory: '',
+    lgbtqDemographic: [],
+    raceDemographic: [],
+    ageDemographic: [],
+    capacity: undefined,
+    ein: undefined,
+    foundingDate: null,
+    is501c3: false,
     street: '',
     city: '',
     state: '',
     zipcode: '',
-    orgName: '',
-    contactName: '',
-    contactEmail: '',
     website: '',
-    missionHistory: '',
     short1: '',
     short2: '',
     short3: '',
@@ -60,6 +73,7 @@ const Registration: React.FC = () => {
   const formik = useFormik({
     initialValues,
     validate,
+    validateOnChange: false,
     onSubmit: (values) => {
       console.log(values);
     },
@@ -84,7 +98,7 @@ const Registration: React.FC = () => {
               values={formik.values}
               setFieldValue={formik.setFieldValue}
               touch={formik.touched}
-              formikErrors={formik.errors}
+              errors={formik.errors}
             />
           )}
           {selected === 1 && (
@@ -94,7 +108,7 @@ const Registration: React.FC = () => {
               values={formik.values}
               setFieldValue={formik.setFieldValue}
               touch={formik.touched}
-              formikErrors={formik.errors}
+              errors={formik.errors}
             />
           )}
           {selected === 2 && (
@@ -104,7 +118,7 @@ const Registration: React.FC = () => {
               values={formik.values}
               setFieldValue={formik.setFieldValue}
               touch={formik.touched}
-              formikErrors={formik.errors}
+              errors={formik.errors}
             />
           )}
         </div>

@@ -1,5 +1,10 @@
 import { TextField } from '@material-ui/core';
-import { FormikHandlers, FormikHelpers } from 'formik';
+import {
+  FormikErrors,
+  FormikHandlers,
+  FormikHelpers,
+  FormikTouched,
+} from 'formik';
 import { Form } from 'interfaces';
 import styles from './TabProj.module.css';
 
@@ -8,8 +13,8 @@ type TabProps = {
   handleChange: FormikHandlers['handleChange'];
   setFieldValue: FormikHelpers<string>['setFieldValue'];
   handleBlur: FormikHandlers['handleBlur'];
-  touch: Array<{ [field: string]: boolean }[]>;
-  formikErrors: Array<{ [field: string]: string }>;
+  touch: FormikTouched<Form>;
+  errors: FormikErrors<Form>;
 };
 
 const requiredError = '*Required';
@@ -18,11 +23,10 @@ const TabProj: React.FC<TabProps> = ({
   handleChange,
   handleBlur,
   touch,
-  formikErrors,
+  errors,
   values,
 }) => {
   const touched = touch;
-  const errors = formikErrors;
   const rowSize = 6;
   const placeholderText = 'Your short response';
   return (
@@ -30,7 +34,6 @@ const TabProj: React.FC<TabProps> = ({
       <div className={styles.row}>
         <p>Project 1</p>
         <TextField
-          error={'proj1' in touched && touched.proj1 && errors.proj1}
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.proj1}
@@ -39,15 +42,13 @@ const TabProj: React.FC<TabProps> = ({
           multiline
           rows={rowSize}
           placeholder={placeholderText}
+          error={Boolean(touched.proj1 && errors.proj1)}
+          helperText={touched.proj1 ? errors.proj1 : undefined}
         />
-        {'proj1' in touched && touched.proj1 && errors.proj1 ? (
-          <div className={styles.errorPara}>{requiredError}</div>
-        ) : null}
       </div>
       <div className={styles.row}>
         <p>Project 2</p>
         <TextField
-          error={'proj2' in touched && touched.proj2 && errors.proj2}
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.proj2}
@@ -56,15 +57,13 @@ const TabProj: React.FC<TabProps> = ({
           multiline
           rows={rowSize}
           placeholder={placeholderText}
+          error={Boolean(touched.proj2 && errors.proj2)}
+          helperText={touched.proj2 ? errors.proj2 : undefined}
         />
-        {'proj2' in touched && touched.proj2 && errors.proj2 ? (
-          <div className={styles.errorPara}>{requiredError}</div>
-        ) : null}
       </div>
       <div className={styles.row}>
         <p>Project 3</p>
         <TextField
-          error={'proj3' in touched && touched.proj3 && errors.proj3}
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.proj3}
@@ -73,10 +72,9 @@ const TabProj: React.FC<TabProps> = ({
           multiline
           rows={rowSize}
           placeholder={placeholderText}
+          error={Boolean(touched.proj3 && errors.proj3)}
+          helperText={touched.proj3 ? errors.proj3 : undefined}
         />
-        {'proj3' in touched && touched.proj3 && errors.proj3 ? (
-          <div className={styles.errorPara}>{requiredError}</div>
-        ) : null}
       </div>
     </>
   );

@@ -1,5 +1,10 @@
 import { TextField } from '@material-ui/core';
-import { FormikHandlers } from 'formik';
+import {
+  FormikErrors,
+  FormikHandlers,
+  FormikHelpers,
+  FormikTouched,
+} from 'formik';
 import { Form } from 'interfaces';
 import styles from './TabShortResponse.module.css';
 
@@ -8,8 +13,8 @@ type TabProps = {
   handleChange: FormikHandlers['handleChange'];
   setFieldValue: FormikHelpers<string>['setFieldValue'];
   handleBlur: FormikHandlers['handleBlur'];
-  touch: Array<{ [field: string]: boolean }[]>;
-  formikErrors: Array<{ [field: string]: string }>;
+  touch: FormikTouched<Form>;
+  errors: FormikErrors<Form>;
 };
 
 const requiredError = '*Required';
@@ -18,11 +23,10 @@ const TabShortResponse: React.FC<TabProps> = ({
   handleChange,
   handleBlur,
   touch,
-  formikErrors,
+  errors,
   values,
 }) => {
   const touched = touch;
-  const errors = formikErrors;
   const rowSize = 6;
   const placeholderText = 'Your short response';
   return (
@@ -30,7 +34,6 @@ const TabShortResponse: React.FC<TabProps> = ({
       <div className={styles.row}>
         <p>Short 1</p>
         <TextField
-          error={'short1' in touched && touched.short1 && errors.short1}
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.short1}
@@ -39,15 +42,13 @@ const TabShortResponse: React.FC<TabProps> = ({
           multiline
           rows={rowSize}
           placeholder={placeholderText}
+          error={Boolean(touched.short1 && errors.short1)}
+          helperText={touched.short1 ? errors.short1 : undefined}
         />
-        {'short1' in touched && touched.short1 && errors.short1 ? (
-          <div className={styles.errorPara}>{requiredError}</div>
-        ) : null}
       </div>
       <div className={styles.row}>
         <p>Short 2</p>
         <TextField
-          error={'short2' in touched && touched.short2 && errors.short2}
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.short2}
@@ -56,15 +57,13 @@ const TabShortResponse: React.FC<TabProps> = ({
           multiline
           rows={rowSize}
           placeholder={placeholderText}
+          error={Boolean(touched.short2 && errors.short2)}
+          helperText={touched.short2 ? errors.short2 : undefined}
         />
-        {'short2' in touched && touched.short2 && errors.short2 ? (
-          <div className={styles.errorPara}>{requiredError}</div>
-        ) : null}
       </div>
       <div className={styles.row}>
         <p>Short 3</p>
         <TextField
-          error={'short3' in touched && touched.short3 && errors.short3}
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.short3}
@@ -73,10 +72,9 @@ const TabShortResponse: React.FC<TabProps> = ({
           multiline
           rows={rowSize}
           placeholder={placeholderText}
+          error={Boolean(touched.short3 && errors.short3)}
+          helperText={touched.short3 ? errors.short3 : undefined}
         />
-        {'short3' in touched && touched.short3 && errors.short3 ? (
-          <div className={styles.errorPara}>{requiredError}</div>
-        ) : null}
       </div>
     </>
   );
