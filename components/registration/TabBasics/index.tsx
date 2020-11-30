@@ -1,4 +1,10 @@
-import { TextField, FormControl, Select, MenuItem } from '@material-ui/core';
+import {
+  FormControl,
+  FormHelperText,
+  MenuItem,
+  Select,
+  TextField,
+} from '@material-ui/core';
 import {
   FormikErrors,
   FormikHandlers,
@@ -14,7 +20,7 @@ type TabProps = {
   handleChange: FormikHandlers['handleChange'];
   setFieldValue: FormikHelpers<string>['setFieldValue'];
   handleBlur: FormikHandlers['handleBlur'];
-  touch: FormikTouched<Form>;
+  touched: FormikTouched<Form>;
   errors: FormikErrors<Form>;
 };
 
@@ -29,133 +35,36 @@ const ethnicity = [
   'Native/Indigenous',
 ];
 const ages = ['All ages', 'Children', 'Teens', 'Adults', 'Seniors'];
-const workType = [
-  '501(c)(3)',
-  'Grassroots/Local',
-  'Statewide',
-  'National',
-  'Other',
-];
-const orgType = ['Advocacy', 'Direct Service', 'Networking/Social'];
+const workType = {
+  grassrootsLocal: 'Grassroots/Local',
+  statewide: 'Statewide',
+  national: 'National',
+  other: 'Other',
+};
+const organizationType = {
+  advocacy: 'Advocacy',
+  directService: 'DirectService',
+  neworkingSocial: 'Networking/Social',
+};
+const locationType = {
+  headquarters: 'Headquarters',
+  branch: 'Branch',
+};
 
 const TabBasics: React.FC<TabProps> = ({
   handleChange,
   handleBlur,
-  touch,
+  touched,
   errors,
   values,
   setFieldValue,
 }) => {
-  const touched = touch;
-  const rowSize = 1;
   const placeholderText = '';
-  const requiredError = '*Required';
-
-  // function emailError(): string {
-  //   if (errors.contactEmail.indexOf('valid') > -1) {
-  //     return '*Invalid Email';
-  //   }
-  //   return '*Required';
-  // }
-
-  // function streetCityError(): React.ReactElement | null {
-  //   let empty = true;
-  //   let street = null;
-  //   let city = null;
-  //   if ('street' in touched && touched.street && errors.street) {
-  //     empty = false;
-  //     street = <div className={styles.errorStreet}>{requiredError}</div>;
-  //   } else {
-  //     street = <div className={styles.errorStreet} />;
-  //   }
-  //   if ('city' in touched && touched.city && errors.city) {
-  //     empty = false;
-  //     city = <div>{requiredError}</div>;
-  //   } else {
-  //     city = <div />;
-  //   }
-
-  //   if (empty) {
-  //     return null;
-  //   }
-  //   return (
-  //     <div className={styles.errorGroup}>
-  //       {street}
-  //       {city}
-  //     </div>
-  //   );
-  // }
-
-  // function stateZipcodeError(): React.ReactElement | null {
-  //   let empty = true;
-  //   let state = null;
-  //   let zipcode = null;
-  //   if ('state' in touched && touched.state && errors.state) {
-  //     empty = false;
-  //     state = <div className={styles.errorState}>{requiredError}</div>;
-  //   } else {
-  //     state = <div className={styles.errorState} />;
-  //   }
-  //   if ('zipcode' in touched && touched.zipcode && errors.zipcode) {
-  //     empty = false;
-  //     zipcode = <div className={styles.errorState}>*Must be a number.</div>;
-  //   } else {
-  //     zipcode = <div className={styles.errorState} />;
-  //   }
-
-  //   if (empty) {
-  //     return null;
-  //   }
-  //   return (
-  //     <div className={styles.errorGroup}>
-  //       {state}
-  //       {zipcode}
-  //     </div>
-  //   );
-  // }
-
-  // function demographicErrors(): React.ReactElement | null {
-  //   let empty = true;
-  //   let agesError = null;
-  //   let orientationError = null;
-  //   let ethnicityError = null;
-  //   if ('ages' in touched && touched.ages && errors.ages) {
-  //     empty = false;
-  //     agesError = <div className={styles.errorDemo}>{requiredError}</div>;
-  //   } else {
-  //     agesError = <div className={styles.errorDemo} />;
-  //   }
-  //   if ('orientation' in touched && touched.orientation && errors.orientation) {
-  //     empty = false;
-  //     orientationError = (
-  //       <div className={styles.errorDemo}>{requiredError}</div>
-  //     );
-  //   } else {
-  //     orientationError = <div className={styles.errorDemo} />;
-  //   }
-  //   if ('ethnicity' in touched && touched.ethnicity && errors.ethnicity) {
-  //     empty = false;
-  //     ethnicityError = <div className={styles.errorDemo}>{requiredError}</div>;
-  //   } else {
-  //     ethnicityError = <div className={styles.errorDemo} />;
-  //   }
-
-  //   if (empty) {
-  //     return null;
-  //   }
-  //   return (
-  //     <div className={styles.errorGroup}>
-  //       {agesError}
-  //       {orientationError}
-  //       {ethnicityError}
-  //     </div>
-  //   );
-  // }
 
   return (
     <>
       <div className={styles.row}>
-        <p className={styles.descriptor}>Org Name</p>
+        <p className={styles.descriptor}>Organization Name</p>
         <TextField
           className={styles.textField}
           id="name"
@@ -165,67 +74,69 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.name}
           name="name"
           variant="outlined"
-          rows={rowSize}
           placeholder={placeholderText}
           error={Boolean(touched.name && errors.name)}
           helperText={touched.name ? errors.name : undefined}
         />
       </div>
       <div className={styles.row}>
-        <p className={styles.descriptor}>Work Type</p>
-        <Autocomplete
-          multiple
-          id="workType"
-          options={workType}
-          getOptionLabel={(option) => option}
-          filterSelectedOptions
-          onChange={(event, newValue) => {
-            setFieldValue('workType', newValue);
-          }}
-          onBlur={handleBlur}
-          className={styles.selectField}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              onBlur={handleBlur}
-              variant="outlined"
-              placeholder="Work Type"
-              error={Boolean(touched.workType && errors.workType)}
-              helperText={touched.workType ? errors.workType : undefined}
-            />
-          )}
-        />
+        <p className={styles.descriptor}>Type of Work</p>
+        <FormControl
+          className={styles.textField}
+          variant="outlined"
+          error={Boolean(touched.workType && errors.workType)}
+        >
+          <Select
+            id="workType"
+            name="workType"
+            value={values.workType}
+            onChange={handleChange}
+            onBlur={handleBlur}
+          >
+            <MenuItem key="none" value="" disabled>
+              <em>None</em>
+            </MenuItem>
+            {Object.entries(workType).map(([key, val]) => (
+              <MenuItem key={key} value={key}>
+                {val}
+              </MenuItem>
+            ))}
+          </Select>
+          <FormHelperText>
+            {touched.workType ? errors.workType : undefined}
+          </FormHelperText>
+        </FormControl>
       </div>
       <div className={styles.row}>
-        <p className={styles.descriptor}>Org Type</p>
-        <Autocomplete
-          multiple
-          id="organizationType"
-          options={orgType}
-          getOptionLabel={(option) => option}
-          filterSelectedOptions
-          onChange={(event, newValue) => {
-            setFieldValue('organizationType', newValue);
-          }}
-          onBlur={handleBlur}
-          className={styles.selectField}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              variant="outlined"
-              placeholder="Org Type"
-              error={Boolean(
-                touched.organizationType && errors.organizationType
-              )}
-              helperText={
-                touched.organizationType ? errors.organizationType : undefined
-              }
-            />
-          )}
-        />
+        <p className={styles.descriptor}>Type of Organization</p>
+        <FormControl
+          className={styles.textField}
+          variant="outlined"
+          error={Boolean(touched.organizationType && errors.organizationType)}
+        >
+          <Select
+            id="organizationType"
+            name="organizationType"
+            value={values.organizationType}
+            onChange={handleChange}
+            onBlur={handleBlur}
+          >
+            <MenuItem key="none" value="" disabled>
+              <em>None</em>
+            </MenuItem>
+            {Object.entries(organizationType).map(([key, val]) => (
+              <MenuItem key={key} value={key}>
+                {val}
+              </MenuItem>
+            ))}
+          </Select>
+          <FormHelperText>
+            {touched.organizationType ? errors.organizationType : undefined}
+          </FormHelperText>
+        </FormControl>
       </div>
       <div className={styles.row}>
-        <p className={styles.descriptor}>Contact Name</p>
+        <p className={styles.descriptor}>Contact Person Name</p>
         <TextField
           className={styles.textField}
           id="contactName"
@@ -235,14 +146,13 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.contactName}
           name="contactName"
           variant="outlined"
-          rows={rowSize}
           placeholder={placeholderText}
           error={Boolean(touched.contactName && errors.contactName)}
           helperText={touched.contactName ? errors.contactName : undefined}
         />
       </div>
       <div className={styles.row}>
-        <p className={styles.descriptor}>Contact Email</p>
+        <p className={styles.descriptor}>Contact Person Email</p>
         <TextField
           className={styles.textField}
           onChange={handleChange}
@@ -250,14 +160,13 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.contactEmail}
           name="contactEmail"
           variant="outlined"
-          rows={rowSize}
           placeholder={placeholderText}
           error={Boolean(touched.contactEmail && errors.contactEmail)}
           helperText={touched.contactEmail ? errors.contactEmail : undefined}
         />
       </div>
       <div className={styles.row}>
-        <p className={styles.descriptor}>Website</p>
+        <p className={styles.descriptor}>Current Website</p>
         <TextField
           className={styles.textField}
           onChange={handleChange}
@@ -265,7 +174,6 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.website}
           name="website"
           variant="outlined"
-          rows={rowSize}
           placeholder={placeholderText}
           error={Boolean(touched.website && errors.website)}
           helperText={touched.website ? errors.website : undefined}
@@ -273,75 +181,44 @@ const TabBasics: React.FC<TabProps> = ({
       </div>
       <div className={styles.row}>
         <p className={styles.descriptor}>Location Type</p>
+        <FormControl
+          className={styles.textField}
+          variant="outlined"
+          error={Boolean(touched.locationType && errors.locationType)}
+        >
+          <Select
+            id="locationType"
+            name="locationType"
+            value={values.locationType}
+            onChange={handleChange}
+            onBlur={handleBlur}
+          >
+            <MenuItem key="none" value="" disabled>
+              <em>None</em>
+            </MenuItem>
+            {Object.entries(locationType).map(([key, val]) => (
+              <MenuItem key={key} value={key}>
+                {val}
+              </MenuItem>
+            ))}
+          </Select>
+          <FormHelperText>
+            {touched.locationType ? errors.locationType : undefined}
+          </FormHelperText>
+        </FormControl>
+      </div>
+      <div className={styles.row}>
+        <p className={styles.descriptor}>Address</p>
         <TextField
           className={styles.textField}
           onChange={handleChange}
           onBlur={handleBlur}
-          value={values.location}
-          name="location"
+          value={values.address}
+          name="address"
           variant="outlined"
-          rows={rowSize}
-          placeholder="location"
-          error={Boolean(touched.location && errors.location)}
-          helperText={touched.location ? errors.location : undefined}
+          error={Boolean(touched.address && errors.address)}
+          helperText={touched.address ? errors.address : undefined}
         />
-      </div>
-      <div className={styles.row}>
-        <p className={styles.addressDescriptor}>Address</p>
-        <div className={styles.addressBlock}>
-          <div className={styles.addressRow}>
-            <TextField
-              className={styles.street}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.street}
-              name="street"
-              variant="outlined"
-              rows={rowSize}
-              placeholder="Street"
-              error={Boolean(touched.street && errors.street)}
-              helperText={touched.street ? errors.street : undefined}
-            />
-            <TextField
-              className={styles.city}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.city}
-              name="city"
-              variant="outlined"
-              rows={rowSize}
-              placeholder="City"
-              error={Boolean(touched.city && errors.city)}
-              helperText={touched.city ? errors.city : undefined}
-            />
-          </div>
-          <div className={styles.addressRow}>
-            <TextField
-              className={styles.zip}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.state}
-              name="state"
-              variant="outlined"
-              rows={rowSize}
-              placeholder="State"
-              error={Boolean(touched.state && errors.state)}
-              helperText={touched.state ? errors.state : undefined}
-            />
-            <TextField
-              className={styles.zip}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.zipcode}
-              name="zipcode"
-              variant="outlined"
-              rows={rowSize}
-              placeholder="Zipcode"
-              error={Boolean(touched.zipcode && errors.zipcode)}
-              helperText={touched.zipcode ? errors.zipcode : undefined}
-            />
-          </div>
-        </div>
       </div>
       <div className={styles.row}>
         <p className={styles.descriptor}>EIN</p>
@@ -352,14 +229,13 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.ein}
           name="ein"
           variant="outlined"
-          rows={rowSize}
           placeholder={placeholderText}
           error={Boolean(touched.ein && errors.ein)}
           helperText={touched.ein ? errors.ein : undefined}
         />
       </div>
       <div className={styles.row}>
-        <p className={styles.descriptor}>Founding Date</p>
+        <p className={styles.descriptor}>Date of Founding</p>
         <TextField
           className={styles.textField}
           onChange={handleChange}
@@ -367,7 +243,6 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.foundingDate ? values.foundingDate : ''}
           name="foundingDate"
           variant="outlined"
-          rows={rowSize}
           placeholder={placeholderText}
           error={Boolean(touched.foundingDate && errors.foundingDate)}
           helperText={touched.foundingDate ? errors.foundingDate : undefined}
@@ -450,6 +325,23 @@ const TabBasics: React.FC<TabProps> = ({
             )}
           />
         </div>
+      </div>
+      <div className={styles.short}>
+        <p>Description and Mission</p>
+        <TextField
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.missionStatement}
+          name="missionStatement"
+          variant="outlined"
+          rows={6}
+          multiline
+          placeholder={placeholderText}
+          error={Boolean(touched.missionStatement && errors.missionStatement)}
+          helperText={
+            touched.missionStatement ? errors.missionStatement : undefined
+          }
+        />
       </div>
       <div className={styles.short}>
         <p>History</p>

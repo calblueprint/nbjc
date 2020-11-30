@@ -14,18 +14,23 @@ const schema = Joi.object({
     .default('test@email.com')
     .email({ tlds: { allow: false } })
     .when('$strict', { is: true, then: Joi.required() }),
-  organizationType: Joi.string().when('$strict', {
+  organizationType: Joi.string().allow('').when('$strict', {
     is: true,
     then: Joi.required(),
   }),
-  workType: Joi.string().when('$strict', { is: true, then: Joi.required() }),
-  website: Joi.string().uri(),
-  address: Joi.string().when('$strict', { is: true, then: Joi.required() }),
-  missionStatement: Joi.string().when('$strict', {
+  workType: Joi.string()
+    .allow('')
+    .when('$strict', { is: true, then: Joi.required() }),
+  website: Joi.string().allow('').uri(),
+  locationType: Joi.string().allow(''),
+  address: Joi.string()
+    .allow('')
+    .when('$strict', { is: true, then: Joi.required() }),
+  missionStatement: Joi.string().allow('').when('$strict', {
     is: true,
     then: Joi.required(),
   }),
-  shortHistory: Joi.string().when('$strict', {
+  shortHistory: Joi.string().allow('').when('$strict', {
     is: true,
     then: Joi.required(),
   }),
@@ -46,12 +51,24 @@ const schema = Joi.object({
   ein: Joi.number().when('$strict', { is: true, then: Joi.required() }),
   foundingDate: Joi.date().when('$strict', { is: true, then: Joi.required() }),
   is501c3: Joi.boolean().when('$strict', { is: true, then: Joi.required() }),
-  proj1: Joi.string().when('$strict', { is: true, then: Joi.required() }),
-  proj2: Joi.string().when('$strict', { is: true, then: Joi.required() }),
-  proj3: Joi.string().when('$strict', { is: true, then: Joi.required() }),
-  short1: Joi.string().when('$strict', { is: true, then: Joi.required() }),
-  short2: Joi.string().when('$strict', { is: true, then: Joi.required() }),
-  short3: Joi.string().when('$strict', { is: true, then: Joi.required() }),
+  proj1: Joi.string()
+    .allow('')
+    .when('$strict', { is: true, then: Joi.required() }),
+  proj2: Joi.string()
+    .allow('')
+    .when('$strict', { is: true, then: Joi.required() }),
+  proj3: Joi.string()
+    .allow('')
+    .when('$strict', { is: true, then: Joi.required() }),
+  short1: Joi.string()
+    .allow('')
+    .when('$strict', { is: true, then: Joi.required() }),
+  short2: Joi.string()
+    .allow('')
+    .when('$strict', { is: true, then: Joi.required() }),
+  short3: Joi.string()
+    .allow('')
+    .when('$strict', { is: true, then: Joi.required() }),
 });
 
 export default schema;

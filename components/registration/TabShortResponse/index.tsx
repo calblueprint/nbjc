@@ -13,20 +13,17 @@ type TabProps = {
   handleChange: FormikHandlers['handleChange'];
   setFieldValue: FormikHelpers<string>['setFieldValue'];
   handleBlur: FormikHandlers['handleBlur'];
-  touch: FormikTouched<Form>;
+  touched: FormikTouched<Form>;
   errors: FormikErrors<Form>;
 };
-
-const requiredError = '*Required';
 
 const TabShortResponse: React.FC<TabProps> = ({
   handleChange,
   handleBlur,
-  touch,
+  touched,
   errors,
   values,
 }) => {
-  const touched = touch;
   const rowSize = 6;
   const placeholderText = 'Your short response';
   return (

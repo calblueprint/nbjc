@@ -16,6 +16,7 @@ export type Form = {
   organizationType: string;
   workType: string;
   website: string;
+  locationType: string;
   address: string;
   missionStatement: string;
   shortHistory: string;
@@ -24,13 +25,8 @@ export type Form = {
   ageDemographic: string[];
   capacity: number | undefined;
   ein: number | undefined;
-  foundingDate: Date | null;
+  foundingDate: Date | undefined;
   is501c3: boolean;
-  location: string;
-  zipcode: number | string;
-  street: string;
-  city: string;
-  state: string;
   short1: string;
   short2: string;
   short3: string;
