@@ -1,19 +1,19 @@
 import { Organization } from '@prisma/client';
-import { CardMedia, Chip, TextField } from '@material-ui/core';
+import { CardMedia, Chip } from '@material-ui/core';
 import styles from './OrgDetail.module.css';
 
 type DetailProps = {
-  items: Organization;
+  org: Organization;
 };
 
 const response =
   "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.";
 
-const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
+const OrgDetail: React.FunctionComponent<DetailProps> = ({ org }) => {
   return (
     <div className={styles.root}>
       <div className={styles.row}>
-        {items && (
+        {org && (
           <CardMedia
             className={styles.leftMedia}
             image="/logo2.png"
@@ -21,14 +21,14 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
           />
         )}
         <div className={styles.colMedia}>
-          {items && (
+          {org && (
             <CardMedia
               className={styles.rightMedia}
               image="/logo2.png"
               title="logo"
             />
           )}
-          {items && (
+          {org && (
             <CardMedia
               className={styles.rightMedia}
               image="/logo2.png"
@@ -40,36 +40,34 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
       <div className={styles.row}>
         <div className={styles.section}>
           <div className={styles.big}>Basics</div>
-          {items.contactName && <div>Website: {items.contactName}</div>}
-          {items.ein && <div>EIN: {items.ein}</div>}
-          {items.createdAt && <div>Founded: {items.createdAt}</div>}
+          {org.contactName && <div>Website: {org.contactName}</div>}
+          {org.ein && <div>EIN: {org.ein}</div>}
+          {org.createdAt && <div>Founded: {org.createdAt}</div>}
         </div>
         <div className={styles.section}>
           <div className={styles.big}>Point of Contact</div>
-          {items.contactName && <div>Name: {items.contactName}</div>}
-          {items.id && <div>Phone: {items.id}</div>}
-          {items.contactEmail && <div>Email: {items.contactEmail}</div>}
+          {org.contactName && <div>Name: {org.contactName}</div>}
+          {org.id && <div>Phone: {org.id}</div>}
+          {org.contactEmail && <div>Email: {org.contactEmail}</div>}
         </div>
         <div className={styles.section}>
           <div className={styles.big}>Location</div>
-          {items.organizationType && <div>Type: {items.organizationType}</div>}
-          {items.missionStatement && (
+          {org.organizationType && <div>Type: {org.organizationType}</div>}
+          {org.missionStatement && (
             <div>
               Still need sample address data: <br />
-              {items.missionStatement}
+              {org.missionStatement}
             </div>
           )}
         </div>
       </div>
       <div className={styles.big}>Audience Demographics</div>
       <div className={styles.row}>
-        {items.lgbtqDemographic && (
+        {org.lgbtqDemographic && (
           <div className={styles.section}>
             <div className={styles.small}>Orientation</div>
             <div className={styles.chips}>
-              {items.lgbtqDemographic.map((item) => (
-                // TODO: Add accessibility support
-                // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+              {org.lgbtqDemographic.map((item) => (
                 <div key={0}>
                   <Chip label={item} variant="outlined" />
                 </div>
@@ -77,12 +75,11 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
             </div>
           </div>
         )}
-        {items.raceDemographic && (
+        {org.raceDemographic && (
           <div className={styles.section}>
             <div className={styles.small}>Ethnicity</div>
             <div className={styles.chips}>
-              {items.raceDemographic.map((item) => (
-                // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+              {org.raceDemographic.map((item) => (
                 <div key={0}>
                   <Chip label={item} variant="outlined" />
                 </div>
@@ -90,12 +87,11 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
             </div>
           </div>
         )}
-        {items.ageDemographic && (
+        {org.ageDemographic && (
           <div className={styles.section}>
             <div className={styles.small}>Ages</div>
             <div className={styles.chips}>
-              {items.ageDemographic.map((item) => (
-                // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+              {org.ageDemographic.map((item) => (
                 <div key={0}>
                   <Chip label={item} variant="outlined" />
                 </div>
@@ -105,27 +101,9 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
         )}
       </div>
       <div className={styles.big}>Mission History</div>
-      <div className={styles.row}>
-        <TextField
-          name="missionHistory"
-          variant="outlined"
-          multiline
-          rows={6}
-          placeholder={response}
-          className={styles.full}
-        />
-      </div>
+      <div className={styles.row}>{response}</div>
       <div className={styles.big}>More responses</div>
-      <div className={styles.row}>
-        <TextField
-          name="missionHistory"
-          variant="outlined"
-          multiline
-          rows={6}
-          placeholder={response}
-          className={styles.full}
-        />
-      </div>
+      <div className={styles.row}>{response}</div>
     </div>
   );
 };
