@@ -7,8 +7,6 @@ import { User, Organization } from '@prisma/client';
 export const sampleUserData: User[] = [
   {
     id: 101,
-    firstName: 'Alice',
-    lastName: 'Wonderland',
     role: 'admin',
     email: 'alice@wonderland.in',
     emailVerified: null,
@@ -19,8 +17,6 @@ export const sampleUserData: User[] = [
   },
   {
     id: 102,
-    firstName: 'Bob',
-    lastName: 'Builder',
     role: 'moderator',
     email: 'bob@builder.com',
     emailVerified: null,
@@ -31,8 +27,6 @@ export const sampleUserData: User[] = [
   },
   {
     id: 103,
-    firstName: 'Fred',
-    lastName: 'Rick',
     role: 'moderator',
     email: 'Fred@rick.com',
     emailVerified: null,
@@ -43,8 +37,6 @@ export const sampleUserData: User[] = [
   },
   {
     id: 104,
-    firstName: 'Rick',
-    lastName: 'Sanchez',
     role: 'admin',
     email: 'rick@morty.com',
     emailVerified: new Date('2020-10-23T01:02:07.213Z'),
