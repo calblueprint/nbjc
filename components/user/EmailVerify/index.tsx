@@ -1,6 +1,6 @@
 import { Link, Snackbar, Button } from '@material-ui/core';
+import { useState } from 'react';
 import styles from './EmailVerify.module.css';
-import { useState } from 'react'
 
 const EmailVerify: React.FC = () => {
   const [open, setOpen] = useState(true);
