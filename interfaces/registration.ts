@@ -99,7 +99,7 @@ const schema = Joi.object({
     .messages({
       'any.required': 'History is required',
     }),
-  keyValue: Joi.string().when('$strict', { is: true, then: Joi.required() }),
+  keyValue: Joi.string(),
   lgbtqDemographic: Joi.array()
     .unique()
     .items(Joi.string())

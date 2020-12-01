@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   FormControl,
   FormHelperText,
   MenuItem,
@@ -131,6 +132,17 @@ const TabBasics: React.FC<TabProps> = ({
             {touched.organizationType ? errors.organizationType : undefined}
           </FormHelperText>
         </FormControl>
+      </div>
+      <div className={styles.row}>
+        <p className={styles.descriptor}>Is a 501(c)(3) Organization</p>
+        <div className={styles.textField}>
+          <Checkbox
+            checked={values.is501c3}
+            onChange={handleChange}
+            name="is501c3"
+            color="primary"
+          />
+        </div>
       </div>
       <div className={styles.row}>
         <p className={styles.descriptor}>Contact Person Name</p>
