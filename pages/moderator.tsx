@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { GetServerSideProps } from 'next';
 import Layout from 'components/Layout';
 import OrgCard from 'components/moderator/OrgCard';
@@ -7,7 +7,9 @@ import clsx from 'clsx';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import SearchIcon from '@material-ui/icons/Search';
-import { PrismaClient, Organization } from '@prisma/client';
+import { PrismaClient, Organization, ApplicationNote } from '@prisma/client';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+// https://stackoverflow.com/questions/54060096/close-persistent-material-ui-drawer-on-clicking-outside
 import {
   Tabs,
   Tab,
@@ -17,6 +19,7 @@ import {
   Drawer,
   Toolbar,
   IconButton,
+  CardActions,
 } from '@material-ui/core';
 import styles from 'styles/Moderator.module.css';
 
@@ -62,6 +65,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
 
   const [errorBanner, setErrorBanner] = useState('');
 
+  /** For the submit & reject buttons */
   const handleSubmit = async (status: string): Promise<void> => {
     if (status === 'rejected') {
       try {
@@ -78,6 +82,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
         await fetch(`/api/app/orgs/approve/${card.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
+          /** body JSON is redundant */
           body: JSON.stringify({ id: card.id }),
         });
       } catch (ex) {
@@ -88,9 +93,34 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
     }
   };
 
+  /** TODO: add clickAwayListener */
+  /** For auto-saving a moderator's notes */
+  const AUTOSAVE_INTERVAL = 3000;
   const [lastText, setLastText] = useState('');
   const [text, setText] = useState('');
-  const [updateContent] = useMutation(UPDATE_CHAPTER_CONTENT.MUTATION);
+  useEffect(() => {
+    const updateContent = async (): Promise<void> => {
+      try {
+        await fetch(`/api/app/orgs/note/${card.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text }),
+        });
+        console.log('putted');
+      } catch (ex) {
+        setErrorBanner('Failed to auto-save');
+        console.log('did not put');
+      }
+    };
+    const timer = setTimeout(() => {
+      if (lastText !== text) {
+        updateContent();
+        setLastText(text);
+        console.log('autosaved');
+      }
+    }, AUTOSAVE_INTERVAL);
+    return () => clearTimeout(timer);
+  }, [text, lastText, card.id]);
 
   return (
     <Layout title="Moderator Dashboard">
@@ -203,6 +233,21 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
               <div className={styles.textField}>
                 notes for {card && card.name}
               </div>
+              <div className={styles.row}>
+                <p className={styles.descriptor}>Notes</p>
+                {console.log(card)};
+                <TextField
+                  className={styles.textField}
+                  onChange={(e) => setText(e.target.value)}
+                  value={text} /** does this need to beorg specific? */
+                  name="orgName"
+                  variant="outlined"
+                  multiline
+                  /** defaultValue={card && card.applicationNotes.note}
+                   * write a function that checks if it note exists
+                   */
+                />
+              </div>
             </Drawer>
             <div className={styles.content}>
               <OrgDetail items={card} />
@@ -238,9 +283,11 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
   );
 };
 
+/** TODO: #insert applicationNote */
 export const getServerSideProps: GetServerSideProps = async () => {
   const res: Organization[] = await prisma.organization.findMany({
     where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
+    include: { applicationNotes: true },
   });
   const items = JSON.parse(JSON.stringify(res)) as Organization[];
   return { props: { items } };
