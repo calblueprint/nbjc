@@ -9,6 +9,30 @@ import TabProj from 'components/registration/TabProj';
 import styles from 'styles/Registration.module.css';
 
 const Registration: React.FC = () => {
+  // autosave begin
+  useEffect(() => {
+    doWhateverIsHereOnMountandUpdate();
+    return () => {
+      doWhateverIsHereOnWillUnmount();
+    };
+  }, [skipUntilThisStateOrPropHaschanged]);
+
+  const [lastText, setLastText] = useState('');
+  const [text, setText] = useState('');
+
+  const AUTOSAVE_INTERVAL = 3000;
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (lastText !== text) {
+        // updateContent({ variables: { content: text, id: chapterId } });
+        // setLastText(text);
+      }
+    }, AUTOSAVE_INTERVAL);
+    return () => clearTimeout(timer);
+  }, [text]);
+  // autosave end
+
+
   const [selected, setSelected] = useState<number>(0);
   const handleChange = (
     _event: ChangeEvent<unknown>,
