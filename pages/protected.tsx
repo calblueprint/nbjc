@@ -4,10 +4,6 @@ import { useSession } from 'next-auth/client';
 const Protected: React.FC = () => {
   const [session, loading] = useSession();
 
-  if (session) {
-    console.log(session.user.email);
-  }
-
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
 
