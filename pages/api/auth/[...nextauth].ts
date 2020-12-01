@@ -1,13 +1,34 @@
-import NextAuth from 'next-auth';
+import NextAuth, { User } from 'next-auth';
 import Providers from 'next-auth/providers';
 import { PrismaClient } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import hashPassword from 'utils/hashPassword';
 import sanitizeUser from 'utils/sanitizeUser';
+import { SanitizedUser } from 'interfaces/user';
 
 type AuthorizeDTO = {
   email: string;
   password: string;
+};
+
+type SessionUser = {
+  email: string;
+  role: 'organization' | 'moderator' | 'admin' | null;
+};
+
+type CustomSession = {
+  user: SessionUser;
+  accessToken?: string;
+  expires: string;
+};
+
+type CustomToken = SessionUser & { iat: number; exp: number };
+
+type Token = CustomToken | Partial<User>;
+
+type Account = {
+  id: string;
+  type: 'credentials';
 };
 
 const prisma = new PrismaClient();
@@ -46,9 +67,46 @@ const options = {
   pages: {
     error: '/signin',
   },
+  callbacks: {
+    session: async (
+      session: Omit<CustomSession, 'user'>,
+      user: SessionUser
+    ) => {
+      const customSession: CustomSession = {
+        user: {
+          email: user.email,
+          role: user.role,
+        },
+        accessToken: session.accessToken,
+        expires: session.expires,
+      };
+      return Promise.resolve(customSession);
+    },
+    jwt: async (
+      token: Token,
+      user?: SanitizedUser,
+      _account?: Account,
+      _profile?: SanitizedUser,
+      _isNewUser?: boolean
+    ) => {
+      // Check if on sign in
+      if (user) {
+        const customToken: SessionUser = {
+          email: user.email,
+          role: user.role,
+        };
+        return Promise.resolve(customToken);
+      }
+      return Promise.resolve(token);
+    },
+  },
 };
 
 export default (
   req: NextApiRequest,
   res: NextApiResponse<unknown>
-): Promise<void> => NextAuth(req, res, options);
+): Promise<void> => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore: Incompatible types in callbacks.session and callbacks.jwt
+  return NextAuth(req, res, options);
+};
