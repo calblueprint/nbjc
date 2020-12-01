@@ -14,7 +14,7 @@ export async function up(
       (
         id                           SERIAL,
         title                        TEXT NOT NULL,
-        description                  TEXT NOT NULL,
+        description                  TEXT,
         organization_id              INTEGER NOT NULL,
         PRIMARY KEY (id),
         FOREIGN KEY (organization_id)
