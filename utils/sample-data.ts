@@ -1,5 +1,5 @@
-import { Organization, OrgApp, Question } from 'interfaces';
-import { User } from '@prisma/client';
+import { OrgApp, Question } from 'interfaces';
+import { User, Organization } from '@prisma/client';
 
 /** Dummy user data. */
 // eslint-disable-next-line import/prefer-default-export
@@ -47,6 +47,34 @@ export const sampleUserData: User[] = [
   },
 ];
 
+export const sampleOrgData: Organization[] = [
+  {
+    id: 1,
+    name: 'The DEA',
+    long: 60,
+    lat: 61,
+    createdAt: new Date('2020-11-18T05:10:26.416Z'),
+    updatedAt: new Date('2020-11-18T05:10:26.416Z'),
+    applicationStatus: 'draft',
+    active: false,
+    contactName: 'Sonja Johanson',
+    contactEmail: 'skylerwhite@gmail.com',
+    organizationType: null,
+    workType: null,
+    address: '120 Sproul Hall',
+    missionStatement: null,
+    shortHistory: null,
+    keyValue: null,
+    lgbtqDemographic: ['lgbtqAll', 'sgl'],
+    raceDemographic: ['asian', 'black'],
+    ageDemographic: ['teen', 'adult'],
+    capacity: null,
+    ein: null,
+    foundingDate: null,
+    is501c3: false,
+  },
+];
+
 // TODO: implement logo and date differently...?
 export const sampleOrgAppData: OrgApp[] = [
   {
@@ -63,6 +91,7 @@ export const sampleOrgAppData: OrgApp[] = [
     ages: ['Teens', 'Adults'],
     orientation: ['LGBT', 'Adults'],
     ethnicity: ['Asian', 'Native'],
+    EIN: 123123,
   },
   {
     id: 108,
@@ -78,6 +107,7 @@ export const sampleOrgAppData: OrgApp[] = [
     ages: ['All'],
     orientation: ['LGBT'],
     ethnicity: ['Asian'],
+    EIN: 3990909,
   },
   {
     id: 109,
@@ -86,21 +116,95 @@ export const sampleOrgAppData: OrgApp[] = [
     website: '14125.com',
     email: 'pinkman@gmail.com',
     name: 'Los Pollos Hermanos',
-    logo: '/oski.jpg',
+    logo: '/logo1.png',
     date: 10112000,
     description: 'Description for Org 3 here',
     contact: 'Jesse Pinkman',
     ages: ['children'],
     orientation: ['Adults'],
     ethnicity: ['Native'],
+    EIN: 9987432,
   },
-];
-
-export const sampleOrgData: Organization[] = [
-  { id: 1, name: 'Blueprint' },
-  { id: 2, name: 'Redprint' },
-  { id: 3, name: 'Greenprint' },
-  { id: 420, name: 'Yellowprint' },
+  {
+    id: 110,
+    orgType: 'for profit!',
+    workType: 'service',
+    website: '14125.com',
+    email: 'pinkman@gmail.com',
+    name: 'TEST 1',
+    logo: '/logo1.png',
+    date: 10112000,
+    description: 'Description for Org 3 here',
+    contact: 'Jesse Pinkman',
+    ages: ['children'],
+    orientation: ['Adults'],
+    ethnicity: ['Native'],
+    EIN: 123123,
+  },
+  {
+    id: 111,
+    orgType: 'for profit!',
+    workType: 'service',
+    website: '14125.com',
+    email: 'pinkman@gmail.com',
+    name: 'TEST4',
+    logo: '/logo1.png',
+    date: 10112000,
+    description: 'Description for Org 3 here',
+    contact: 'Jesse Pinkman',
+    ages: ['children'],
+    orientation: ['Adults'],
+    ethnicity: ['Native'],
+    EIN: 123123,
+  },
+  {
+    id: 112,
+    orgType: 'for profit!',
+    workType: 'service',
+    website: '14125.com',
+    email: 'pinkman@gmail.com',
+    name: 'TEST5',
+    logo: '/logo1.png',
+    date: 10112000,
+    description: 'Description for Org 3 here',
+    contact: 'Jesse Pinkman',
+    ages: ['children'],
+    orientation: ['Adults'],
+    ethnicity: ['Native'],
+    EIN: 123123,
+  },
+  {
+    id: 113,
+    orgType: 'for profit!',
+    workType: 'service',
+    website: '14125.com',
+    email: 'pinkman@gmail.com',
+    name: 'TEST 6!',
+    logo: '/logo1.png',
+    date: 10112000,
+    description: 'Description for Org 3 here',
+    contact: 'Jesse Pinkman',
+    ages: ['children'],
+    orientation: ['Adults'],
+    ethnicity: ['Native'],
+    EIN: 123123,
+  },
+  {
+    id: 114,
+    orgType: 'for profit!',
+    workType: 'service',
+    website: '14125.com',
+    email: 'pinkman@gmail.com',
+    name: 'TEST 7777',
+    logo: '/logo1.png',
+    date: 10112000,
+    description: 'Description for Org 3 here',
+    contact: 'Jesse Pinkman',
+    ages: ['children'],
+    orientation: ['Adults'],
+    ethnicity: ['Native'],
+    EIN: 123123,
+  },
 ];
 
 export const sampleQuestionData: Question[] = [

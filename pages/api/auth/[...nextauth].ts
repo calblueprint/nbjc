@@ -26,22 +26,13 @@ const options = {
           where: { email: credentials.email },
         });
         if (!user) {
-          // Change this to be an error page
-          // return Promise.resolve(Error('No account exists'));
-          return Promise.reject(new Error('No accout exists'));
+          return Promise.reject(new Error('No account exists'));
         }
         // Verify that their password matches
         if (user.hashedPassword === hashPassword(credentials.password)) {
           return Promise.resolve(sanitizeUser(user));
         }
-
-        // return Promise.resolve(Error('Invalid password'));
         return Promise.reject(new Error('Invalid password'));
-        // ;new Error('Invalid password'));
-        // // Password mismatch
-        // // Change this to be an error page
-        // return { message: 'wrong' };
-        // return new Error('Invalid password');
       },
     }),
   ],
@@ -58,7 +49,7 @@ const options = {
     secret: process.env.JWT_SIGNING_PRIVATE_KEY,
   },
   pages: {
-    error: '/users/signin',
+    error: '/signin',
   },
 };
 

@@ -1,0 +1,10 @@
+.wordBox {
+  padding: 3px 8px 3px 8px;
+  margin-top: 10px;
+  border-radius: 30px;
+  border-color: #423e45;
+}
+
+.wordMargin {
+  margin-right: 5px;
+}

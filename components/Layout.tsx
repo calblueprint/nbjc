@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Button } from '@material-ui/core';
+import { Button, LinearProgress } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import { useSession, signOut } from 'next-auth/client';
 import styles from '../styles/Layout.module.css';
@@ -14,11 +14,9 @@ const Layout: React.FunctionComponent<Props> = ({
   title = 'NBJC',
 }) => {
   const router = useRouter();
-  const [session, loading] = useSession();
+  const [session, sessionLoading] = useSession();
 
-  // When rendering client side don't display anything until loading is complete
-  if (typeof window !== 'undefined' && loading) return null;
-
+  if (sessionLoading) return <LinearProgress />;
   return (
     <div>
       <Head>
@@ -40,8 +38,8 @@ const Layout: React.FunctionComponent<Props> = ({
             <Link href="/moderator">
               <a className={styles.link}>Moderator Dashboard</a>
             </Link>
-            <Link href="/orgs">
-              <a className={styles.link}>Orgs List</a>
+            <Link href="/users/settings">
+              <a className={styles.link}>Users</a>
             </Link>
             <div className={styles.buttons}>
               {!session ? (
@@ -50,7 +48,7 @@ const Layout: React.FunctionComponent<Props> = ({
                     className={styles.logButtonSpace}
                     variant="contained"
                     color="primary"
-                    onClick={() => router.push('/users/signin')}
+                    onClick={() => router.push('/signin')}
                   >
                     Log In
                   </Button>
@@ -58,7 +56,7 @@ const Layout: React.FunctionComponent<Props> = ({
                     className={styles.logButtonSpace}
                     variant="contained"
                     color="primary"
-                    onClick={() => router.push('/users/signup')}
+                    onClick={() => router.push('/signup')}
                   >
                     Join Us
                   </Button>
@@ -78,6 +76,7 @@ const Layout: React.FunctionComponent<Props> = ({
         </nav>
       </header>
       {children}
+      <footer className={styles.footer} />
     </div>
   );
 };
