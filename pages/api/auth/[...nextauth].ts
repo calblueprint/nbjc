@@ -36,11 +36,6 @@ const options = {
       },
     }),
   ],
-  // callbacks: {
-  //   signIn: async (user: any, account: any, profile: any) => {
-  //     return Promise.resolve(false);
-  //   },
-  // },
   database: process.env.DATABASE_URL,
   session: {
     jwt: true,

@@ -1,5 +1,5 @@
-import { Link, Snackbar, Button } from '@material-ui/core';
 import { useState } from 'react';
+import { Link, Snackbar, Button } from '@material-ui/core';
 import styles from './EmailVerify.module.css';
 
 const EmailVerify: React.FC = () => {
