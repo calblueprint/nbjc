@@ -103,6 +103,93 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     setProcessingAction(false);
   };
 
+  const orgApp = (app: Organization): JSX.Element => (
+    <div className={styles.rightCol}>
+      <div className={styles.header}>
+        <div>
+          <div className={styles.large}>{app.name}</div>
+          {app.workType && app.organizationType && (
+            <div className={styles.med}>
+              {app.workType} {app.organizationType}
+            </div>
+          )}
+        </div>
+        <div>
+          <Button variant="outlined" color="primary">
+            Rejection history
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleDrawerOpenRight}
+            className={styles.menuButton}
+          >
+            Notepad
+          </Button>
+        </div>
+      </div>
+      <Drawer
+        className={styles.drawer}
+        variant="persistent"
+        anchor="right"
+        open={openRight}
+        classes={{
+          paper: styles.drawerPaperRight,
+        }}
+      >
+        <div>
+          <IconButton onClick={handleDrawerCloseRight}>
+            <ChevronRightIcon />
+          </IconButton>
+        </div>
+        <div className={styles.textField}>notes for {app.name}</div>
+      </Drawer>
+      <div className={styles.content}>
+        <OrgDetail org={app} />
+      </div>
+      <div className={styles.footer}>
+        {errorBanner ? (
+          <>
+            <div className={styles.banner}>{errorBanner}</div>
+            &nbsp;
+          </>
+        ) : null}
+        {successBanner ? (
+          <>
+            <div className={styles.banner}>{successBanner}</div>
+            &nbsp;
+          </>
+        ) : null}
+        <div className={styles.submitButton}>
+          <Button
+            onClick={() => approveApp(false)}
+            variant="outlined"
+            color="primary"
+            disabled={processingAction}
+          >
+            Decline
+          </Button>
+          {processingAction && (
+            <CircularProgress size={24} className={styles.submitProgress} />
+          )}
+        </div>
+        <div className={styles.submitButton}>
+          <Button
+            onClick={() => approveApp(true)}
+            variant="contained"
+            color="primary"
+            disabled={processingAction}
+          >
+            Approve
+          </Button>
+          {processingAction && (
+            <CircularProgress size={24} className={styles.submitProgress} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
   if (!sessionLoading && !session) router.push('/');
   if (!sessionLoading && session)
     return (
@@ -175,98 +262,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
               [styles.mainShift]: openLeft,
             })}
           >
-            <div className={styles.rightCol}>
-              <div className={styles.header}>
-                <div>
-                  <div className={styles.large}>{card && card.name}</div>
-                  {card && card.workType && card.organizationType && (
-                    <div className={styles.med}>
-                      {card.workType} {card.organizationType}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <Button variant="outlined" color="primary">
-                    Rejection history
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={handleDrawerOpenRight}
-                    className={styles.menuButton}
-                  >
-                    Notepad
-                  </Button>
-                </div>
-              </div>
-              <Drawer
-                className={styles.drawer}
-                variant="persistent"
-                anchor="right"
-                open={openRight}
-                classes={{
-                  paper: styles.drawerPaperRight,
-                }}
-              >
-                <div>
-                  <IconButton onClick={handleDrawerCloseRight}>
-                    <ChevronRightIcon />
-                  </IconButton>
-                </div>
-                <div className={styles.textField}>
-                  notes for {card && card.name}
-                </div>
-              </Drawer>
-              <div className={styles.content}>
-                {card && <OrgDetail org={card} />}
-              </div>
-              <div className={styles.footer}>
-                {errorBanner ? (
-                  <>
-                    <div className={styles.banner}>{errorBanner}</div>
-                    &nbsp;
-                  </>
-                ) : null}
-                {successBanner ? (
-                  <>
-                    <div className={styles.banner}>{successBanner}</div>
-                    &nbsp;
-                  </>
-                ) : null}
-                <div className={styles.submitButton}>
-                  <Button
-                    onClick={() => approveApp(false)}
-                    variant="outlined"
-                    color="primary"
-                    type="submit"
-                  >
-                    Decline
-                  </Button>
-                  {processingAction && (
-                    <CircularProgress
-                      size={24}
-                      className={styles.submitProgress}
-                    />
-                  )}
-                </div>
-                <div className={styles.submitButton}>
-                  <Button
-                    onClick={() => approveApp(true)}
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                  >
-                    Approve
-                  </Button>
-                  {processingAction && (
-                    <CircularProgress
-                      size={24}
-                      className={styles.submitProgress}
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
+            {card ? orgApp(card) : 'No application selected'}
           </main>
         </div>
       </Layout>

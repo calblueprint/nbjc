@@ -40,25 +40,20 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ org }) => {
       <div className={styles.row}>
         <div className={styles.section}>
           <div className={styles.big}>Basics</div>
-          {org.contactName && <div>Website: {org.contactName}</div>}
-          {org.ein && <div>EIN: {org.ein}</div>}
-          {org.createdAt && <div>Founded: {org.createdAt}</div>}
+          <div>Website: {org.contactName || 'None'}</div>
+          <div>EIN: {org.ein || 'None'}</div>
+          <div>Founded: {org.foundingDate || 'None'}</div>
         </div>
         <div className={styles.section}>
           <div className={styles.big}>Point of Contact</div>
-          {org.contactName && <div>Name: {org.contactName}</div>}
-          {org.id && <div>Phone: {org.id}</div>}
-          {org.contactEmail && <div>Email: {org.contactEmail}</div>}
+          <div>Name: {org.contactName || 'None'}</div>
+          <div>Phone: {org.id || 'None'}</div>
+          <div>Email: {org.contactEmail || 'None'}</div>
         </div>
         <div className={styles.section}>
           <div className={styles.big}>Location</div>
-          {org.organizationType && <div>Type: {org.organizationType}</div>}
-          {org.missionStatement && (
-            <div>
-              Still need sample address data: <br />
-              {org.missionStatement}
-            </div>
-          )}
+          <div>Type: {org.organizationType || 'None'}</div>
+          <div>{'123 Street Name City, SA 12345' || 'None'}</div>
         </div>
       </div>
       <div className={styles.big}>Audience Demographics</div>
@@ -67,11 +62,15 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ org }) => {
           <div className={styles.section}>
             <div className={styles.small}>Orientation</div>
             <div className={styles.chips}>
-              {org.lgbtqDemographic.map((item) => (
-                <div key={0}>
-                  <Chip label={item} variant="outlined" />
-                </div>
-              ))}
+              {org.lgbtqDemographic.length !== 0 ? (
+                org.lgbtqDemographic.map((item) => (
+                  <div key={item}>
+                    <Chip label={item} variant="outlined" />
+                  </div>
+                ))
+              ) : (
+                <Chip label="None" variant="outlined" />
+              )}
             </div>
           </div>
         )}
@@ -79,11 +78,15 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ org }) => {
           <div className={styles.section}>
             <div className={styles.small}>Ethnicity</div>
             <div className={styles.chips}>
-              {org.raceDemographic.map((item) => (
-                <div key={0}>
-                  <Chip label={item} variant="outlined" />
-                </div>
-              ))}
+              {org.raceDemographic.length !== 0 ? (
+                org.raceDemographic.map((item) => (
+                  <div key={0}>
+                    <Chip label={item} variant="outlined" />
+                  </div>
+                ))
+              ) : (
+                <Chip label="None" variant="outlined" />
+              )}
             </div>
           </div>
         )}
@@ -91,19 +94,23 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ org }) => {
           <div className={styles.section}>
             <div className={styles.small}>Ages</div>
             <div className={styles.chips}>
-              {org.ageDemographic.map((item) => (
-                <div key={0}>
-                  <Chip label={item} variant="outlined" />
-                </div>
-              ))}
+              {org.ageDemographic.length !== 0 ? (
+                org.ageDemographic.map((item) => (
+                  <div key={0}>
+                    <Chip label={item} variant="outlined" />
+                  </div>
+                ))
+              ) : (
+                <Chip label="None" variant="outlined" />
+              )}
             </div>
           </div>
         )}
       </div>
-      <div className={styles.big}>Mission History</div>
-      <div className={styles.row}>{response}</div>
-      <div className={styles.big}>More responses</div>
-      <div className={styles.row}>{response}</div>
+      <div className={styles.big}>Description and Mission</div>
+      <div className={styles.row}>{org.missionStatement || 'None'}</div>
+      <div className={styles.big}>History</div>
+      <div className={styles.row}>{org.shortHistory || 'None'}</div>
     </div>
   );
 };
