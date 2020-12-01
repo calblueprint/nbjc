@@ -1,6 +1,5 @@
 import { FormikErrors, useFormik } from 'formik';
-import { Form } from 'interfaces';
-import { useState, ChangeEvent } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import {
   Tabs,
   Tab,
@@ -15,7 +14,7 @@ import Layout from 'components/Layout';
 import TabShortResponse from 'components/registration/TabShortResponse';
 import TabBasics from 'components/registration/TabBasics';
 import TabProj from 'components/registration/TabProj';
-import schema from 'interfaces/registration';
+import schema, { Form } from 'interfaces/registration';
 import { useRouter } from 'next/router';
 import styles from '../styles/Registration.module.css';
 
@@ -23,10 +22,14 @@ const Registration: React.FC = () => {
   const router = useRouter();
   const [selected, setSelected] = useState(0);
   const [exitDialogOpen, setExitDialogOpen] = useState(false);
+  const [saveDraft, setSaveDraft] = useState(true);
 
   const validate = (values: Form): FormikErrors<Form> => {
     const { error } = schema.validate(values, {
       abortEarly: false,
+      context: {
+        strict: !saveDraft,
+      },
     });
 
     const msg: { [k: string]: string } = error
@@ -39,17 +42,7 @@ const Registration: React.FC = () => {
         )
       : {};
 
-    console.log(msg);
-
     return msg;
-  };
-
-  const saveDraft = (values: Form): void => {
-    console.log('save draft', values);
-  };
-
-  const handleSubmit = (): void => {
-    console.log('submitting');
   };
 
   const handleChange = (
@@ -57,6 +50,11 @@ const Registration: React.FC = () => {
     newValue: number
   ): void => {
     setSelected(newValue);
+  };
+
+  const handleSubmit = (values: Form): void => {
+    console.log('submitting', values);
+    // TODO: Change status to submitted when submitted
   };
 
   const initialValues: Form = {
@@ -72,7 +70,7 @@ const Registration: React.FC = () => {
     raceDemographic: [],
     ageDemographic: [],
     capacity: undefined,
-    ein: undefined,
+    ein: '',
     foundingDate: undefined,
     is501c3: false,
     website: '',
@@ -89,8 +87,15 @@ const Registration: React.FC = () => {
     initialValues,
     validate,
     validateOnChange: false,
-    onSubmit: saveDraft,
+    onSubmit: handleSubmit,
   });
+
+  useEffect(() => {
+    if (!saveDraft) {
+      formik.submitForm();
+      setSaveDraft(true);
+    }
+  }, [saveDraft, formik]);
 
   return (
     <Layout title="Register">
@@ -176,7 +181,7 @@ const Registration: React.FC = () => {
               variant="contained"
               className={styles.autoField}
               color="primary"
-              onClick={handleSubmit}
+              onClick={() => setSaveDraft(false)}
             >
               Submit
             </Button>

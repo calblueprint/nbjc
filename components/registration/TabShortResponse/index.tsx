@@ -5,7 +5,7 @@ import {
   FormikHelpers,
   FormikTouched,
 } from 'formik';
-import { Form } from 'interfaces';
+import { Form } from 'interfaces/registration';
 import styles from './TabShortResponse.module.css';
 
 type TabProps = {

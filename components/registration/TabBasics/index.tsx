@@ -11,7 +11,7 @@ import {
   FormikHelpers,
   FormikTouched,
 } from 'formik';
-import { Form } from 'interfaces';
+import { Form } from 'interfaces/registration';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import styles from './TabBasics.module.css';
 
@@ -59,8 +59,6 @@ const TabBasics: React.FC<TabProps> = ({
   values,
   setFieldValue,
 }) => {
-  const placeholderText = '';
-
   return (
     <>
       <div className={styles.row}>
@@ -74,7 +72,6 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.name}
           name="name"
           variant="outlined"
-          placeholder={placeholderText}
           error={Boolean(touched.name && errors.name)}
           helperText={touched.name ? errors.name : undefined}
         />
@@ -146,7 +143,6 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.contactName}
           name="contactName"
           variant="outlined"
-          placeholder={placeholderText}
           error={Boolean(touched.contactName && errors.contactName)}
           helperText={touched.contactName ? errors.contactName : undefined}
         />
@@ -160,7 +156,6 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.contactEmail}
           name="contactEmail"
           variant="outlined"
-          placeholder={placeholderText}
           error={Boolean(touched.contactEmail && errors.contactEmail)}
           helperText={touched.contactEmail ? errors.contactEmail : undefined}
         />
@@ -174,7 +169,6 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.website}
           name="website"
           variant="outlined"
-          placeholder={placeholderText}
           error={Boolean(touched.website && errors.website)}
           helperText={touched.website ? errors.website : undefined}
         />
@@ -229,7 +223,6 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.ein}
           name="ein"
           variant="outlined"
-          placeholder={placeholderText}
           error={Boolean(touched.ein && errors.ein)}
           helperText={touched.ein ? errors.ein : undefined}
         />
@@ -243,7 +236,6 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.foundingDate ? values.foundingDate : ''}
           name="foundingDate"
           variant="outlined"
-          placeholder={placeholderText}
           error={Boolean(touched.foundingDate && errors.foundingDate)}
           helperText={touched.foundingDate ? errors.foundingDate : undefined}
         />
@@ -343,7 +335,6 @@ const TabBasics: React.FC<TabProps> = ({
           variant="outlined"
           rows={6}
           multiline
-          placeholder={placeholderText}
           error={Boolean(touched.missionStatement && errors.missionStatement)}
           helperText={
             touched.missionStatement ? errors.missionStatement : undefined
@@ -360,7 +351,6 @@ const TabBasics: React.FC<TabProps> = ({
           variant="outlined"
           rows={6}
           multiline
-          placeholder={placeholderText}
           error={Boolean(touched.shortHistory && errors.shortHistory)}
           helperText={touched.shortHistory ? errors.shortHistory : undefined}
         />

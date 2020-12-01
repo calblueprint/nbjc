@@ -9,32 +9,6 @@ export type Moderator = {
   name: string;
 };
 
-export type Form = {
-  name: string;
-  contactName: string;
-  contactEmail: string;
-  organizationType: string;
-  workType: string;
-  website: string;
-  locationType: string;
-  address: string;
-  missionStatement: string;
-  shortHistory: string;
-  lgbtqDemographic: string[];
-  raceDemographic: string[];
-  ageDemographic: string[];
-  capacity: number | undefined;
-  ein: number | undefined;
-  foundingDate: Date | undefined;
-  is501c3: boolean;
-  short1: string;
-  short2: string;
-  short3: string;
-  proj1: string;
-  proj2: string;
-  proj3: string;
-};
-
 // TODO: logo needs to be type of an image.... saving as string for now
 export type OrgApp = {
   id: number;
