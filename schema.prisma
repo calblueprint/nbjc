@@ -50,8 +50,9 @@ model Organization {
   ein                  Int?
   foundingDate         DateTime?             @map("founding_date")
   is501c3              Boolean               @default(false) @map("is_501c3")
+  userId               Int?                  @unique @map("user_id")
+  user                 User?                 @relation("OrganizationsToUsers", fields: [userId], references: [id])
   applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
-  users                User[]                @relation("OrganizationsToUsers")
 
   @@map("organizations")
 }
@@ -77,8 +78,7 @@ model User {
   hashedPassword String        @map("hashed_password")
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @default(now()) @updatedAt @map("updated_at")
-  organizationId Int?          @map("organization_id")
-  organization   Organization? @relation("OrganizationsToUsers", fields: [organizationId], references: [id])
+  organization   Organization? @relation("OrganizationsToUsers")
 
   @@map("users")
 }

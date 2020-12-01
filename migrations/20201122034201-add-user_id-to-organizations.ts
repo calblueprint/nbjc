@@ -1,7 +1,7 @@
 import Base from 'db-migrate-base';
 
 /**
- * Adds a 1-1 connection from Users to Organizations.
+ * Adds a 1-1 connection from Organizations to Users.
  */
 export async function up(
   db: Base,
@@ -9,17 +9,18 @@ export async function up(
 ): Promise<void> {
   db.runSql(
     `
-    ALTER TABLE users
-    ADD COLUMN organization_id INTEGER,
-    ADD FOREIGN KEY (organization_id)
-    REFERENCES organizations(id);
+    ALTER TABLE organizations
+    ADD COLUMN user_id INTEGER,
+    ADD UNIQUE (user_id),
+    ADD FOREIGN KEY (user_id)
+    REFERENCES users(id);
   `,
     callback
   );
 }
 
 /**
- * Removes connection between Users and Organizations.
+ * Removes connection between Organizations and Users.
  */
 export async function down(
   db: Base,
@@ -27,8 +28,8 @@ export async function down(
 ): Promise<void> {
   db.runSql(
     `
-    ALTER TABLE users
-    DROP COLUMN organization_id;
+    ALTER TABLE organizations
+    DROP COLUMN user_id;
   `,
     callback
   );
