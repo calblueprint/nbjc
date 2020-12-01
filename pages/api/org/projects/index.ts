@@ -35,7 +35,7 @@ export default async (
       data: {
         title: data.title,
         description: data.description,
-        organizations: {
+        organization: {
           connect: { id: data.organizationId },
         },
       },
