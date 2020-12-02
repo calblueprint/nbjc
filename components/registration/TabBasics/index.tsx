@@ -1,6 +1,18 @@
-import { TextField, FormControl, Select, MenuItem } from '@material-ui/core';
-import { FormikHandlers, FormikHelpers } from 'formik';
-import { Form } from 'interfaces';
+import {
+  Checkbox,
+  FormControl,
+  FormHelperText,
+  MenuItem,
+  Select,
+  TextField,
+} from '@material-ui/core';
+import {
+  FormikErrors,
+  FormikHandlers,
+  FormikHelpers,
+  FormikTouched,
+} from 'formik';
+import { Form } from 'interfaces/registration';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import styles from './TabBasics.module.css';
 
@@ -8,6 +20,9 @@ type TabProps = {
   values: Form;
   handleChange: FormikHandlers['handleChange'];
   setFieldValue: FormikHelpers<string>['setFieldValue'];
+  handleBlur: FormikHandlers['handleBlur'];
+  touched: FormikTouched<Form>;
+  errors: FormikErrors<Form>;
 };
 
 // TODO: use Prisma enums
@@ -21,264 +36,335 @@ const ethnicity = [
   'Native/Indigenous',
 ];
 const ages = ['All ages', 'Children', 'Teens', 'Adults', 'Seniors'];
-const workType = [
-  '501(c)(3)',
-  'Grassroots/Local',
-  'Statewide',
-  'National',
-  'Other',
-];
-const orgType = ['Advocacy', 'Direct Service', 'Networking/Social'];
+const workType = {
+  grassrootsLocal: 'Grassroots/Local',
+  statewide: 'Statewide',
+  national: 'National',
+  other: 'Other',
+};
+const organizationType = {
+  advocacy: 'Advocacy',
+  directService: 'DirectService',
+  neworkingSocial: 'Networking/Social',
+};
+const locationType = {
+  headquarters: 'Headquarters',
+  branch: 'Branch',
+};
 
 const TabBasics: React.FC<TabProps> = ({
   handleChange,
+  handleBlur,
+  touched,
+  errors,
   values,
   setFieldValue,
 }) => {
-  const rowSize = 1;
-  const placeholderText = ' ';
-
   return (
     <>
       <div className={styles.row}>
         <p className={styles.descriptor}>Organization Name</p>
         <TextField
           className={styles.textField}
+          id="name"
           onChange={handleChange}
-          value={values.orgName}
-          name="orgName"
+          onBlur={handleBlur}
+          type="text"
+          value={values.name}
+          name="name"
           variant="outlined"
-          multiline
-          rows={rowSize}
-          placeholder={placeholderText}
+          error={Boolean(touched.name && errors.name)}
+          helperText={touched.name ? errors.name : undefined}
         />
       </div>
       <div className={styles.row}>
-        <p className={styles.descriptor}>Work Type</p>
-        <Autocomplete
-          multiple
-          id="tags-outlined"
-          options={workType}
-          getOptionLabel={(option) => option}
-          filterSelectedOptions
-          onChange={(event, newValue) => {
-            setFieldValue('workType', newValue);
-          }}
-          className={styles.selectField}
-          renderInput={(params) => (
-            <TextField {...params} variant="outlined" placeholder="Work Type" />
-          )}
-        />
+        <p className={styles.descriptor}>Type of Work</p>
+        <FormControl
+          className={styles.textField}
+          variant="outlined"
+          error={Boolean(touched.workType && errors.workType)}
+        >
+          <Select
+            id="workType"
+            name="workType"
+            value={values.workType}
+            onChange={handleChange}
+            onBlur={handleBlur}
+          >
+            <MenuItem key="none" value="" disabled>
+              <em>None</em>
+            </MenuItem>
+            {Object.entries(workType).map(([key, val]) => (
+              <MenuItem key={key} value={key}>
+                {val}
+              </MenuItem>
+            ))}
+          </Select>
+          <FormHelperText>
+            {touched.workType ? errors.workType : undefined}
+          </FormHelperText>
+        </FormControl>
       </div>
       <div className={styles.row}>
-        <p className={styles.descriptor}>Org Type</p>
-        <Autocomplete
-          multiple
-          id="tags-outlined"
-          options={orgType}
-          getOptionLabel={(option) => option}
-          filterSelectedOptions
-          onChange={(event, newValue) => {
-            setFieldValue('orgType', newValue);
-          }}
-          className={styles.selectField}
-          renderInput={(params) => (
-            <TextField {...params} variant="outlined" placeholder="Org Type" />
-          )}
-        />
+        <p className={styles.descriptor}>Type of Organization</p>
+        <FormControl
+          className={styles.textField}
+          variant="outlined"
+          error={Boolean(touched.organizationType && errors.organizationType)}
+        >
+          <Select
+            id="organizationType"
+            name="organizationType"
+            value={values.organizationType}
+            onChange={handleChange}
+            onBlur={handleBlur}
+          >
+            <MenuItem key="none" value="" disabled>
+              <em>None</em>
+            </MenuItem>
+            {Object.entries(organizationType).map(([key, val]) => (
+              <MenuItem key={key} value={key}>
+                {val}
+              </MenuItem>
+            ))}
+          </Select>
+          <FormHelperText>
+            {touched.organizationType ? errors.organizationType : undefined}
+          </FormHelperText>
+        </FormControl>
       </div>
       <div className={styles.row}>
-        <p className={styles.descriptor}>Contact Name</p>
+        <p className={styles.descriptor}>Is a 501(c)(3) Organization</p>
+        <div className={styles.textField}>
+          <Checkbox
+            checked={values.is501c3}
+            onChange={handleChange}
+            name="is501c3"
+            color="primary"
+          />
+        </div>
+      </div>
+      <div className={styles.row}>
+        <p className={styles.descriptor}>Contact Person Name</p>
         <TextField
           className={styles.textField}
+          id="contactName"
           onChange={handleChange}
+          onBlur={handleBlur}
+          type="text"
           value={values.contactName}
           name="contactName"
           variant="outlined"
-          multiline
-          rows={rowSize}
-          placeholder={placeholderText}
+          error={Boolean(touched.contactName && errors.contactName)}
+          helperText={touched.contactName ? errors.contactName : undefined}
         />
       </div>
       <div className={styles.row}>
-        <p className={styles.descriptor}>Contact Email</p>
+        <p className={styles.descriptor}>Contact Person Email</p>
         <TextField
           className={styles.textField}
           onChange={handleChange}
+          onBlur={handleBlur}
           value={values.contactEmail}
           name="contactEmail"
           variant="outlined"
-          multiline
-          rows={rowSize}
-          placeholder={placeholderText}
+          error={Boolean(touched.contactEmail && errors.contactEmail)}
+          helperText={touched.contactEmail ? errors.contactEmail : undefined}
         />
       </div>
       <div className={styles.row}>
-        <p className={styles.descriptor}>Website</p>
+        <p className={styles.descriptor}>Current Website</p>
         <TextField
           className={styles.textField}
           onChange={handleChange}
+          onBlur={handleBlur}
           value={values.website}
           name="website"
           variant="outlined"
-          multiline
-          rows={rowSize}
-          placeholder={placeholderText}
+          error={Boolean(touched.website && errors.website)}
+          helperText={touched.website ? errors.website : undefined}
         />
       </div>
       <div className={styles.row}>
         <p className={styles.descriptor}>Location Type</p>
-        <TextField
+        <FormControl
           className={styles.textField}
-          onChange={handleChange}
-          value={values.location}
-          name="location"
           variant="outlined"
-          multiline
-          rows={rowSize}
-          placeholder="location"
-        />
-      </div>
-      <div className={styles.row}>
-        <p className={styles.addressDescriptor}>Address</p>
-        <div className={styles.addressBlock}>
-          <div className={styles.addressRow}>
-            <TextField
-              className={styles.street}
-              onChange={handleChange}
-              value={values.street}
-              name="street"
-              variant="outlined"
-              multiline
-              rows={rowSize}
-              placeholder="Street"
-            />
-            <TextField
-              className={styles.city}
-              onChange={handleChange}
-              value={values.city}
-              name="city"
-              variant="outlined"
-              multiline
-              rows={rowSize}
-              placeholder="City"
-            />
-          </div>
-          <div className={styles.addressRow}>
-            <TextField
-              className={styles.zip}
-              onChange={handleChange}
-              value={values.state}
-              name="state"
-              variant="outlined"
-              multiline
-              rows={rowSize}
-              placeholder="State"
-            />
-            <TextField
-              className={styles.zip}
-              onChange={handleChange}
-              value={values.zipcode}
-              name="zipcode"
-              variant="outlined"
-              multiline
-              rows={rowSize}
-              placeholder="Zipcode"
-            />
-          </div>
-        </div>
-      </div>
-      <div className={styles.row}>
-        <p className={styles.descriptor}>EIN</p>
-        <FormControl variant="outlined" className={styles.selectField}>
-          <Select value={values.EIN} name="EIN" onChange={handleChange}>
-            <MenuItem value="">
+          error={Boolean(touched.locationType && errors.locationType)}
+        >
+          <Select
+            id="locationType"
+            name="locationType"
+            value={values.locationType}
+            onChange={handleChange}
+            onBlur={handleBlur}
+          >
+            <MenuItem key="none" value="" disabled>
               <em>None</em>
             </MenuItem>
-            <MenuItem value={10}>EIN 1</MenuItem>
-            <MenuItem value={20}>EIN 2</MenuItem>
-            <MenuItem value={30}>EIN 3</MenuItem>
+            {Object.entries(locationType).map(([key, val]) => (
+              <MenuItem key={key} value={key}>
+                {val}
+              </MenuItem>
+            ))}
           </Select>
+          <FormHelperText>
+            {touched.locationType ? errors.locationType : undefined}
+          </FormHelperText>
         </FormControl>
       </div>
       <div className={styles.row}>
-        <p className={styles.descriptor}>founding Date</p>
+        <p className={styles.descriptor}>Address</p>
         <TextField
           className={styles.textField}
           onChange={handleChange}
-          value={values.foundingDate}
+          onBlur={handleBlur}
+          value={values.address}
+          name="address"
+          variant="outlined"
+          error={Boolean(touched.address && errors.address)}
+          helperText={touched.address ? errors.address : undefined}
+        />
+      </div>
+      <div className={styles.row}>
+        <p className={styles.descriptor}>EIN</p>
+        <TextField
+          className={styles.textField}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.ein}
+          name="ein"
+          variant="outlined"
+          error={Boolean(touched.ein && errors.ein)}
+          helperText={touched.ein ? errors.ein : undefined}
+        />
+      </div>
+      <div className={styles.row}>
+        <p className={styles.descriptor}>Date of Founding</p>
+        <TextField
+          className={styles.textField}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.foundingDate ? values.foundingDate : ''}
           name="foundingDate"
           variant="outlined"
-          multiline
-          rows={rowSize}
-          placeholder={placeholderText}
+          error={Boolean(touched.foundingDate && errors.foundingDate)}
+          helperText={touched.foundingDate ? errors.foundingDate : undefined}
         />
       </div>
       <div className={styles.short}>
         <p>Audience Demographics</p>
         <div className={styles.auto}>
-          <Autocomplete
-            multiple
-            id="tags-outlined"
-            options={ages}
-            getOptionLabel={(option) => option}
-            filterSelectedOptions
-            onChange={(event, newValue) => {
-              setFieldValue('ages', newValue);
-            }}
-            className={styles.autoField}
-            renderInput={(params) => (
-              <TextField {...params} variant="outlined" placeholder="Ages" />
-            )}
-          />
-          <Autocomplete
-            multiple
-            id="tags-outlined"
-            options={orientation}
-            getOptionLabel={(option) => option}
-            filterSelectedOptions
-            onChange={(event, newValue) => {
-              setFieldValue('orientation', newValue);
-            }}
-            className={styles.autoField}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="outlined"
-                placeholder="Orientation"
-              />
-            )}
-          />
-          <Autocomplete
-            multiple
-            id="tags-outlined"
-            options={ethnicity}
-            getOptionLabel={(option) => option}
-            filterSelectedOptions
-            onChange={(event, newValue) => {
-              setFieldValue('ethnicity', newValue);
-            }}
-            className={styles.autoField}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="outlined"
-                placeholder="Ethnicity"
-              />
-            )}
-          />
+          <div className={styles.autoField}>
+            <p>Orientation</p>
+            <Autocomplete
+              multiple
+              id="lgbtqDemographic"
+              options={orientation}
+              getOptionLabel={(option) => option}
+              filterSelectedOptions
+              onChange={(event, newValue) => {
+                setFieldValue('lgbtqDemographic', newValue);
+              }}
+              onBlur={handleBlur}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  error={Boolean(
+                    touched.lgbtqDemographic && errors.lgbtqDemographic
+                  )}
+                  helperText={
+                    touched.lgbtqDemographic
+                      ? errors.lgbtqDemographic
+                      : undefined
+                  }
+                />
+              )}
+            />
+          </div>
+          <div className={styles.autoField}>
+            <p>Background</p>
+            <Autocomplete
+              multiple
+              id="raceDemographic"
+              options={ethnicity}
+              getOptionLabel={(option) => option}
+              filterSelectedOptions
+              onChange={(event, newValue) => {
+                setFieldValue('raceDemographic', newValue);
+              }}
+              onBlur={handleBlur}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  error={Boolean(
+                    touched.raceDemographic && errors.raceDemographic
+                  )}
+                  helperText={
+                    touched.raceDemographic ? errors.raceDemographic : undefined
+                  }
+                />
+              )}
+            />
+          </div>
+          <div className={styles.autoField}>
+            <p>Age Range</p>
+            <Autocomplete
+              multiple
+              id="ageDemographic"
+              options={ages}
+              getOptionLabel={(option) => option}
+              filterSelectedOptions
+              onChange={(event, newValue) => {
+                setFieldValue('ageDemographic', newValue);
+              }}
+              onBlur={handleBlur}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  error={Boolean(
+                    touched.ageDemographic && errors.ageDemographic
+                  )}
+                  helperText={
+                    touched.ageDemographic ? errors.ageDemographic : undefined
+                  }
+                />
+              )}
+            />
+          </div>
         </div>
       </div>
       <div className={styles.short}>
-        <p>Mission History</p>
+        <p>Description and Mission</p>
         <TextField
           onChange={handleChange}
-          value={values.missionHistory}
-          name="missionHistory"
+          onBlur={handleBlur}
+          value={values.missionStatement}
+          name="missionStatement"
           variant="outlined"
-          multiline
           rows={6}
-          placeholder={placeholderText}
+          multiline
+          error={Boolean(touched.missionStatement && errors.missionStatement)}
+          helperText={
+            touched.missionStatement ? errors.missionStatement : undefined
+          }
+        />
+      </div>
+      <div className={styles.short}>
+        <p>History</p>
+        <TextField
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.shortHistory}
+          name="shortHistory"
+          variant="outlined"
+          rows={6}
+          multiline
+          error={Boolean(touched.shortHistory && errors.shortHistory)}
+          helperText={touched.shortHistory ? errors.shortHistory : undefined}
         />
       </div>
     </>

@@ -23,3 +23,11 @@
 .descriptor {
   display: flex;
 }
+
+.errorPara {
+  font-size: 0.9rem;
+  font-weight: 300;
+  display: flex;
+  color: red;
+  margin-left: 2%;
+}

@@ -2,7 +2,8 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Layout from 'components/Layout';
 import styles from 'styles/users/Settings.module.css';
-import { Button, TextField, Link } from '@material-ui/core';
+import { Button, TextField, Link, LinearProgress } from '@material-ui/core';
+import { useSession } from 'next-auth/client';
 import ProgressStepper from '../../components/user/ProgressStepper/index';
 
 const email = 'oskibear@berkeley.edu';
@@ -10,6 +11,7 @@ const profileType = 'admin';
 
 const UserProfSettings: React.FC = () => {
   const router = useRouter();
+  const [session, sessionLoading] = useSession();
   const [setting, setSetting] = useState(0);
   const hiddenPassword = '******';
   const emailButton =
@@ -72,26 +74,29 @@ const UserProfSettings: React.FC = () => {
     </div>
   );
 
-  return (
-    <Layout title="User Profile Settings">
-      <div className={styles.content}>
-        <div className={styles.box}>
-          <div className={styles.top}>
-            <div className={styles.title}>
-              <div className={styles.caps}>{profileType} Profile</div>
-            </div>
-            {emailButton}
-            {passwordButton}
+  if (!sessionLoading && !session) router.push('/');
+  if (!sessionLoading && session)
+    return (
+      <Layout title="User Profile Settings">
+        <div className={styles.content}>
+          <div className={styles.box}>
+            <div className={styles.top}>
+              <div className={styles.title}>
+                <div className={styles.caps}>{profileType} Profile</div>
+              </div>
+              {emailButton}
+              {passwordButton}
 
-            <div className={styles.delete}>
-              <Link>Delete User Account</Link>
+              <div className={styles.delete}>
+                <Link>Delete User Account</Link>
+              </div>
             </div>
+            <ProgressStepper />
           </div>
-          <ProgressStepper />
         </div>
-      </div>
-    </Layout>
-  );
+      </Layout>
+    );
+  return <LinearProgress />;
 };
 
 export default UserProfSettings;

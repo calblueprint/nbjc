@@ -1,9 +1,7 @@
 import { PrismaClient, Organization } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import OrganizationSchema, {
-  PublicOrganization,
-} from 'interfaces/organization';
+import OrganizationSchema from 'interfaces/organization';
 import CreateError, { MethodNotAllowed } from 'utils/error';
 
 const prisma = new PrismaClient();
