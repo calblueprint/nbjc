@@ -18,22 +18,23 @@ import {
   Toolbar,
   IconButton,
   LinearProgress,
+  CircularProgress,
 } from '@material-ui/core';
-import styles from 'styles/Moderator.module.css';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/client';
+import styles from '../styles/Moderator.module.css';
 
 type Props = {
-  items: Organization[];
+  orgs: Organization[];
 };
 
 const prisma = new PrismaClient();
 
-const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
+const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
 
-  const [card, setCard] = useState<Organization>(items[0]);
+  const [card, setCard] = useState<Organization | null>(null);
   const clickCard = (newCard: Organization): void => {
     setCard(newCard);
   };
@@ -46,7 +47,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
     setSelected(newValue);
   };
 
-  const [openLeft, setOpenLeft] = useState<boolean>(false);
+  const [openLeft, setOpenLeft] = useState<boolean>(true);
 
   const handleDrawerOpenLeft = (): void => {
     setOpenLeft(true);
@@ -66,38 +67,128 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
     setOpenRight(false);
   };
 
+  const [processingAction, setProcessingAction] = useState(false);
   const [errorBanner, setErrorBanner] = useState('');
   const [successBanner, setSuccessBanner] = useState('');
 
-  const handleSubmit = async (status: string): Promise<void> => {
-    if (status === 'rejected') {
-      try {
-        await fetch(`/api/app/orgs/reject/${card.id}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: card.id }),
-        });
-        setSuccessBanner('Successfully rejected.');
-        console.log(6);
-      } catch (ex) {
-        setErrorBanner('We could not process the rejection');
+  const approveApp = async (approve: boolean): Promise<void> => {
+    setProcessingAction(true);
+    if (card) {
+      if (approve) {
+        /** put in form of const res so you can say if res === ok then display this banner */
+        try {
+          const res = await fetch(`/api/app/orgs/approve/${card.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          if (res.ok) setSuccessBanner('Successfully approved.');
+          setErrorBanner('Failed to process approval');
+        } catch (err) {
+          setErrorBanner('Failed to process approval');
+        }
+      } else {
+        try {
+          const res = await fetch(`/api/app/orgs/reject/${card.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          if (res.ok) setSuccessBanner('Successfully rejected.');
+          setErrorBanner('Failed to process rejection');
+        } catch (err) {
+          setErrorBanner('Failed to process rejection');
+        }
       }
-    } else if (status === 'approved') {
-      /** put in form of const res so you can say if res === ok then display this banner */
-      try {
-        await fetch(`/api/app/orgs/approve/${card.id}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: card.id }),
-        });
-        setSuccessBanner('Successfully approved.');
-      } catch (ex) {
-        setErrorBanner('We could not process the approval');
-      }
-    } else {
-      setErrorBanner('We could not process your request');
     }
+    setErrorBanner('An organization app must be selected first');
+    setProcessingAction(false);
   };
+
+  const orgApp = (app: Organization): JSX.Element => (
+    <div className={styles.rightCol}>
+      <div className={styles.header}>
+        <div>
+          <div className={styles.large}>{app.name}</div>
+          {app.workType && app.organizationType && (
+            <div className={styles.med}>
+              {app.workType} {app.organizationType}
+            </div>
+          )}
+        </div>
+        <div>
+          <Button variant="outlined" color="primary">
+            Rejection history
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleDrawerOpenRight}
+            className={styles.menuButton}
+          >
+            Notepad
+          </Button>
+        </div>
+      </div>
+      <Drawer
+        className={styles.drawer}
+        variant="persistent"
+        anchor="right"
+        open={openRight}
+        classes={{
+          paper: styles.drawerPaperRight,
+        }}
+      >
+        <div>
+          <IconButton onClick={handleDrawerCloseRight}>
+            <ChevronRightIcon />
+          </IconButton>
+        </div>
+        <div className={styles.textField}>notes for {app.name}</div>
+      </Drawer>
+      <div className={styles.content}>
+        <OrgDetail org={app} />
+      </div>
+      <div className={styles.footer}>
+        {errorBanner ? (
+          <>
+            <div className={styles.banner}>{errorBanner}</div>
+            &nbsp;
+          </>
+        ) : null}
+        {successBanner ? (
+          <>
+            <div className={styles.banner}>{successBanner}</div>
+            &nbsp;
+          </>
+        ) : null}
+        <div className={styles.submitButton}>
+          <Button
+            onClick={() => approveApp(false)}
+            variant="outlined"
+            color="primary"
+            disabled={processingAction}
+          >
+            Decline
+          </Button>
+          {processingAction && (
+            <CircularProgress size={24} className={styles.submitProgress} />
+          )}
+        </div>
+        <div className={styles.submitButton}>
+          <Button
+            onClick={() => approveApp(true)}
+            variant="contained"
+            color="primary"
+            disabled={processingAction}
+          >
+            Approve
+          </Button>
+          {processingAction && (
+            <CircularProgress size={24} className={styles.submitProgress} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
 
   if (!sessionLoading && !session) router.push('/');
   if (!sessionLoading && session)
@@ -152,12 +243,12 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
               </div>
               {selected === 0 && (
                 <div className={styles.content}>
-                  {items &&
-                    items.map((item) => (
+                  {orgs &&
+                    orgs.map((org) => (
                       // TODO: Add accessibility support
                       // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-                      <div key={item.id} onClick={() => clickCard(item)}>
-                        <OrgCard items={item} />
+                      <div key={org.id} onClick={() => clickCard(org)}>
+                        <OrgCard org={org} />
                       </div>
                     ))}
                 </div>
@@ -165,99 +256,13 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
               {selected === 1 &&
                 'Event list, mimic the Org mapping on first tab?'}
             </Drawer>
-            <div className={styles.content}>
-              <OrgDetail items={card} />
-            </div>
-            <div className={styles.footer}>
-              {errorBanner ? (
-                <>
-                  <div className={styles.banner}>{errorBanner}</div>
-                  &nbsp;
-                </>
-              ) : null}
-              {successBanner ? (
-                <>
-                  <div className={styles.banner}>{successBanner}</div>
-                  &nbsp;
-                </>
-              ) : null}
-              <Button
-                onClick={() => handleSubmit('rejected')}
-                variant="contained"
-                color="secondary"
-                type="submit"
-              >
-                Reject
-              </Button>
-              <Button
-                onClick={() => handleSubmit('approved')}
-                variant="contained"
-                color="primary"
-                type="submit"
-              >
-                Accept
-              </Button>
-            </div>
           </div>
           <main
             className={clsx(styles.main, {
               [styles.mainShift]: openLeft,
             })}
           >
-            <div className={styles.rightCol}>
-              <div className={styles.header}>
-                <div>
-                  <div className={styles.large}>{card && card.name}</div>
-                  {card.workType && card.organizationType && (
-                    <div className={styles.med}>
-                      {card.workType} {card.organizationType}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <Button variant="outlined" color="primary">
-                    Rejection history
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={handleDrawerOpenRight}
-                    className={styles.menuButton}
-                  >
-                    Notepad
-                  </Button>
-                </div>
-              </div>
-              <Drawer
-                className={styles.drawer}
-                variant="persistent"
-                anchor="right"
-                open={openRight}
-                classes={{
-                  paper: styles.drawerPaperRight,
-                }}
-              >
-                <div>
-                  <IconButton onClick={handleDrawerCloseRight}>
-                    <ChevronRightIcon />
-                  </IconButton>
-                </div>
-                <div className={styles.textField}>
-                  notes for {card && card.name}
-                </div>
-              </Drawer>
-              <div className={styles.content}>
-                <OrgDetail items={card} />
-              </div>
-              <div className={styles.footer}>
-                <Button variant="contained" color="secondary">
-                  Decline
-                </Button>
-                <Button variant="contained" color="primary">
-                  Accept
-                </Button>
-              </div>
-            </div>
+            {card ? orgApp(card) : 'No application selected'}
           </main>
         </div>
       </Layout>
@@ -269,8 +274,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const res: Organization[] = await prisma.organization.findMany({
     where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
   });
-  const items = JSON.parse(JSON.stringify(res)) as Organization[];
-  return { props: { items } };
+  const orgs = JSON.parse(JSON.stringify(res)) as Organization[];
+  return { props: { orgs } };
 };
 
 export default ModeratorDashBoard;
