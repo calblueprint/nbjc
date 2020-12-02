@@ -23,19 +23,20 @@ export default async (
   }
 
   const data = value as Organization;
-  const user = await prisma.user
-    .findOne({
-      where: {
-        email: userEmail,
-      },
-      select: {
-        id: true,
-      },
-    })
-    .catch((err) => {
-      return CreateError(500, 'Failed to find user', res);
-    });
-  const currUserId = user ? user.id : null;
+  const user = await prisma.user.findOne({
+    where: {
+      email: userEmail,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  const currUserId = user?.id;
+  if (!currUserId) {
+    return CreateError(500, 'Failed to find user', res);
+  }
+
   try {
     const newOrg = await prisma.organization.upsert({
       where: {
