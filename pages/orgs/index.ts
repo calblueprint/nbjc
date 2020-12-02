@@ -23,41 +23,26 @@ export default async (
   }
 
   const data = value as Organization;
-  const user = await prisma.user.findOne({
-    where: {
-      email: userEmail,
-    },
-    select: {
-      id: true,
-    },
-  });
-  const currUserId = user?.id;
+  const user = await prisma.user
+    .findOne({
+      where: {
+        email: userEmail,
+      },
+      select: {
+        id: true,
+      },
+    })
+    .catch((err) => {
+      return CreateError(500, 'Failed to find user', res);
+    });
+  const currUserId = user ? user.id : null;
   try {
     const newOrg = await prisma.organization.upsert({
       where: {
-        userId: currUserId,
+        userId: currUserId || undefined,
       },
       create: {
-        name: data.name,
-        contactEmail: data.contactEmail,
-        contactName: data.contactName,
-        long: data.long,
-        lat: data.lat,
-        applicationStatus: data.applicationStatus,
-        active: data.active,
-        organizationType: data.organizationType,
-        workType: data.workType,
-        address: data.address,
-        missionStatement: data.missionStatement,
-        shortHistory: data.shortHistory,
-        keyValue: data.keyValue,
-        lgbtqDemographic: data.lgbtqDemographic,
-        raceDemographic: data.raceDemographic,
-        ageDemographic: data.ageDemographic,
-        ein: data.ein,
-        capacity: data.capacity,
-        foundingDate: data.foundingDate,
-        is501c3: data.is501c3,
+        ...data,
         user: {
           connect: {
             id: data.userId || undefined,
@@ -65,26 +50,7 @@ export default async (
         },
       },
       update: {
-        name: data.name,
-        contactEmail: data.contactEmail,
-        contactName: data.contactName,
-        long: data.long,
-        lat: data.lat,
-        applicationStatus: data.applicationStatus,
-        active: data.active,
-        organizationType: data.organizationType,
-        workType: data.workType,
-        address: data.address,
-        missionStatement: data.missionStatement,
-        shortHistory: data.shortHistory,
-        keyValue: data.keyValue,
-        lgbtqDemographic: data.lgbtqDemographic,
-        raceDemographic: data.raceDemographic,
-        ageDemographic: data.ageDemographic,
-        ein: data.ein,
-        capacity: data.capacity,
-        foundingDate: data.foundingDate,
-        is501c3: data.is501c3,
+        ...data,
         user: {
           connect: {
             id: data.userId || undefined,
