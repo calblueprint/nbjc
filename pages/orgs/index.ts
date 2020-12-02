@@ -15,9 +15,7 @@ export default async (
   }
 
   const { userEmail, ...body } = req.body;
-  const { error, value } = OrganizationSchema.validate(body, {
-    context: { strict: true },
-  });
+  const { error, value } = OrganizationSchema.validate(body);
   if (error) {
     return CreateError(400, error.message, res);
   }
@@ -40,13 +38,13 @@ export default async (
   try {
     const newOrg = await prisma.organization.upsert({
       where: {
-        userId: currUserId || undefined,
+        userId: currUserId,
       },
       create: {
         ...data,
         user: {
           connect: {
-            id: data.userId || undefined,
+            id: currUserId,
           },
         },
       },
@@ -54,7 +52,7 @@ export default async (
         ...data,
         user: {
           connect: {
-            id: data.userId || undefined,
+            id: currUserId,
           },
         },
       },
