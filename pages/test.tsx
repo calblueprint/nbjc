@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Layout from 'components/Layout';
+import Toast from 'components/Toast';
 
 const Test: React.FunctionComponent = () => (
   <Layout title="Home | Next.js + TypeScript Example">
@@ -9,6 +10,7 @@ const Test: React.FunctionComponent = () => (
         <a>About</a>
       </Link>
     </p>
+    <Toast msg="test" variant="alert" />
   </Layout>
 );
 
