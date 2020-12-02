@@ -1,4 +1,4 @@
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect, ChangeEvent, useCallback } from 'react';
 import { GetServerSideProps } from 'next';
 import Layout from 'components/Layout';
 import OrgCard from 'components/moderator/OrgCard';
@@ -23,15 +23,19 @@ import {
 } from '@material-ui/core';
 import styles from 'styles/Moderator.module.css';
 
+type OrgWithNote = Organization & {
+  applicationNote: ApplicationNote | null;
+};
+
 type Props = {
-  items: Organization[];
+  items: OrgWithNote[];
 };
 
 const prisma = new PrismaClient();
 
 const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
-  const [card, setCard] = useState<Organization>(items[0]);
-  const clickCard = (newCard: Organization): void => {
+  const [card, setCard] = useState<OrgWithNote>(items[0]);
+  const clickCard = (newCard: OrgWithNote): void => {
     setCard(newCard);
   };
 
@@ -65,6 +69,16 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
 
   const [errorBanner, setErrorBanner] = useState('');
 
+  const [open, setOpen] = useState(false);
+
+  const handleClick = (): void => {
+    setOpen((prev) => !prev);
+  };
+
+  const handleClickAway = (): void => {
+    setOpen(false);
+  };
+
   /** For the submit & reject buttons */
   const handleSubmit = async (status: string): Promise<void> => {
     if (status === 'rejected') {
@@ -93,7 +107,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
     }
   };
 
-  /** TODO: add clickAwayListener */
   /** For auto-saving a moderator's notes */
   const AUTOSAVE_INTERVAL = 3000;
   const [lastText, setLastText] = useState('');
@@ -216,39 +229,43 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
                 </Button>
               </div>
             </div>
-            <Drawer
-              className={styles.drawer}
-              variant="persistent"
-              anchor="right"
-              open={openRight}
-              classes={{
-                paper: styles.drawerPaperRight,
-              }}
-            >
-              <div>
-                <IconButton onClick={handleDrawerCloseRight}>
-                  <ChevronRightIcon />
-                </IconButton>
-              </div>
-              <div className={styles.textField}>
-                notes for {card && card.name}
-              </div>
-              <div className={styles.row}>
-                <p className={styles.descriptor}>Notes</p>
-                {console.log(card)};
-                <TextField
-                  className={styles.textField}
-                  onChange={(e) => setText(e.target.value)}
-                  value={text} /** does this need to beorg specific? */
-                  name="orgName"
-                  variant="outlined"
-                  multiline
-                  /** defaultValue={card && card.applicationNotes.note}
-                   * write a function that checks if it note exists
-                   */
-                />
-              </div>
-            </Drawer>
+            <ClickAwayListener onClickAway={handleClickAway}>
+              <Drawer
+                className={styles.drawer}
+                variant="persistent"
+                anchor="right"
+                open={openRight}
+                classes={{
+                  paper: styles.drawerPaperRight,
+                }}
+              >
+                <div>
+                  <IconButton onClick={handleDrawerCloseRight}>
+                    <ChevronRightIcon />
+                  </IconButton>
+                </div>
+                <div className={styles.textField}>
+                  notes for {card && card.name}
+                </div>
+                <div className={styles.row}>
+                  <p className={styles.descriptor}>Notes</p>
+                  {console.log(card)}
+                  <TextField
+                    className={styles.textField}
+                    onChange={(e) => setText(e.target.value)}
+                    /** This is buggy becuase you can't assign to a potentially null value
+                     * Currently, card.applicationNote && prevents the value fr  */
+                    value={card.applicationNote && card.applicationNote.note}
+                    name="orgName"
+                    variant="outlined"
+                    multiline
+                    /** defaultValue={card && card.applicationNote.note}
+                     * write a function that checks if it note exists
+                     */
+                  />
+                </div>
+              </Drawer>
+            </ClickAwayListener>
             <div className={styles.content}>
               <OrgDetail items={card} />
             </div>
@@ -285,9 +302,9 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ items }) => {
 
 /** TODO: #insert applicationNote */
 export const getServerSideProps: GetServerSideProps = async () => {
-  const res: Organization[] = await prisma.organization.findMany({
+  const res = await prisma.organization.findMany({
     where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
-    include: { applicationNotes: true },
+    include: { applicationNote: true },
   });
   const items = JSON.parse(JSON.stringify(res)) as Organization[];
   return { props: { items } };

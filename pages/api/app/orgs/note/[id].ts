@@ -12,7 +12,7 @@ export default async (
   const orgNote = req.body.text;
   try {
     await prisma.applicationNote.upsert({
-      where: { id: Number(orgId) },
+      where: { organizationId: Number(orgId) },
       update: { note: String(orgNote) },
       create: { note: String(orgNote) },
     });

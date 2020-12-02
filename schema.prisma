@@ -50,7 +50,7 @@ model Organization {
   ein                  Int?
   foundingDate         DateTime?             @map("founding_date")
   is501c3              Boolean               @default(false) @map("is_501c3")
-  applicationNotes     ApplicationNote?      @relation("ApplicationNotesToOrganizations")
+  applicationNote      ApplicationNote?      @relation("ApplicationNotesToOrganizations")
   applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
 
   @@map("organizations")
