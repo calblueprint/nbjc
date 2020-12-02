@@ -1,10 +1,5 @@
 import Card from '@material-ui/core/Card';
-import {
-  CardContent,
-  CardMedia,
-  CardActionArea,
-  Typography,
-} from '@material-ui/core';
+import { CardContent, CardActionArea, Typography } from '@material-ui/core';
 import { Organization } from '@prisma/client';
 import styles from './OrgCard.module.css';
 
