@@ -1,5 +1,6 @@
-import { useState, ChangeEvent, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { GetServerSideProps } from 'next';
+
 import Layout from 'components/Layout';
 import OrgCard from 'components/moderator/OrgCard';
 import OrgDetail from 'components/moderator/OrgDetail';
@@ -42,12 +43,10 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
 
-  const [card, setCard] = useState<OrgWithNote | null>(
-    orgs && orgs.length > 0 ? orgs[0] : null
-  );
-  const clickCard = (newCard: OrgWithNote): void => {
-    setCard(newCard);
-  };
+  const [lastText, setLastText] = useState('');
+  const [text, setText] = useState('');
+
+  const [index, setIndex] = useState<number>(0);
 
   const [selected, setSelected] = useState<number>(0);
   const handleChange = (
@@ -69,12 +68,41 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
 
   const [openRight, setOpenRight] = useState<boolean>(false);
 
-  const handleDrawerOpenRight = (): void => {
+  const handleDrawerOpenRight = (card: OrgWithNote): void => {
+    setText(
+      card.applicationNote && card.applicationNote.note
+        ? card.applicationNote.note
+        : ''
+    );
+    console.log(card);
+    setLastText(
+      card.applicationNote && card.applicationNote.note
+        ? card.applicationNote.note
+        : ''
+    );
     setOpenRight(true);
   };
 
-  const handleDrawerCloseRight = (): void => {
+  const handleDrawerCloseRight = async (): Promise<void> => {
+    try {
+      await fetch(`/api/app/orgs/note/${orgs[index].id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ note: text }),
+      });
+      console.log('putted');
+    } catch (ex) {
+      console.log('did not put');
+    }
+    router.replace(router.asPath);
+    setText('');
+    setLastText('');
     setOpenRight(false);
+  };
+
+  const clickCard = (newIndex: number): void => {
+    handleDrawerCloseRight();
+    setIndex(newIndex);
   };
 
   const [processingAction, setProcessingAction] = useState(false);
@@ -91,16 +119,24 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     setOpen(false);
   };
   useEffect(() => {
-    setCard(orgs && orgs.length > 0 ? orgs[0] : null);
-  }, [orgs]);
+    setIndex((prevIndex) => {
+      if (orgs.length - 1 >= 0) {
+        if (prevIndex >= orgs.length) {
+          return orgs.length - 1;
+        }
+        return prevIndex;
+      }
+      return 0;
+    });
+  }, [orgs.length]);
 
   const approveApp = async (approve: boolean): Promise<void> => {
     setProcessingAction(true);
-    if (card) {
+    if (orgs[index]) {
       if (approve) {
         /** put in form of const res so you can say if res === ok then display this banner */
         try {
-          const res = await fetch(`/api/app/orgs/approve/${card.id}`, {
+          const res = await fetch(`/api/app/orgs/approve/${orgs[index].id}`, {
             method: 'POST',
           });
           if (res.ok) {
@@ -115,7 +151,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         }
       } else {
         try {
-          const res = await fetch(`/api/app/orgs/reject/${card.id}`, {
+          const res = await fetch(`/api/app/orgs/reject/${orgs[index].id}`, {
             method: 'POST',
           });
           if (res.ok) {
@@ -137,16 +173,15 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
 
   /** For auto-saving a moderator's notes */
   const AUTOSAVE_INTERVAL = 3000;
-  const [lastText, setLastText] = useState('');
-  const [text, setText] = useState('');
+
   useEffect(() => {
-    if (card) {
+    if (orgs[index]) {
       const updateContent = async (): Promise<void> => {
         try {
-          await fetch(`/api/app/orgs/note/${card.id}`, {
+          await fetch(`/api/app/orgs/note/${orgs[index].id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text }),
+            body: JSON.stringify({ note: text }),
           });
           console.log('putted');
         } catch (ex) {
@@ -164,16 +199,16 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
       return () => clearTimeout(timer);
     }
     return undefined;
-  }, [text, lastText, card]);
+  }, [text, lastText, orgs, index]);
   const tab = (): JSX.Element | null => {
     if (selected === 0) {
       return (
         <div className={styles.content}>
           {orgs && orgs.length > 0 ? (
-            orgs.map((org) => (
+            orgs.map((org, i) => (
               // TODO: Add accessibility support
               // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-              <div key={org.id} onClick={() => clickCard(org)}>
+              <div key={org.id} onClick={() => clickCard(i)}>
                 <OrgCard org={org} />
               </div>
             ))
@@ -207,7 +242,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           <Button
             variant="outlined"
             color="primary"
-            onClick={handleDrawerOpenRight}
+            onClick={() => handleDrawerOpenRight(orgs[index])}
             className={styles.menuButton}
           >
             Notepad
@@ -229,22 +264,18 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
               <ChevronRightIcon />
             </IconButton>
           </div>
-          <div className={styles.textField}>notes for {card && card.name}</div>
+          <div className={styles.textField}>
+            notes for {orgs[index] && orgs[index].name}
+          </div>
           <div className={styles.row}>
             <p className={styles.descriptor}>Notes</p>
-            {console.log(card)}
             <TextField
               className={styles.textField}
               onChange={(e) => setText(e.target.value)}
-              /** This is buggy becuase you can't assign to a potentially null value
-               * Currently, card.applicationNote && prevents the value fr  */
               value={text}
               name="orgName"
               variant="outlined"
               multiline
-              /** defaultValue={card && card.applicationNote.note}
-               * write a function that checks if it note exists
-               */
             />
           </div>
         </Drawer>
@@ -349,7 +380,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
               [styles.mainShift]: openLeft,
             })}
           >
-            {card ? orgApp(card) : 'No application selected'}
+            {orgs[index] ? orgApp(orgs[index]) : 'No application selected'}
           </main>
         </div>
       </Layout>
