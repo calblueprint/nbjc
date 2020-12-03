@@ -28,29 +28,30 @@ model Account {
 
 model Organization {
   id                   Int                   @id @default(autoincrement())
-  name                 String
+  name                 String?
   long                 Float?
   lat                  Float?
   createdAt            DateTime              @default(now()) @map("created_at")
   updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
   applicationStatus    ApplicationStatus     @default(draft) @map("application_status")
   active               Boolean               @default(false)
-  contactName          String                @map("contact_name")
-  contactEmail         String                @map("contact_email")
+  contactName          String?               @map("contact_name")
+  contactEmail         String?               @map("contact_email")
   organizationType     OrganizationType?     @map("organization_type")
   workType             WorkType?             @map("work_type")
   address              String?
   missionStatement     String?               @map("mission_statement")
   shortHistory         String?               @map("short_history")
-  keyValue             String?               @map("key_values")
   lgbtqDemographic     LgbtqDemographic[]    @map("lgbtq_demographic")
   raceDemographic      RaceDemographic[]     @map("race_demographic")
   ageDemographic       AgeDemographic[]      @map("age_demographic")
   capacity             Int?
-  ein                  Int?
+  ein                  String?
   foundingDate         DateTime?             @map("founding_date")
   is501c3              Boolean               @default(false) @map("is_501c3")
   userId               Int?                  @unique @map("user_id")
+  contact_phone        String?
+  website              String?
   user                 User?                 @relation("OrganizationsToUsers", fields: [userId], references: [id])
   applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
   organizationProjects OrganizationProject[] @relation("OrganizationProjectsToOrganizations")
@@ -139,12 +140,12 @@ model OrganizationProject {
 }
 
 enum AgeDemographic {
-  child   @map("Children")
-  teen    @map("Teens")
-  adult   @map("Adults")
-  senior  @map("Seniors")
+  child @map("Children")
+  teen @map("Teens")
+  adult @map("Adults")
+  senior @map("Seniors")
 
-  @@map("age_demographic")
+   @@map("age_demographic")
 }
 
 enum ApplicationStatus {
@@ -153,38 +154,38 @@ enum ApplicationStatus {
   approved
   rejected
 
-  @@map("application_status")
+   @@map("application_status")
 }
 
 enum LgbtqDemographic {
-  lgbtqAll          @map("LGBTQ+ (All)")
-  sgl               @map("SGL")
-  transgender       @map("Transgender")
-  asexualAromantic  @map("Asexual/Aromantic")
-  other             @map("Other")
+  lgbtqAll @map("LGBTQ+ (All)")
+  sgl @map("SGL")
+  transgender @map("Transgender")
+  asexualAromantic @map("Asexual/Aromantic")
+  other @map("Other")
 
-  @@map("lgbtq_demographic")
+   @@map("lgbtq_demographic")
 }
 
 enum OrganizationType {
-  grassrootsLocal  @map("Grassroots/Local")
-  statewide        @map("Statewide")
-  national         @map("National")
-  other            @map("Other")
+  grassrootsLocal @map("Grassroots/Local")
+  statewide @map("Statewide")
+  national @map("National")
+  other @map("Other")
 
-  @@map("organization_type")
+   @@map("organization_type")
 }
 
 enum RaceDemographic {
-  pocAll             @map("POC (All)")
-  black              @map("Black")
-  asian              @map("Asian")
-  pacificIslander    @map("Pacific Islander")
-  latinx             @map("Latinx")
-  nativeIndigeneous  @map("Native/Indigeneous")
-  other              @map("Other")
+  pocAll @map("POC (All)")
+  black @map("Black")
+  asian @map("Asian")
+  pacificIslander @map("Pacific Islander")
+  latinx @map("Latinx")
+  nativeIndigeneous @map("Native/Indigeneous")
+  other @map("Other")
 
-  @@map("race_demographic")
+   @@map("race_demographic")
 }
 
 enum UserRole {
@@ -192,13 +193,13 @@ enum UserRole {
   moderator
   admin
 
-  @@map("user_role")
+   @@map("user_role")
 }
 
 enum WorkType {
-  advocacy          @map("Advocacy")
-  directService     @map("Direct Service")
-  networkingSocial  @map("Networking/Social")
+  advocacy @map("Advocacy")
+  directService @map("Direct Service")
+  networkingSocial @map("Networking/Social")
 
-  @@map("work_type")
+   @@map("work_type")
 }
