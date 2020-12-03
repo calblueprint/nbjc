@@ -4,22 +4,11 @@ import { PrismaClient } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import hashPassword from 'utils/hashPassword';
 import sanitizeUser from 'utils/sanitizeUser';
-import { SanitizedUser } from 'interfaces/user';
+import { SanitizedUser, SessionUser, Session } from 'interfaces/user';
 
 type AuthorizeDTO = {
   email: string;
   password: string;
-};
-
-type SessionUser = {
-  email: string;
-  role: 'organization' | 'moderator' | 'admin' | null;
-};
-
-type CustomSession = {
-  user: SessionUser;
-  accessToken?: string;
-  expires: string;
 };
 
 type CustomToken = SessionUser & { iat: number; exp: number };
@@ -68,11 +57,8 @@ const options = {
     error: '/signin',
   },
   callbacks: {
-    session: async (
-      session: Omit<CustomSession, 'user'>,
-      user: SessionUser
-    ) => {
-      const customSession: CustomSession = {
+    session: async (session: Omit<Session, 'user'>, user: SessionUser) => {
+      const customSession: Session = {
         user: {
           email: user.email,
           role: user.role,
