@@ -263,7 +263,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           />
         </div>
       </Drawer>
-      <div className={styles.content}>
+      <div className={styles.content} onClick={handleDrawerCloseRight}>
         <OrgDetail org={app} />
       </div>
       <div className={styles.footer}>
