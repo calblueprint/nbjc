@@ -34,11 +34,14 @@
     "schema": "./schema.prisma"
   },
   "dependencies": {
+    "@date-io/date-fns": "^1.3.13",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
+    "@material-ui/pickers": "^3.2.10",
     "@prisma/client": "^2.9.0",
     "clsx": "^1.1.1",
+    "date-fns": "^2.16.1",
     "db-migrate": "^0.11.11",
     "db-migrate-base": "^2.3.0",
     "db-migrate-pg": "^1.2.2",
@@ -48,7 +51,8 @@
     "next-auth": "^3.1.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "react-map-gl": "^5.2.9"
+    "react-map-gl": "^5.2.9",
+    "react-text-mask": "^5.4.3"
   },
   "devDependencies": {
     "@prisma/cli": "^2.9.0",

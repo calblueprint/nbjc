@@ -90,6 +90,33 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                 </Select>
               </FormControl>
             </div>
+
+            <div className={styles.cards}>
+              {orgs.length !== 0 ? (
+                orgs.map((org) => (
+                  <Card className={styles.card} key={org.id}>
+                    <CardActionArea
+                      onClick={() => router.push(`/orgs/${org.id}`)}
+                    >
+                      <CardContent>
+                        <Typography variant="h5">{org.name}</Typography>
+                        <Typography variant="body2">
+                          {org.organizationType}
+                          {org.organizationType && org.workType ? ' • ' : null}
+                          {org.workType}
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                ))
+              ) : (
+                <Typography>No Organizations</Typography>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.rightCol}>
+            <Map orgs={orgs} width="100%" height="100%" />
           </div>
         </div>
       </div>

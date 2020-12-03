@@ -5,6 +5,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  Input,
 } from '@material-ui/core';
 import {
   FormikErrors,
@@ -14,6 +15,20 @@ import {
 } from 'formik';
 import { Form } from 'interfaces/registration';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+// yarn add @material-ui/pickers
+// npm i @date-io/date-fns@1.x date-fns
+import 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
+// masked number
+// npm i react-text-mask
+import MaskedInput from 'react-text-mask';
+import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
+//
+import { useState } from 'react';
 import styles from './TabBasics.module.css';
 
 type TabProps = {
@@ -60,6 +75,97 @@ const TabBasics: React.FC<TabProps> = ({
   values,
   setFieldValue,
 }) => {
+  // date picker
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const handleDateChange = (date: Date | null): void => {
+    setSelectedDate(date);
+  };
+  const datePicker = (
+    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <KeyboardDatePicker
+        className={styles.textField}
+        onBlur={handleBlur}
+        value={selectedDate === new Date() ? values.foundingDate : selectedDate}
+        name="foundingDate"
+        format="MM/dd/yyyy"
+        margin="normal"
+        id="date-picker-inline"
+        onChange={handleDateChange}
+        inputVariant="outlined"
+        KeyboardButtonProps={{
+          'aria-label': 'change date',
+        }}
+      />
+    </MuiPickersUtilsProvider>
+  );
+  // date picker end
+
+  // number mask
+  interface NumberMaskProps {
+    inputRef: (ref: HTMLInputElement | null) => void;
+  }
+  function NumberMask(props: NumberMaskProps): React.ReactElement {
+    const { inputRef, ...other } = props;
+
+    return (
+      <MaskedInput
+        {...other}
+        ref={(ref: any) => {
+          inputRef(ref ? ref.inputElement : null);
+        }}
+        mask={[
+          '(',
+          /[1-9]/,
+          /\d/,
+          /\d/,
+          ')',
+          ' ',
+          /\d/,
+          /\d/,
+          /\d/,
+          '-',
+          /\d/,
+          /\d/,
+          /\d/,
+          /\d/,
+        ]}
+        placeholderChar={'\u2000'}
+        showMask
+      />
+    );
+  }
+  interface State {
+    textmask: string;
+  }
+  const [numbers, setNumbers] = useState<State>({
+    textmask: '(1  )    -    ',
+  });
+  const handleNumberChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    setNumbers({
+      ...numbers,
+      [event.target.name]: event.target.value,
+    });
+  };
+  const phoneNumberInput = (
+    <FormControl
+      className={styles.textField}
+      variant="outlined"
+      error={Boolean(touched.contactPhone && errors.contactPhone)}
+    >
+      <TextField
+        value={numbers.textmask}
+        onChange={handleNumberChange}
+        name="textmask" // contactphone
+        id="formatted-text-mask-input"
+        inputProps={NumberMask as any}
+        variant="outlined"
+        helperText={touched.contactPhone ? errors.contactPhone : undefined}
+      />
+    </FormControl>
+  );
+  // number mask end
   return (
     <>
       <div className={styles.row}>
@@ -174,7 +280,7 @@ const TabBasics: React.FC<TabProps> = ({
       </div>
       <div className={styles.row}>
         <p className={styles.descriptor}>Contact Person Phone</p>
-        <TextField
+        {/* <TextField
           className={styles.textField}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -183,7 +289,8 @@ const TabBasics: React.FC<TabProps> = ({
           variant="outlined"
           error={Boolean(touched.contactPhone && errors.contactPhone)}
           helperText={touched.contactPhone ? errors.contactPhone : undefined}
-        />
+        /> */}
+        {phoneNumberInput}
       </div>
       <div className={styles.row}>
         <p className={styles.descriptor}>Current Website</p>
@@ -254,7 +361,7 @@ const TabBasics: React.FC<TabProps> = ({
       </div>
       <div className={styles.row}>
         <p className={styles.descriptor}>Date of Founding</p>
-        <TextField
+        {/* <TextField
           className={styles.textField}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -263,7 +370,8 @@ const TabBasics: React.FC<TabProps> = ({
           variant="outlined"
           error={Boolean(touched.foundingDate && errors.foundingDate)}
           helperText={touched.foundingDate ? errors.foundingDate : undefined}
-        />
+        /> */}
+        {datePicker}
       </div>
       <div className={styles.short}>
         <p>Audience Demographics</p>
