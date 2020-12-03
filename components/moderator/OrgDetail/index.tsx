@@ -77,7 +77,7 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ org }) => {
             <div className={styles.chips}>
               {org.raceDemographic.length !== 0 ? (
                 org.raceDemographic.map((item) => (
-                  <div key={0}>
+                  <div key={item}>
                     <Chip label={item} variant="outlined" />
                   </div>
                 ))
@@ -93,7 +93,7 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ org }) => {
             <div className={styles.chips}>
               {org.ageDemographic.length !== 0 ? (
                 org.ageDemographic.map((item) => (
-                  <div key={0}>
+                  <div key={item}>
                     <Chip label={item} variant="outlined" />
                   </div>
                 ))

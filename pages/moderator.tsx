@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import Layout from 'components/Layout';
 import OrgCard from 'components/moderator/OrgCard';
@@ -34,7 +34,9 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
 
-  const [card, setCard] = useState<Organization | null>(null);
+  const [card, setCard] = useState<Organization | null>(
+    orgs && orgs.length > 0 ? orgs[0] : null
+  );
   const clickCard = (newCard: Organization): void => {
     setCard(newCard);
   };
@@ -71,6 +73,10 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   const [errorBanner, setErrorBanner] = useState('');
   const [successBanner, setSuccessBanner] = useState('');
 
+  useEffect(() => {
+    setCard(orgs && orgs.length > 0 ? orgs[0] : null);
+  }, [orgs]);
+
   const approveApp = async (approve: boolean): Promise<void> => {
     setProcessingAction(true);
     if (card) {
@@ -78,29 +84,62 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         /** put in form of const res so you can say if res === ok then display this banner */
         try {
           const res = await fetch(`/api/app/orgs/approve/${card.id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
           });
-          if (res.ok) setSuccessBanner('Successfully approved.');
-          setErrorBanner('Failed to process approval');
+          if (res.ok) {
+            setSuccessBanner('Successfully approved.');
+            // Refresh data without full page reload
+            router.replace(router.asPath);
+          } else {
+            setErrorBanner('Failed to process approval');
+          }
         } catch (err) {
           setErrorBanner('Failed to process approval');
         }
       } else {
         try {
           const res = await fetch(`/api/app/orgs/reject/${card.id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
           });
-          if (res.ok) setSuccessBanner('Successfully rejected.');
-          setErrorBanner('Failed to process rejection');
+          if (res.ok) {
+            setSuccessBanner('Successfully rejected.');
+            // Refresh data without full page reload
+            router.replace(router.asPath);
+          } else {
+            setErrorBanner('Failed to process rejection');
+          }
         } catch (err) {
           setErrorBanner('Failed to process rejection');
         }
       }
+    } else {
+      setErrorBanner('An organization app must be selected first');
     }
-    setErrorBanner('An organization app must be selected first');
     setProcessingAction(false);
+  };
+
+  const tab = (): JSX.Element | null => {
+    if (selected === 0) {
+      return (
+        <div className={styles.content}>
+          {orgs && orgs.length > 0 ? (
+            orgs.map((org) => (
+              // TODO: Add accessibility support
+              // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+              <div key={org.id} onClick={() => clickCard(org)}>
+                <OrgCard org={org} />
+              </div>
+            ))
+          ) : (
+            <div>No organizations</div>
+          )}
+        </div>
+      );
+    }
+    if (selected === 1) {
+      return <div>Event list, mimic the Org mapping on first tab?</div>;
+    }
+    return null;
   };
 
   const orgApp = (app: Organization): JSX.Element => (
@@ -149,16 +188,10 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
       </div>
       <div className={styles.footer}>
         {errorBanner ? (
-          <>
-            <div className={styles.banner}>{errorBanner}</div>
-            &nbsp;
-          </>
+          <div className={styles.banner}>{errorBanner}</div>
         ) : null}
         {successBanner ? (
-          <>
-            <div className={styles.banner}>{successBanner}</div>
-            &nbsp;
-          </>
+          <div className={styles.banner}>{successBanner}</div>
         ) : null}
         <div className={styles.submitButton}>
           <Button
@@ -241,20 +274,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
                   size="small"
                 />
               </div>
-              {selected === 0 && (
-                <div className={styles.content}>
-                  {orgs &&
-                    orgs.map((org) => (
-                      // TODO: Add accessibility support
-                      // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-                      <div key={org.id} onClick={() => clickCard(org)}>
-                        <OrgCard org={org} />
-                      </div>
-                    ))}
-                </div>
-              )}
-              {selected === 1 &&
-                'Event list, mimic the Org mapping on first tab?'}
+              {tab()}
             </Drawer>
           </div>
           <main
