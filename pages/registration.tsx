@@ -90,7 +90,7 @@ const Registration: React.FC = () => {
     raceDemographic: [],
     ageDemographic: [],
     capacity: undefined,
-    ein: '',
+    ein: null,
     foundingDate: undefined,
     is501c3: false,
     website: '',
