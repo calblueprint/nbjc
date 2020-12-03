@@ -1,0 +1,64 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100vh - 104px);
+}
+
+.content {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.titles {
+  margin-bottom: 40px;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+}
+
+.field {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0px;
+}
+
+.textField {
+  width: 250px;
+}
+
+.actions {
+  margin-top: 40px;
+}
+
+.entryName {
+  text-transform: capitalize;
+}
+
+.link {
+  color: gray;
+  font-size: small;
+}
+
+.errorBanner {
+  color: red;
+}
+
+.submitButton {
+  position: relative;
+}
+
+.submitProgress {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -12px;
+  margin-left: -12px;
+}

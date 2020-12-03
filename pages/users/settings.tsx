@@ -1,17 +1,14 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Layout from 'components/Layout';
-import styles from 'styles/users/Settings.module.css';
-import { Button, TextField, Link } from '@material-ui/core';
-// uncomment when user id is finished being coded
-// import users from 'pages/api/users';
-import ProgressStepper from '../../components/user/ProgressStepper/index';
-import { sampleUserData } from '../../utils/sample-data';
-
-const sampleUserId = 1;
+import { Button, TextField, Link, LinearProgress } from '@material-ui/core';
+import useSession from 'utils/useSession';
+import ProgressStepper from 'components/user/ProgressStepper/index';
+import styles from '../../styles/users/Settings.module.css';
 
 const UserProfSettings: React.FC = () => {
   const router = useRouter();
+  const [session, sessionLoading] = useSession();
   const [setting, setSetting] = useState(0);
   const hiddenPassword = '******';
 
@@ -37,25 +34,18 @@ const UserProfSettings: React.FC = () => {
     createdAt: string;
     updatedAt: string;
   }
-  function getUsers(): Promise<user[]> {
-    return fetch(`/api/users/${sampleUserId}`)
-      .then((res) => res.json())
-      .then((res) => {
-        return res as user[];
-      });
-  }
-  const emailValue = getUsers().email;
 
   function onClickSave(values: string): void {
     setSetting(0);
     handleSubmit(values);
   }
+
   const emailButton =
     setting === 0 ? (
       <div className={styles.field}>
         <div>Email</div>
         <div className={styles.emailButton}>
-          {emailValue}
+          {session?.user.email}
           <Button
             variant="outlined"
             color="primary"
@@ -73,7 +63,7 @@ const UserProfSettings: React.FC = () => {
         <div className={styles.fieldRight}>
           <TextField
             id="email"
-            defaultValue={emailValue}
+            defaultValue={session?.user.email}
             variant="outlined"
             size="small"
           />
@@ -82,7 +72,7 @@ const UserProfSettings: React.FC = () => {
             variant="contained"
             color="primary"
             disableElevation
-            onClick={(values) => onClickSave(values)}
+            onClick={() => onClickSave('')}
           >
             Save
           </Button>
@@ -110,28 +100,29 @@ const UserProfSettings: React.FC = () => {
     </div>
   );
 
-  return (
-    <Layout title="User Profile Settings">
-      <div className={styles.content}>
-        <div className={styles.box}>
-          <div className={styles.top}>
-            <div className={styles.title}>
-              <div className={styles.caps}>
-                {sampleUserData[0].role} Profile
+  if (!sessionLoading && !session) router.push('/');
+  if (!sessionLoading && session)
+    return (
+      <Layout title="User Profile Settings">
+        <div className={styles.content}>
+          <div className={styles.box}>
+            <div className={styles.top}>
+              <div className={styles.title}>
+                <div className={styles.caps}>{session.user.role} Profile</div>
+              </div>
+              {emailButton}
+              {passwordButton}
+
+              <div className={styles.delete}>
+                <Link>Delete User Account</Link>
               </div>
             </div>
-            {emailButton}
-            {passwordButton}
-
-            <div className={styles.delete}>
-              <Link>Delete User Account</Link>
-            </div>
+            <ProgressStepper />
           </div>
-          <ProgressStepper />
         </div>
-      </div>
-    </Layout>
-  );
+      </Layout>
+    );
+  return <LinearProgress />;
 };
 
 export default UserProfSettings;

@@ -3,13 +3,18 @@ import { User } from '@prisma/client';
 
 export type SanitizedUser = Omit<User, 'hashedPassword'>;
 
+export type SessionUser = {
+  email: string;
+  role: 'organization' | 'moderator' | 'admin' | null;
+};
+
+export type Session = {
+  user: SessionUser;
+  accessToken?: string;
+  expires: string;
+};
+
 const schema = Joi.object({
-  firstName: Joi.string()
-    .when('$strict', { is: true, then: Joi.required() })
-    .error(new Error('First name is required.')),
-  lastName: Joi.string()
-    .when('$strict', { is: true, then: Joi.required() })
-    .error(new Error('Last name is required.')),
   role: Joi.string()
     .valid('admin', 'moderator', 'organization')
     .error(new Error('Valid role required.')),

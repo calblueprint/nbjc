@@ -1,7 +1,8 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Button } from '@material-ui/core';
+import { Button, LinearProgress } from '@material-ui/core';
 import { useRouter } from 'next/router';
+import { useSession, signOut } from 'next-auth/client';
 import styles from '../styles/Layout.module.css';
 
 type Props = {
@@ -13,7 +14,9 @@ const Layout: React.FunctionComponent<Props> = ({
   title = 'NBJC',
 }) => {
   const router = useRouter();
+  const [session, sessionLoading] = useSession();
 
+  if (sessionLoading) return <LinearProgress />;
   return (
     <div>
       <Head>
@@ -39,22 +42,35 @@ const Layout: React.FunctionComponent<Props> = ({
               <a className={styles.link}>Users</a>
             </Link>
             <div className={styles.buttons}>
-              <Button
-                className={styles.logButtonSpace}
-                variant="contained"
-                color="primary"
-                onClick={() => router.push('/api/auth/signin')}
-              >
-                Log In
-              </Button>
-              <Button
-                className={styles.logButtonSpace}
-                variant="contained"
-                color="primary"
-                onClick={() => router.push('/registration')}
-              >
-                Join Us
-              </Button>
+              {!session ? (
+                <div>
+                  <Button
+                    className={styles.logButtonSpace}
+                    variant="contained"
+                    color="primary"
+                    onClick={() => router.push('/signin')}
+                  >
+                    Log In
+                  </Button>
+                  <Button
+                    className={styles.logButtonSpace}
+                    variant="contained"
+                    color="primary"
+                    onClick={() => router.push('/signup')}
+                  >
+                    Join Us
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  className={styles.logButtonSpace}
+                  variant="contained"
+                  color="primary"
+                  onClick={() => signOut()}
+                >
+                  Sign Out
+                </Button>
+              )}
             </div>
           </div>
         </nav>
