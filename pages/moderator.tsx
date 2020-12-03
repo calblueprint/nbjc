@@ -187,6 +187,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         <OrgDetail org={app} />
       </div>
       <div className={styles.footer}>
+        {/* TODO: Replace with toasts */}
         {errorBanner ? (
           <div className={styles.banner}>{errorBanner}</div>
         ) : null}
