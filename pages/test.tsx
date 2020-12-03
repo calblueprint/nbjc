@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import Layout from 'components/Layout';
-import Toast from 'components/Toast';
+import Toast from 'components/Toast/index';
 
+// you don't need to accept incoming changes here
+// 'acceptedAlert','verifyEmailAlert', 'userExistsError'
 const Test: React.FunctionComponent = () => (
   <Layout title="Home | Next.js + TypeScript Example">
     <h1>Hello Next.js</h1>
@@ -10,7 +12,7 @@ const Test: React.FunctionComponent = () => (
         <a>About</a>
       </Link>
     </p>
-    <Toast msg="test" variant="alert" />
+    <Toast variant="userExistsError" />
   </Layout>
 );
 
