@@ -28,29 +28,30 @@ model Account {
 
 model Organization {
   id                   Int                   @id @default(autoincrement())
-  name                 String
+  name                 String?
   long                 Float?
   lat                  Float?
   createdAt            DateTime              @default(now()) @map("created_at")
   updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
   applicationStatus    ApplicationStatus     @default(draft) @map("application_status")
   active               Boolean               @default(false)
-  contactName          String                @map("contact_name")
-  contactEmail         String                @map("contact_email")
+  contactName          String?               @map("contact_name")
+  contactEmail         String?               @map("contact_email")
   organizationType     OrganizationType?     @map("organization_type")
   workType             WorkType?             @map("work_type")
   address              String?
   missionStatement     String?               @map("mission_statement")
   shortHistory         String?               @map("short_history")
-  keyValue             String?               @map("key_values")
   lgbtqDemographic     LgbtqDemographic[]    @map("lgbtq_demographic")
   raceDemographic      RaceDemographic[]     @map("race_demographic")
   ageDemographic       AgeDemographic[]      @map("age_demographic")
   capacity             Int?
-  ein                  Int?
+  ein                  String?
   foundingDate         DateTime?             @map("founding_date")
   is501c3              Boolean               @default(false) @map("is_501c3")
   userId               Int?                  @unique @map("user_id")
+  contactPhone         String?               @map("contact_phone")
+  website              String?
   user                 User?                 @relation("OrganizationsToUsers", fields: [userId], references: [id])
   applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
   organizationProjects OrganizationProject[] @relation("OrganizationProjectsToOrganizations")
