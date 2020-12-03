@@ -3,6 +3,17 @@ import { User } from '@prisma/client';
 
 export type SanitizedUser = Omit<User, 'hashedPassword'>;
 
+export type SessionUser = {
+  email: string;
+  role: 'organization' | 'moderator' | 'admin' | null;
+};
+
+export type Session = {
+  user: SessionUser;
+  accessToken?: string;
+  expires: string;
+};
+
 const schema = Joi.object({
   role: Joi.string()
     .valid('admin', 'moderator', 'organization')
