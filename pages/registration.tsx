@@ -1,3 +1,5 @@
+import { GetServerSideProps } from 'next';
+import { Organization, PrismaClient } from '@prisma/client';
 import { FormikErrors, useFormik } from 'formik';
 import { useState, useEffect, ChangeEvent } from 'react';
 import {
@@ -19,14 +21,22 @@ import schema, { Form } from 'interfaces/registration';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import parseValidationError from 'utils/parseValidationError';
+import { getSession } from 'next-auth/client';
 import styles from '../styles/Registration.module.css';
 
-const Registration: React.FC = () => {
+const prisma = new PrismaClient();
+
+type RegistrationProps = {
+  org: Organization;
+};
+
+const Registration: React.FunctionComponent<RegistrationProps> = (org) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
   const [selected, setSelected] = useState(0);
   const [exitDialogOpen, setExitDialogOpen] = useState(false);
   const [saveDraft, setSaveDraft] = useState(true);
+  const userOrg = org.org;
 
   const validate = (values: Form): FormikErrors<Form> => {
     const { error } = schema.validate(values, {
@@ -77,23 +87,23 @@ const Registration: React.FC = () => {
   };
 
   const initialValues: Form = {
-    name: '',
-    contactName: '',
-    contactEmail: '',
-    contactPhone: '',
-    organizationType: '',
-    workType: '',
-    address: '',
-    missionStatement: '',
-    shortHistory: '',
-    lgbtqDemographic: [],
-    raceDemographic: [],
-    ageDemographic: [],
-    capacity: undefined,
-    ein: '',
-    foundingDate: undefined,
-    is501c3: false,
-    website: '',
+    name: userOrg.name,
+    contactName: userOrg.contactName,
+    contactEmail: userOrg.contactEmail,
+    contactPhone: userOrg.contactPhone,
+    organizationType: userOrg.organizationType,
+    workType: userOrg.workType,
+    address: userOrg.address,
+    missionStatement: userOrg.missionStatement,
+    shortHistory: userOrg.shortHistory,
+    lgbtqDemographic: userOrg.lgbtqDemographic,
+    raceDemographic: userOrg.raceDemographic,
+    ageDemographic: userOrg.ageDemographic,
+    capacity: userOrg.capacity,
+    ein: userOrg.ein,
+    foundingDate: userOrg.foundingDate,
+    is501c3: userOrg.is501c3,
+    website: userOrg.website,
     short1: '',
     short2: '',
     short3: '',
@@ -218,3 +228,25 @@ const Registration: React.FC = () => {
 };
 
 export default Registration;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  try {
+    const session = await getSession(context);
+    const email = session?.user.email;
+    console.log(session);
+    const newUser = await prisma.user.findOne({
+      where: {
+        email,
+      },
+      select: {
+        organization: true,
+      },
+    });
+    const org = JSON.parse(JSON.stringify(newUser)).organization;
+    return {
+      props: { org },
+    };
+  } catch (err) {
+    return { props: { errors: err.message } };
+  }
+};

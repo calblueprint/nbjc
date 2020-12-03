@@ -14,6 +14,7 @@ import {
 } from 'formik';
 import { Form } from 'interfaces/registration';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import { Organization } from '@prisma/client';
 import styles from './TabBasics.module.css';
 
 type TabProps = {
@@ -36,13 +37,13 @@ const ethnicity = [
   'Native/Indigenous',
 ];
 const ages = ['All ages', 'Children', 'Teens', 'Adults', 'Seniors'];
-const workType = {
+const organizationType = {
   grassrootsLocal: 'Grassroots/Local',
   statewide: 'Statewide',
   national: 'National',
   other: 'Other',
 };
-const organizationType = {
+const workType = {
   advocacy: 'Advocacy',
   directService: 'DirectService',
   neworkingSocial: 'Networking/Social',
