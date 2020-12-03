@@ -22,7 +22,6 @@ export default async (
   }
 
   const note = dataNote as string;
-  console.log('datanote:', dataNote);
   try {
     const theNote = await prisma.applicationNote.upsert({
       where: { organizationId },
@@ -34,6 +33,10 @@ export default async (
     });
     return res.json(theNote);
   } catch (ex) {
-    return CreateError(500, `Failed to auto-save note for ${orgId}`, res);
+    return CreateError(
+      500,
+      `Failed to auto-save note for ${organizationId}`,
+      res
+    );
   }
 };

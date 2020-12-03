@@ -47,6 +47,9 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   const [text, setText] = useState('');
 
   const [index, setIndex] = useState<number>(0);
+  const [processingAction, setProcessingAction] = useState(false);
+  const [errorBanner, setErrorBanner] = useState('');
+  const [successBanner, setSuccessBanner] = useState('');
 
   const [selected, setSelected] = useState<number>(0);
   const handleChange = (
@@ -74,7 +77,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         ? card.applicationNote.note
         : ''
     );
-    console.log(card);
     setLastText(
       card.applicationNote && card.applicationNote.note
         ? card.applicationNote.note
@@ -90,9 +92,8 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ note: text }),
       });
-      console.log('putted');
     } catch (ex) {
-      console.log('did not put');
+      setErrorBanner('Did not save.');
     }
     router.replace(router.asPath);
     setText('');
@@ -105,19 +106,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     setIndex(newIndex);
   };
 
-  const [processingAction, setProcessingAction] = useState(false);
-  const [errorBanner, setErrorBanner] = useState('');
-  const [successBanner, setSuccessBanner] = useState('');
-
-  const [open, setOpen] = useState(false);
-
-  const handleClick = (): void => {
-    setOpen((prev) => !prev);
-  };
-
-  const handleClickAway = (): void => {
-    setOpen(false);
-  };
   useEffect(() => {
     setIndex((prevIndex) => {
       if (orgs.length - 1 >= 0) {
@@ -183,17 +171,14 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ note: text }),
           });
-          console.log('putted');
         } catch (ex) {
           setErrorBanner('Failed to auto-save');
-          console.log('did not put');
         }
       };
       const timer = setTimeout(() => {
         if (lastText !== text) {
           updateContent();
           setLastText(text);
-          console.log('autosaved');
         }
       }, AUTOSAVE_INTERVAL);
       return () => clearTimeout(timer);
@@ -249,37 +234,35 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           </Button>
         </div>
       </div>
-      <ClickAwayListener onClickAway={handleClickAway}>
-        <Drawer
-          className={styles.drawer}
-          variant="persistent"
-          anchor="right"
-          open={openRight}
-          classes={{
-            paper: styles.drawerPaperRight,
-          }}
-        >
-          <div>
-            <IconButton onClick={handleDrawerCloseRight}>
-              <ChevronRightIcon />
-            </IconButton>
-          </div>
-          <div className={styles.textField}>
-            notes for {orgs[index] && orgs[index].name}
-          </div>
-          <div className={styles.row}>
-            <p className={styles.descriptor}>Notes</p>
-            <TextField
-              className={styles.textField}
-              onChange={(e) => setText(e.target.value)}
-              value={text}
-              name="orgName"
-              variant="outlined"
-              multiline
-            />
-          </div>
-        </Drawer>
-      </ClickAwayListener>
+      <Drawer
+        className={styles.drawer}
+        variant="persistent"
+        anchor="right"
+        open={openRight}
+        classes={{
+          paper: styles.drawerPaperRight,
+        }}
+      >
+        <div>
+          <IconButton onClick={handleDrawerCloseRight}>
+            <ChevronRightIcon />
+          </IconButton>
+        </div>
+        <div className={styles.textField}>
+          notes for {orgs[index] && orgs[index].name}
+        </div>
+        <div className={styles.row}>
+          <p className={styles.descriptor}>Notes</p>
+          <TextField
+            className={styles.textField}
+            onChange={(e) => setText(e.target.value)}
+            value={text}
+            name="orgName"
+            variant="outlined"
+            multiline
+          />
+        </div>
+      </Drawer>
       <div className={styles.content}>
         <OrgDetail org={app} />
       </div>
