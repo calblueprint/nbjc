@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 import OrganizationSchema from 'interfaces/organization';
 import CreateError, { MethodNotAllowed } from 'utils/error';
+import parseValidationError from 'utils/parseValidationError';
 
 const prisma = new PrismaClient();
 
@@ -14,13 +15,19 @@ export default async (
     return MethodNotAllowed(req.method, res);
   }
 
+  const isSubmit = req.query.submitting === 'true';
+
   const { userEmail, ...body } = req.body;
-  const { error, value } = OrganizationSchema.validate(body);
+  const { error, value } = OrganizationSchema.validate(body, {
+    abortEarly: false,
+    context: {
+      strict: isSubmit,
+    },
+  });
   if (error) {
-    return CreateError(400, error.message, res);
+    return CreateError(400, parseValidationError(error), res);
   }
 
-  const data = value as Organization;
   const user = await prisma.user.findOne({
     where: {
       email: userEmail,
@@ -30,21 +37,25 @@ export default async (
     },
   });
 
-  const currUserId = user?.id;
-  if (!currUserId) {
+  const userId = user?.id;
+  if (!userId) {
     return CreateError(500, 'Failed to find user', res);
   }
+
+  const applicationStatus = isSubmit ? 'submitted' : 'draft';
+  const active = isSubmit;
+  const data = { ...value, applicationStatus, active } as Organization;
 
   try {
     const newOrg = await prisma.organization.upsert({
       where: {
-        userId: currUserId,
+        userId,
       },
       create: {
         ...data,
         user: {
           connect: {
-            id: currUserId,
+            id: userId,
           },
         },
       },
@@ -52,13 +63,14 @@ export default async (
         ...data,
         user: {
           connect: {
-            id: currUserId,
+            id: userId,
           },
         },
       },
     });
     return res.json(newOrg);
   } catch (err) {
+    console.log(err);
     return CreateError(500, 'Failed to create organization', res);
   }
 };

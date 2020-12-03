@@ -145,7 +145,7 @@ const TabBasics: React.FC<TabProps> = ({
         </div>
       </div>
       <div className={styles.row}>
-        <p className={styles.descriptor}>Contact Person Name</p>
+        <p className={styles.descriptor}>Contact Person Full Name</p>
         <TextField
           className={styles.textField}
           id="contactName"
@@ -173,6 +173,19 @@ const TabBasics: React.FC<TabProps> = ({
         />
       </div>
       <div className={styles.row}>
+        <p className={styles.descriptor}>Contact Person Phone</p>
+        <TextField
+          className={styles.textField}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.contactPhone}
+          name="contactPhone"
+          variant="outlined"
+          error={Boolean(touched.contactPhone && errors.contactPhone)}
+          helperText={touched.contactPhone ? errors.contactPhone : undefined}
+        />
+      </div>
+      <div className={styles.row}>
         <p className={styles.descriptor}>Current Website</p>
         <TextField
           className={styles.textField}
@@ -185,7 +198,7 @@ const TabBasics: React.FC<TabProps> = ({
           helperText={touched.website ? errors.website : undefined}
         />
       </div>
-      <div className={styles.row}>
+      {/* <div className={styles.row}>
         <p className={styles.descriptor}>Location Type</p>
         <FormControl
           className={styles.textField}
@@ -212,7 +225,7 @@ const TabBasics: React.FC<TabProps> = ({
             {touched.locationType ? errors.locationType : undefined}
           </FormHelperText>
         </FormControl>
-      </div>
+      </div> */}
       <div className={styles.row}>
         <p className={styles.descriptor}>Address</p>
         <TextField
