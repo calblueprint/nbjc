@@ -1,38 +1,21 @@
 import Card from '@material-ui/core/Card';
-import {
-  CardContent,
-  CardMedia,
-  CardActionArea,
-  Typography,
-} from '@material-ui/core';
+import { CardContent, CardActionArea, Typography } from '@material-ui/core';
 import { Organization } from '@prisma/client';
 import styles from './OrgCard.module.css';
 
 type CardProps = {
-  items: Organization;
+  org: Organization;
 };
 
-const OrgCard: React.FunctionComponent<CardProps> = ({ items }) => {
+const OrgCard: React.FunctionComponent<CardProps> = ({ org }) => {
   return (
     <Card className={styles.root}>
       <CardActionArea>
         <div className={styles.cardMain}>
-          {items.name && (
-            <CardMedia
-              className={styles.media}
-              image={items.name}
-              title="Contemplative Reptile"
-            />
-          )}
           <CardContent className={styles.content}>
-            {items.name && (
+            {org.name && (
               <Typography component="h5" variant="h5">
-                {items.name}
-              </Typography>
-            )}
-            {items.missionStatement && (
-              <Typography variant="subtitle1" color="textSecondary">
-                {items.missionStatement}
+                {org.name}
               </Typography>
             )}
           </CardContent>
