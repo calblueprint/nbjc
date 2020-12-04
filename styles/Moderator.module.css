@@ -20,14 +20,12 @@
 }
 
 .header {
-  background-color: white;
   display: flex;
   justify-content: space-between;
   padding: 10px;
 }
 
 .footer {
-  background-color: white;
   display: flex;
   padding: 10px;
   justify-content: flex-end;
@@ -36,7 +34,6 @@
 .content {
   flex: 1;
   overflow: auto;
-  background-color: white;
 }
 
 .large {
@@ -90,4 +87,20 @@
 
 .mainShift {
   margin-left: 0px;
+}
+
+.banner {
+  color: red;
+}
+
+.submitButton {
+  position: relative;
+}
+
+.submitProgress {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -12px;
+  margin-left: -12px;
 }
