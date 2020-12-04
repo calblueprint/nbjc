@@ -38,7 +38,7 @@ const Layout: React.FunctionComponent<Props> = ({
             <Link href="/moderator">
               <a className={styles.link}>Moderator Dashboard</a>
             </Link>
-            <Link href="/users/settings">
+            <Link href="/users/profile">
               <a className={styles.link}>Users</a>
             </Link>
             <div className={styles.buttons}>

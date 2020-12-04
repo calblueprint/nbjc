@@ -1,7 +1,7 @@
 import Layout from 'components/Layout';
-import styles from 'styles/users/PasswordChange.module.css';
 import { Button, TextField } from '@material-ui/core';
 import { useRouter } from 'next/router';
+import styles from '../../styles/users/PasswordChange.module.css';
 
 const email = 'oskibear@berkeley.edu';
 
@@ -44,8 +44,16 @@ const ChangePassword: React.FC = () => {
           <div className={styles.save}>
             <Button
               color="primary"
+              variant="outlined"
+              onClick={() => router.push('/users/profile')}
+              disableElevation
+            >
+              Back
+            </Button>
+            <Button
+              color="primary"
               variant="contained"
-              onClick={() => router.push('/users/settings')}
+              onClick={() => router.push('/users/profile')}
               disableElevation
             >
               Save Changes

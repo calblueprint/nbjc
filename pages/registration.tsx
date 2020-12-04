@@ -108,7 +108,7 @@ const Registration: React.FC = () => {
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => router.push('/users/settings')}
+            onClick={() => router.push('/users/profile')}
           >
             Yes
           </Button>

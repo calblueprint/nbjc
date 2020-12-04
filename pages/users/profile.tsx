@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import useSession from 'utils/useSession';
 import ProgressStepper from 'components/user/ProgressStepper/index';
-import styles from '../../styles/users/Settings.module.css';
+import styles from '../../styles/users/Profile.module.css';
 
 const UserProfile: React.FC = () => {
   const router = useRouter();
