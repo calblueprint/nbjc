@@ -1,51 +1,62 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Layout from 'components/Layout';
-import { Button, TextField, Link, LinearProgress } from '@material-ui/core';
+import {
+  Button,
+  TextField,
+  Link,
+  LinearProgress,
+  CircularProgress,
+} from '@material-ui/core';
 import useSession from 'utils/useSession';
 import ProgressStepper from 'components/user/ProgressStepper/index';
 import styles from '../../styles/users/Settings.module.css';
 
-const UserProfSettings: React.FC = () => {
+const UserProfile: React.FC = () => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
   const [setting, setSetting] = useState(0);
+  const [email, setEmail] = useState('');
+  const [updateEmailLoading, setUpdateEmailLoading] = useState(false);
   const hiddenPassword = '******';
 
-  const handleSubmit = async (values: string): Promise<void> => {
-    const res = await fetch('/api/users/', {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: values }),
-    });
+  useEffect(() => {
+    if (session) {
+      setEmail(session.user.email);
+    }
+  }, [session]);
+
+  const updateEmail = async (): Promise<void> => {
+    setUpdateEmailLoading(true);
+    if (session?.user.email !== email) {
+      try {
+        const res = await fetch('/api/users/updateEmail', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ oldEmail: session?.user.email, email }),
+        });
+        if (res.ok) {
+          console.log('successful!');
+          setSetting(0);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setSetting(0);
+    }
+
+    setUpdateEmailLoading(false);
   };
-  // necessary?
-  interface user {
-    email: string;
-    id: string;
-    firstName: string;
-    lastName: string;
-    role: string;
-    image: string;
-    emailVerified: string;
-    hashedPassword: string;
-    createdAt: string;
-    updatedAt: string;
-  }
 
-  function onClickSave(values: string): void {
-    setSetting(0);
-    handleSubmit(values);
-  }
-
-  const emailButton =
+  const emailButton = (): JSX.Element =>
     setting === 0 ? (
       <div className={styles.field}>
         <div>Email</div>
         <div className={styles.emailButton}>
-          {session?.user.email}
+          {email}
           <Button
             variant="outlined"
             color="primary"
@@ -63,19 +74,29 @@ const UserProfSettings: React.FC = () => {
         <div className={styles.fieldRight}>
           <TextField
             id="email"
-            defaultValue={session?.user.email}
             variant="outlined"
             size="small"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
-          <Button
-            className={styles.fieldButton}
-            variant="contained"
-            color="primary"
-            disableElevation
-            onClick={() => onClickSave('')}
-          >
-            Save
-          </Button>
+          <div className={styles.updateEmailButton}>
+            <Button
+              className={styles.fieldButton}
+              variant="contained"
+              color="primary"
+              disableElevation
+              onClick={() => updateEmail()}
+              disabled={updateEmailLoading}
+            >
+              Save
+            </Button>
+            {updateEmailLoading && (
+              <CircularProgress
+                size={24}
+                className={styles.updateEmailProgress}
+              />
+            )}
+          </div>
         </div>
       </div>
     );
@@ -110,14 +131,14 @@ const UserProfSettings: React.FC = () => {
               <div className={styles.title}>
                 <div className={styles.caps}>{session.user.role} Profile</div>
               </div>
-              {emailButton}
+              {emailButton()}
               {passwordButton}
 
               <div className={styles.delete}>
                 <Link>Delete User Account</Link>
               </div>
             </div>
-            <ProgressStepper />
+            {session.user.role === 'organization' && <ProgressStepper />}
           </div>
         </div>
       </Layout>
@@ -125,4 +146,4 @@ const UserProfSettings: React.FC = () => {
   return <LinearProgress />;
 };
 
-export default UserProfSettings;
+export default UserProfile;
