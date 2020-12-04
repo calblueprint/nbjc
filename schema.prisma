@@ -50,6 +50,7 @@ model Organization {
   ein                  Int?
   foundingDate         DateTime?             @map("founding_date")
   is501c3              Boolean               @default(false) @map("is_501c3")
+  applicationNote      ApplicationNote?      @relation("ApplicationNotesToOrganizations")
   applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
 
   @@map("organizations")
@@ -122,6 +123,17 @@ model migrations {
   id     Int      @id @default(autoincrement())
   name   String
   run_on DateTime
+}
+
+model ApplicationNote {
+  id             Int          @id @default(autoincrement())
+  note           String?
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at")
+  organizationId Int          @unique @map("organization_id")
+  organization   Organization @relation("ApplicationNotesToOrganizations", fields: [organizationId], references: [id])
+
+  @@map("application_notes")
 }
 
 enum AgeDemographic {

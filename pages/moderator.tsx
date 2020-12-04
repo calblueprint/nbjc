@@ -1,5 +1,6 @@
-import { useState, ChangeEvent, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { GetServerSideProps } from 'next';
+
 import Layout from 'components/Layout';
 import OrgCard from 'components/moderator/OrgCard';
 import OrgDetail from 'components/moderator/OrgDetail';
@@ -7,7 +8,9 @@ import clsx from 'clsx';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import SearchIcon from '@material-ui/icons/Search';
-import { PrismaClient, Organization } from '@prisma/client';
+import { PrismaClient, Organization, ApplicationNote } from '@prisma/client';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+
 import {
   Tabs,
   Tab,
@@ -17,6 +20,7 @@ import {
   Drawer,
   Toolbar,
   IconButton,
+  CardActions,
   LinearProgress,
   CircularProgress,
 } from '@material-ui/core';
@@ -24,8 +28,13 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/client';
 import styles from '../styles/Moderator.module.css';
 
+type OrgWithNote = Organization & {
+  applicationNote: ApplicationNote | null;
+};
+
+/** fix orgdetail props */
 type Props = {
-  orgs: Organization[];
+  orgs: OrgWithNote[];
 };
 
 const prisma = new PrismaClient();
@@ -34,12 +43,13 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
 
-  const [card, setCard] = useState<Organization | null>(
-    orgs && orgs.length > 0 ? orgs[0] : null
-  );
-  const clickCard = (newCard: Organization): void => {
-    setCard(newCard);
-  };
+  const [lastText, setLastText] = useState('');
+  const [text, setText] = useState('');
+
+  const [index, setIndex] = useState<number>(0);
+  const [processingAction, setProcessingAction] = useState(false);
+  const [errorBanner, setErrorBanner] = useState('');
+  const [successBanner, setSuccessBanner] = useState('');
 
   const [selected, setSelected] = useState<number>(0);
   const handleChange = (
@@ -61,29 +71,60 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
 
   const [openRight, setOpenRight] = useState<boolean>(false);
 
-  const handleDrawerOpenRight = (): void => {
+  const handleDrawerOpenRight = (card: OrgWithNote): void => {
+    setText(
+      card.applicationNote && card.applicationNote.note
+        ? card.applicationNote.note
+        : ''
+    );
+    setLastText(
+      card.applicationNote && card.applicationNote.note
+        ? card.applicationNote.note
+        : ''
+    );
     setOpenRight(true);
   };
 
-  const handleDrawerCloseRight = (): void => {
+  const handleDrawerCloseRight = async (): Promise<void> => {
+    try {
+      await fetch(`/api/app/orgs/note/${orgs[index].id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ note: text }),
+      });
+    } catch (ex) {
+      setErrorBanner('Did not save.');
+    }
+    router.replace(router.asPath);
+    setText('');
+    setLastText('');
     setOpenRight(false);
   };
 
-  const [processingAction, setProcessingAction] = useState(false);
-  const [errorBanner, setErrorBanner] = useState('');
-  const [successBanner, setSuccessBanner] = useState('');
+  const clickCard = (newIndex: number): void => {
+    handleDrawerCloseRight();
+    setIndex(newIndex);
+  };
 
   useEffect(() => {
-    setCard(orgs && orgs.length > 0 ? orgs[0] : null);
-  }, [orgs]);
+    setIndex((prevIndex) => {
+      if (orgs.length - 1 >= 0) {
+        if (prevIndex >= orgs.length) {
+          return orgs.length - 1;
+        }
+        return prevIndex;
+      }
+      return 0;
+    });
+  }, [orgs.length]);
 
   const approveApp = async (approve: boolean): Promise<void> => {
     setProcessingAction(true);
-    if (card) {
+    if (orgs[index]) {
       if (approve) {
         /** put in form of const res so you can say if res === ok then display this banner */
         try {
-          const res = await fetch(`/api/app/orgs/approve/${card.id}`, {
+          const res = await fetch(`/api/app/orgs/approve/${orgs[index].id}`, {
             method: 'POST',
           });
           if (res.ok) {
@@ -98,7 +139,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         }
       } else {
         try {
-          const res = await fetch(`/api/app/orgs/reject/${card.id}`, {
+          const res = await fetch(`/api/app/orgs/reject/${orgs[index].id}`, {
             method: 'POST',
           });
           if (res.ok) {
@@ -118,15 +159,41 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     setProcessingAction(false);
   };
 
+  /** For auto-saving a moderator's notes */
+  const AUTOSAVE_INTERVAL = 3000;
+
+  useEffect(() => {
+    if (orgs[index]) {
+      const updateContent = async (): Promise<void> => {
+        try {
+          await fetch(`/api/app/orgs/note/${orgs[index].id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ note: text }),
+          });
+        } catch (ex) {
+          setErrorBanner('Failed to auto-save');
+        }
+      };
+      const timer = setTimeout(() => {
+        if (lastText !== text) {
+          updateContent();
+          setLastText(text);
+        }
+      }, AUTOSAVE_INTERVAL);
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, [text, lastText, orgs, index]);
   const tab = (): JSX.Element | null => {
     if (selected === 0) {
       return (
         <div className={styles.content}>
           {orgs && orgs.length > 0 ? (
-            orgs.map((org) => (
+            orgs.map((org, i) => (
               // TODO: Add accessibility support
               // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-              <div key={org.id} onClick={() => clickCard(org)}>
+              <div key={org.id} onClick={() => clickCard(i)}>
                 <OrgCard org={org} />
               </div>
             ))
@@ -160,7 +227,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           <Button
             variant="outlined"
             color="primary"
-            onClick={handleDrawerOpenRight}
+            onClick={() => handleDrawerOpenRight(orgs[index])}
             className={styles.menuButton}
           >
             Notepad
@@ -181,9 +248,22 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             <ChevronRightIcon />
           </IconButton>
         </div>
-        <div className={styles.textField}>notes for {app.name}</div>
+        <div className={styles.textField}>
+          notes for {orgs[index] && orgs[index].name}
+        </div>
+        <div className={styles.row}>
+          <p className={styles.descriptor}>Notes</p>
+          <TextField
+            className={styles.textField}
+            onChange={(e) => setText(e.target.value)}
+            value={text}
+            name="orgName"
+            variant="outlined"
+            multiline
+          />
+        </div>
       </Drawer>
-      <div className={styles.content}>
+      <div className={styles.content} onClick={handleDrawerCloseRight}>
         <OrgDetail org={app} />
       </div>
       <div className={styles.footer}>
@@ -283,7 +363,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
               [styles.mainShift]: openLeft,
             })}
           >
-            {card ? orgApp(card) : 'No application selected'}
+            {orgs[index] ? orgApp(orgs[index]) : 'No application selected'}
           </main>
         </div>
       </Layout>
@@ -291,9 +371,11 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   return <LinearProgress />;
 };
 
+/** TODO: #insert applicationNote */
 export const getServerSideProps: GetServerSideProps = async () => {
-  const res: Organization[] = await prisma.organization.findMany({
+  const res = await prisma.organization.findMany({
     where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
+    include: { applicationNote: true },
   });
   const orgs = JSON.parse(JSON.stringify(res)) as Organization[];
   return { props: { orgs } };
