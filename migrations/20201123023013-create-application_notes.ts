@@ -16,7 +16,7 @@ export async function up(
         note                         TEXT,
         created_at                   TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at                   TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        organization_id              INTEGER,
+        organization_id              INTEGER NOT NULL,
         UNIQUE (organization_id),
         PRIMARY KEY (id),
         FOREIGN KEY (organization_id)
