@@ -10,7 +10,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import SearchIcon from '@material-ui/icons/Search';
 import { PrismaClient, Organization, ApplicationNote } from '@prisma/client';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-// https://stackoverflow.com/questions/54060096/close-persistent-material-ui-drawer-on-clicking-outside
+
 import {
   Tabs,
   Tab,
