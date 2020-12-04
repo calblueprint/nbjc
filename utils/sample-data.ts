@@ -72,6 +72,7 @@ export const sampleOrgData: Organization[] = [
     ein: null,
     foundingDate: null,
     is501c3: false,
+    userId: null,
   },
 ];
 
