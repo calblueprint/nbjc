@@ -83,7 +83,7 @@ const resetButton = (
 );
 
 type Props = {
-  data: Array<OrgApp | Organization | User | Question>;
+  data: Array<Organization | User | Question>;
   pageType: string;
 };
 
