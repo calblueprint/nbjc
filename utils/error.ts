@@ -15,7 +15,7 @@ type ErrorCodes = 'DUP_EMAIL';
 
 export default (
   statusCode: number,
-  message: string,
+  message: string | { [k: string]: string },
   res: NextApiResponse,
   errorCode?: ErrorCodes
 ): void => {

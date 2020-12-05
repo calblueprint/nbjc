@@ -1,35 +1,37 @@
+import { Organization } from '@prisma/client';
 import Joi from 'joi';
 
-export type Form = {
-  name: string;
-  contactName: string;
-  contactEmail: string;
+export type Form = Pick<
+  Organization,
+  | 'name'
+  | 'contactName'
+  | 'contactEmail'
+  | 'contactPhone'
+  | 'website'
+  | 'address'
+  | 'missionStatement'
+  | 'shortHistory'
+  | 'lgbtqDemographic'
+  | 'raceDemographic'
+  | 'ageDemographic'
+  | 'ein'
+  | 'is501c3'
+> & {
   organizationType: string;
   workType: string;
-  website: string;
-  locationType: string;
-  address: string;
-  missionStatement: string;
-  shortHistory: string;
-  lgbtqDemographic: string[];
-  raceDemographic: string[];
-  ageDemographic: string[];
-  capacity: number | undefined;
-  ein: string;
-  foundingDate: Date | undefined;
-  is501c3: boolean;
   short1: string;
   short2: string;
   short3: string;
   proj1: string;
   proj2: string;
   proj3: string;
+  // capacity: number | undefined;
+  // foundingDate: Date | undefined;
 };
 
 const schema = Joi.object({
   name: Joi.string()
     .empty('')
-    .default('asdfs')
     .when('$strict', {
       is: true,
       then: Joi.required(),
@@ -39,18 +41,31 @@ const schema = Joi.object({
     }),
   contactName: Joi.string()
     .empty('')
-    .default('asdf')
-    .when('$strict', { is: true, then: Joi.required() })
+    .when('$strict', {
+      is: true,
+      then: Joi.required(),
+    })
     .messages({
       'any.required': 'Contact Name is required',
     }),
   contactEmail: Joi.string()
     .empty('')
-    .default('test@email.com')
     .email({ tlds: { allow: false } })
-    .when('$strict', { is: true, then: Joi.required() })
+    .when('$strict', {
+      is: true,
+      then: Joi.required(),
+    })
     .messages({
       'any.required': 'Contact Email is required',
+    }),
+  contactPhone: Joi.string()
+    .empty('')
+    .when('$strict', {
+      is: true,
+      then: Joi.required(),
+    })
+    .messages({
+      'any.required': 'Contact Phone is required',
     }),
   organizationType: Joi.string()
     .empty('')
@@ -71,10 +86,10 @@ const schema = Joi.object({
         'Not a valid URL - remember http or https (https://nbjc.org)',
       'string.domain': 'Not a valid URL - missing domain (https://nbjc.org)',
     }),
-  locationType: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() })
-    .messages({ 'any.required': 'Location Type is required' }),
+  // locationType: Joi.string()
+  //   .empty('')
+  //   .when('$strict', { is: true, then: Joi.required() })
+  //   .messages({ 'any.required': 'Location Type is required' }),
   address: Joi.string()
     .empty('')
     .when('$strict', { is: true, then: Joi.required() })
@@ -99,7 +114,6 @@ const schema = Joi.object({
     .messages({
       'any.required': 'History is required',
     }),
-  keyValue: Joi.string(),
   lgbtqDemographic: Joi.array()
     .unique()
     .items(Joi.string())
@@ -112,14 +126,14 @@ const schema = Joi.object({
     .unique()
     .items(Joi.string())
     .when('$strict', { is: true, then: Joi.required() }),
-  capacity: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
+  // capacity: Joi.string()
+  //   .empty('')
+  //   .when('$strict', { is: true, then: Joi.required() }),
   ein: Joi.string()
-    .allow('')
+    .empty('')
     .pattern(/^[0-9]\d?-?\d{7}$/)
     .messages({ 'string.pattern.base': 'Not a valid EIN' }),
-  foundingDate: Joi.date(),
+  // foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
   proj1: Joi.string()
     .empty('')
