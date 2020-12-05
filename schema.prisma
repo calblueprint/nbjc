@@ -115,10 +115,10 @@ model ApplicationResponse {
   id                  Int                 @id @default(autoincrement())
   answer              String
   questionId          Int                 @map("question_id")
-  organizationId      Int?                @map("organization_id")
+  organizationId      Int                 @map("organization_id")
   createdAt           DateTime            @default(now()) @map("created_at")
   updatedAt           DateTime            @default(now()) @updatedAt @map("updated_at")
-  organization        Organization?       @relation("ApplicationResponsesToOrganizations", fields: [organizationId], references: [id])
+  organization        Organization        @relation("ApplicationResponsesToOrganizations", fields: [organizationId], references: [id])
   applicationQuestion ApplicationQuestion @relation("ApplicationQuestionsToApplicationResponses", fields: [questionId], references: [id])
 
   @@map("application_responses")
