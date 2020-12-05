@@ -21,22 +21,26 @@ import schema, { Form } from 'interfaces/registration';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import parseValidationError from 'utils/parseValidationError';
-import { getSession } from 'next-auth/client';
+import getSession from 'utils/getSession';
 import styles from '../styles/Registration.module.css';
 
 const prisma = new PrismaClient();
 
 type RegistrationProps = {
-  org: Organization;
+  org: Organization | null;
 };
 
-const Registration: React.FunctionComponent<RegistrationProps> = (org) => {
+const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
   const [selected, setSelected] = useState(0);
   const [exitDialogOpen, setExitDialogOpen] = useState(false);
   const [saveDraft, setSaveDraft] = useState(true);
-  const userOrg = org.org;
+
+  const status = org?.applicationStatus;
+  if (status && status !== 'draft') {
+    router.back();
+  }
 
   const validate = (values: Form): FormikErrors<Form> => {
     const { error } = schema.validate(values, {
@@ -46,9 +50,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = (org) => {
       },
     });
 
-    const msg = parseValidationError(error);
-
-    return msg;
+    return parseValidationError(error);
   };
 
   const handleChange = (
@@ -70,40 +72,48 @@ const Registration: React.FunctionComponent<RegistrationProps> = (org) => {
         proj3,
         ...tempValues
       } = values;
-      const res = await fetch(`/api/app/orgs?submitting=${!saveDraft}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userEmail: session.user.email,
-          ...tempValues,
-        }),
-      });
 
-      if (res.ok) router.push('/users/settings');
-      // TODO: Raise an error
+      try {
+        const res = await fetch(`/api/app/orgs?submitting=${!saveDraft}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userEmail: session.user.email,
+            ...tempValues,
+          }),
+        });
+
+        if (res.ok && !saveDraft) router.push('/users/settings');
+        if (!res.ok) {
+          console.log('patch not successful');
+        }
+      } catch (err) {
+        // TODO: Raise an error toast
+        console.log(err);
+      }
     }
   };
 
   const initialValues: Form = {
-    name: userOrg.name,
-    contactName: userOrg.contactName,
-    contactEmail: userOrg.contactEmail,
-    contactPhone: userOrg.contactPhone,
-    organizationType: userOrg.organizationType,
-    workType: userOrg.workType,
-    address: userOrg.address,
-    missionStatement: userOrg.missionStatement,
-    shortHistory: userOrg.shortHistory,
-    lgbtqDemographic: userOrg.lgbtqDemographic,
-    raceDemographic: userOrg.raceDemographic,
-    ageDemographic: userOrg.ageDemographic,
-    capacity: userOrg.capacity,
-    ein: userOrg.ein,
-    foundingDate: userOrg.foundingDate,
-    is501c3: userOrg.is501c3,
-    website: userOrg.website,
+    name: (org && org.name) ?? '',
+    contactName: (org && org.contactName) ?? '',
+    contactEmail: (org && org.contactEmail) ?? '',
+    contactPhone: (org && org.contactPhone) ?? '',
+    organizationType: (org && org.organizationType) ?? '',
+    workType: (org && org.workType) ?? '',
+    address: (org && org.address) ?? '',
+    missionStatement: (org && org.missionStatement) ?? '',
+    shortHistory: (org && org.shortHistory) ?? '',
+    lgbtqDemographic: org ? org.lgbtqDemographic : [],
+    raceDemographic: org ? org.raceDemographic : [],
+    ageDemographic: org ? org.ageDemographic : [],
+    // capacity: undefined,
+    ein: (org && org.ein) ?? '',
+    // foundingDate: undefined,
+    is501c3: Boolean(org && org.is501c3),
+    website: (org && org.website) ?? '',
     short1: '',
     short2: '',
     short3: '',
@@ -120,9 +130,12 @@ const Registration: React.FunctionComponent<RegistrationProps> = (org) => {
   });
 
   useEffect(() => {
-    if (!saveDraft) {
-      formik.submitForm();
+    async function submitForm(): Promise<void> {
+      await formik.submitForm();
       setSaveDraft(true);
+    }
+    if (!saveDraft) {
+      submitForm();
     }
   }, [saveDraft, formik]);
 
@@ -232,21 +245,30 @@ export default Registration;
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
-    const email = session?.user.email;
-    console.log(session);
-    const newUser = await prisma.user.findOne({
-      where: {
-        email,
-      },
-      select: {
-        organization: true,
-      },
-    });
-    const org = JSON.parse(JSON.stringify(newUser)).organization;
+    if (session && session.user.role === 'organization') {
+      const email = session?.user.email;
+      const user = await prisma.user.findOne({
+        where: {
+          email,
+        },
+        select: {
+          organization: true,
+        },
+      });
+
+      const org = JSON.parse(JSON.stringify(user)).organization;
+      return {
+        props: { org },
+      };
+    }
     return {
-      props: { org },
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
     };
   } catch (err) {
+    console.log('error');
     return { props: { errors: err.message } };
   }
 };

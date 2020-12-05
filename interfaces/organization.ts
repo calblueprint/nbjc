@@ -77,12 +77,12 @@ const schema = Joi.object({
     .unique()
     .items(Joi.string().valid(...Object.values(AgeDemographic)))
     .when('$strict', { is: true, then: Joi.array().min(1).required() }),
-  capacity: Joi.number(),
+  // capacity: Joi.number(),
   ein: Joi.string()
     .empty('')
     .default(null)
     .pattern(/^[0-9]\d?-?\d{7}$/),
-  foundingDate: Joi.date(),
+  // foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
 }).when('$strict', { is: true, then: Joi.object().and('lat', 'long') });
 

@@ -25,8 +25,8 @@ export type Form = Pick<
   proj1: string;
   proj2: string;
   proj3: string;
-  capacity: number | undefined;
-  foundingDate: Date | undefined;
+  // capacity: number | undefined;
+  // foundingDate: Date | undefined;
 };
 
 const schema = Joi.object({
@@ -126,14 +126,14 @@ const schema = Joi.object({
     .unique()
     .items(Joi.string())
     .when('$strict', { is: true, then: Joi.required() }),
-  capacity: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
+  // capacity: Joi.string()
+  //   .empty('')
+  //   .when('$strict', { is: true, then: Joi.required() }),
   ein: Joi.string()
     .empty('')
     .pattern(/^[0-9]\d?-?\d{7}$/)
     .messages({ 'string.pattern.base': 'Not a valid EIN' }),
-  foundingDate: Joi.date(),
+  // foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
   proj1: Joi.string()
     .empty('')

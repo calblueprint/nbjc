@@ -61,11 +61,6 @@ export default async (
       },
       update: {
         ...data,
-        user: {
-          connect: {
-            id: userId,
-          },
-        },
       },
     });
     return res.json(newOrg);
