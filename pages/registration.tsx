@@ -73,6 +73,15 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
         ...tempValues
       } = values;
 
+      // @Calvin replace
+      const projects = [
+        {
+          title: 'Join the Prisma Slack on https://slack.prisma.io',
+          description: 'b',
+        },
+        { title: 'Follow Prisma on Twitter', description: 'blah' },
+      ];
+
       try {
         const res = await fetch(`/api/app/orgs?submitting=${!saveDraft}`, {
           method: 'POST',
@@ -82,6 +91,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
           body: JSON.stringify({
             userEmail: session.user.email,
             ...tempValues,
+            projects,
           }),
         });
 

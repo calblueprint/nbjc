@@ -17,7 +17,7 @@ export default async (
 
   const isSubmit = req.query.submitting === 'true';
 
-  const { userEmail, ...body } = req.body;
+  const { userEmail, ...body, projects } = req.body;
   const { error, value } = OrganizationSchema.validate(body, {
     abortEarly: false,
     context: {
@@ -46,8 +46,9 @@ export default async (
   const active = isSubmit ? false : undefined;
   const data = { ...value, applicationStatus, active } as Organization;
 
+  let newOrg;
   try {
-    const newOrg = await prisma.organization.upsert({
+    newOrg = await prisma.organization.upsert({
       where: {
         userId,
       },
@@ -63,9 +64,21 @@ export default async (
         ...data,
       },
     });
-    return res.json(newOrg);
   } catch (err) {
     console.log(err);
     return CreateError(500, 'Failed to create organization', res);
   }
+
+  try {
+    for (const p of projects) { 
+      const a = await prisma.organizationProject.create({
+        p.title,
+        p.description,
+        organization: { connect: { p.id: organizationId } },
+      });
+    };
+  } catch (err) {
+    return CreateError(500, 'Failed to create project', res);
+  }
+  return res.json(newOrg);
 };
