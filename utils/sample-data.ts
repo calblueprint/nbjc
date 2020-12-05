@@ -1,4 +1,4 @@
-import { OrgApp, Question } from 'interfaces';
+import { Question } from 'interfaces';
 import { User, Organization } from '@prisma/client';
 
 /** Dummy user data. */
@@ -59,12 +59,13 @@ export const sampleOrgData: Organization[] = [
     active: false,
     contactName: 'Sonja Johanson',
     contactEmail: 'skylerwhite@gmail.com',
+    contactPhone: '1234567890',
+    website: 'https://google.com',
     organizationType: null,
     workType: null,
     address: '120 Sproul Hall',
     missionStatement: null,
     shortHistory: null,
-    keyValue: null,
     lgbtqDemographic: ['lgbtqAll', 'sgl'],
     raceDemographic: ['asian', 'black'],
     ageDemographic: ['teen', 'adult'],
@@ -90,7 +91,8 @@ export const sampleOrgData: Organization[] = [
     address: '120 Sproul Hall',
     missionStatement: null,
     shortHistory: null,
-    keyValue: null,
+    contactPhone: '1234567890',
+    website: 'https://google.com',
     lgbtqDemographic: ['lgbtqAll', 'sgl'],
     raceDemographic: ['asian', 'black'],
     ageDemographic: ['teen', 'adult'],
@@ -116,7 +118,8 @@ export const sampleOrgData: Organization[] = [
     address: '120 Sproul Hall',
     missionStatement: null,
     shortHistory: null,
-    keyValue: null,
+    contactPhone: '1234567890',
+    website: 'https://google.com',
     lgbtqDemographic: ['lgbtqAll', 'sgl'],
     raceDemographic: ['asian', 'black'],
     ageDemographic: ['teen', 'adult'],
@@ -142,7 +145,8 @@ export const sampleOrgData: Organization[] = [
     address: '120 Sproul Hall',
     missionStatement: null,
     shortHistory: null,
-    keyValue: null,
+    contactPhone: '1234567890',
+    website: 'https://google.com',
     lgbtqDemographic: ['lgbtqAll', 'sgl'],
     raceDemographic: ['asian', 'black'],
     ageDemographic: ['teen', 'adult'],

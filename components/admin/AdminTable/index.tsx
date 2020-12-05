@@ -11,8 +11,8 @@ import {
 } from '@material-ui/core';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import InfoIcon from '@material-ui/icons/Info';
-import { OrgApp, Organization, Question } from 'interfaces/index';
-import { User } from '@prisma/client';
+import { Question } from 'interfaces/index';
+import { User, Organization } from '@prisma/client';
 import computeDate from 'utils/computeDate';
 import styles from './AdminTable.module.css';
 
