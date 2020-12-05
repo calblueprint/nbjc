@@ -2,7 +2,7 @@ import Joi, { ValidationError } from 'joi';
 import { PrismaClient, ApplicationResponse } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import CreateError, { MethodNotAllowed } from 'utils/error';
-import { ResponseSchema } from 'interfaces/question';
+import { AppResponseSchema } from 'interfaces/appQuestion';
 
 const prisma = new PrismaClient();
 
@@ -15,7 +15,7 @@ export const updateResponse = async (
   id: string,
   body: ApplicationResponse
 ): Promise<ApplicationResponse | null> => {
-  const { error, value } = ResponseSchema.validate(body);
+  const { error, value } = AppResponseSchema.validate(body);
   if (error) {
     throw error;
   }

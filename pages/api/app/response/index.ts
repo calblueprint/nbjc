@@ -1,7 +1,7 @@
 import { PrismaClient, ApplicationResponse } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import CreateError, { MethodNotAllowed } from 'utils/error';
-import { ResponseSchema } from 'interfaces/question';
+import { AppResponseSchema } from 'interfaces/appQuestion';
 
 const prisma = new PrismaClient();
 
@@ -13,7 +13,7 @@ export default async (
     return MethodNotAllowed(req.method, res);
   }
 
-  const { error, value } = ResponseSchema.validate(req.body, {
+  const { error, value } = AppResponseSchema.validate(req.body, {
     context: { strict: true },
   });
   if (error) {

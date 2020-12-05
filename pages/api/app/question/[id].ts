@@ -2,7 +2,7 @@ import Joi, { ValidationError } from 'joi';
 import { PrismaClient, ApplicationQuestion } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import CreateError, { MethodNotAllowed } from 'utils/error';
-import { QuestionSchema } from 'interfaces/question';
+import { AppQuestionSchema } from 'interfaces/appQuestion';
 
 const prisma = new PrismaClient();
 
@@ -15,7 +15,7 @@ export const updateQuestion = async (
   id: string,
   body: ApplicationQuestion
 ): Promise<ApplicationQuestion | null> => {
-  const { error, value } = QuestionSchema.validate(body);
+  const { error, value } = AppQuestionSchema.validate(body);
   if (error) {
     throw error;
   }
