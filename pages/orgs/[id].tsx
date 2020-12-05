@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
-import { Button, ButtonGroup, Chip } from '@material-ui/core';
+import { Button, Chip } from '@material-ui/core';
 import { Organization, PrismaClient } from '@prisma/client';
 import Layout from 'components/Layout';
-import Project from 'components/organization/Project/index';
+import Project from 'components/organization/Project';
+import Tab from 'components/Tab';
 import computeDate from 'utils/computeDate';
 import styles from '../../styles/Organization.module.css';
 
@@ -19,7 +20,6 @@ type Props = {
     | 'address'
     | 'missionStatement'
     | 'shortHistory'
-    | 'keyValue'
     | 'lgbtqDemographic'
     | 'raceDemographic'
     | 'ageDemographic'
@@ -53,7 +53,7 @@ const projectsList = projects.map((project) => {
 });
 
 const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
-  const [showInfo, setshowInfo] = useState<boolean>(true);
+  const [tabState, setTabState] = useState<0 | 1 | 2>(0);
 
   const demographics = (category: string, groups: string[]): JSX.Element => {
     return (
@@ -136,32 +136,14 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
           </div>
           <div className={styles.rightColumn}>
             <div className={styles.headerButton}>
-              <ButtonGroup
-                variant="contained"
-                color="primary"
-                className={styles.buttonGroup}
-              >
-                <Button
-                  className={
-                    showInfo ? styles.buttonIndSelected : styles.buttonInd
-                  }
-                  onClick={() => setshowInfo(true)}
-                  disableElevation
-                >
-                  Information
-                </Button>
-                <Button
-                  className={
-                    showInfo ? styles.buttonInd : styles.buttonIndSelected
-                  }
-                  onClick={() => setshowInfo(false)}
-                  disableElevation
-                >
-                  Project and Events
-                </Button>
-              </ButtonGroup>
+              <Tab
+                tabName1="information"
+                tabName2="project and events"
+                tabState={tabState}
+                setTabState={setTabState}
+              />
             </div>
-            {showInfo ? (
+            {tabState === 0 ? (
               <div className={styles.rightContent}>
                 <h3 className={styles.audienceHeader}>Audience Demographics</h3>
                 <div className={styles.demographicSection}>
@@ -208,7 +190,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         address: true,
         missionStatement: true,
         shortHistory: true,
-        keyValue: true,
         lgbtqDemographic: true,
         raceDemographic: true,
         ageDemographic: true,

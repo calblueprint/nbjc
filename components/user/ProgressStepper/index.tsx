@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import Button from '@material-ui/core/Button';
+import { useRouter } from 'next/router';
 import styles from './ProgressStepper.module.css';
 
 export default function ProgressMobileStepper(): React.ReactElement {
+  const router = useRouter();
   const [activeStep, setActiveStep] = useState(1);
 
   const handleNext = (): void => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    router.push('/registration');
   };
 
   function stepText(text: string, step: number): React.ReactElement {

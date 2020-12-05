@@ -11,15 +11,19 @@ export const MethodNotAllowed = (
     },
   });
 
+type ErrorCodes = 'DUP_EMAIL';
+
 export default (
   statusCode: number,
-  message: string,
-  res: NextApiResponse
+  message: string | { [k: string]: string },
+  res: NextApiResponse,
+  errorCode?: ErrorCodes
 ): void => {
   return res.status(statusCode).json({
     error: {
       statusCode,
       message,
+      errorCode,
     },
   });
 };

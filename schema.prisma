@@ -28,29 +28,34 @@ model Account {
 
 model Organization {
   id                   Int                   @id @default(autoincrement())
-  name                 String
+  name                 String?
   long                 Float?
   lat                  Float?
   createdAt            DateTime              @default(now()) @map("created_at")
   updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
   applicationStatus    ApplicationStatus     @default(draft) @map("application_status")
   active               Boolean               @default(false)
-  contactName          String                @map("contact_name")
-  contactEmail         String                @map("contact_email")
+  contactName          String?               @map("contact_name")
+  contactEmail         String?               @map("contact_email")
   organizationType     OrganizationType?     @map("organization_type")
   workType             WorkType?             @map("work_type")
   address              String?
   missionStatement     String?               @map("mission_statement")
   shortHistory         String?               @map("short_history")
-  keyValue             String?               @map("key_values")
   lgbtqDemographic     LgbtqDemographic[]    @map("lgbtq_demographic")
   raceDemographic      RaceDemographic[]     @map("race_demographic")
   ageDemographic       AgeDemographic[]      @map("age_demographic")
   capacity             Int?
-  ein                  Int?
+  ein                  String?
   foundingDate         DateTime?             @map("founding_date")
   is501c3              Boolean               @default(false) @map("is_501c3")
+  userId               Int?                  @unique @map("user_id")
+  contactPhone         String?               @map("contact_phone")
+  website              String?
+  user                 User?                 @relation("OrganizationsToUsers", fields: [userId], references: [id])
+  applicationNote      ApplicationNote?      @relation("ApplicationNotesToOrganizations")
   applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
+  organizationProjects OrganizationProject[] @relation("OrganizationProjectsToOrganizations")
 
   @@map("organizations")
 }
@@ -68,16 +73,15 @@ model Session {
 }
 
 model User {
-  id             Int       @id @default(autoincrement())
-  firstName      String    @map("first_name")
-  lastName       String    @map("last_name")
+  id             Int           @id @default(autoincrement())
   role           UserRole?
-  email          String    @unique
-  emailVerified  DateTime? @map("email_verified")
+  email          String        @unique
+  emailVerified  DateTime?     @map("email_verified")
   image          String?
-  hashedPassword String    @map("hashed_password")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at")
+  hashedPassword String        @map("hashed_password")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @default(now()) @updatedAt @map("updated_at")
+  organization   Organization? @relation("OrganizationsToUsers")
 
   @@map("users")
 }
@@ -111,10 +115,10 @@ model ApplicationResponse {
   id                  Int                 @id @default(autoincrement())
   answer              String
   questionId          Int                 @map("question_id")
-  organizationId      Int?                @map("organization_id")
+  organizationId      Int                 @map("organization_id")
   createdAt           DateTime            @default(now()) @map("created_at")
   updatedAt           DateTime            @default(now()) @updatedAt @map("updated_at")
-  organization        Organization?       @relation("ApplicationResponsesToOrganizations", fields: [organizationId], references: [id])
+  organization        Organization        @relation("ApplicationResponsesToOrganizations", fields: [organizationId], references: [id])
   applicationQuestion ApplicationQuestion @relation("ApplicationQuestionsToApplicationResponses", fields: [questionId], references: [id])
 
   @@map("application_responses")
@@ -124,6 +128,27 @@ model migrations {
   id     Int      @id @default(autoincrement())
   name   String
   run_on DateTime
+}
+
+model ApplicationNote {
+  id             Int          @id @default(autoincrement())
+  note           String?
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at")
+  organizationId Int          @unique @map("organization_id")
+  organization   Organization @relation("ApplicationNotesToOrganizations", fields: [organizationId], references: [id])
+
+  @@map("application_notes")
+}
+
+model OrganizationProject {
+  id             Int          @id @default(autoincrement())
+  title          String
+  description    String?
+  organizationId Int          @map("organization_id")
+  organization   Organization @relation("OrganizationProjectsToOrganizations", fields: [organizationId], references: [id])
+
+  @@map("organization_projects")
 }
 
 enum AgeDemographic {
