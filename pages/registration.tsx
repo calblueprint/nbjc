@@ -1,5 +1,9 @@
 import { GetServerSideProps } from 'next';
-import { Organization, PrismaClient } from '@prisma/client';
+import {
+  Organization,
+  PrismaClient,
+  ApplicationQuestion,
+} from '@prisma/client';
 import { FormikErrors, useFormik } from 'formik';
 import { useState, useEffect, ChangeEvent } from 'react';
 import {
@@ -28,9 +32,13 @@ const prisma = new PrismaClient();
 
 type RegistrationProps = {
   org: Organization | null;
+  appQuestions: ApplicationQuestion[] | null;
 };
 
-const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
+const Registration: React.FunctionComponent<RegistrationProps> = ({
+  org,
+  appQuestions,
+}) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
   const [selected, setSelected] = useState(0);
@@ -52,6 +60,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
 
     return parseValidationError(error);
   };
+  console.log(appQuestions);
 
   const handleChange = (
     _event: ChangeEvent<unknown>,
@@ -59,6 +68,8 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
   ): void => {
     setSelected(newValue);
   };
+
+  // const shortResponses =
 
   const handleSubmit = async (values: Form): Promise<void> => {
     if (session && session.user.role === 'organization') {
@@ -255,10 +266,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           organization: true,
         },
       });
+      // getting app questions
+      const appQuestions = await prisma.applicationQuestion.findMany({
+        select: {
+          id: true,
+          placeholder: true,
+          question: true,
+          hint: true,
+          required: true,
+          wordLimit: true,
+        },
+      });
 
       const org = JSON.parse(JSON.stringify(user)).organization;
       return {
-        props: { org },
+        props: { org, appQuestions },
       };
     }
     return {
