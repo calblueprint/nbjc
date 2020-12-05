@@ -43,7 +43,7 @@ export default async (
   }
 
   const applicationStatus = isSubmit ? 'submitted' : 'draft';
-  const active = isSubmit;
+  const active = isSubmit ? false : undefined;
   const data = { ...value, applicationStatus, active } as Organization;
 
   try {

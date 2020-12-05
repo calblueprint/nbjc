@@ -52,7 +52,7 @@ const organizationType = {
 const workType = {
   advocacy: 'Advocacy',
   directService: 'DirectService',
-  neworkingSocial: 'Networking/Social',
+  networkingSocial: 'Networking/Social',
 };
 const locationType = {
   headquarters: 'Headquarters',

@@ -87,8 +87,8 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
 
   const handleDrawerCloseRight = async (): Promise<void> => {
     try {
-      await fetch(`/api/app/orgs/note/${orgs[index].id}`, {
-        method: 'PUT',
+      await fetch(`/api/app/orgs/${orgs[index].id}/note`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ note: text }),
       });
@@ -124,7 +124,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
       if (approve) {
         /** put in form of const res so you can say if res === ok then display this banner */
         try {
-          const res = await fetch(`/api/app/orgs/approve/${orgs[index].id}`, {
+          const res = await fetch(`/api/app/orgs/${orgs[index].id}/approve`, {
             method: 'POST',
           });
           if (res.ok) {
@@ -139,7 +139,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         }
       } else {
         try {
-          const res = await fetch(`/api/app/orgs/reject/${orgs[index].id}`, {
+          const res = await fetch(`/api/app/orgs/${orgs[index].id}/reject`, {
             method: 'POST',
           });
           if (res.ok) {
@@ -166,8 +166,8 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     if (orgs[index]) {
       const updateContent = async (): Promise<void> => {
         try {
-          await fetch(`/api/app/orgs/note/${orgs[index].id}`, {
-            method: 'PUT',
+          await fetch(`/api/app/orgs/${orgs[index].id}/note`, {
+            method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ note: text }),
           });
@@ -263,6 +263,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           />
         </div>
       </Drawer>
+      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
       <div className={styles.content} onClick={handleDrawerCloseRight}>
         <OrgDetail org={app} />
       </div>
