@@ -1,8 +1,8 @@
 import Joi, { ValidationError } from 'joi';
-import { PrismaClient, ApplicationResponse } from '@prisma/client';
+import { PrismaClient, ApplicationQuestion } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import CreateError, { MethodNotAllowed } from 'utils/error';
-import { ResponseSchema } from 'interfaces/question';
+import { QuestionSchema } from 'interfaces/question';
 
 const prisma = new PrismaClient();
 
@@ -11,32 +11,20 @@ const prisma = new PrismaClient();
  * @param id - the ID of the Organization
  * @param body - the fields of the Organization to update
  */
-export const updateResponse = async (
+export const updateQuestion = async (
   id: string,
-  body: ApplicationResponse
-): Promise<ApplicationResponse | null> => {
-  const { error, value } = ResponseSchema.validate(body);
+  body: ApplicationQuestion
+): Promise<ApplicationQuestion | null> => {
+  const { error, value } = QuestionSchema.validate(body);
   if (error) {
     throw error;
   }
 
-  const data = value as ApplicationResponse;
+  const data = value as ApplicationQuestion;
 
-  const updatedResponse = await prisma.applicationResponse.update({
+  const updatedResponse = await prisma.applicationQuestion.update({
     where: { id: Number(id) },
-    data: {
-      answer: data.answer,
-      organization: data.organizationId
-        ? {
-            connect: { id: data.organizationId },
-          }
-        : undefined,
-      applicationQuestion: data.questionId
-        ? {
-            connect: { id: data.questionId },
-          }
-        : undefined,
-    },
+    data,
   });
 
   return updatedResponse;
@@ -56,7 +44,7 @@ export default async (
   }
 
   try {
-    const response = await updateResponse(responseId, req.body);
+    const response = await updateQuestion(responseId, req.body);
     return res.json(response);
   } catch (err) {
     if (err instanceof ValidationError) {

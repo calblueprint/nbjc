@@ -1,7 +1,7 @@
 import { PrismaClient, ApplicationQuestion } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import CreateError, { MethodNotAllowed } from 'utils/error';
-import QuestionSchema from 'interfaces/question';
+import { QuestionSchema } from 'interfaces/question';
 
 const prisma = new PrismaClient();
 
