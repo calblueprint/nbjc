@@ -1,50 +1,51 @@
-import { Organization, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import AdminIndex from 'components/admin/AdminIndex';
 import AdminTable from 'components/admin/AdminTable';
 import Layout from 'components/Layout';
+import { TableOrgApplication } from 'interfaces/admin';
 import { GetServerSideProps } from 'next';
 
 const prisma = new PrismaClient();
 
-type AdminOrgIndexProps = {
-  orgs: Organization[];
+type AdminAppIndexProps = {
+  orgs: TableOrgApplication[];
 };
 
-const AdminOrgIndex: React.FunctionComponent<AdminOrgIndexProps> = ({
+const AdminAppIndex: React.FunctionComponent<AdminAppIndexProps> = ({
   orgs,
 }) => (
   <Layout>
     <AdminIndex
-      page="Organization"
-      search="Look for an Organization"
+      page="Application"
+      search="Look for an Application"
       // TODO: Add button on click
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       addButtonOnClick={() => {}}
     >
-      <AdminTable data={orgs} pageType="organizations" />
+      <AdminTable data={orgs} pageType="applications" />
     </AdminIndex>
   </Layout>
 );
 
-export default AdminOrgIndex;
+export default AdminAppIndex;
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    const approvedOrganizations = await prisma.organization.findMany({
+    const orgApps = await prisma.organization.findMany({
       where: {
-        active: true,
+        active: false,
       },
       select: {
         id: true,
         name: true,
-        organizationType: true,
-        workType: true,
+        applicationStatus: true,
         contactName: true,
         contactEmail: true,
+        contactPhone: true,
         createdAt: true,
       },
     });
-    const orgs = JSON.parse(JSON.stringify(approvedOrganizations));
+    const orgs = JSON.parse(JSON.stringify(orgApps));
     return {
       props: { orgs },
     };
