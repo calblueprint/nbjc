@@ -1,6 +1,11 @@
 import { Organization } from '@prisma/client';
 import Joi from 'joi';
 
+type Project = {
+  title: string;
+  description: string;
+};
+
 export type Form = Pick<
   Organization,
   | 'name'
@@ -22,9 +27,7 @@ export type Form = Pick<
   short1: string;
   short2: string;
   short3: string;
-  proj1: string;
-  proj2: string;
-  proj3: string;
+  projects: Project[];
   // capacity: number | undefined;
   // foundingDate: Date | undefined;
 };
@@ -80,7 +83,7 @@ const schema = Joi.object({
     .messages({ 'any.required': 'Type of Work is required' }),
   website: Joi.string()
     .empty('')
-    .uri({ domain: { tlds: false } })
+    .uri({ domain: { tlds: false }, allowRelative: true })
     .messages({
       'string.uri':
         'Not a valid URL - remember http or https (https://nbjc.org)',
@@ -135,15 +138,18 @@ const schema = Joi.object({
     .messages({ 'string.pattern.base': 'Not a valid EIN' }),
   // foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
-  proj1: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
-  proj2: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
-  proj3: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
+
+  // TODO: Add validation for each of the items in the project array instead of these variables
+
+  // proj1: Joi.string()
+  //   .empty('')
+  //   .when('$strict', { is: true, then: Joi.required() }),
+  // proj2: Joi.string()
+  //   .empty('')
+  //   .when('$strict', { is: true, then: Joi.required() }),
+  // proj3: Joi.string()
+  //   .empty('')
+  //   .when('$strict', { is: true, then: Joi.required() }),
   short1: Joi.string()
     .empty('')
     .when('$strict', { is: true, then: Joi.required() }),

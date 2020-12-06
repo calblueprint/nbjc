@@ -17,7 +17,7 @@ export default async (
 
   const isSubmit = req.query.submitting === 'true';
 
-  const { userEmail, ...body, projects } = req.body;
+  const { userEmail, projects, ...body } = req.body;
   const { error, value } = OrganizationSchema.validate(body, {
     abortEarly: false,
     context: {
@@ -70,13 +70,20 @@ export default async (
   }
 
   try {
-    for (const p of projects) { 
-      const a = await prisma.organizationProject.create({
-        p.title,
-        p.description,
-        organization: { connect: { p.id: organizationId } },
+    for (let i = 0; i < projects.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      const response = await prisma.organizationProject.create({
+        data: {
+          title: projects[i].title,
+          description: projects[i].description,
+          organization: {
+            connect: {
+              id: newOrg.id,
+            },
+          },
+        },
       });
-    };
+    }
   } catch (err) {
     return CreateError(500, 'Failed to create project', res);
   }

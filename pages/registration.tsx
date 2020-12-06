@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next';
 import { Organization, PrismaClient } from '@prisma/client';
-import { FormikErrors, useFormik } from 'formik';
+import { Formik, FormikErrors, useFormik, FormikHelpers } from 'formik';
 import { useState, useEffect, ChangeEvent } from 'react';
 import {
   Tabs,
@@ -38,9 +38,9 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
   const [saveDraft, setSaveDraft] = useState(true);
 
   const status = org?.applicationStatus;
-  if (status && status !== 'draft') {
-    router.back();
-  }
+  // if (status && status !== 'draft') {
+  //   router.back();
+  // }
 
   const validate = (values: Form): FormikErrors<Form> => {
     const { error } = schema.validate(values, {
@@ -61,26 +61,21 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
   };
 
   const handleSubmit = async (values: Form): Promise<void> => {
+    console.log(1);
+    console.log(session);
     if (session && session.user.role === 'organization') {
       console.log('submitting', values);
-      const {
-        short1,
-        short2,
-        short3,
-        proj1,
-        proj2,
-        proj3,
-        ...tempValues
-      } = values;
+      const { short1, short2, short3, projects, ...tempValues } = values;
 
-      // @Calvin replace
-      const projects = [
-        {
-          title: 'Join the Prisma Slack on https://slack.prisma.io',
-          description: 'b',
-        },
-        { title: 'Follow Prisma on Twitter', description: 'blah' },
-      ];
+      console.log(projects);
+      // // @Calvin replace
+      // const projects = [
+      //   {
+      //     title: 'Join the Prisma Slack on https://slack.prisma.io',
+      //     description: 'b',
+      //   },
+      //   { title: 'Follow Prisma on Twitter', description: 'blah' },
+      // ];
 
       try {
         const res = await fetch(`/api/app/orgs?submitting=${!saveDraft}`, {
@@ -127,9 +122,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
     short1: '',
     short2: '',
     short3: '',
-    proj1: '',
-    proj2: '',
-    proj3: '',
+    projects: [{ title: '', description: '' }],
   };
 
   const formik = useFormik({
@@ -138,6 +131,25 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
     validateOnChange: false,
     onSubmit: handleSubmit,
   });
+
+  const addNewProj = (
+    values: Form,
+    setFieldValue: FormikHelpers<string>['setFieldValue']
+  ): void => {
+    const currProjs = values.projects;
+    currProjs.push({ title: '', description: '' });
+    setFieldValue('projects', currProjs);
+  };
+
+  const deleteProj = (
+    values: Form,
+    setFieldValue: FormikHelpers<string>['setFieldValue'],
+    index: number
+  ): void => {
+    const currProjs = values.projects;
+    currProjs.splice(index, 1);
+    setFieldValue('projects', currProjs);
+  };
 
   useEffect(() => {
     async function submitForm(): Promise<void> {
@@ -177,74 +189,92 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
           </DialogActions>
         </Dialog>
         <h1 className={styles.header}>Registration Form</h1>
-        <form onSubmit={formik.handleSubmit}>
-          <div className={styles.root}>
-            <AppBar position="static" color="default" className={styles.appBar}>
-              <Tabs value={selected} onChange={handleChange}>
-                <Tab label="Basics" />
-                <Tab label="Projects and Events" />
-                <Tab label="Short Response" />
-              </Tabs>
-            </AppBar>
-            {selected === 0 && (
-              <TabBasics
-                handleChange={formik.handleChange}
-                handleBlur={formik.handleBlur}
-                values={formik.values}
-                setFieldValue={formik.setFieldValue}
-                touched={formik.touched}
-                errors={formik.errors}
-              />
-            )}
-            {selected === 1 && (
-              <TabProj
-                handleChange={formik.handleChange}
-                handleBlur={formik.handleBlur}
-                values={formik.values}
-                setFieldValue={formik.setFieldValue}
-                touched={formik.touched}
-                errors={formik.errors}
-              />
-            )}
-            {selected === 2 && (
-              <TabShortResponse
-                handleChange={formik.handleChange}
-                handleBlur={formik.handleBlur}
-                values={formik.values}
-                setFieldValue={formik.setFieldValue}
-                touched={formik.touched}
-                errors={formik.errors}
-              />
-            )}
-          </div>
-          <div className={styles.bottomButtons}>
-            <div>
-              <Button
-                variant="contained"
-                onClick={() => setExitDialogOpen(true)}
-              >
-                Exit
-              </Button>
-            </div>
-            <div>
-              <Button
-                variant="contained"
-                className={styles.autoField}
-                type="submit"
-              >
-                Save Changes
-              </Button>
-              <Button
-                variant="contained"
-                className={styles.autoField}
-                color="primary"
-                onClick={() => setSaveDraft(false)}
-              >
-                Submit
-              </Button>
-            </div>
-          </div>
-        </form>
+        <Formik
+          initialValues={initialValues}
+          validate={validate}
+          validateOnChange={false}
+          onSubmit={(values) => {
+            console.log('here');
+            console.log(values);
+          }}
+          render={(values) => (
+            <>
+              <div className={styles.root}>
+                <AppBar
+                  position="static"
+                  color="default"
+                  className={styles.appBar}
+                >
+                  <Tabs value={selected} onChange={handleChange}>
+                    <Tab label="Basics" />
+                    <Tab label="Projects and Events" />
+                    <Tab label="Short Response" />
+                  </Tabs>
+                </AppBar>
+                {selected === 0 && (
+                  <TabBasics
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                    values={formik.values}
+                    setFieldValue={formik.setFieldValue}
+                    touched={formik.touched}
+                    errors={formik.errors}
+                  />
+                )}
+                {selected === 1 && (
+                  <TabProj
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                    values={formik.values}
+                    setFieldValue={formik.setFieldValue}
+                    touched={formik.touched}
+                    errors={formik.errors}
+                    addNewProj={addNewProj}
+                    deleteProj={deleteProj}
+                  />
+                )}
+                {selected === 2 && (
+                  <TabShortResponse
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                    values={formik.values}
+                    setFieldValue={formik.setFieldValue}
+                    touched={formik.touched}
+                    errors={formik.errors}
+                  />
+                )}
+              </div>
+              <div className={styles.bottomButtons}>
+                <div>
+                  <Button
+                    variant="contained"
+                    onClick={() => setExitDialogOpen(true)}
+                  >
+                    Exit
+                  </Button>
+                </div>
+                <div>
+                  <Button
+                    variant="contained"
+                    className={styles.autoField}
+                    type="submit"
+                    onClick={() => handleSubmit(formik.values)}
+                  >
+                    Save Changes
+                  </Button>
+                  <Button
+                    variant="contained"
+                    className={styles.autoField}
+                    color="primary"
+                    onClick={() => setSaveDraft(false)}
+                  >
+                    Submit
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        />
       </Layout>
     );
   return <LinearProgress />;
