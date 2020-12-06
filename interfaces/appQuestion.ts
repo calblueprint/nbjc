@@ -2,10 +2,10 @@ import Joi from 'joi';
 
 export const AppQuestionSchema = Joi.object({
   question: Joi.string().when('$strict', { is: true, then: Joi.required() }),
-  hint: Joi.string(),
-  placeholder: Joi.string(),
-  required: Joi.boolean(),
-  wordLimit: Joi.number(),
+  hint: Joi.string().empty('').default(null),
+  placeholder: Joi.string().empty('').default(null),
+  required: Joi.boolean().empty('').default(null),
+  wordLimit: Joi.number().allow(null),
 });
 
 export const AppResponseSchema = Joi.object({

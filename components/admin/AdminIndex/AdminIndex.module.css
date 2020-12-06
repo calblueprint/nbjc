@@ -41,9 +41,24 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.headerActions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.headerActions > * {
+  margin: 0 10px;
 }
 
 .title {
   font-size: 1.5rem;
   font-weight: 800;
+}
+
+.addButton {
+  text-transform: capitalize;
 }

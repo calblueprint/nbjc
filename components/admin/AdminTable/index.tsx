@@ -11,9 +11,11 @@ import {
 } from '@material-ui/core';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import InfoIcon from '@material-ui/icons/Info';
-import { Question } from 'interfaces/index';
-import { User, Organization } from '@prisma/client';
+import CheckIcon from '@material-ui/icons/Check';
+import CloseIcon from '@material-ui/icons/Close';
+import { User, Organization, ApplicationQuestion } from '@prisma/client';
 import computeDate from 'utils/computeDate';
+import { TableApplicationQuestion } from 'interfaces/admin';
 import styles from './AdminTable.module.css';
 
 const declineButton = (
@@ -83,7 +85,7 @@ const resetButton = (
 );
 
 type Props = {
-  data: Array<Organization | User | Question>;
+  data: Array<Organization | User | TableApplicationQuestion>;
   pageType: string;
 };
 
@@ -132,7 +134,7 @@ const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
           <caption>No {pageType} in database</caption>
         ) : null}
         <TableHead>
-          <TableRow>
+          <TableRow className={styles.headerText}>
             {headList.map((key) => (
               <TableCell align="left" key={key}>
                 {key}
@@ -149,6 +151,13 @@ const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
                   return (
                     <TableCell align="left" key={headList[index]}>
                       {computeDate(value, 1)}
+                    </TableCell>
+                  );
+                }
+                if (typeof value === 'boolean') {
+                  return (
+                    <TableCell align="left" key={headList[index]}>
+                      {value ? <CheckIcon /> : <CloseIcon />}
                     </TableCell>
                   );
                 }
