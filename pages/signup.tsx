@@ -40,6 +40,7 @@ const UserSignUp: React.FC = () => {
         body: JSON.stringify({
           email: values.email,
           password: values.password,
+          role: 'organization',
         }),
       });
 

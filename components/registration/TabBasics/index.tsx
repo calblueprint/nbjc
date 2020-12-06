@@ -25,27 +25,34 @@ type TabProps = {
   errors: FormikErrors<Form>;
 };
 
-// TODO: use Prisma enums
-const orientation = ['LGBTQ+ (all)', 'SGL', 'Transgender', 'Asexual/Aromantic'];
-const ethnicity = [
-  'LGBTQ',
-  'POC',
-  'Black',
-  'Pacific Islander',
-  'Latinx',
-  'Native/Indigenous',
+// TODO: create readable mapping
+const orientation = [
+  'lgbtqAll',
+  'sgl',
+  'transgender',
+  'asexualAromantic',
+  'other',
 ];
-const ages = ['All ages', 'Children', 'Teens', 'Adults', 'Seniors'];
-const workType = {
+const ethnicity = [
+  'pocAll',
+  'black',
+  'asian',
+  'pacificIslander',
+  'latinx',
+  'nativeIndigeneous',
+  'other',
+];
+const ages = ['child', 'teen', 'adult', 'senior'];
+const organizationType = {
   grassrootsLocal: 'Grassroots/Local',
   statewide: 'Statewide',
   national: 'National',
   other: 'Other',
 };
-const organizationType = {
+const workType = {
   advocacy: 'Advocacy',
   directService: 'DirectService',
-  neworkingSocial: 'Networking/Social',
+  networkingSocial: 'Networking/Social',
 };
 const locationType = {
   headquarters: 'Headquarters',
@@ -145,7 +152,7 @@ const TabBasics: React.FC<TabProps> = ({
         </div>
       </div>
       <div className={styles.row}>
-        <p className={styles.descriptor}>Contact Person Name</p>
+        <p className={styles.descriptor}>Contact Person Full Name</p>
         <TextField
           className={styles.textField}
           id="contactName"
@@ -173,6 +180,19 @@ const TabBasics: React.FC<TabProps> = ({
         />
       </div>
       <div className={styles.row}>
+        <p className={styles.descriptor}>Contact Person Phone</p>
+        <TextField
+          className={styles.textField}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.contactPhone}
+          name="contactPhone"
+          variant="outlined"
+          error={Boolean(touched.contactPhone && errors.contactPhone)}
+          helperText={touched.contactPhone ? errors.contactPhone : undefined}
+        />
+      </div>
+      <div className={styles.row}>
         <p className={styles.descriptor}>Current Website</p>
         <TextField
           className={styles.textField}
@@ -185,7 +205,7 @@ const TabBasics: React.FC<TabProps> = ({
           helperText={touched.website ? errors.website : undefined}
         />
       </div>
-      <div className={styles.row}>
+      {/* <div className={styles.row}>
         <p className={styles.descriptor}>Location Type</p>
         <FormControl
           className={styles.textField}
@@ -212,7 +232,7 @@ const TabBasics: React.FC<TabProps> = ({
             {touched.locationType ? errors.locationType : undefined}
           </FormHelperText>
         </FormControl>
-      </div>
+      </div> */}
       <div className={styles.row}>
         <p className={styles.descriptor}>Address</p>
         <TextField
@@ -239,7 +259,7 @@ const TabBasics: React.FC<TabProps> = ({
           helperText={touched.ein ? errors.ein : undefined}
         />
       </div>
-      <div className={styles.row}>
+      {/* <div className={styles.row}>
         <p className={styles.descriptor}>Date of Founding</p>
         <TextField
           className={styles.textField}
@@ -251,7 +271,7 @@ const TabBasics: React.FC<TabProps> = ({
           error={Boolean(touched.foundingDate && errors.foundingDate)}
           helperText={touched.foundingDate ? errors.foundingDate : undefined}
         />
-      </div>
+      </div> */}
       <div className={styles.short}>
         <p>Audience Demographics</p>
         <div className={styles.auto}>
@@ -263,6 +283,7 @@ const TabBasics: React.FC<TabProps> = ({
               options={orientation}
               getOptionLabel={(option) => option}
               filterSelectedOptions
+              value={values.lgbtqDemographic}
               onChange={(event, newValue) => {
                 setFieldValue('lgbtqDemographic', newValue);
               }}
@@ -291,6 +312,7 @@ const TabBasics: React.FC<TabProps> = ({
               options={ethnicity}
               getOptionLabel={(option) => option}
               filterSelectedOptions
+              value={values.raceDemographic}
               onChange={(event, newValue) => {
                 setFieldValue('raceDemographic', newValue);
               }}
@@ -320,6 +342,7 @@ const TabBasics: React.FC<TabProps> = ({
               onChange={(event, newValue) => {
                 setFieldValue('ageDemographic', newValue);
               }}
+              value={values.ageDemographic}
               onBlur={handleBlur}
               renderInput={(params) => (
                 <TextField

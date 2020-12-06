@@ -20,7 +20,6 @@ type Props = {
     | 'address'
     | 'missionStatement'
     | 'shortHistory'
-    | 'keyValue'
     | 'lgbtqDemographic'
     | 'raceDemographic'
     | 'ageDemographic'
@@ -191,7 +190,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         address: true,
         missionStatement: true,
         shortHistory: true,
-        keyValue: true,
         lgbtqDemographic: true,
         raceDemographic: true,
         ageDemographic: true,

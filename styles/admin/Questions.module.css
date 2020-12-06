@@ -1,0 +1,45 @@
+.newModal.MuiDialog-paperFullWidth {
+  min-height: 60vh;
+}
+
+.dialogRow {
+  display: flex;
+  margin: 20px 0px;
+}
+
+.dialogShort {
+  flex-direction: column;
+}
+
+.dialogField {
+  align-items: center;
+}
+
+.descriptor {
+  display: flex;
+  align-self: left;
+  width: 45%;
+}
+
+.field {
+  display: flex;
+  align-self: center;
+  width: 55%;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.saveButton {
+  position: relative;
+}
+
+.saveProgress {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -12px;
+  margin-left: -12px;
+}
