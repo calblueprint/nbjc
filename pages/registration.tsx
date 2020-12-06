@@ -21,12 +21,14 @@ import Layout from 'components/Layout';
 import TabShortResponse from 'components/registration/TabShortResponse';
 import TabBasics from 'components/registration/TabBasics';
 import TabProj from 'components/registration/TabProj';
-import schema, { Form } from 'interfaces/registration';
+import schema, { Form, Response } from 'interfaces/registration';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import parseValidationError from 'utils/parseValidationError';
 import getSession from 'utils/getSession';
 import styles from '../styles/Registration.module.css';
+import { string } from 'joi';
+import response from './api/app/response';
 
 const prisma = new PrismaClient();
 
@@ -74,15 +76,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
   const handleSubmit = async (values: Form): Promise<void> => {
     if (session && session.user.role === 'organization') {
       console.log('submitting', values);
-      const {
-        short1,
-        short2,
-        short3,
-        proj1,
-        proj2,
-        proj3,
-        ...tempValues
-      } = values;
+      const { proj1, proj2, proj3, ...tempValues } = values;
 
       try {
         const res = await fetch(`/api/app/orgs?submitting=${!saveDraft}`, {
@@ -107,6 +101,14 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     }
   };
 
+  let elem = 0;
+  const responses = Array<string>();
+  const ids = Array<number>();
+  appQuestions?.map(function (q): void {
+    responses[elem] = '';
+    ids[elem] = q.id;
+    elem += 1;
+  });
   const initialValues: Form = {
     name: (org && org.name) ?? '',
     contactName: (org && org.contactName) ?? '',
@@ -125,12 +127,13 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     // foundingDate: undefined,
     is501c3: Boolean(org && org.is501c3),
     website: (org && org.website) ?? '',
-    short1: '',
-    short2: '',
-    short3: '',
     proj1: '',
     proj2: '',
     proj3: '',
+    shortResponses: {
+      id: ids,
+      response: responses,
+    },
   };
 
   const formik = useFormik({
@@ -215,6 +218,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                 setFieldValue={formik.setFieldValue}
                 touched={formik.touched}
                 errors={formik.errors}
+                appQuestions={appQuestions}
               />
             )}
           </div>

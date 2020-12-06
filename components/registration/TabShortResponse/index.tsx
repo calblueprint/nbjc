@@ -1,4 +1,5 @@
 import { TextField } from '@material-ui/core';
+import { ApplicationQuestion } from '@prisma/client';
 import {
   FormikErrors,
   FormikHandlers,
@@ -6,6 +7,7 @@ import {
   FormikTouched,
 } from 'formik';
 import { Form } from 'interfaces/registration';
+import { string } from 'joi';
 import styles from './TabShortResponse.module.css';
 
 type TabProps = {
@@ -15,6 +17,7 @@ type TabProps = {
   handleBlur: FormikHandlers['handleBlur'];
   touched: FormikTouched<Form>;
   errors: FormikErrors<Form>;
+  appQuestions: ApplicationQuestion[] | null;
 };
 
 const TabShortResponse: React.FC<TabProps> = ({
@@ -23,58 +26,52 @@ const TabShortResponse: React.FC<TabProps> = ({
   touched,
   errors,
   values,
+  appQuestions,
 }) => {
   const rowSize = 6;
   const placeholderText = 'Your short response';
-  return (
-    <>
-      <div className={styles.row}>
-        <p>Short 1</p>
-        <TextField
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.short1}
-          name="short1"
-          variant="outlined"
-          multiline
-          rows={rowSize}
-          placeholder={placeholderText}
-          error={Boolean(touched.short1 && errors.short1)}
-          helperText={touched.short1 ? errors.short1 : undefined}
-        />
-      </div>
-      <div className={styles.row}>
-        <p>Short 2</p>
-        <TextField
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.short2}
-          name="short2"
-          variant="outlined"
-          multiline
-          rows={rowSize}
-          placeholder={placeholderText}
-          error={Boolean(touched.short2 && errors.short2)}
-          helperText={touched.short2 ? errors.short2 : undefined}
-        />
-      </div>
-      <div className={styles.row}>
-        <p>Short 3</p>
-        <TextField
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.short3}
-          name="short3"
-          variant="outlined"
-          multiline
-          rows={rowSize}
-          placeholder={placeholderText}
-          error={Boolean(touched.short3 && errors.short3)}
-          helperText={touched.short3 ? errors.short3 : undefined}
-        />
-      </div>
-    </>
-  );
+  function index(question: string): number {
+    return values.shortResponses.response.indexOf(question);
+  }
+  /*
+    function idOf(question: string): number | string {
+    return values.shortResponses.id[index(question)];
+   }
+  */
+  const questions = appQuestions?.map(function (q) {
+    <div className={styles.row}>
+      <p>{q.question}</p>
+      <TextField
+        onChange={handleChange}
+        onBlur={handleBlur}
+        value={values.shortResponses.response[index(q.question)]}
+        name={q.id.toString()}
+        variant="outlined"
+        multiline
+        rows={rowSize}
+        placeholder={
+          typeof q.placeholder === 'string' ? q.placeholder : placeholderText
+        }
+        error={Boolean(
+          touched.shortResponses &&
+            touched.shortResponses.response &&
+            errors.shortResponses &&
+            errors.shortResponses.response
+        )}
+        helperText={
+          touched.shortResponses &&
+          touched.shortResponses.response &&
+          errors.shortResponses
+            ? errors.shortResponses.response
+            : undefined
+        }
+      />
+    </div>;
+  });
+  const empty = <div className={styles.empty}>No questions to answer.</div>;
+  const shortResponseForm =
+    !appQuestions || appQuestions?.length === 0 ? empty : questions;
+return <>{shortResponseForm}</>;
 };
 
 export default TabShortResponse;

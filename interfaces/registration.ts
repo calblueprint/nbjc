@@ -1,6 +1,11 @@
 import { Organization } from '@prisma/client';
 import Joi from 'joi';
 
+export type Response = {
+  id: number[];
+  response: string[];
+};
+
 export type Form = Pick<
   Organization,
   | 'name'
@@ -19,9 +24,7 @@ export type Form = Pick<
 > & {
   organizationType: string;
   workType: string;
-  short1: string;
-  short2: string;
-  short3: string;
+  shortResponses: Response;
   proj1: string;
   proj2: string;
   proj3: string;
