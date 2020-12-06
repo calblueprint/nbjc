@@ -3,6 +3,7 @@ import {
   Organization,
   PrismaClient,
   ApplicationQuestion,
+  ApplicationQuestionSelect,
 } from '@prisma/client';
 import { FormikErrors, useFormik } from 'formik';
 import { useState, useEffect, ChangeEvent } from 'react';
@@ -101,10 +102,38 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     }
   };
 
+  // sample data begin
+  /*
+          id: true,
+          placeholder: true,
+          question: true,
+          hint: true,
+          required: true,
+          wordLimit: true,
+          */
+  const appQ1 = {
+    id: 1,
+    placeholder: 'cindy',
+    question: 'hi cindy',
+    hint: 'yes',
+    required: true,
+    wordLimit: true,
+  };
+  const appQ2 = {
+    id: 2,
+    placeholder: 'bry',
+    question: 'hi bry',
+    hint: 'naw',
+    required: false,
+    wordLimit: 1,
+  };
+  const sample = [appQ1, appQ2];
+  // sample data end
+
   let elem = 0;
   const responses = Array<string>();
   const ids = Array<number>();
-  appQuestions?.map(function (q): void {
+  appQuestions?.map(function (q): void { // change between sample (test) or appQuestions (real)
     responses[elem] = '';
     ids[elem] = q.id;
     elem += 1;
@@ -218,7 +247,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                 setFieldValue={formik.setFieldValue}
                 touched={formik.touched}
                 errors={formik.errors}
-                appQuestions={appQuestions}
+                appQuestions={appQuestions} // change between sample (test) or appQuestions (real)
               />
             )}
           </div>

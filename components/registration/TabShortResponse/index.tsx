@@ -39,6 +39,7 @@ const TabShortResponse: React.FC<TabProps> = ({
    }
   */
   const questions = appQuestions?.map(function (q) {
+    return (
     <div className={styles.row}>
       <p>{q.question}</p>
       <TextField
@@ -66,7 +67,7 @@ const TabShortResponse: React.FC<TabProps> = ({
             : undefined
         }
       />
-    </div>;
+    </div>)
   });
   const empty = <div className={styles.empty}>No questions to answer.</div>;
   const shortResponseForm =
