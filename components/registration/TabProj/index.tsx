@@ -7,7 +7,6 @@ import {
   FormikTouched,
 } from 'formik';
 import { Form } from 'interfaces/registration';
-import { useState } from 'react';
 import styles from './TabProj.module.css';
 
 type TabProps = {
@@ -34,6 +33,11 @@ type Project = {
   description: string;
 };
 
+type ProjectTouched = {
+  title: boolean;
+  description: boolean;
+};
+
 const TabProj: React.FC<TabProps> = ({
   handleChange,
   handleBlur,
@@ -44,11 +48,15 @@ const TabProj: React.FC<TabProps> = ({
   addNewProj,
   deleteProj,
 }) => {
+  // Need this for weird validation bug
+  let touchedProjs: ProjectTouched[];
+  if (touched.projects) {
+    touchedProjs = touched.projects as ProjectTouched[];
+  }
   return (
     <FieldArray
       name="projects"
       render={(arrayHelpers) => {
-        console.log(values);
         return (
           <>
             <Button
@@ -88,8 +96,14 @@ const TabProj: React.FC<TabProps> = ({
                         multiline
                         rows={6}
                         placeholder="i.e. Annual Gala Three!"
-                        // error={Boolean(touched.proj1 && errors.proj1)}
-                        // helperText={touched.proj1 ? errors.proj1 : undefined}
+                        error={Boolean(
+                          touchedProjs[index].title && errors.projects
+                        )}
+                        helperText={
+                          touchedProjs[index].title && errors.projects
+                            ? errors.projects
+                            : undefined
+                        }
                       />
                       <p>Description</p>
                       <TextField
@@ -101,8 +115,14 @@ const TabProj: React.FC<TabProps> = ({
                         multiline
                         rows={6}
                         placeholder="Your short response"
-                        // error={Boolean(touched.proj1 && errors.proj1)}
-                        // helperText={touched.proj1 ? errors.proj1 : undefined}
+                        error={Boolean(
+                          touchedProjs[index].description && errors.projects
+                        )}
+                        helperText={
+                          touchedProjs[index].description && errors.projects
+                            ? errors.projects
+                            : undefined
+                        }
                       />
                     </div>
                   ))

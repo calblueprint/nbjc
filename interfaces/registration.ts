@@ -138,18 +138,9 @@ const schema = Joi.object({
     .messages({ 'string.pattern.base': 'Not a valid EIN' }),
   // foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
-
-  // TODO: Add validation for each of the items in the project array instead of these variables
-
-  // proj1: Joi.string()
-  //   .empty('')
-  //   .when('$strict', { is: true, then: Joi.required() }),
-  // proj2: Joi.string()
-  //   .empty('')
-  //   .when('$strict', { is: true, then: Joi.required() }),
-  // proj3: Joi.string()
-  //   .empty('')
-  //   .when('$strict', { is: true, then: Joi.required() }),
+  projects: Joi.array()
+    .items(Joi.object({ title: Joi.string(), description: Joi.string() }))
+    .when('$strict', { is: true, then: Joi.required() }),
   short1: Joi.string()
     .empty('')
     .when('$strict', { is: true, then: Joi.required() }),

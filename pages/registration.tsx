@@ -1,6 +1,12 @@
 import { GetServerSideProps } from 'next';
 import { Organization, PrismaClient } from '@prisma/client';
-import { Formik, FormikErrors, useFormik, FormikHelpers } from 'formik';
+import {
+  Formik,
+  FormikErrors,
+  useFormik,
+  FormikValues,
+  FormikHelpers,
+} from 'formik';
 import { useState, useEffect, ChangeEvent } from 'react';
 import {
   Tabs,
@@ -35,47 +41,34 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
   const [session, sessionLoading] = useSession();
   const [selected, setSelected] = useState(0);
   const [exitDialogOpen, setExitDialogOpen] = useState(false);
-  const [saveDraft, setSaveDraft] = useState(true);
+  const [saveDraft, setSaveDraft] = useState(false);
 
   const status = org?.applicationStatus;
   // if (status && status !== 'draft') {
   //   router.back();
   // }
 
-  const validate = (values: Form): FormikErrors<Form> => {
-    const { error } = schema.validate(values, {
+  const validate = (values: FormikValues): FormikErrors<Form> => {
+    const formValues = values as Form;
+    const { error } = schema.validate(formValues, {
       abortEarly: false,
       context: {
         strict: !saveDraft,
       },
     });
+    console.log('validate');
+    console.log(parseValidationError(error));
 
     return parseValidationError(error);
   };
 
-  const handleChange = (
-    _event: ChangeEvent<unknown>,
-    newValue: number
-  ): void => {
+  const tabChange = (_event: ChangeEvent<unknown>, newValue: number): void => {
     setSelected(newValue);
   };
 
   const handleSubmit = async (values: Form): Promise<void> => {
-    console.log(1);
-    console.log(session);
     if (session && session.user.role === 'organization') {
-      console.log('submitting', values);
       const { short1, short2, short3, projects, ...tempValues } = values;
-
-      console.log(projects);
-      // // @Calvin replace
-      // const projects = [
-      //   {
-      //     title: 'Join the Prisma Slack on https://slack.prisma.io',
-      //     description: 'b',
-      //   },
-      //   { title: 'Follow Prisma on Twitter', description: 'blah' },
-      // ];
 
       try {
         const res = await fetch(`/api/app/orgs?submitting=${!saveDraft}`, {
@@ -125,12 +118,12 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
     projects: [{ title: '', description: '' }],
   };
 
-  const formik = useFormik({
-    initialValues,
-    validate,
-    validateOnChange: false,
-    onSubmit: handleSubmit,
-  });
+  // const formik = useFormik({
+  //   initialValues,
+  //   validate,
+  //   validateOnChange: false,
+  //   onSubmit: handleSubmit,
+  // });
 
   const addNewProj = (
     values: Form,
@@ -151,15 +144,15 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
     setFieldValue('projects', currProjs);
   };
 
-  useEffect(() => {
-    async function submitForm(): Promise<void> {
-      await formik.submitForm();
-      setSaveDraft(true);
-    }
-    if (!saveDraft) {
-      submitForm();
-    }
-  }, [saveDraft, formik]);
+  // useEffect(() => {
+  //   async function submitForm(): Promise<void> {
+  //     await formik.submitForm();
+  //     setSaveDraft(true);
+  //   }
+  //   if (!saveDraft) {
+  //     submitForm();
+  //   }
+  // }, [saveDraft, formik]);
 
   if (!sessionLoading && !session) router.push('/');
   if (!sessionLoading && session && session.user.role === 'organization')
@@ -193,87 +186,96 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
           initialValues={initialValues}
           validate={validate}
           validateOnChange={false}
-          onSubmit={(values) => {
-            console.log('here');
-            console.log(values);
+          onSubmit={handleSubmit}
+          render={({
+            handleChange,
+            handleBlur,
+            setFieldValue,
+            values,
+            touched,
+            errors,
+          }): React.ReactNode => {
+            console.log('errors here');
+            console.log(errors);
+            const formValues = values as Form;
+            return (
+              <>
+                <div className={styles.root}>
+                  <AppBar
+                    position="static"
+                    color="default"
+                    className={styles.appBar}
+                  >
+                    <Tabs value={selected} onChange={tabChange}>
+                      <Tab label="Basics" />
+                      <Tab label="Projects and Events" />
+                      <Tab label="Short Response" />
+                    </Tabs>
+                  </AppBar>
+                  {selected === 0 && (
+                    <TabBasics
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                      values={formValues}
+                      setFieldValue={setFieldValue}
+                      touched={touched}
+                      errors={errors}
+                    />
+                  )}
+                  {selected === 1 && (
+                    <TabProj
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                      values={formValues}
+                      setFieldValue={setFieldValue}
+                      touched={touched}
+                      errors={errors}
+                      addNewProj={addNewProj}
+                      deleteProj={deleteProj}
+                    />
+                  )}
+                  {selected === 2 && (
+                    <TabShortResponse
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                      values={formValues}
+                      setFieldValue={setFieldValue}
+                      touched={touched}
+                      errors={errors}
+                    />
+                  )}
+                </div>
+                <div className={styles.bottomButtons}>
+                  <div>
+                    <Button
+                      variant="contained"
+                      onClick={() => setExitDialogOpen(true)}
+                    >
+                      Exit
+                    </Button>
+                  </div>
+                  <div>
+                    <Button
+                      variant="contained"
+                      className={styles.autoField}
+                      type="submit"
+                      onClick={() => handleSubmit(formValues)}
+                    >
+                      Save Changes
+                    </Button>
+                    <Button
+                      variant="contained"
+                      className={styles.autoField}
+                      color="primary"
+                      onClick={() => setSaveDraft(false)}
+                    >
+                      Submit
+                    </Button>
+                  </div>
+                </div>
+              </>
+            );
           }}
-          render={(values) => (
-            <>
-              <div className={styles.root}>
-                <AppBar
-                  position="static"
-                  color="default"
-                  className={styles.appBar}
-                >
-                  <Tabs value={selected} onChange={handleChange}>
-                    <Tab label="Basics" />
-                    <Tab label="Projects and Events" />
-                    <Tab label="Short Response" />
-                  </Tabs>
-                </AppBar>
-                {selected === 0 && (
-                  <TabBasics
-                    handleChange={formik.handleChange}
-                    handleBlur={formik.handleBlur}
-                    values={formik.values}
-                    setFieldValue={formik.setFieldValue}
-                    touched={formik.touched}
-                    errors={formik.errors}
-                  />
-                )}
-                {selected === 1 && (
-                  <TabProj
-                    handleChange={formik.handleChange}
-                    handleBlur={formik.handleBlur}
-                    values={formik.values}
-                    setFieldValue={formik.setFieldValue}
-                    touched={formik.touched}
-                    errors={formik.errors}
-                    addNewProj={addNewProj}
-                    deleteProj={deleteProj}
-                  />
-                )}
-                {selected === 2 && (
-                  <TabShortResponse
-                    handleChange={formik.handleChange}
-                    handleBlur={formik.handleBlur}
-                    values={formik.values}
-                    setFieldValue={formik.setFieldValue}
-                    touched={formik.touched}
-                    errors={formik.errors}
-                  />
-                )}
-              </div>
-              <div className={styles.bottomButtons}>
-                <div>
-                  <Button
-                    variant="contained"
-                    onClick={() => setExitDialogOpen(true)}
-                  >
-                    Exit
-                  </Button>
-                </div>
-                <div>
-                  <Button
-                    variant="contained"
-                    className={styles.autoField}
-                    type="submit"
-                    onClick={() => handleSubmit(formik.values)}
-                  >
-                    Save Changes
-                  </Button>
-                  <Button
-                    variant="contained"
-                    className={styles.autoField}
-                    color="primary"
-                    onClick={() => setSaveDraft(false)}
-                  >
-                    Submit
-                  </Button>
-                </div>
-              </div>
-            </>
-          )}
         />
       </Layout>
     );

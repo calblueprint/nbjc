@@ -6,8 +6,8 @@ import { Button, TextField, Link, LinearProgress } from '@material-ui/core';
 import { useSession } from 'next-auth/client';
 import ProgressStepper from '../../components/user/ProgressStepper/index';
 
-const email = 'oskibear@berkeley.edu';
-const profileType = 'admin';
+const email = 'hi@calvin.com';
+const profileType = 'User';
 
 const UserProfSettings: React.FC = () => {
   const router = useRouter();
