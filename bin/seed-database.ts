@@ -1,24 +1,30 @@
 /* eslint-disable no-console */
 import {
+  AgeDemographic,
+  ApplicationStatus,
+  LgbtqDemographic,
+  OrganizationType,
   PrismaClient,
-  // User,
+  RaceDemographic,
+  User,
   UserCreateArgs,
   UserRole,
+  WorkType,
 } from '@prisma/client';
 import Faker from 'faker';
 import Ora from 'ora';
-// import { AbsenceReason, AbsenceType } from '../interfaces';
 import hashPassword from '../utils/hashPassword';
 
 const NUMBER_USERS = 10;
-const NUM_ORG_REJECTED = 1;
-const NUM_ORG_APPROVED = 2;
-const NUM_ORG_SUBMITTED = 3;
-const NUM_ORG_DRAFT = 2;
+const NUMBER_ORGS = {
+  rejected: 1,
+  approved: 2,
+  submitted: 3,
+  draft: 2,
+};
 
 if (
-  NUM_ORG_REJECTED + NUM_ORG_APPROVED + NUM_ORG_SUBMITTED + NUM_ORG_DRAFT >
-  NUMBER_USERS
+  Object.values(NUMBER_ORGS).reduce((acc, curr) => acc + curr) > NUMBER_USERS
 ) {
   console.log(
     'Number of organizations specified greater than number of org users'
@@ -26,65 +32,33 @@ if (
   process.exit(1);
 }
 
-// function generateFieldsAcrossTimestamps(
-//   key: ProfileFieldKey,
-//   generateValue: () => unknown
-// ): ProfileFieldCreateWithoutUserInput[] {
-//   return Array(12)
-//     .fill(null)
-//     .map(
-//       (_, index: number) =>
-//         new Date(
-//           `2020-${String(index + 1).padStart(2, '0')}-${String(
-//             Faker.random.number({
-//               min: 1,
-//               max: 28,
-//             })
-//           ).padStart(2, '0')}T12:00:00+00:00`
-//         )
-//     )
-//     .map(
-//       (date: Date) =>
-//         <ProfileFieldCreateWithoutUserInput>{
-//           key,
-//           value: String(generateValue()),
-//           createdAt: date,
-//         }
-//     );
-// }
-
 export default async function seedDatabase(): Promise<void> {
   const prisma = new PrismaClient();
+
+  const orgStatus = Object.entries(NUMBER_ORGS).reduce<
+    [ApplicationStatus, boolean][]
+  >((acc, [status, num]) => {
+    return [...acc, ...Array(num).fill([status, status === 'approved'])];
+  }, []);
+
   const clearAllMessage = Ora('Cleaning up previous seeded information');
   try {
-    // const users = await prisma.user.findMany({
-    //   where: {
-    //     email: {
-    //       endsWith: '@nbjc.dev',
-    //     },
-    //   },
-    // });
-    // await prisma.userInvite.deleteMany({
-    //   where: {
-    //     user_id: {
-    //       in: users.map((user: User) => user.id),
-    //     },
-    //   },
-    // });
-    // await prisma.absence.deleteMany({
-    //   where: {
-    //     userId: {
-    //       in: users.map((user: User) => user.id),
-    //     },
-    //   },
-    // });
-    // await prisma.profileField.deleteMany({
-    //   where: {
-    //     userId: {
-    //       in: users.map((user: User) => user.id),
-    //     },
-    //   },
-    // });
+    const users = await prisma.user.findMany({
+      where: {
+        email: {
+          endsWith: '@nbjc.dev',
+        },
+      },
+    });
+
+    await prisma.organization.deleteMany({
+      where: {
+        userId: {
+          in: users.map((user: User) => user.id),
+        },
+      },
+    });
+
     await prisma.user.deleteMany({
       where: {
         email: {
@@ -92,12 +66,14 @@ export default async function seedDatabase(): Promise<void> {
         },
       },
     });
+
     clearAllMessage.text = 'Cleaned up previous seeded information';
     clearAllMessage.succeed();
   } catch (err) {
     clearAllMessage.fail(
       `Could not clean up previous seeded information\n\n${err.message}`
     );
+    await prisma.$disconnect();
     process.exit(1);
   }
 
@@ -127,7 +103,38 @@ export default async function seedDatabase(): Promise<void> {
           email: `org${index}@nbjc.dev`,
           hashedPassword: hashPassword('password'),
           role: UserRole.organization,
-          organization: {},
+          organization: orgStatus[index]
+            ? {
+                create: {
+                  applicationStatus: orgStatus[index][0],
+                  active: orgStatus[index][1],
+                  name: Faker.company.companyName(),
+                  lat: parseFloat(Faker.address.latitude()),
+                  long: parseFloat(Faker.address.longitude()),
+                  address: Faker.address.streetAddress(true),
+                  contactName: Faker.name.findName(),
+                  contactEmail: Faker.internet.email(),
+                  contactPhone: Faker.phone.phoneNumber('(!##) !##-####'),
+                  missionStatement: Faker.lorem.lines(10),
+                  shortHistory: Faker.lorem.lines(10),
+                  is501c3: Faker.random.boolean(),
+                  website: Faker.internet.url(),
+                  organizationType: Faker.random.objectElement<
+                    OrganizationType
+                  >(OrganizationType),
+                  workType: Faker.random.objectElement<WorkType>(WorkType),
+                  lgbtqDemographic: Faker.random.arrayElements<
+                    LgbtqDemographic
+                  >(Object.values(LgbtqDemographic)),
+                  raceDemographic: Faker.random.arrayElements<RaceDemographic>(
+                    Object.values(RaceDemographic)
+                  ),
+                  ageDemographic: Faker.random.arrayElements<AgeDemographic>(
+                    Object.values(AgeDemographic)
+                  ),
+                },
+              }
+            : undefined,
         },
       };
     });
@@ -161,6 +168,7 @@ export default async function seedDatabase(): Promise<void> {
     modUsersCreateMessage.fail(`Creating mod users failed\n\n${err.message}`);
   }
 
+  await prisma.$disconnect();
   process.exit(0);
 }
 
