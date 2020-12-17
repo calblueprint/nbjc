@@ -1,6 +1,10 @@
 {
   "name": "nbjc",
   "version": "0.1.0",
+  "engines": {
+    "node": "12.18.4",
+    "yarn": "1.22.5"
+  },
   "private": true,
   "cacheDirectories": [
     ".next/cache"
