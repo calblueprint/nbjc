@@ -40,6 +40,7 @@ export default async (
   const emails = value as emailType;
 
   try {
+    // TODO: change to use user id instead of email
     const updatedUser = await prisma.user.update({
       where: { email: emails.oldEmail },
       data: { email: emails.email },
