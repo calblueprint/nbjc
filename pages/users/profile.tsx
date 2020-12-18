@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import prisma from 'utils/prisma';
 import Layout from 'components/Layout';
 import {
   Button,
@@ -12,12 +13,17 @@ import useSession from 'utils/useSession';
 import ProgressStepper from 'components/user/ProgressStepper/index';
 import { GetServerSideProps } from 'next';
 import getSession from 'utils/getSession';
-import { PrismaClient } from '@prisma/client';
+import { ApplicationStatus } from '@prisma/client';
 import styles from '../../styles/users/Profile.module.css';
 
-// const prisma = new PrismaClient();
+type UserProfileProps = {
+  org: {
+    id: number;
+    applicationStatus: ApplicationStatus;
+  } | null;
+};
 
-const UserProfile: React.FC = () => {
+const UserProfile: React.FC<UserProfileProps> = ({ org }) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
   const [setting, setSetting] = useState(0);
@@ -32,6 +38,7 @@ const UserProfile: React.FC = () => {
   }, [session]);
 
   const updateEmail = async (): Promise<void> => {
+    // FIXME: need to change useSession with custom Context API so that email is updated in session
     setUpdateEmailLoading(true);
     if (session?.user.email !== email) {
       try {
@@ -144,7 +151,10 @@ const UserProfile: React.FC = () => {
               </div>
             </div>
             {session.user.role === 'organization' && (
-              <ProgressStepper status={1} />
+              <ProgressStepper
+                applicationStatus={org?.applicationStatus}
+                orgId={org?.id}
+              />
             )}
           </div>
         </div>
@@ -158,21 +168,18 @@ export default UserProfile;
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
-    console.log('session', session);
     if (session) {
-      // const email = session?.user.email;
-      // const user = await prisma.user.findOne({
-      //   where: {
-      //     email,
-      //   },
-      //   select: {
-      //     organization: true,
-      //   },
-      // });
-
-      // const org = JSON.parse(JSON.stringify(user)).organization;
+      const org = await prisma.organization.findOne({
+        where: {
+          userId: session.user.id,
+        },
+        select: {
+          id: true,
+          applicationStatus: true,
+        },
+      });
       return {
-        props: {},
+        props: { org },
       };
     }
     return {
