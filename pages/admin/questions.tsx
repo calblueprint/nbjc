@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import prisma from 'utils/prisma';
+import { ApplicationQuestion } from '@prisma/client';
 import AdminIndex from 'components/admin/AdminIndex';
 import AdminTable from 'components/admin/AdminTable';
 import {
@@ -15,14 +17,11 @@ import {
 import Layout from 'components/Layout';
 import { GetServerSideProps } from 'next';
 import { Formik, FormikErrors, FormikHelpers } from 'formik';
-import { ApplicationQuestion, PrismaClient } from '@prisma/client';
 import { AppQuestionSchema } from 'interfaces/appQuestion';
 import parseValidationError from 'utils/parseValidationError';
 import { useRouter } from 'next/router';
 import { TableApplicationQuestion } from 'interfaces/admin';
 import styles from '../../styles/admin/Questions.module.css';
-
-const prisma = new PrismaClient();
 
 type FormValues = Pick<
   ApplicationQuestion,

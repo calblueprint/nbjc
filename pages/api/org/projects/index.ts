@@ -1,10 +1,9 @@
-import { PrismaClient, OrganizationProject } from '@prisma/client';
+import prisma from 'utils/prisma';
+import { OrganizationProject } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import OrgProjectSchema from 'interfaces/orgProjects';
 import CreateError, { MethodNotAllowed } from 'utils/error';
-
-const prisma = new PrismaClient();
 
 export const getAllOrganizations = async (): Promise<
   OrganizationProject[] | null
