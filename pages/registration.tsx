@@ -2,17 +2,7 @@ import { GetServerSideProps } from 'next';
 import { Organization, PrismaClient } from '@prisma/client';
 import { FormikErrors, useFormik } from 'formik';
 import { useState, useEffect, ChangeEvent } from 'react';
-import {
-  Tabs,
-  Tab,
-  AppBar,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  LinearProgress,
-} from '@material-ui/core';
+import { Tabs, Tab, AppBar, Button, LinearProgress } from '@material-ui/core';
 import Layout from 'components/Layout';
 import TabShortResponse from 'components/registration/TabShortResponse';
 import TabBasics from 'components/registration/TabBasics';
@@ -34,13 +24,9 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
   const [selected, setSelected] = useState(0);
-  const [exitDialogOpen, setExitDialogOpen] = useState(false);
   const [saveDraft, setSaveDraft] = useState(true);
 
   const status = org?.applicationStatus;
-  if (status && status !== 'draft') {
-    router.back();
-  }
 
   const validate = (values: Form): FormikErrors<Form> => {
     const { error } = schema.validate(values, {
@@ -143,29 +129,6 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
   if (!sessionLoading && session && session.user.role === 'organization')
     return (
       <Layout title="Register">
-        <Dialog open={exitDialogOpen} onClose={() => setExitDialogOpen(false)}>
-          <DialogTitle>Exit Without Saving</DialogTitle>
-          <DialogContent>
-            Are you sure you wish to exit without saving?
-          </DialogContent>
-          <DialogActions>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => router.push('/users/profile')}
-            >
-              Yes
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              autoFocus
-              onClick={() => setExitDialogOpen(false)}
-            >
-              No
-            </Button>
-          </DialogActions>
-        </Dialog>
         <h1 className={styles.header}>Registration Form</h1>
         <form onSubmit={formik.handleSubmit}>
           <div className={styles.root}>
@@ -184,6 +147,11 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
                 setFieldValue={formik.setFieldValue}
                 touched={formik.touched}
                 errors={formik.errors}
+                readOnly={
+                  status === 'submitted' ||
+                  status === 'approved' ||
+                  status === 'rejected'
+                }
               />
             )}
             {selected === 1 && (
@@ -194,6 +162,11 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
                 setFieldValue={formik.setFieldValue}
                 touched={formik.touched}
                 errors={formik.errors}
+                readOnly={
+                  status === 'submitted' ||
+                  status === 'approved' ||
+                  status === 'rejected'
+                }
               />
             )}
             {selected === 2 && (
@@ -204,6 +177,11 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
                 setFieldValue={formik.setFieldValue}
                 touched={formik.touched}
                 errors={formik.errors}
+                readOnly={
+                  status === 'submitted' ||
+                  status === 'approved' ||
+                  status === 'rejected'
+                }
               />
             )}
           </div>
@@ -211,28 +189,30 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
             <div>
               <Button
                 variant="contained"
-                onClick={() => setExitDialogOpen(true)}
+                onClick={() => router.push('/users/profile')}
               >
                 Exit
               </Button>
             </div>
-            <div>
-              <Button
-                variant="contained"
-                className={styles.autoField}
-                type="submit"
-              >
-                Save Changes
-              </Button>
-              <Button
-                variant="contained"
-                className={styles.autoField}
-                color="primary"
-                onClick={() => setSaveDraft(false)}
-              >
-                Submit
-              </Button>
-            </div>
+            {status === undefined || status === 'draft' ? (
+              <div>
+                <Button
+                  variant="contained"
+                  className={styles.autoField}
+                  type="submit"
+                >
+                  Save Changes
+                </Button>
+                <Button
+                  variant="contained"
+                  className={styles.autoField}
+                  color="primary"
+                  onClick={() => setSaveDraft(false)}
+                >
+                  Submit
+                </Button>
+              </div>
+            ) : null}
           </div>
         </form>
       </Layout>
