@@ -14,7 +14,7 @@
 
 .bottomButtons {
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   justify-content: space-between;
   margin-bottom: 20px;
   margin-left: 25px;

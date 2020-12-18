@@ -27,6 +27,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
   const [saveDraft, setSaveDraft] = useState(true);
 
   const status = org?.applicationStatus;
+  const readOnly = status === 'submitted' || status === 'approved';
 
   const validate = (values: Form): FormikErrors<Form> => {
     const { error } = schema.validate(values, {
@@ -147,11 +148,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
                 setFieldValue={formik.setFieldValue}
                 touched={formik.touched}
                 errors={formik.errors}
-                readOnly={
-                  status === 'submitted' ||
-                  status === 'approved' ||
-                  status === 'rejected'
-                }
+                readOnly={readOnly}
               />
             )}
             {selected === 1 && (
@@ -162,11 +159,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
                 setFieldValue={formik.setFieldValue}
                 touched={formik.touched}
                 errors={formik.errors}
-                readOnly={
-                  status === 'submitted' ||
-                  status === 'approved' ||
-                  status === 'rejected'
-                }
+                readOnly={readOnly}
               />
             )}
             {selected === 2 && (
@@ -177,27 +170,16 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
                 setFieldValue={formik.setFieldValue}
                 touched={formik.touched}
                 errors={formik.errors}
-                readOnly={
-                  status === 'submitted' ||
-                  status === 'approved' ||
-                  status === 'rejected'
-                }
+                readOnly={readOnly}
               />
             )}
           </div>
           <div className={styles.bottomButtons}>
-            <div>
-              <Button
-                variant="contained"
-                onClick={() => router.push('/users/profile')}
-              >
-                Exit
-              </Button>
-            </div>
-            {status === undefined || status === 'draft' ? (
+            {!readOnly ? (
               <div>
                 <Button
-                  variant="contained"
+                  variant="outlined"
+                  color="primary"
                   className={styles.autoField}
                   type="submit"
                 >
@@ -213,6 +195,15 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
                 </Button>
               </div>
             ) : null}
+            <div>
+              <Button
+                variant={readOnly ? 'contained' : 'outlined'}
+                color="primary"
+                onClick={() => router.push('/users/profile')}
+              >
+                Exit
+              </Button>
+            </div>
           </div>
         </form>
       </Layout>
