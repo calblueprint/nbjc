@@ -112,14 +112,6 @@ const Layout: React.FunctionComponent<Props> = ({
                     </MenuItem>
                   </Menu>
                 </>
-                // <Button
-                //   className={styles.logButtonSpace}
-                //   variant="contained"
-                //   color="primary"
-                //   onClick={() => signOut()}
-                // >
-                //   Sign Out
-                // </Button>
               )}
             </div>
           </div>
