@@ -4,9 +4,13 @@ import Button from '@material-ui/core/Button';
 import { useRouter } from 'next/router';
 import styles from './ProgressStepper.module.css';
 
-export default function ProgressMobileStepper(): React.ReactElement {
+type ProgressStepperProps = {
+  status: number;
+};
+
+const ProgressStepper: React.FC<ProgressStepperProps> = ({ status }) => {
   const router = useRouter();
-  const [activeStep, setActiveStep] = useState(1);
+  const [activeStep, setActiveStep] = useState(status);
 
   const handleNext = (): void => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -55,4 +59,6 @@ export default function ProgressMobileStepper(): React.ReactElement {
       </div>
     </div>
   );
-}
+};
+
+export default ProgressStepper;

@@ -10,7 +10,12 @@ import {
 } from '@material-ui/core';
 import useSession from 'utils/useSession';
 import ProgressStepper from 'components/user/ProgressStepper/index';
+import { GetServerSideProps } from 'next';
+import getSession from 'utils/getSession';
+import { PrismaClient } from '@prisma/client';
 import styles from '../../styles/users/Profile.module.css';
+
+// const prisma = new PrismaClient();
 
 const UserProfile: React.FC = () => {
   const router = useRouter();
@@ -138,7 +143,9 @@ const UserProfile: React.FC = () => {
                 <Link>Delete User Account</Link>
               </div>
             </div>
-            {session.user.role === 'organization' && <ProgressStepper />}
+            {session.user.role === 'organization' && (
+              <ProgressStepper status={1} />
+            )}
           </div>
         </div>
       </Layout>
@@ -147,3 +154,35 @@ const UserProfile: React.FC = () => {
 };
 
 export default UserProfile;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  try {
+    const session = await getSession(context);
+    console.log('session', session);
+    if (session) {
+      // const email = session?.user.email;
+      // const user = await prisma.user.findOne({
+      //   where: {
+      //     email,
+      //   },
+      //   select: {
+      //     organization: true,
+      //   },
+      // });
+
+      // const org = JSON.parse(JSON.stringify(user)).organization;
+      return {
+        props: {},
+      };
+    }
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+    };
+  } catch (err) {
+    console.log('error');
+    return { props: { errors: err.message } };
+  }
+};
