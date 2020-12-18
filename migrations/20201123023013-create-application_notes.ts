@@ -2,7 +2,7 @@ import Base from 'db-migrate-base';
 import { promisify } from 'util';
 
 /**
- * Create the Application Responses table for responses to custom questions
+ * Create the Application Notes table for Mod Dash notes on an organization
  */
 export async function up(
   db: Base,
@@ -10,17 +10,15 @@ export async function up(
 ): Promise<void> {
   db.runSql(
     `
-    CREATE TABLE application_responses
+    CREATE TABLE application_notes
       (
         id                           SERIAL,
-        answer                       TEXT NOT NULL,
-        question_id                  INTEGER NOT NULL,
-        organization_id              INTEGER NOT NULL,
+        note                         TEXT,
         created_at                   TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at                   TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        organization_id              INTEGER NOT NULL,
+        UNIQUE (organization_id),
         PRIMARY KEY (id),
-        FOREIGN KEY (question_id)
-          REFERENCES application_questions(id),
         FOREIGN KEY (organization_id)
           REFERENCES organizations(id)
       );
@@ -30,7 +28,7 @@ export async function up(
 }
 
 /**
- * Drop the Application Responses table
+ * Drop the Application Notes table
  */
 export async function down(
   db: Base,
@@ -38,7 +36,7 @@ export async function down(
 ): Promise<void> {
   const dropTable = promisify<string>(db.dropTable.bind(db));
   try {
-    await dropTable('application_responses');
+    await dropTable('application_notes');
   } catch (err) {
     callback(err, null);
   }
