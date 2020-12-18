@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next';
+import prisma from 'utils/prisma';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { PublicOrganization } from 'interfaces/organization';
@@ -16,10 +17,7 @@ import {
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import Layout from 'components/Layout';
-import { PrismaClient } from '@prisma/client';
 import styles from '../styles/Home.module.css';
-
-const prisma = new PrismaClient();
 
 const Map = dynamic(() => import('../components/Map'), {
   ssr: false,

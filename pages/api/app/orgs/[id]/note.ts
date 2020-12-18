@@ -1,9 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import prisma from 'utils/prisma';
+
 import CreateError, { MethodNotAllowed } from 'utils/error';
 import Joi from 'joi';
-
-const prisma = new PrismaClient();
 
 export default async (
   req: NextApiRequest,

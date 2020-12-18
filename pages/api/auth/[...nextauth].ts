@@ -1,6 +1,6 @@
 import NextAuth, { User } from 'next-auth';
 import Providers from 'next-auth/providers';
-import { PrismaClient } from '@prisma/client';
+import prisma from 'utils/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 import hashPassword from 'utils/hashPassword';
 import sanitizeUser from 'utils/sanitizeUser';
@@ -19,8 +19,6 @@ type Account = {
   id: string;
   type: 'credentials';
 };
-
-const prisma = new PrismaClient();
 
 const options = {
   // Configure one or more authentication providers

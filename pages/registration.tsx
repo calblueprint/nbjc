@@ -1,5 +1,6 @@
 import { GetServerSideProps } from 'next';
-import { Organization, PrismaClient } from '@prisma/client';
+import prisma from 'utils/prisma';
+import { Organization } from '@prisma/client';
 import { FormikErrors, useFormik } from 'formik';
 import { useState, useEffect, ChangeEvent } from 'react';
 import {
@@ -25,8 +26,6 @@ import useSession from 'utils/useSession';
 import parseValidationError from 'utils/parseValidationError';
 import getSession from 'utils/getSession';
 import styles from '../styles/Registration.module.css';
-
-const prisma = new PrismaClient();
 
 type RegistrationProps = {
   org: Organization | null;

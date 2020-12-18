@@ -1,10 +1,9 @@
-import { Organization, PrismaClient } from '@prisma/client';
+import { Organization } from '@prisma/client';
+import prisma from 'utils/prisma';
 import AdminIndex from 'components/admin/AdminIndex';
 import AdminTable from 'components/admin/AdminTable';
 import Layout from 'components/Layout';
 import { GetServerSideProps } from 'next';
-
-const prisma = new PrismaClient();
 
 type AdminOrgIndexProps = {
   orgs: Organization[];

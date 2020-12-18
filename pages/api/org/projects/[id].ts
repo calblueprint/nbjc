@@ -1,11 +1,10 @@
-import { PrismaClient, OrganizationProject } from '@prisma/client';
+import prisma from 'utils/prisma';
+import { OrganizationProject } from '@prisma/client';
 import Joi, { ValidationError } from 'joi';
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import OrgProjSchema from 'interfaces/orgProjects';
 import CreateError, { MethodNotAllowed } from 'utils/error';
-
-const prisma = new PrismaClient();
 
 /**
  * Update an OrgProject by the given ID and fields and return the updated OrgProject
