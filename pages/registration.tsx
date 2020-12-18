@@ -2,7 +2,19 @@ import { GetServerSideProps } from 'next';
 import { Organization, PrismaClient } from '@prisma/client';
 import { FormikErrors, useFormik } from 'formik';
 import { useState, useEffect, ChangeEvent } from 'react';
-import { Tabs, Tab, AppBar, Button, LinearProgress } from '@material-ui/core';
+import {
+  Tabs,
+  Tab,
+  AppBar,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  LinearProgress,
+  Typography,
+  IconButton,
+} from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import Layout from 'components/Layout';
 import TabShortResponse from 'components/registration/TabShortResponse';
 import TabBasics from 'components/registration/TabBasics';
@@ -25,6 +37,9 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
   const [session, sessionLoading] = useSession();
   const [selected, setSelected] = useState(0);
   const [saveDraft, setSaveDraft] = useState(true);
+  const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(
+    router.query?.feedback === 'true'
+  );
 
   const status = org?.applicationStatus;
   const readOnly = status === 'submitted' || status === 'approved';
@@ -130,7 +145,37 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
   if (!sessionLoading && session && session.user.role === 'organization')
     return (
       <Layout title="Register">
-        <h1 className={styles.header}>Registration Form</h1>
+        {status === 'rejected' ? (
+          <Dialog
+            open={feedbackDialogOpen}
+            onClose={() => setFeedbackDialogOpen(false)}
+          >
+            <DialogTitle disableTypography className={styles.feedbackHeader}>
+              <Typography variant="h6">Reason For Declining</Typography>
+              <IconButton
+                aria-label="close"
+                onClick={() => setFeedbackDialogOpen(false)}
+              >
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent>
+              This is where the feedback text will go asd sda fa sdf asd fas df
+              asdf asd fas df asd fas df asdf asd fas df asdf as dfas dfs adf
+            </DialogContent>
+          </Dialog>
+        ) : null}
+        <div className={styles.header}>
+          <Typography variant="h4">Registration Form</Typography>
+          {status === 'rejected' ? (
+            <Button
+              variant="outlined"
+              onClick={() => setFeedbackDialogOpen(true)}
+            >
+              View Feedback
+            </Button>
+          ) : null}
+        </div>
         <form onSubmit={formik.handleSubmit}>
           <div className={styles.root}>
             <AppBar position="static" color="default" className={styles.appBar}>
