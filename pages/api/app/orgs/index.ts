@@ -1,11 +1,10 @@
-import { PrismaClient, Organization } from '@prisma/client';
+import prisma from 'utils/prisma';
+import { Organization } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import OrganizationSchema from 'interfaces/organization';
 import CreateError, { MethodNotAllowed } from 'utils/error';
 import parseValidationError from 'utils/parseValidationError';
-
-const prisma = new PrismaClient();
 
 export default async (
   req: NextApiRequest,

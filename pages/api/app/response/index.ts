@@ -1,9 +1,8 @@
-import { PrismaClient, ApplicationResponse } from '@prisma/client';
+import { ApplicationResponse } from '@prisma/client';
+import prisma from 'utils/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 import CreateError, { MethodNotAllowed } from 'utils/error';
 import { AppResponseSchema } from 'interfaces/appQuestion';
-
-const prisma = new PrismaClient();
 
 export default async (
   req: NextApiRequest,

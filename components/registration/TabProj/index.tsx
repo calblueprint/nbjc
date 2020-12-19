@@ -15,6 +15,7 @@ type TabProps = {
   handleBlur: FormikHandlers['handleBlur'];
   touched: FormikTouched<Form>;
   errors: FormikErrors<Form>;
+  readOnly: boolean;
 };
 
 const TabProj: React.FC<TabProps> = ({
@@ -23,6 +24,7 @@ const TabProj: React.FC<TabProps> = ({
   touched,
   errors,
   values,
+  readOnly,
 }) => {
   const rowSize = 6;
   const placeholderText = 'Your short response';
@@ -41,6 +43,7 @@ const TabProj: React.FC<TabProps> = ({
           placeholder={placeholderText}
           error={Boolean(touched.proj1 && errors.proj1)}
           helperText={touched.proj1 ? errors.proj1 : undefined}
+          disabled={readOnly}
         />
       </div>
       <div className={styles.row}>
@@ -56,6 +59,7 @@ const TabProj: React.FC<TabProps> = ({
           placeholder={placeholderText}
           error={Boolean(touched.proj2 && errors.proj2)}
           helperText={touched.proj2 ? errors.proj2 : undefined}
+          disabled={readOnly}
         />
       </div>
       <div className={styles.row}>
@@ -71,6 +75,7 @@ const TabProj: React.FC<TabProps> = ({
           placeholder={placeholderText}
           error={Boolean(touched.proj3 && errors.proj3)}
           helperText={touched.proj3 ? errors.proj3 : undefined}
+          disabled={readOnly}
         />
       </div>
     </>

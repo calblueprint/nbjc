@@ -22,6 +22,10 @@
   height: 50%;
 }
 
+.signOutText {
+  color: #be0000;
+}
+
 .footer {
   height: 20px;
 }

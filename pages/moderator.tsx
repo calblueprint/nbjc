@@ -1,5 +1,6 @@
 import { useState, useEffect, ChangeEvent } from 'react';
 import { GetServerSideProps } from 'next';
+import prisma from 'utils/prisma';
 
 import Layout from 'components/Layout';
 import OrgCard from 'components/moderator/OrgCard';
@@ -8,7 +9,7 @@ import clsx from 'clsx';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import SearchIcon from '@material-ui/icons/Search';
-import { PrismaClient, Organization, ApplicationNote } from '@prisma/client';
+import { Organization, ApplicationNote } from '@prisma/client';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 import {
@@ -36,8 +37,6 @@ type OrgWithNote = Organization & {
 type Props = {
   orgs: OrgWithNote[];
 };
-
-const prisma = new PrismaClient();
 
 const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   const router = useRouter();
