@@ -4,6 +4,7 @@ import { User } from '@prisma/client';
 export type SanitizedUser = Omit<User, 'hashedPassword'>;
 
 export type SessionUser = {
+  id: number;
   email: string;
   role: 'organization' | 'moderator' | 'admin' | null;
 };

@@ -11,9 +11,11 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
   LinearProgress,
+  Typography,
+  IconButton,
 } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import Layout from 'components/Layout';
 import TabShortResponse from 'components/registration/TabShortResponse';
 import TabBasics from 'components/registration/TabBasics';
@@ -33,13 +35,13 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
   const [selected, setSelected] = useState(0);
-  const [exitDialogOpen, setExitDialogOpen] = useState(false);
   const [saveDraft, setSaveDraft] = useState(true);
+  const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(
+    router.query?.feedback === 'true'
+  );
 
   const status = org?.applicationStatus;
-  if (status && status !== 'draft') {
-    router.back();
-  }
+  const readOnly = status === 'submitted' || status === 'approved';
 
   const validate = (values: Form): FormikErrors<Form> => {
     const { error } = schema.validate(values, {
@@ -142,30 +144,37 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
   if (!sessionLoading && session && session.user.role === 'organization')
     return (
       <Layout title="Register">
-        <Dialog open={exitDialogOpen} onClose={() => setExitDialogOpen(false)}>
-          <DialogTitle>Exit Without Saving</DialogTitle>
-          <DialogContent>
-            Are you sure you wish to exit without saving?
-          </DialogContent>
-          <DialogActions>
+        {status === 'rejected' ? (
+          <Dialog
+            open={feedbackDialogOpen}
+            onClose={() => setFeedbackDialogOpen(false)}
+          >
+            <DialogTitle disableTypography className={styles.feedbackHeader}>
+              <Typography variant="h6">Reason For Declining</Typography>
+              <IconButton
+                aria-label="close"
+                onClick={() => setFeedbackDialogOpen(false)}
+              >
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent>
+              This is where the feedback text will go asd sda fa sdf asd fas df
+              asdf asd fas df asd fas df asdf asd fas df asdf as dfas dfs adf
+            </DialogContent>
+          </Dialog>
+        ) : null}
+        <div className={styles.header}>
+          <Typography variant="h4">Registration Form</Typography>
+          {status === 'rejected' ? (
             <Button
               variant="outlined"
-              color="primary"
-              onClick={() => router.push('/users/settings')}
+              onClick={() => setFeedbackDialogOpen(true)}
             >
-              Yes
+              View Feedback
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              autoFocus
-              onClick={() => setExitDialogOpen(false)}
-            >
-              No
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <h1 className={styles.header}>Registration Form</h1>
+          ) : null}
+        </div>
         <form onSubmit={formik.handleSubmit}>
           <div className={styles.root}>
             <AppBar position="static" color="default" className={styles.appBar}>
@@ -183,6 +192,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
                 setFieldValue={formik.setFieldValue}
                 touched={formik.touched}
                 errors={formik.errors}
+                readOnly={readOnly}
               />
             )}
             {selected === 1 && (
@@ -193,6 +203,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
                 setFieldValue={formik.setFieldValue}
                 touched={formik.touched}
                 errors={formik.errors}
+                readOnly={readOnly}
               />
             )}
             {selected === 2 && (
@@ -203,33 +214,38 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
                 setFieldValue={formik.setFieldValue}
                 touched={formik.touched}
                 errors={formik.errors}
+                readOnly={readOnly}
               />
             )}
           </div>
           <div className={styles.bottomButtons}>
+            {!readOnly ? (
+              <div>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  className={styles.autoField}
+                  type="submit"
+                >
+                  Save Changes
+                </Button>
+                <Button
+                  variant="contained"
+                  className={styles.autoField}
+                  color="primary"
+                  onClick={() => setSaveDraft(false)}
+                >
+                  Submit
+                </Button>
+              </div>
+            ) : null}
             <div>
               <Button
-                variant="contained"
-                onClick={() => setExitDialogOpen(true)}
+                variant={readOnly ? 'contained' : 'outlined'}
+                color="primary"
+                onClick={() => router.push('/users/profile')}
               >
                 Exit
-              </Button>
-            </div>
-            <div>
-              <Button
-                variant="contained"
-                className={styles.autoField}
-                type="submit"
-              >
-                Save Changes
-              </Button>
-              <Button
-                variant="contained"
-                className={styles.autoField}
-                color="primary"
-                onClick={() => setSaveDraft(false)}
-              >
-                Submit
               </Button>
             </div>
           </div>

@@ -12,20 +12,26 @@
   display: flex;
 }
 
-.stepper {
-  margin-bottom: 30px;
-}
-
 .button {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: row-reverse;
   margin-top: 5px;
+}
+
+.twoButtons {
+  justify-content: space-between;
 }
 
 .wording {
   display: flex;
   justify-content: flex-end;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.verifyMessage {
+  margin-top: 30px;
+  margin-bottom: 10px;
 }
 
 .steps {
