@@ -62,11 +62,11 @@ const Layout: React.FunctionComponent<Props> = ({
                 <div>
                   <Button
                     className={styles.logButtonSpace}
-                    variant="contained"
+                    variant="outlined"
                     color="primary"
                     onClick={() => router.push('/signin')}
                   >
-                    Log In
+                    Sign In
                   </Button>
                   <Button
                     className={styles.logButtonSpace}
