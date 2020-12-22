@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next';
 import prisma from 'utils/prisma';
-import { Organization, ApplicationQuestion } from '@prisma/client';
+import { Organization } from '@prisma/client';
 import { FormikErrors, useFormik } from 'formik';
 import { useState, useEffect, ChangeEvent } from 'react';
 import {
@@ -20,21 +20,22 @@ import Layout from 'components/Layout';
 import TabShortResponse from 'components/registration/TabShortResponse';
 import TabBasics from 'components/registration/TabBasics';
 import TabProj from 'components/registration/TabProj';
-import schema, { Form } from 'interfaces/registration';
+import schema, { AppQnR, Form } from 'interfaces/registration';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import parseValidationError from 'utils/parseValidationError';
 import getSession from 'utils/getSession';
+import Joi from 'joi';
 import styles from '../styles/Registration.module.css';
 
 type RegistrationProps = {
   org: Organization | null;
-  appQuestions: ApplicationQuestion[] | null;
+  appQnR: AppQnR;
 };
 
 const Registration: React.FunctionComponent<RegistrationProps> = ({
   org,
-  appQuestions,
+  appQnR,
 }) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
@@ -48,16 +49,39 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
   const readOnly = status === 'submitted' || status === 'approved';
 
   const validate = (values: Form): FormikErrors<Form> => {
-    const { error } = schema.validate(values, {
+    const { qnr, ...rest } = values;
+    const { error } = schema.validate(rest, {
       abortEarly: false,
       context: {
         strict: !saveDraft,
       },
     });
 
-    return parseValidationError(error);
+    // Validate custom short response questions
+    let qnrValidateEmpty = true;
+    const qnrValidate: { response: string | undefined }[] = qnr.map(
+      ({ response: value }, i) => {
+        if (!saveDraft && appQnR && appQnR[i].required) {
+          const response = Joi.string()
+            .messages({ 'string.empty': 'This prompt is required.' })
+            .validate(value).error?.message;
+          if (qnrValidateEmpty && response) qnrValidateEmpty = false;
+          return { response };
+        }
+
+        const response = Joi.string().empty('').validate(value).error?.message;
+        if (qnrValidateEmpty && response) qnrValidateEmpty = false;
+        return { response };
+      }
+    );
+
+    if (!qnrValidateEmpty)
+      return {
+        ...parseValidationError(error),
+        qnr: qnrValidate,
+      };
+    return { ...parseValidationError(error) };
   };
-  console.log(appQuestions);
 
   const handleChange = (
     _event: ChangeEvent<unknown>,
@@ -65,8 +89,6 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
   ): void => {
     setSelected(newValue);
   };
-
-  // const shortResponses =
 
   const handleSubmit = async (values: Form): Promise<void> => {
     if (session && session.user.role === 'organization') {
@@ -96,43 +118,6 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     }
   };
 
-  // sample data begin
-  /*
-          id: true,
-          placeholder: true,
-          question: true,
-          hint: true,
-          required: true,
-          wordLimit: true,
-          */
-  const appQ1 = {
-    id: 1,
-    placeholder: 'cindy',
-    question: 'hi cindy',
-    hint: 'yes',
-    required: true,
-    wordLimit: true,
-  };
-  const appQ2 = {
-    id: 2,
-    placeholder: 'bry',
-    question: 'hi bry',
-    hint: 'naw',
-    required: false,
-    wordLimit: 1,
-  };
-  const sample = [appQ1, appQ2];
-  // sample data end
-
-  let elem = 0;
-  const responses = Array<string>();
-  const ids = Array<number>();
-  appQuestions?.forEach((q): void => {
-    // change between sample (test) or appQuestions (real)
-    responses[elem] = '';
-    ids[elem] = q.id;
-    elem += 1;
-  });
   const initialValues: Form = {
     name: (org && org.name) ?? '',
     contactName: (org && org.contactName) ?? '',
@@ -154,10 +139,10 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     proj1: '',
     proj2: '',
     proj3: '',
-    shortResponses: {
-      id: ids,
-      response: responses,
-    },
+    qnr:
+      appQnR?.map((q) => ({
+        response: q.applicationResponses[0]?.answer ?? '',
+      })) ?? [],
   };
 
   const formik = useFormik({
@@ -251,7 +236,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                 setFieldValue={formik.setFieldValue}
                 touched={formik.touched}
                 errors={formik.errors}
-                appQuestions={appQuestions} // change between sample (test) or appQuestions (real)
+                appQnR={appQnR}
                 readOnly={readOnly}
               />
             )}
@@ -299,17 +284,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
     if (session && session.user.role === 'organization') {
-      const email = session?.user.email;
-      const user = await prisma.user.findOne({
+      const organization = await prisma.organization.findOne({
         where: {
-          email,
-        },
-        select: {
-          organization: true,
+          userId: session.user.id,
         },
       });
       // getting app questions
-      const appQuestions = await prisma.applicationQuestion.findMany({
+      const appQnR = await prisma.applicationQuestion.findMany({
         select: {
           id: true,
           placeholder: true,
@@ -317,12 +298,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           hint: true,
           required: true,
           wordLimit: true,
+          applicationResponses: {
+            where: {
+              organizationId: organization?.id,
+            },
+            select: {
+              answer: true,
+            },
+          },
         },
       });
-
-      const org = JSON.parse(JSON.stringify(user)).organization;
+      const org = JSON.parse(JSON.stringify(organization));
       return {
-        props: { org, appQuestions },
+        props: { org, appQnR },
       };
     }
     return {

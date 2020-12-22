@@ -1,10 +1,28 @@
-import { Organization } from '@prisma/client';
+import { ApplicationQuestionGetPayload, Organization } from '@prisma/client';
 import Joi from 'joi';
 
 export type Response = {
   id: number[];
   response: string[];
 };
+
+export type AppQnR =
+  | ApplicationQuestionGetPayload<{
+      select: {
+        id: true;
+        placeholder: true;
+        question: true;
+        hint: true;
+        required: true;
+        wordLimit: true;
+        applicationResponses: {
+          select: {
+            answer: true;
+          };
+        };
+      };
+    }>[]
+  | null;
 
 export type Form = Pick<
   Organization,
@@ -24,7 +42,7 @@ export type Form = Pick<
 > & {
   organizationType: string;
   workType: string;
-  shortResponses: Response;
+  qnr: { response: string }[];
   proj1: string;
   proj2: string;
   proj3: string;
@@ -145,15 +163,6 @@ const schema = Joi.object({
     .empty('')
     .when('$strict', { is: true, then: Joi.required() }),
   proj3: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
-  short1: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
-  short2: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
-  short3: Joi.string()
     .empty('')
     .when('$strict', { is: true, then: Joi.required() }),
 });
