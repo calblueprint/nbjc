@@ -41,12 +41,24 @@ export default async function seedDatabase(): Promise<void> {
     return [...acc, ...Array(num).fill([status, status === 'approved'])];
   }, []);
 
+  const appQuestions = await prisma.applicationQuestion.findMany();
+
   const clearAllMessage = Ora('Cleaning up previous seeded information');
   try {
     const users = await prisma.user.findMany({
       where: {
         email: {
           endsWith: '@nbjc.dev',
+        },
+      },
+    });
+
+    await prisma.applicationResponse.deleteMany({
+      where: {
+        organization: {
+          userId: {
+            in: users.map((user: User) => user.id),
+          },
         },
       },
     });
@@ -132,6 +144,12 @@ export default async function seedDatabase(): Promise<void> {
                   ageDemographic: Faker.random.arrayElements<AgeDemographic>(
                     Object.values(AgeDemographic)
                   ),
+                  applicationResponses: {
+                    create: appQuestions.map((q) => ({
+                      answer: Faker.lorem.lines(10),
+                      applicationQuestion: { connect: { id: q.id } },
+                    })),
+                  },
                 },
               }
             : undefined,
