@@ -21,6 +21,7 @@ import { AppQuestionSchema } from 'interfaces/appQuestion';
 import parseValidationError from 'utils/parseValidationError';
 import { useRouter } from 'next/router';
 import { TableApplicationQuestion } from 'interfaces/admin';
+import getSession from 'utils/getSession';
 import styles from '../../styles/admin/Questions.module.css';
 
 type FormValues = Pick<
@@ -228,23 +229,37 @@ const AdminQuestionsIndex: React.FC<AdminQuestionsIndexProps> = ({
 
 export default AdminQuestionsIndex;
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    const applicationQuestions = await prisma.applicationQuestion.findMany({
-      select: {
-        id: true,
-        question: true,
-        required: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-    const questions = JSON.parse(JSON.stringify(applicationQuestions));
+    const session = await getSession(context);
+    if (session && session.user.role === 'admin') {
+      const applicationQuestions = await prisma.applicationQuestion.findMany({
+        select: {
+          id: true,
+          question: true,
+          required: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+      const questions = JSON.parse(JSON.stringify(applicationQuestions));
+      return {
+        props: { questions },
+      };
+    }
     return {
-      props: { questions },
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
     };
   } catch (err) {
     console.log(err);
-    return { props: { errors: err.message } };
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+    };
   }
 };

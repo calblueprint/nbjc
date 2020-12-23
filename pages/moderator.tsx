@@ -30,7 +30,8 @@ import {
   CircularProgress,
 } from '@material-ui/core';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/client';
+import useSession from 'utils/useSession';
+import getSession from 'utils/getSession';
 import styles from '../styles/Moderator.module.css';
 
 type Props = {
@@ -311,8 +312,9 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     </div>
   );
 
-  if (!sessionLoading && !session) router.push('/');
-  if (!sessionLoading && session)
+  if (!sessionLoading && (!session || session.user.role !== 'moderator'))
+    router.push('/');
+  if (!sessionLoading && session && session.user.role === 'moderator')
     return (
       <Layout title="Moderator Dashboard">
         <div className={styles.root}>
@@ -376,28 +378,47 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   return <LinearProgress />;
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const res = await prisma.organization.findMany({
-    where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
-    include: {
-      applicationNote: true,
-      applicationResponses: {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  try {
+    const session = await getSession(context);
+    if (session && session.user.role === 'moderator') {
+      const res = await prisma.organization.findMany({
+        where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
         include: {
-          applicationQuestion: {
-            select: { question: true },
+          applicationNote: true,
+          applicationResponses: {
+            include: {
+              applicationQuestion: {
+                select: { question: true },
+              },
+            },
           },
         },
-      },
-    },
-  });
+      });
 
-  const orgs = JSON.parse(JSON.stringify(res)) as (Organization & {
-    applicationNote: ApplicationNote | null;
-    applicationResponses: (ApplicationResponse & {
-      applicationQuestion: { question: string };
-    })[];
-  })[];
-  return { props: { orgs } };
+      const orgs = JSON.parse(JSON.stringify(res)) as (Organization & {
+        applicationNote: ApplicationNote | null;
+        applicationResponses: (ApplicationResponse & {
+          applicationQuestion: { question: string };
+        })[];
+      })[];
+      return { props: { orgs } };
+    }
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+    };
+  } catch (err) {
+    console.log('error');
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+    };
+  }
 };
 
 export default ModeratorDashBoard;

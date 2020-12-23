@@ -156,7 +156,8 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     onSubmit: handleSubmit(false),
   });
 
-  if (!sessionLoading && !session) router.push('/');
+  if (!sessionLoading && (!session || session.user.role !== 'organization'))
+    router.push('/');
   if (!sessionLoading && session && session.user.role === 'organization')
     return (
       <Layout title="Register">
@@ -316,6 +317,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   } catch (err) {
     console.log('error');
-    return { props: { errors: err.message } };
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+    };
   }
 };
