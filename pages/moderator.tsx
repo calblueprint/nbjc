@@ -9,7 +9,11 @@ import clsx from 'clsx';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import SearchIcon from '@material-ui/icons/Search';
-import { Organization, ApplicationNote } from '@prisma/client';
+import {
+  Organization,
+  ApplicationNote,
+  ApplicationResponse,
+} from '@prisma/client';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 import {
@@ -29,13 +33,13 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/client';
 import styles from '../styles/Moderator.module.css';
 
-type OrgWithNote = Organization & {
-  applicationNote: ApplicationNote | null;
-};
-
-/** fix orgdetail props */
 type Props = {
-  orgs: OrgWithNote[];
+  orgs: (Organization & {
+    applicationNote: ApplicationNote | null;
+    applicationResponses: (ApplicationResponse & {
+      applicationQuestion: { question: string };
+    })[];
+  })[];
 };
 
 const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
@@ -70,17 +74,9 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
 
   const [openRight, setOpenRight] = useState<boolean>(false);
 
-  const handleDrawerOpenRight = (card: OrgWithNote): void => {
-    setText(
-      card.applicationNote && card.applicationNote.note
-        ? card.applicationNote.note
-        : ''
-    );
-    setLastText(
-      card.applicationNote && card.applicationNote.note
-        ? card.applicationNote.note
-        : ''
-    );
+  const handleDrawerOpenRight = (note: ApplicationNote | null): void => {
+    setText(note && note.note ? note.note : '');
+    setLastText(note && note.note ? note.note : '');
     setOpenRight(true);
   };
 
@@ -184,6 +180,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     }
     return undefined;
   }, [text, lastText, orgs, index]);
+
   const tab = (): JSX.Element | null => {
     if (selected === 0) {
       return (
@@ -208,7 +205,13 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     return null;
   };
 
-  const orgApp = (app: Organization): JSX.Element => (
+  const orgApp = (
+    app: Organization & {
+      applicationResponses: (ApplicationResponse & {
+        applicationQuestion: { question: string };
+      })[];
+    }
+  ): JSX.Element => (
     <div className={styles.rightCol}>
       <div className={styles.header}>
         <div>
@@ -226,7 +229,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => handleDrawerOpenRight(orgs[index])}
+            onClick={() => handleDrawerOpenRight(orgs[index].applicationNote)}
             className={styles.menuButton}
           >
             Notepad
@@ -371,13 +374,27 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   return <LinearProgress />;
 };
 
-/** TODO: #insert applicationNote */
 export const getServerSideProps: GetServerSideProps = async () => {
   const res = await prisma.organization.findMany({
     where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
-    include: { applicationNote: true },
+    include: {
+      applicationNote: true,
+      applicationResponses: {
+        include: {
+          applicationQuestion: {
+            select: { question: true },
+          },
+        },
+      },
+    },
   });
-  const orgs = JSON.parse(JSON.stringify(res)) as Organization[];
+
+  const orgs = JSON.parse(JSON.stringify(res)) as (Organization & {
+    applicationNote: ApplicationNote | null;
+    applicationResponses: (ApplicationResponse & {
+      applicationQuestion: { question: string };
+    })[];
+  })[];
   return { props: { orgs } };
 };
 

@@ -29,7 +29,7 @@ const SAMPLE_QUESTIONS = [
     required: true,
   },
   {
-    question: 'How can you organization benefit from joining this platform?',
+    question: 'How can your organization benefit from joining this platform?',
     required: true,
   },
   {
