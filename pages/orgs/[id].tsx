@@ -26,6 +26,7 @@ type Props = {
     | 'ein'
     | 'foundingDate'
     | 'is501c3'
+    | 'website'
   >;
   errors?: string;
 };
@@ -102,18 +103,24 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
             <h2 className={styles.Header}>{org.name}</h2>
             <h3 className={styles.subHeader}>
               {org.workType}
-              {org.workType && org.organizationType ? ' ● ' : null}
+              {org.workType && org.organizationType ? ' • ' : null}
               {org.organizationType}
             </h3>
+            {/* Location */}
             <h3 className={styles.infoHeader}>Location</h3>
             <p className={styles.info}>
               <b>Type:</b> Headquarters
             </p>
             {org.address && <p className={styles.info}>{org.address}</p>}
-            <h3 className={styles.infoHeader}>Basics</h3>
-            <p className={styles.info}>
-              <b>Site:</b> currentwebsite.org
-            </p>
+            {/* Basics */}
+            {(org.website || org.ein || org.foundingDate) && (
+              <h3 className={styles.infoHeader}>Basics</h3>
+            )}
+            {org.website && (
+              <p className={styles.info}>
+                <b>Site:</b> {org.website}
+              </p>
+            )}
             {org.ein && (
               <p className={styles.info}>
                 <b>EIN:</b> {org.ein}
@@ -125,13 +132,14 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
                 <b>Founded:</b> {computeDate(new Date(org.foundingDate), 0)}
               </p>
             )}
+            {/* Members */}
             <h3 className={styles.infoHeader}>Members</h3>
-            <p className={styles.info}>Fred Kim, CEO of redprint</p>
-            <p className={styles.info}>Cindy Zhang, CEO of redprint</p>
-            <p className={styles.info}>Calvin Chen, CEO of redprint</p>
-            <p className={styles.info}>Sonja Johanson, CEO of redprint</p>
-            <p className={styles.info}>Elizabeth Wu, CEO of redprint</p>
-            <p className={styles.info}>Bryanna Gavino, CEO of redprint</p>
+            <p className={styles.info}>Frederick Kim, Project Leader</p>
+            <p className={styles.info}>Elizabeth Wu, Designer</p>
+            <p className={styles.info}>Cindy Zhang, Developer</p>
+            <p className={styles.info}>Calvin Chen, Developer</p>
+            <p className={styles.info}>Sonja Johanson, Developer</p>
+            <p className={styles.info}>Bryanna Gavino, Developer</p>
           </div>
           <div className={styles.rightColumn}>
             <div className={styles.headerButton}>
@@ -196,6 +204,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         ein: true,
         foundingDate: true,
         is501c3: true,
+        website: true,
       },
     });
     const org = JSON.parse(JSON.stringify(resp));
