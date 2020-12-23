@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import {
   AgeDemographic,
+  ApplicationQuestionCreateArgs,
   ApplicationStatus,
   LgbtqDemographic,
   OrganizationType,
@@ -22,6 +23,20 @@ const NUMBER_ORGS = {
   submitted: 3,
   draft: 2,
 };
+const SAMPLE_QUESTIONS = [
+  {
+    question: 'Why does your organization want to join this platform?',
+    required: true,
+  },
+  {
+    question: 'How can your organization benefit from joining this platform?',
+    required: true,
+  },
+  {
+    question: 'Have you heard of Blueprint?',
+    required: false,
+  },
+];
 
 if (
   Object.values(NUMBER_ORGS).reduce((acc, curr) => acc + curr) > NUMBER_USERS
@@ -41,12 +56,34 @@ export default async function seedDatabase(): Promise<void> {
     return [...acc, ...Array(num).fill([status, status === 'approved'])];
   }, []);
 
-  const clearAllMessage = Ora('Cleaning up previous seeded information');
+  const clearAllMessage = Ora(
+    'Cleaning up previous seeded information'
+  ).start();
   try {
     const users = await prisma.user.findMany({
       where: {
         email: {
           endsWith: '@nbjc.dev',
+        },
+      },
+    });
+
+    await prisma.applicationResponse.deleteMany({
+      where: {
+        organization: {
+          userId: {
+            in: users.map((user: User) => user.id),
+          },
+        },
+      },
+    });
+
+    await prisma.applicationNote.deleteMany({
+      where: {
+        organization: {
+          userId: {
+            in: users.map((user: User) => user.id),
+          },
         },
       },
     });
@@ -67,6 +104,14 @@ export default async function seedDatabase(): Promise<void> {
       },
     });
 
+    await prisma.applicationQuestion.deleteMany({
+      where: {
+        question: {
+          in: SAMPLE_QUESTIONS.map((q) => q.question),
+        },
+      },
+    });
+
     clearAllMessage.text = 'Cleaned up previous seeded information';
     clearAllMessage.succeed();
   } catch (err) {
@@ -75,6 +120,24 @@ export default async function seedDatabase(): Promise<void> {
     );
     await prisma.$disconnect();
     process.exit(1);
+  }
+
+  const appQuestionsCreateMessage = Ora(
+    `Creating custom application questions`
+  ).start();
+  const mockAppQuestions: ApplicationQuestionCreateArgs[] = SAMPLE_QUESTIONS.map(
+    (q) => ({
+      data: q,
+    })
+  );
+  try {
+    await Promise.all(mockAppQuestions.map(prisma.applicationQuestion.create));
+    appQuestionsCreateMessage.text = `Created ${SAMPLE_QUESTIONS.length} custom application questions.`;
+    appQuestionsCreateMessage.succeed();
+  } catch (err) {
+    appQuestionsCreateMessage.fail(
+      `Creating custom application questions failed\n\n${err.message}`
+    );
   }
 
   const adminCreateMessage = Ora(`Creating admin user`).start();
@@ -91,6 +154,8 @@ export default async function seedDatabase(): Promise<void> {
   } catch (err) {
     adminCreateMessage.fail(`Creating the admin user failed\n\n${err.message}`);
   }
+
+  const appQuestions = await prisma.applicationQuestion.findMany();
 
   const orgUsersCreateMessage = Ora(
     `Creating ${NUMBER_USERS} org users`
@@ -132,6 +197,12 @@ export default async function seedDatabase(): Promise<void> {
                   ageDemographic: Faker.random.arrayElements<AgeDemographic>(
                     Object.values(AgeDemographic)
                   ),
+                  applicationResponses: {
+                    create: appQuestions.map((q) => ({
+                      answer: Faker.lorem.lines(10),
+                      applicationQuestion: { connect: { id: q.id } },
+                    })),
+                  },
                 },
               }
             : undefined,
@@ -140,7 +211,7 @@ export default async function seedDatabase(): Promise<void> {
     });
   try {
     await Promise.all(mockOrgUsers.map(prisma.user.create));
-    orgUsersCreateMessage.text = 'Created 10 org users.';
+    orgUsersCreateMessage.text = `Created ${NUMBER_USERS} org users.`;
     orgUsersCreateMessage.succeed();
   } catch (err) {
     orgUsersCreateMessage.fail(`Creating org users failed\n\n${err.message}`);
@@ -162,7 +233,7 @@ export default async function seedDatabase(): Promise<void> {
     });
   try {
     await Promise.all(mockModUsers.map(prisma.user.create));
-    modUsersCreateMessage.text = 'Created 10 mod users.';
+    modUsersCreateMessage.text = `Created ${NUMBER_USERS} mod users.`;
     modUsersCreateMessage.succeed();
   } catch (err) {
     modUsersCreateMessage.fail(`Creating mod users failed\n\n${err.message}`);

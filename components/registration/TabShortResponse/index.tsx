@@ -5,7 +5,7 @@ import {
   FormikHelpers,
   FormikTouched,
 } from 'formik';
-import { Form } from 'interfaces/registration';
+import { AppQnR, Form } from 'interfaces/registration';
 import styles from './TabShortResponse.module.css';
 
 type TabProps = {
@@ -15,6 +15,7 @@ type TabProps = {
   handleBlur: FormikHandlers['handleBlur'];
   touched: FormikTouched<Form>;
   errors: FormikErrors<Form>;
+  appQnR: AppQnR;
   readOnly: boolean;
 };
 
@@ -24,60 +25,40 @@ const TabShortResponse: React.FC<TabProps> = ({
   touched,
   errors,
   values,
+  appQnR,
   readOnly,
 }) => {
   const rowSize = 6;
-  const placeholderText = 'Your short response';
+
+  if (!appQnR || appQnR?.length === 0)
+    return <div className={styles.empty}>No questions to answer.</div>;
   return (
     <>
-      <div className={styles.row}>
-        <p>Short 1</p>
-        <TextField
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.short1}
-          name="short1"
-          variant="outlined"
-          multiline
-          rows={rowSize}
-          placeholder={placeholderText}
-          error={Boolean(touched.short1 && errors.short1)}
-          helperText={touched.short1 ? errors.short1 : undefined}
-          disabled={readOnly}
-        />
-      </div>
-      <div className={styles.row}>
-        <p>Short 2</p>
-        <TextField
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.short2}
-          name="short2"
-          variant="outlined"
-          multiline
-          rows={rowSize}
-          placeholder={placeholderText}
-          error={Boolean(touched.short2 && errors.short2)}
-          helperText={touched.short2 ? errors.short2 : undefined}
-          disabled={readOnly}
-        />
-      </div>
-      <div className={styles.row}>
-        <p>Short 3</p>
-        <TextField
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.short3}
-          name="short3"
-          variant="outlined"
-          multiline
-          rows={rowSize}
-          placeholder={placeholderText}
-          error={Boolean(touched.short3 && errors.short3)}
-          helperText={touched.short3 ? errors.short3 : undefined}
-          disabled={readOnly}
-        />
-      </div>
+      {appQnR?.map(
+        (q, i): JSX.Element => {
+          const qnrErr = errors.qnr && errors.qnr[i];
+          return (
+            <div key={q.id} className={styles.row}>
+              <p>{q.question}</p>
+              <TextField
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.qnr[i].response}
+                name={`qnr[${i}].response`}
+                variant="outlined"
+                multiline
+                rows={rowSize}
+                placeholder={q.placeholder ?? undefined}
+                error={Boolean(
+                  touched.qnr && touched.qnr[i]?.response && qnrErr
+                )}
+                helperText={touched.qnr && touched.qnr[i] && qnrErr}
+                disabled={readOnly}
+              />
+            </div>
+          );
+        }
+      )}
     </>
   );
 };

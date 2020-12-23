@@ -4,6 +4,7 @@ import AdminIndex from 'components/admin/AdminIndex';
 import AdminTable from 'components/admin/AdminTable';
 import Layout from 'components/Layout';
 import { GetServerSideProps } from 'next';
+import getSession from 'utils/getSession';
 
 type AdminOrgIndexProps = {
   orgs: Organization[];
@@ -27,28 +28,42 @@ const AdminOrgIndex: React.FunctionComponent<AdminOrgIndexProps> = ({
 
 export default AdminOrgIndex;
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    const approvedOrganizations = await prisma.organization.findMany({
-      where: {
-        active: true,
-      },
-      select: {
-        id: true,
-        name: true,
-        organizationType: true,
-        workType: true,
-        contactName: true,
-        contactEmail: true,
-        createdAt: true,
-      },
-    });
-    const orgs = JSON.parse(JSON.stringify(approvedOrganizations));
+    const session = await getSession(context);
+    if (session && session.user.role === 'admin') {
+      const approvedOrganizations = await prisma.organization.findMany({
+        where: {
+          active: true,
+        },
+        select: {
+          id: true,
+          name: true,
+          organizationType: true,
+          workType: true,
+          contactName: true,
+          contactEmail: true,
+          createdAt: true,
+        },
+      });
+      const orgs = JSON.parse(JSON.stringify(approvedOrganizations));
+      return {
+        props: { orgs },
+      };
+    }
     return {
-      props: { orgs },
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
     };
   } catch (err) {
     console.log(err);
-    return { props: { errors: err.message } };
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+    };
   }
 };

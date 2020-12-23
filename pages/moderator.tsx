@@ -9,7 +9,11 @@ import clsx from 'clsx';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import SearchIcon from '@material-ui/icons/Search';
-import { Organization, ApplicationNote } from '@prisma/client';
+import {
+  Organization,
+  ApplicationNote,
+  ApplicationResponse,
+} from '@prisma/client';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 import {
@@ -26,16 +30,17 @@ import {
   CircularProgress,
 } from '@material-ui/core';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/client';
+import useSession from 'utils/useSession';
+import getSession from 'utils/getSession';
 import styles from '../styles/Moderator.module.css';
 
-type OrgWithNote = Organization & {
-  applicationNote: ApplicationNote | null;
-};
-
-/** fix orgdetail props */
 type Props = {
-  orgs: OrgWithNote[];
+  orgs: (Organization & {
+    applicationNote: ApplicationNote | null;
+    applicationResponses: (ApplicationResponse & {
+      applicationQuestion: { question: string };
+    })[];
+  })[];
 };
 
 const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
@@ -70,17 +75,9 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
 
   const [openRight, setOpenRight] = useState<boolean>(false);
 
-  const handleDrawerOpenRight = (card: OrgWithNote): void => {
-    setText(
-      card.applicationNote && card.applicationNote.note
-        ? card.applicationNote.note
-        : ''
-    );
-    setLastText(
-      card.applicationNote && card.applicationNote.note
-        ? card.applicationNote.note
-        : ''
-    );
+  const handleDrawerOpenRight = (note: ApplicationNote | null): void => {
+    setText(note && note.note ? note.note : '');
+    setLastText(note && note.note ? note.note : '');
     setOpenRight(true);
   };
 
@@ -184,6 +181,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     }
     return undefined;
   }, [text, lastText, orgs, index]);
+
   const tab = (): JSX.Element | null => {
     if (selected === 0) {
       return (
@@ -208,7 +206,13 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     return null;
   };
 
-  const orgApp = (app: Organization): JSX.Element => (
+  const orgApp = (
+    app: Organization & {
+      applicationResponses: (ApplicationResponse & {
+        applicationQuestion: { question: string };
+      })[];
+    }
+  ): JSX.Element => (
     <div className={styles.rightCol}>
       <div className={styles.header}>
         <div>
@@ -220,14 +224,18 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           )}
         </div>
         <div>
-          <Button variant="outlined" color="primary">
+          <Button
+            variant="outlined"
+            color="primary"
+            className={styles.buttonSpace}
+          >
             Rejection history
           </Button>
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => handleDrawerOpenRight(orgs[index])}
-            className={styles.menuButton}
+            onClick={() => handleDrawerOpenRight(orgs[index].applicationNote)}
+            className={styles.buttonSpace}
           >
             Notepad
           </Button>
@@ -274,7 +282,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         {successBanner ? (
           <div className={styles.banner}>{successBanner}</div>
         ) : null}
-        <div className={styles.submitButton}>
+        <div className={`${styles.submitButton} ${styles.buttonSpace}`}>
           <Button
             onClick={() => approveApp(false)}
             variant="outlined"
@@ -287,7 +295,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             <CircularProgress size={24} className={styles.submitProgress} />
           )}
         </div>
-        <div className={styles.submitButton}>
+        <div className={`${styles.submitButton} ${styles.buttonSpace}`}>
           <Button
             onClick={() => approveApp(true)}
             variant="contained"
@@ -304,60 +312,57 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     </div>
   );
 
-  if (!sessionLoading && !session) router.push('/');
-  if (!sessionLoading && session)
+  if (!sessionLoading && (!session || session.user.role !== 'moderator'))
+    router.push('/');
+  if (!sessionLoading && session && session.user.role === 'moderator')
     return (
       <Layout title="Moderator Dashboard">
         <div className={styles.root}>
-          <div className={styles.leftCol}>
-            <Toolbar>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpenLeft}
-                edge="start"
-                className={clsx(styles.menuButton, openLeft && styles.hide)}
-              >
-                <ChevronRightIcon />
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpenLeft}
+            edge="start"
+            className={clsx(styles.menuButton, openLeft && styles.hide)}
+          >
+            <ChevronRightIcon />
+          </IconButton>
+          <Drawer
+            className={styles.drawer}
+            variant="persistent"
+            anchor="left"
+            open={openLeft}
+            classes={{
+              paper: styles.drawerPaperLeft,
+            }}
+          >
+            <div className={styles.tabs}>
+              <Tabs value={selected} onChange={handleChange}>
+                <Tab label="Orgs" />
+                <Tab label="Events" />
+              </Tabs>
+              <IconButton onClick={handleDrawerCloseLeft}>
+                <ChevronLeftIcon />
               </IconButton>
-            </Toolbar>
-            <Drawer
-              className={styles.drawer}
-              variant="persistent"
-              anchor="left"
-              open={openLeft}
-              classes={{
-                paper: styles.drawerPaperLeft,
-              }}
-            >
-              <div className={styles.tabs}>
-                <Tabs value={selected} onChange={handleChange}>
-                  <Tab label="Orgs" />
-                  <Tab label="Events" />
-                </Tabs>
-                <IconButton onClick={handleDrawerCloseLeft}>
-                  <ChevronLeftIcon />
-                </IconButton>
-              </div>
-              <div className={styles.textField}>
-                <TextField
-                  fullWidth
-                  id="search"
-                  type="search"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                  variant="outlined"
-                  size="small"
-                />
-              </div>
-              {tab()}
-            </Drawer>
-          </div>
+            </div>
+            <div className={styles.textField}>
+              <TextField
+                fullWidth
+                id="search"
+                type="search"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                variant="outlined"
+                size="small"
+              />
+            </div>
+            {tab()}
+          </Drawer>
           <main
             className={clsx(styles.main, {
               [styles.mainShift]: openLeft,
@@ -371,14 +376,47 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   return <LinearProgress />;
 };
 
-/** TODO: #insert applicationNote */
-export const getServerSideProps: GetServerSideProps = async () => {
-  const res = await prisma.organization.findMany({
-    where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
-    include: { applicationNote: true },
-  });
-  const orgs = JSON.parse(JSON.stringify(res)) as Organization[];
-  return { props: { orgs } };
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  try {
+    const session = await getSession(context);
+    if (session && session.user.role === 'moderator') {
+      const res = await prisma.organization.findMany({
+        where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
+        include: {
+          applicationNote: true,
+          applicationResponses: {
+            include: {
+              applicationQuestion: {
+                select: { question: true },
+              },
+            },
+          },
+        },
+      });
+
+      const orgs = JSON.parse(JSON.stringify(res)) as (Organization & {
+        applicationNote: ApplicationNote | null;
+        applicationResponses: (ApplicationResponse & {
+          applicationQuestion: { question: string };
+        })[];
+      })[];
+      return { props: { orgs } };
+    }
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+    };
+  } catch (err) {
+    console.log('error');
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+    };
+  }
 };
 
 export default ModeratorDashBoard;
