@@ -24,6 +24,8 @@ export type AppQnR =
     }>[]
   | null;
 
+export type QnR = { questionId: number; response: string };
+
 export type Form = Pick<
   Organization,
   | 'name'
@@ -42,7 +44,7 @@ export type Form = Pick<
 > & {
   organizationType: string;
   workType: string;
-  qnr: { response: string }[];
+  qnr: QnR[];
   proj1: string;
   proj2: string;
   proj3: string;

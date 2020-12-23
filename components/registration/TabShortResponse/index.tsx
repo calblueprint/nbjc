@@ -37,10 +37,6 @@ const TabShortResponse: React.FC<TabProps> = ({
       {appQnR?.map(
         (q, i): JSX.Element => {
           const qnrErr = errors.qnr && errors.qnr[i];
-          let errMsg: string | undefined;
-          if (qnrErr && typeof qnrErr === 'object') {
-            errMsg = qnrErr.response;
-          }
           return (
             <div key={q.id} className={styles.row}>
               <p>{q.question}</p>
@@ -54,9 +50,9 @@ const TabShortResponse: React.FC<TabProps> = ({
                 rows={rowSize}
                 placeholder={q.placeholder ?? undefined}
                 error={Boolean(
-                  touched.qnr && touched.qnr[i]?.response && errMsg
+                  touched.qnr && touched.qnr[i]?.response && qnrErr
                 )}
-                helperText={touched.qnr && touched.qnr[i] && errMsg}
+                helperText={touched.qnr && touched.qnr[i] && qnrErr}
                 disabled={readOnly}
               />
             </div>

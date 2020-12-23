@@ -34,15 +34,17 @@ const schema = Joi.object({
     .default(null)
     .when('$strict', { is: true, then: Joi.required() }),
   contactEmail: Joi.string()
-    .email()
     .empty('')
     .default(null)
-    .when('$strict', { is: true, then: Joi.required() }),
+    .when('$strict', { is: true, then: Joi.string().email().required() }),
   contactPhone: Joi.string()
     .empty('')
     .default(null)
     .when('$strict', { is: true, then: Joi.required() }),
-  website: Joi.string().empty('').default(null).uri({ domain: {} }),
+  website: Joi.string()
+    .empty('')
+    .default(null)
+    .when('$strict', { is: true, then: Joi.string().uri({ domain: {} }) }),
   organizationType: Joi.string()
     .empty('')
     .default(null)
@@ -81,7 +83,10 @@ const schema = Joi.object({
   ein: Joi.string()
     .empty('')
     .default(null)
-    .pattern(/^[0-9]\d?-?\d{7}$/),
+    .when('$strict', {
+      is: true,
+      then: Joi.string().pattern(/^[0-9]\d?-?\d{7}$/),
+    }),
   // foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
 }).when('$strict', { is: true, then: Joi.object().and('lat', 'long') });

@@ -5,6 +5,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import OrganizationSchema from 'interfaces/organization';
 import CreateError, { MethodNotAllowed } from 'utils/error';
 import parseValidationError from 'utils/parseValidationError';
+import Joi from 'joi';
+import { QnR } from 'interfaces/registration';
 
 export default async (
   req: NextApiRequest,
@@ -16,7 +18,11 @@ export default async (
 
   const isSubmit = req.query.submitting === 'true';
 
-  const { userEmail, ...body } = req.body;
+  const { userId, qnr, ...body } = req.body;
+  if (Joi.number().validate(userId).error) {
+    return CreateError(400, `ID ${userId} is not a number`, res);
+  }
+
   const { error, value } = OrganizationSchema.validate(body, {
     abortEarly: false,
     context: {
@@ -27,19 +33,7 @@ export default async (
     return CreateError(400, parseValidationError(error), res);
   }
 
-  const user = await prisma.user.findOne({
-    where: {
-      email: userEmail,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  const userId = user?.id;
-  if (!userId) {
-    return CreateError(500, 'Failed to find user', res);
-  }
+  const appRes = qnr as QnR[];
 
   const applicationStatus = isSubmit ? 'submitted' : 'draft';
   const active = isSubmit ? false : undefined;
@@ -52,6 +46,16 @@ export default async (
       },
       create: {
         ...data,
+        applicationResponses: {
+          create: appRes.map(({ questionId, response: answer }) => ({
+            answer,
+            applicationQuestion: {
+              connect: {
+                id: questionId,
+              },
+            },
+          })),
+        },
         user: {
           connect: {
             id: userId,
@@ -60,6 +64,16 @@ export default async (
       },
       update: {
         ...data,
+        applicationResponses: {
+          updateMany: appRes.map(({ questionId, response: answer }) => ({
+            where: {
+              questionId,
+            },
+            data: {
+              answer,
+            },
+          })),
+        },
       },
     });
     return res.json(newOrg);

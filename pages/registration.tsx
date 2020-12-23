@@ -2,7 +2,7 @@ import { GetServerSideProps } from 'next';
 import prisma from 'utils/prisma';
 import { Organization } from '@prisma/client';
 import { FormikErrors, useFormik } from 'formik';
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, ChangeEvent } from 'react';
 import {
   Tabs,
   Tab,
@@ -40,7 +40,6 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
   const router = useRouter();
   const [session, sessionLoading] = useSession();
   const [selected, setSelected] = useState(0);
-  const [saveDraft, setSaveDraft] = useState(true);
   const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(
     router.query?.feedback === 'true'
   );
@@ -48,32 +47,32 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
   const status = org?.applicationStatus;
   const readOnly = status === 'submitted' || status === 'approved';
 
-  const validate = (values: Form): FormikErrors<Form> => {
+  const handleValidate = (draft: boolean) => (
+    values: Form
+  ): FormikErrors<Form> => {
     const { qnr, ...rest } = values;
     const { error } = schema.validate(rest, {
       abortEarly: false,
       context: {
-        strict: !saveDraft,
+        strict: !draft,
       },
     });
 
     // Validate custom short response questions
     let qnrValidateEmpty = true;
-    const qnrValidate: { response: string | undefined }[] = qnr.map(
-      ({ response: value }, i) => {
-        if (!saveDraft && appQnR && appQnR[i].required) {
-          const response = Joi.string()
-            .messages({ 'string.empty': 'This prompt is required.' })
-            .validate(value).error?.message;
-          if (qnrValidateEmpty && response) qnrValidateEmpty = false;
-          return { response };
-        }
-
-        const response = Joi.string().empty('').validate(value).error?.message;
+    const qnrValidate: string[] = qnr.map(({ response: value }, i) => {
+      if (!draft && appQnR && appQnR[i].required) {
+        const response = Joi.string()
+          .messages({ 'string.empty': 'This prompt is required.' })
+          .validate(value).error?.message;
         if (qnrValidateEmpty && response) qnrValidateEmpty = false;
-        return { response };
+        return response ?? '';
       }
-    );
+
+      const response = Joi.string().empty('').validate(value).error?.message;
+      if (qnrValidateEmpty && response) qnrValidateEmpty = false;
+      return response ?? '';
+    });
 
     if (!qnrValidateEmpty)
       return {
@@ -90,24 +89,28 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     setSelected(newValue);
   };
 
-  const handleSubmit = async (values: Form): Promise<void> => {
+  const handleSubmit = (draft: boolean) => async (
+    values: Form
+  ): Promise<void> => {
     if (session && session.user.role === 'organization') {
+      if (draft && Object.keys(handleValidate(true)(values)).length !== 0)
+        return;
       console.log('submitting', values);
       const { proj1, proj2, proj3, ...tempValues } = values;
 
       try {
-        const res = await fetch(`/api/app/orgs?submitting=${!saveDraft}`, {
+        const res = await fetch(`/api/app/orgs?submitting=${!draft}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            userEmail: session.user.email,
+            userId: session.user.id,
             ...tempValues,
           }),
         });
 
-        if (res.ok && !saveDraft) router.push('/users/settings');
+        if (res.ok && !draft) router.push('/users/profile');
         if (!res.ok) {
           console.log('patch not successful');
         }
@@ -141,26 +144,17 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     proj3: '',
     qnr:
       appQnR?.map((q) => ({
+        questionId: q.id,
         response: q.applicationResponses[0]?.answer ?? '',
       })) ?? [],
   };
 
   const formik = useFormik({
     initialValues,
-    validate,
+    validate: handleValidate(false),
     validateOnChange: false,
-    onSubmit: handleSubmit,
+    onSubmit: handleSubmit(false),
   });
-
-  useEffect(() => {
-    async function submitForm(): Promise<void> {
-      await formik.submitForm();
-      setSaveDraft(true);
-    }
-    if (!saveDraft) {
-      submitForm();
-    }
-  }, [saveDraft, formik]);
 
   if (!sessionLoading && !session) router.push('/');
   if (!sessionLoading && session && session.user.role === 'organization')
@@ -248,7 +242,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                   variant="outlined"
                   color="primary"
                   className={styles.autoField}
-                  type="submit"
+                  onClick={() => handleSubmit(true)(formik.values)}
                 >
                   Save Changes
                 </Button>
@@ -256,7 +250,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                   variant="contained"
                   className={styles.autoField}
                   color="primary"
-                  onClick={() => setSaveDraft(false)}
+                  type="submit"
                 >
                   Submit
                 </Button>
@@ -300,7 +294,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           wordLimit: true,
           applicationResponses: {
             where: {
-              organizationId: organization?.id,
+              organizationId: organization?.id ?? -1,
             },
             select: {
               answer: true,
@@ -308,6 +302,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           },
         },
       });
+
       const org = JSON.parse(JSON.stringify(organization));
       return {
         props: { org, appQnR },
