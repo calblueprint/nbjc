@@ -16,10 +16,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         },
         select: {
           id: true,
+          active: true,
         },
       });
 
-      if (org) {
+      if (org && org.active) {
         return {
           redirect: {
             permanent: false,
