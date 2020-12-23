@@ -3,13 +3,6 @@
   flex-direction: row;
   height: calc(100vh - 104px);
 }
-.leftCol {
-  display: flex;
-  justify-content: flex-start;
-  flex-direction: column;
-  height: 100%;
-  margin-left: 10px;
-}
 
 .rightCol {
   height: 100%;

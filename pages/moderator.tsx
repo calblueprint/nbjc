@@ -327,7 +327,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           >
             <ChevronRightIcon />
           </IconButton>
-          {/* <div className={styles.leftCol}> */}
           <Drawer
             className={styles.drawer}
             variant="persistent"
@@ -364,7 +363,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             </div>
             {tab()}
           </Drawer>
-          {/* </div> */}
           <main
             className={clsx(styles.main, {
               [styles.mainShift]: openLeft,
