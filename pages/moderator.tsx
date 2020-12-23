@@ -223,14 +223,18 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           )}
         </div>
         <div>
-          <Button variant="outlined" color="primary">
+          <Button
+            variant="outlined"
+            color="primary"
+            className={styles.buttonSpace}
+          >
             Rejection history
           </Button>
           <Button
             variant="outlined"
             color="primary"
             onClick={() => handleDrawerOpenRight(orgs[index].applicationNote)}
-            className={styles.menuButton}
+            className={styles.buttonSpace}
           >
             Notepad
           </Button>
@@ -277,7 +281,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         {successBanner ? (
           <div className={styles.banner}>{successBanner}</div>
         ) : null}
-        <div className={styles.submitButton}>
+        <div className={`${styles.submitButton} ${styles.buttonSpace}`}>
           <Button
             onClick={() => approveApp(false)}
             variant="outlined"
@@ -290,7 +294,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             <CircularProgress size={24} className={styles.submitProgress} />
           )}
         </div>
-        <div className={styles.submitButton}>
+        <div className={`${styles.submitButton} ${styles.buttonSpace}`}>
           <Button
             onClick={() => approveApp(true)}
             variant="contained"
@@ -312,55 +316,53 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     return (
       <Layout title="Moderator Dashboard">
         <div className={styles.root}>
-          <div className={styles.leftCol}>
-            <Toolbar>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpenLeft}
-                edge="start"
-                className={clsx(styles.menuButton, openLeft && styles.hide)}
-              >
-                <ChevronRightIcon />
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpenLeft}
+            edge="start"
+            className={clsx(styles.menuButton, openLeft && styles.hide)}
+          >
+            <ChevronRightIcon />
+          </IconButton>
+          {/* <div className={styles.leftCol}> */}
+          <Drawer
+            className={styles.drawer}
+            variant="persistent"
+            anchor="left"
+            open={openLeft}
+            classes={{
+              paper: styles.drawerPaperLeft,
+            }}
+          >
+            <div className={styles.tabs}>
+              <Tabs value={selected} onChange={handleChange}>
+                <Tab label="Orgs" />
+                <Tab label="Events" />
+              </Tabs>
+              <IconButton onClick={handleDrawerCloseLeft}>
+                <ChevronLeftIcon />
               </IconButton>
-            </Toolbar>
-            <Drawer
-              className={styles.drawer}
-              variant="persistent"
-              anchor="left"
-              open={openLeft}
-              classes={{
-                paper: styles.drawerPaperLeft,
-              }}
-            >
-              <div className={styles.tabs}>
-                <Tabs value={selected} onChange={handleChange}>
-                  <Tab label="Orgs" />
-                  <Tab label="Events" />
-                </Tabs>
-                <IconButton onClick={handleDrawerCloseLeft}>
-                  <ChevronLeftIcon />
-                </IconButton>
-              </div>
-              <div className={styles.textField}>
-                <TextField
-                  fullWidth
-                  id="search"
-                  type="search"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                  variant="outlined"
-                  size="small"
-                />
-              </div>
-              {tab()}
-            </Drawer>
-          </div>
+            </div>
+            <div className={styles.textField}>
+              <TextField
+                fullWidth
+                id="search"
+                type="search"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                variant="outlined"
+                size="small"
+              />
+            </div>
+            {tab()}
+          </Drawer>
+          {/* </div> */}
           <main
             className={clsx(styles.main, {
               [styles.mainShift]: openLeft,

@@ -48,13 +48,13 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ org }) => {
         <div className={styles.section}>
           <div className={styles.big}>Point of Contact</div>
           <div>Name: {org.contactName || 'None'}</div>
-          <div>Phone: {org.id || 'None'}</div>
+          <div>Phone: {org.contactPhone || 'None'}</div>
           <div>Email: {org.contactEmail || 'None'}</div>
         </div>
         <div className={styles.section}>
           <div className={styles.big}>Location</div>
           <div>Type: {org.organizationType || 'None'}</div>
-          <div>{'123 Street Name City, SA 12345' || 'None'}</div>
+          <div>{org.address || 'None'}</div>
         </div>
       </div>
       <div className={styles.big}>Audience Demographics</div>
