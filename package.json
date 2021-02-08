@@ -41,7 +41,7 @@
     "@material-ui/pickers": "^3.2.10",
     "@prisma/client": "^2.9.0",
     "clsx": "^1.1.1",
-    "date-fns": "^2.16.1",
+    "date-fns": "^2.17.0",
     "db-migrate": "^0.11.11",
     "db-migrate-base": "^2.3.0",
     "db-migrate-pg": "^1.2.2",
