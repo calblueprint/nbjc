@@ -5,7 +5,6 @@ import {
   MenuItem,
   Select,
   TextField,
-  OutlinedInput,
 } from '@material-ui/core';
 import {
   FormikErrors,
@@ -27,7 +26,7 @@ import {
 // npm i react-text-mask
 import MaskedInput from 'react-text-mask';
 //
-import { useState } from 'react';
+import { useImperativeHandle, useState } from 'react';
 import styles from './TabBasics.module.css';
 
 type TabProps = {
@@ -153,14 +152,13 @@ const TabBasics: React.FC<TabProps> = ({
       variant="outlined"
       error={Boolean(touched.contactPhone && errors.contactPhone)}
     >
-      <OutlinedInput
+      <TextField
         value={numbers.textmask}
-        onChange={handleNumberChange}
         name="textmask" // contactphone
-        id="formatted-text-mask-input"
-        inputComponent={NumberMask as any}
-        // variant="outlined"
-        // helperText={touched.contactPhone ? errors.contactPhone : undefined}
+        id="contactphone"
+        InputProps={{ inputComponent: NumberMask as any }}
+        variant="outlined"
+        helperText={touched.contactPhone ? errors.contactPhone : undefined}
       />
     </FormControl>
   );
