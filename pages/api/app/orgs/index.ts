@@ -1,5 +1,5 @@
 import prisma from 'utils/prisma';
-import { Organization } from '@prisma/client';
+import { Organization, OrganizationProject } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import OrganizationSchema from 'interfaces/organization';
@@ -18,7 +18,7 @@ export default async (
 
   const isSubmit = req.query.submitting === 'true';
 
-  const { userId, qnr, ...body } = req.body;
+  const { userId, qnr, projects, ...body } = req.body;
   if (Joi.number().validate(userId).error) {
     return CreateError(400, `ID ${userId} is not a number`, res);
   }
@@ -34,6 +34,7 @@ export default async (
   }
 
   const appRes = qnr as QnR[];
+  const appProjs = projects as OrganizationProject[];
 
   const applicationStatus = isSubmit ? 'submitted' : 'draft';
   const active = isSubmit ? false : undefined;
@@ -56,6 +57,12 @@ export default async (
             },
           })),
         },
+        organizationProjects: {
+          create: appProjs.map(({ title, description }) => ({
+            title,
+            description,
+          })),
+        },
         user: {
           connect: {
             id: userId,
@@ -73,6 +80,11 @@ export default async (
               answer,
             },
           })),
+        },
+        organizationProjects: {
+          create: [], // iterate through list of projects to create
+          update: [], // iterate through list of projects to update
+          deleteMany: [], // iterate through list of projects to delete
         },
       },
     });
