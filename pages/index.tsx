@@ -39,24 +39,6 @@ const Home: React.FC = () => {
                 <Autocomplete
                   multiple
                   id="tags-outlined"
-                  options={ages}
-                  getOptionLabel={(option) => option}
-                  filterSelectedOptions
-                  onChange={(event, newValue) => {
-                    formik.setFieldValue('ages', newValue);
-                  }}
-                  className={styles.autoField}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      variant="outlined"
-                      placeholder="Ages"
-                    />
-                  )}
-                />
-                <Autocomplete
-                  multiple
-                  id="tags-outlined"
                   options={orientation}
                   getOptionLabel={(option) => option}
                   filterSelectedOptions
@@ -87,6 +69,24 @@ const Home: React.FC = () => {
                       {...params}
                       variant="outlined"
                       placeholder="Ethnicity"
+                    />
+                  )}
+                />
+                <Autocomplete
+                  multiple
+                  id="tags-outlined"
+                  options={ages}
+                  getOptionLabel={(option) => option}
+                  filterSelectedOptions
+                  onChange={(event, newValue) => {
+                    formik.setFieldValue('ages', newValue);
+                  }}
+                  className={styles.autoField}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      placeholder="Ages"
                     />
                   )}
                 />
