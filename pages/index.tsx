@@ -28,7 +28,7 @@ const Home: React.FC = () => {
     },
   });
   return (
-    <Layout>
+    <Layout title="Home">
       <form onSubmit={formik.handleSubmit}>
         <div className={styles.root}>
           <div className={styles.leftCol}>{slogan}</div>
@@ -50,7 +50,7 @@ const Home: React.FC = () => {
                     <TextField
                       {...params}
                       variant="outlined"
-                      placeholder="Orientation"
+                      placeholder="By Identities"
                     />
                   )}
                 />
@@ -68,7 +68,7 @@ const Home: React.FC = () => {
                     <TextField
                       {...params}
                       variant="outlined"
-                      placeholder="Ethnicity"
+                      placeholder="By Background"
                     />
                   )}
                 />
@@ -86,7 +86,7 @@ const Home: React.FC = () => {
                     <TextField
                       {...params}
                       variant="outlined"
-                      placeholder="Ages"
+                      placeholder="By Audiences"
                     />
                   )}
                 />
@@ -94,7 +94,7 @@ const Home: React.FC = () => {
               <div className={styles.row}>
                 <TextField
                   id="outlined-size-small"
-                  placeholder="Explore Organizations"
+                  placeholder="By Name"
                   fullWidth
                   className={styles.textField}
                   onChange={formik.handleChange}
@@ -114,7 +114,7 @@ const Home: React.FC = () => {
                   color="primary"
                   type="submit"
                 >
-                  Submit
+                  Search
                 </Button>
               </div>
             </Card>
