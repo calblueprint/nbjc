@@ -1,7 +1,8 @@
 import { Organization } from '@prisma/client';
 import Joi from 'joi';
 
-type Project = {
+export type Project = {
+  id?: number;
   title: string;
   description: string;
 };
@@ -135,15 +136,31 @@ const schema = Joi.object({
   ein: Joi.string()
     .empty('')
     .pattern(/^[0-9]\d?-?\d{7}$/)
+    .when('$strict', {
+      is: true,
+      then: Joi.required(),
+    })
     .messages({ 'string.pattern.base': 'Not a valid EIN' }),
   // foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
   projects: Joi.array()
-    .items(Joi.object({ title: Joi.string(), description: Joi.string() }))
-    .when('$strict', { is: true, then: Joi.required() }),
+    .empty('')
+    .when('$strict', {
+      is: true,
+      then: Joi.required(),
+    })
+    .messages({
+      'any.required': 'project is required',
+    }),
   short1: Joi.string()
     .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
+    .when('$strict', {
+      is: true,
+      then: Joi.required(),
+    })
+    .messages({
+      'any.required': 'short1 is required',
+    }),
   short2: Joi.string()
     .empty('')
     .when('$strict', { is: true, then: Joi.required() }),

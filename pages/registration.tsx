@@ -1,5 +1,9 @@
 import { GetServerSideProps } from 'next';
-import { Organization, PrismaClient } from '@prisma/client';
+import {
+  Organization,
+  PrismaClient,
+  OrganizationGetPayload,
+} from '@prisma/client';
 import {
   Formik,
   FormikErrors,
@@ -33,7 +37,9 @@ import styles from '../styles/Registration.module.css';
 const prisma = new PrismaClient();
 
 type RegistrationProps = {
-  org: Organization | null;
+  org: OrganizationGetPayload<{
+    include: { organizationProjects: true };
+  }> | null;
 };
 
 const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
@@ -56,8 +62,8 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
         strict: !saveDraft,
       },
     });
-    console.log('validate');
-    console.log(parseValidationError(error));
+    // console.log('validate');
+    // console.log(parseValidationError(error));
 
     return parseValidationError(error);
   };
@@ -69,7 +75,26 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
   const handleSubmit = async (values: Form): Promise<void> => {
     if (session && session.user.role === 'organization') {
       const { short1, short2, short3, projects, ...tempValues } = values;
-
+      // console.log('org.projects', org?.organizationProjects);
+      // console.log('projects', projects);
+      const projSet = new Set();
+      const projToDelete = [];
+      let ind = 0;
+      // FIXME: Logic bug in these loops? (not filtered correctly)
+      // More than just the projects we want seem to be getting deleted
+      const oP = org?.organizationProjects?.map((o) => o.id) ?? [];
+      for (let i = 0; i < projects.length; i += 1) {
+        projSet.add(projects[i].id);
+      }
+      for (let i = 0; i < oP.length; i += 1) {
+        if (!projSet.has(oP[i])) {
+          projToDelete[ind] = oP[i];
+          ind += 1;
+        }
+      }
+      console.log('hey');
+      console.log('projects to delete:', projToDelete);
+      // result: projToDelete contains ids of all projects to delete
       try {
         const res = await fetch(`/api/app/orgs?submitting=${!saveDraft}`, {
           method: 'POST',
@@ -80,6 +105,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
             userEmail: session.user.email,
             ...tempValues,
             projects,
+            projToDelete,
           }),
         });
 
@@ -93,7 +119,6 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
       }
     }
   };
-
   const initialValues: Form = {
     name: (org && org.name) ?? '',
     contactName: (org && org.contactName) ?? '',
@@ -115,8 +140,18 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
     short1: '',
     short2: '',
     short3: '',
-    projects: [{ title: '', description: '' }],
+    // projects: [{ title: '', description: '' }],
+    // TODO: map projects out!
+    projects:
+      org?.organizationProjects?.map((o) => ({
+        // id: o.id,
+        title: o.title,
+        description: o.description ?? '',
+      })) ?? [],
   };
+
+  // console.log(org, 'this is org');
+  // console.log(org.projects, 'this is org');
 
   // const formik = useFormik({
   //   initialValues,
@@ -185,7 +220,6 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
         <Formik
           initialValues={initialValues}
           validate={validate}
-          validateOnChange={false}
           onSubmit={handleSubmit}
           render={({
             handleChange,
@@ -195,8 +229,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
             touched,
             errors,
           }): React.ReactNode => {
-            console.log('errors here');
-            console.log(errors);
+            // console.log(errors);
             const formValues = values as Form;
             return (
               <>
@@ -259,7 +292,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
                       variant="contained"
                       className={styles.autoField}
                       type="submit"
-                      onClick={() => handleSubmit(formValues)}
+                      onClick={() => setSaveDraft(false)}
                     >
                       Save Changes
                     </Button>
@@ -267,7 +300,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
                       variant="contained"
                       className={styles.autoField}
                       color="primary"
-                      onClick={() => setSaveDraft(false)}
+                      onClick={() => handleSubmit(formValues)}
                     >
                       Submit
                     </Button>
@@ -289,18 +322,29 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const session = await getSession(context);
     if (session && session.user.role === 'organization') {
       const email = session?.user.email;
+      // Temp solution until merged with main
       const user = await prisma.user.findOne({
         where: {
           email,
         },
         select: {
-          organization: true,
+          id: true,
         },
       });
 
-      const org = JSON.parse(JSON.stringify(user)).organization;
+      const org = await prisma.organization.findOne({
+        where: {
+          userId: user?.id,
+        },
+        include: {
+          organizationProjects: true,
+        },
+      });
+
+      const parsedOrg = JSON.parse(JSON.stringify(org));
+      console.log(parsedOrg, 'printing in serversideprops');
       return {
-        props: { org },
+        props: { org: parsedOrg },
       };
     }
     return {

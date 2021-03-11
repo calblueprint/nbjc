@@ -72,7 +72,7 @@ const TabProj: React.FC<TabProps> = ({
             <div>
               {values.projects && values.projects.length > 0
                 ? values.projects.map((project, index) => (
-                    <div className={styles.row}>
+                    <div className={styles.row} key={index}>
                       <div className={styles.rowEntry}>
                         <p>Project or Event Name</p>
                         {/* <Button onClick={() => arrayHelpers.remove(index)}> */}
@@ -97,10 +97,14 @@ const TabProj: React.FC<TabProps> = ({
                         rows={6}
                         placeholder="i.e. Annual Gala Three!"
                         error={Boolean(
-                          touchedProjs[index].title && errors.projects
+                          touchedProjs &&
+                            touchedProjs[index]?.title &&
+                            errors.projects
                         )}
                         helperText={
-                          touchedProjs[index].title && errors.projects
+                          touchedProjs &&
+                          touchedProjs[index]?.title &&
+                          errors.projects
                             ? errors.projects
                             : undefined
                         }
@@ -116,10 +120,14 @@ const TabProj: React.FC<TabProps> = ({
                         rows={6}
                         placeholder="Your short response"
                         error={Boolean(
-                          touchedProjs[index].description && errors.projects
+                          touchedProjs &&
+                            touchedProjs[index]?.description &&
+                            errors.projects
                         )}
                         helperText={
-                          touchedProjs[index].description && errors.projects
+                          touchedProjs &&
+                          touchedProjs[index]?.description &&
+                          errors.projects
                             ? errors.projects
                             : undefined
                         }
