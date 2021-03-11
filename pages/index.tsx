@@ -38,12 +38,14 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
   const router = useRouter();
 
   // ///// ADDED /////
+
   const [ageDemoVals, setAgeDemoVals] = useState([
     'child',
     'teen',
     'adult',
     'senior',
   ] as AgeDemographic[]);
+  const [newAgeDemoVals, setNewAgeDemoVals] = useState([] as AgeDemographic[]);
   const [lgbtqDemoVals, setLgbtqDemoVals] = useState([
     'lgbtqAll',
     'sgl',
@@ -51,6 +53,9 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
     'asexualAromantic',
     'other',
   ] as LgbtqDemographic[]);
+  const [newLgbtqDemoVals, setNewLgbtqDemoVals] = useState(
+    [] as LgbtqDemographic[]
+  );
   const [raceDemoVals, setRaceDemoVals] = useState([
     'pocAll',
     'asian',
@@ -60,33 +65,57 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
     'nativeIndigeneous',
     'other',
   ] as RaceDemographic[]);
+  const [newRaceDemoVals, setNewRaceDemoVals] = useState(
+    [] as RaceDemographic[]
+  );
 
+  // sets new incoming lists...prepare to compare w current list
   const handleAgeChange = (values: Array<AgeDemographic>): void => {
-    setAgeDemoVals(values);
+    setNewAgeDemoVals(values);
   };
   const handleLgbtqChange = (values: Array<LgbtqDemographic>): void => {
-    setLgbtqDemoVals(values);
+    setNewLgbtqDemoVals(values);
   };
   const handleRaceChange = (values: Array<RaceDemographic>): void => {
-    setRaceDemoVals(values);
+    setNewRaceDemoVals(values);
   };
+
+  // orgs that will be shown to user
+  const [orgsDisplayed, setOrgsDisplayed] = useState(orgs);
+  // orgs hidden
+  const [orgsNotDisplayed, setOrgsNotDisplayed] = useState(
+    [] as Organization[]
+  );
+
+  // filter the orgs
+  const handleApplyChange = (): void => {
+    // process what is added from new & current lists
+    let newAges = Array<AgeDemographic>();
+    for (let age in newAgeDemoVals) {
+      if (!ageDemoVals.includes(age)) {
+
+        setAgeDemoVals(ageDemoVals + age);
+      }
+    };
+    newAgeDemoVals.map((age) => (
+      (!ageDemoVals.includes(age) ? (
+        setAgeDemoVals(ageDemoVals.push(age));
+      ))
+    ))
+    // add those orgs to displayed
+    //    remove from list of hidden
+    // add to current lists
+
+    // process what is removed from new & current lists
+    // remove those orgs
+    //    add to list of hidden
+    // remove from current lists
+  };
+
+  // for testing purposes on backend
   const testChange = (): void => {
     setAgeDemoVals(['adult', 'senior']);
   };
-
-  // const getOrgs = prisma.organization.findMany({
-  //  where: {
-  //    ageDemographic: {
-  //      hasEvery: ageDemoVals,
-  //    },
-  //    lgbtqDemographic: {
-  //      hasEvery: lgbtqDemoVals,
-  //    },
-  //    raceDemographic: {
-  //      hasEvery: raceDemoVals,
-  //    },
-  //  },
-  // });
 
   // ///// ADDED /////
 
@@ -130,7 +159,11 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                   <MenuItem value="seniors">Seniors</MenuItem>
                 </Select>
               </FormControl>
-              <FormControl className={styles.filter} variant="outlined">
+              <FormControl
+                className={styles.filter}
+                variant="outlined"
+                onChange={handleApplyChange}
+              >
                 <InputLabel>Keyword</InputLabel>
                 <Select label="Keyword">
                   <MenuItem value="">
@@ -172,8 +205,8 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
             }
 
             <div className={styles.cards}>
-              {orgs.length !== 0 ? (
-                orgs.map((org) => (
+              {orgsDisplayed.length !== 0 ? (
+                orgsDisplayed.map((org) => (
                   <Card className={styles.card} key={org.id}>
                     <CardActionArea
                       onClick={() => router.push(`/orgs/${org.id}`)}
@@ -196,7 +229,7 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
           </div>
 
           <div className={styles.rightCol}>
-            <Map orgs={orgs} width="100%" height="100%" />
+            <Map orgs={orgsDisplayed} width="100%" height="100%" />
           </div>
         </div>
       </div>
@@ -208,26 +241,9 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    // let { ageDemoVals, lgbtqDemoVals, raceDemoVals } = useSWR(
-    //   '/api/user',
-    //   fetch
-    // );
-    // if (ageDemoVals === undefined || ageDemoVals === null) {
-    //   ageDemoVals = ['child', 'teen', 'adult', 'senior'] as AgeDemographic[];
-    // }
-
     const resp = await prisma.organization.findMany({
       where: {
         active: true,
-        // ageDemographic: {
-        //   hasEvery: ageDemoVals,
-        // },
-        // lgbtqDemographic: {
-        //   hasEvery: lgbtqDemoVals,
-        // },
-        // raceDemographic: {
-        //   hasEvery: raceDemoVals,
-        // },
       },
       orderBy: {
         name: 'asc',
@@ -254,16 +270,3 @@ export const getServerSideProps: GetServerSideProps = async () => {
     return { props: { errors: err.message } };
   }
 };
-function useSWR(
-  arg0: string,
-  fetch: (
-    input: RequestInfo,
-    init?: RequestInit | undefined
-  ) => Promise<Response>
-): {
-  ageDemoVals: Array<AgeDemographic>;
-  lgbtqDemoVals: Array<LgbtqDemographic>;
-  raceDemoVals: Array<RaceDemographic>;
-} {
-  throw new Error('Function not implemented.');
-}
