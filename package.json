@@ -17,7 +17,7 @@
     "heroku-postbuild": "yarn build && yarn build:scripts && yarn db:migrate up",
     "heroku-review-app-init": "node build/bin/set-nextauth-url.js && node build/bin/seed-database.js",
     "cm": "cz",
-    "prisma:update": "prisma introspect && prisma generate",
+    "prisma:update": "prisma db pull && prisma generate && prisma format",
     "prisma:transform": "prisma-schema-transformer ./schema.prisma",
     "db:drop": "db-migrate db:drop nbjc_development -e pg",
     "db:create": "db-migrate db:create nbjc_development -e pg",
