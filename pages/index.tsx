@@ -27,12 +27,59 @@ type HomeProps = {
   orgs: PublicOrganization[];
 };
 
+// using lists for now, but maybe replace with enums?
+const demographicTypes = [
+  'LGBTQ+',
+  'SGL',
+  'Transgender',
+  'Asexual/Aromantic',
+  'Other',
+];
+
+const backgroundTypes = ['Grassroots/Local', 'Statewide', 'National', 'Other'];
+
+const audienceTypes = [
+  'POC (All)',
+  'Black',
+  'Asian',
+  'Pacific Islander',
+  'Latinx',
+  'Native/Indigeneous',
+  'Other',
+];
+
 const Home: React.FC<HomeProps> = ({ orgs }) => {
   const router = useRouter();
 
   // This is to verify whether or not the current user has a proper session configured to see the page.
   // Will be implemented in the next PR.
   // const [session, loading] = useSession();
+
+  const [demographicFilters, setDemographicFilters] = React.useState<string[]>(
+    []
+  );
+  const [backgroundFilters, setBackgroundFilters] = React.useState<string[]>(
+    []
+  );
+  const [audienceFilters, setAudienceFilters] = React.useState<string[]>([]);
+
+  const handleDemographicChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ): void => {
+    setDemographicFilters(event.target.value as string[]);
+  };
+
+  const handleBackgroundChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ): void => {
+    setBackgroundFilters(event.target.value as string[]);
+  };
+
+  const handleAudienceChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ): void => {
+    setAudienceFilters(event.target.value as string[]);
+  };
 
   return (
     <Layout>
@@ -55,36 +102,120 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
           <div className={styles.leftCol}>
             <div className={styles.filters}>
               <FormControl className={styles.filter} variant="outlined">
-                <InputLabel>Keyword</InputLabel>
-                <Select label="Keyword">
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={1}>One</MenuItem>
-                  <MenuItem value={2}>Two</MenuItem>
-                  <MenuItem value={3}>Three</MenuItem>
+                <InputLabel classes={{ root: styles.filterLabel }}>
+                  Identities
+                </InputLabel>
+                <Select
+                  native={false}
+                  className={styles.filterDropDown}
+                  label="Identities"
+                  multiple
+                  value={demographicFilters}
+                  onChange={handleDemographicChange}
+                  renderValue={(value) => (
+                    <InputLabel classes={{ root: styles.selectedLabel }}>
+                      Identities
+                    </InputLabel>
+                  )}
+                  MenuProps={{
+                    variant: 'menu',
+                    anchorOrigin: {
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    },
+                    getContentAnchorEl: null,
+                  }}
+                >
+                  {demographicTypes.map((filterOption: string) => (
+                    <MenuItem
+                      classes={{
+                        selected: styles.selectedFilter,
+                        root: styles.filterOption,
+                      }}
+                      disableRipple
+                      value={filterOption}
+                      key={filterOption}
+                    >
+                      {filterOption}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
               <FormControl className={styles.filter} variant="outlined">
-                <InputLabel>Keyword</InputLabel>
-                <Select label="Keyword">
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={1}>One</MenuItem>
-                  <MenuItem value={2}>Two</MenuItem>
-                  <MenuItem value={3}>Three</MenuItem>
+                <InputLabel className={styles.filterLabel}>
+                  Background
+                </InputLabel>
+                <Select
+                  className={styles.filterDropDown}
+                  label="Background"
+                  multiple
+                  value={backgroundFilters}
+                  onChange={handleBackgroundChange}
+                  renderValue={(value) => (
+                    <InputLabel classes={{ root: styles.selectedLabel }}>
+                      Background
+                    </InputLabel>
+                  )}
+                  MenuProps={{
+                    variant: 'menu',
+                    anchorOrigin: {
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    },
+                    getContentAnchorEl: null,
+                  }}
+                >
+                  {backgroundTypes.map((filterOption: string) => (
+                    <MenuItem
+                      classes={{
+                        selected: styles.selectedFilter,
+                        root: styles.filterOption,
+                      }}
+                      className={styles.filterOption}
+                      disableRipple
+                      value={filterOption}
+                      key={filterOption}
+                    >
+                      {filterOption}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
               <FormControl className={styles.filter} variant="outlined">
-                <InputLabel>More</InputLabel>
-                <Select label="More">
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={1}>One</MenuItem>
-                  <MenuItem value={2}>Two</MenuItem>
-                  <MenuItem value={3}>Three</MenuItem>
+                <InputLabel className={styles.filterLabel}>Audience</InputLabel>
+                <Select
+                  className={styles.filterDropDown}
+                  label="Audience"
+                  multiple
+                  value={audienceFilters}
+                  onChange={handleAudienceChange}
+                  renderValue={(value) => (
+                    <InputLabel classes={{ root: styles.selectedLabel }}>
+                      Audience
+                    </InputLabel>
+                  )}
+                  MenuProps={{
+                    variant: 'menu',
+                    anchorOrigin: {
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    },
+                    getContentAnchorEl: null,
+                  }}
+                >
+                  {audienceTypes.map((filterOption: string) => (
+                    <MenuItem
+                      classes={{
+                        selected: styles.selectedFilter,
+                        root: styles.filterOption,
+                      }}
+                      disableRipple
+                      value={filterOption}
+                      key={filterOption}
+                    >
+                      {filterOption}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </div>
