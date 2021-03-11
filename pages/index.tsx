@@ -60,40 +60,18 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
     'nativeIndigeneous',
     'other',
   ] as RaceDemographic[]);
-  // Call this function whenever you want to
-  // refresh props!
-  const refreshData = (): void => {
-    router.replace(router.asPath);
-  };
-
-  async function handleFilter(): Promise<void> {
-    // const userData =
-    const res = await fetch('/api/user', {
-      method: 'PUT',
-      body: JSON.stringify({ ageDemoVals, lgbtqDemoVals, raceDemoVals }),
-    });
-    // Check that our status code is in the 200s,
-    // meaning the request was successful.
-    if (res.status < 300) {
-      refreshData();
-    }
-  }
 
   const handleAgeChange = (values: Array<AgeDemographic>): void => {
     setAgeDemoVals(values);
-    handleFilter();
   };
   const handleLgbtqChange = (values: Array<LgbtqDemographic>): void => {
     setLgbtqDemoVals(values);
-    handleFilter();
   };
   const handleRaceChange = (values: Array<RaceDemographic>): void => {
     setRaceDemoVals(values);
-    handleFilter();
   };
   const testChange = (): void => {
     setAgeDemoVals(['adult', 'senior']);
-    handleFilter();
   };
 
   // const getOrgs = prisma.organization.findMany({
@@ -193,8 +171,6 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
               // ////// POSSIBLY DELETE //////
             }
 
-            {}
-
             <div className={styles.cards}>
               {orgs.length !== 0 ? (
                 orgs.map((org) => (
@@ -232,12 +208,26 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    // const res = await fetch('/api/user');
-    // const data = res.json();
+    // let { ageDemoVals, lgbtqDemoVals, raceDemoVals } = useSWR(
+    //   '/api/user',
+    //   fetch
+    // );
+    // if (ageDemoVals === undefined || ageDemoVals === null) {
+    //   ageDemoVals = ['child', 'teen', 'adult', 'senior'] as AgeDemographic[];
+    // }
 
     const resp = await prisma.organization.findMany({
       where: {
         active: true,
+        // ageDemographic: {
+        //   hasEvery: ageDemoVals,
+        // },
+        // lgbtqDemographic: {
+        //   hasEvery: lgbtqDemoVals,
+        // },
+        // raceDemographic: {
+        //   hasEvery: raceDemoVals,
+        // },
       },
       orderBy: {
         name: 'asc',
@@ -249,6 +239,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
         workType: true,
         lat: true,
         long: true,
+        ageDemographic: true,
+        lgbtqDemographic: true,
+        raceDemographic: true,
       },
     });
     const orgs = JSON.parse(JSON.stringify(resp)) as PublicOrganization[];
@@ -261,3 +254,16 @@ export const getServerSideProps: GetServerSideProps = async () => {
     return { props: { errors: err.message } };
   }
 };
+function useSWR(
+  arg0: string,
+  fetch: (
+    input: RequestInfo,
+    init?: RequestInit | undefined
+  ) => Promise<Response>
+): {
+  ageDemoVals: Array<AgeDemographic>;
+  lgbtqDemoVals: Array<LgbtqDemographic>;
+  raceDemoVals: Array<RaceDemographic>;
+} {
+  throw new Error('Function not implemented.');
+}
