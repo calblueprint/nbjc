@@ -187,7 +187,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       return { notFound: true };
     }
 
-    const resp = await await prisma.organization.findOne({
+    const resp = await await prisma.organization.findUnique({
       where: { id: Number(id) },
       select: {
         id: true,
