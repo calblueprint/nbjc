@@ -21,12 +21,7 @@ import Layout from 'components/Layout';
 // DELETE LINE BELOW when implemented
 // eslint-disable-next-line no-use-before-define
 import React, { useState } from 'react';
-import {
-  AgeDemographic,
-  LgbtqDemographic,
-  Organization,
-  RaceDemographic,
-} from '@prisma/client';
+import { Organization } from '@prisma/client';
 import styles from '../styles/Home.module.css';
 
 const Map = dynamic(() => import('../components/Map'), {
@@ -46,9 +41,9 @@ const demographicTypes = [
   'Other',
 ];
 
-const backgroundTypes = ['Grassroots/Local', 'Statewide', 'National', 'Other'];
+const audienceTypes = ['Child', 'Teen', 'Adult', 'Senior'];
 
-const audienceTypes = [
+const backgroundTypes = [
   'POC (All)',
   'Black',
   'Asian',
@@ -63,37 +58,18 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
 
   // ///// ADDED [START] /////
 
-  const [ageDemoVals, setAgeDemoVals] = useState([
-    'child',
-    'teen',
-    'adult',
-    'senior',
-  ] as AgeDemographic[]);
+  // AUDIENCE TYPES
   const [child, setChild] = useState(false);
   const [teen, setTeen] = useState(false);
   const [adult, setAdult] = useState(false);
   const [senior, setSenior] = useState(false);
-  const [lgbtqDemoVals, setLgbtqDemoVals] = useState([
-    'lgbtqAll',
-    'sgl',
-    'transgender',
-    'asexualAromantic',
-    'other',
-  ] as LgbtqDemographic[]);
+  // IDENTITY TYPES
   const [lgbtqAll, setLgbtqAll] = useState(false);
   const [sgl, setSgl] = useState(false);
   const [transgender, setTransgender] = useState(false);
   const [asexualAromantic, setAsexualAromantic] = useState(false);
   const [otherLgbtq, setOtherLgbtq] = useState(false);
-  const [raceDemoVals, setRaceDemoVals] = useState([
-    'pocAll',
-    'asian',
-    'latinx',
-    'black',
-    'pacificIslander',
-    'nativeIndigeneous',
-    'other',
-  ] as RaceDemographic[]);
+  // BACKGROUND TYPES
   const [pocAll, setPocAll] = useState(false);
   const [asian, setAsian] = useState(false);
   const [latinx, setLatinx] = useState(false);
@@ -101,6 +77,33 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
   const [pacificIslander, setPacificIslander] = useState(false);
   const [nativeIndigeneous, setNativeIndigeneous] = useState(false);
   const [otherRace, setOtherRace] = useState(false);
+
+  // handle changes
+  const [demographicFilters, setDemographicFilters] = React.useState<string[]>(
+    []
+  );
+  const [backgroundFilters, setBackgroundFilters] = React.useState<string[]>(
+    []
+  );
+  const [audienceFilters, setAudienceFilters] = React.useState<string[]>([]);
+
+  const handleDemographicChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ): void => {
+    setDemographicFilters(event.target.value as string[]);
+  };
+
+  const handleBackgroundChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ): void => {
+    setBackgroundFilters(event.target.value as string[]);
+  };
+
+  const handleAudienceChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ): void => {
+    setAudienceFilters(event.target.value as string[]);
+  };
 
   // goes through vals and checks if they have been set true
   function setsTrue(): void {
@@ -123,71 +126,57 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
     setNativeIndigeneous(false);
     setOtherRace(false);
     //
-    if (ageDemoVals.includes('child')) {
+    if (audienceFilters.includes('Child')) {
       setChild(true);
     }
-    if (ageDemoVals.includes('teen')) {
+    if (audienceFilters.includes('Teen')) {
       setTeen(true);
     }
-    if (ageDemoVals.includes('adult')) {
+    if (audienceFilters.includes('Adult')) {
       setAdult(true);
     }
-    if (ageDemoVals.includes('senior')) {
+    if (audienceFilters.includes('Senior')) {
       setSenior(true);
     }
     //
-    if (lgbtqDemoVals.includes('lgbtqAll')) {
+    if (demographicFilters.includes('LGBTQ+')) {
       setLgbtqAll(true);
     }
-    if (lgbtqDemoVals.includes('sgl')) {
+    if (demographicFilters.includes('SGL')) {
       setSgl(true);
     }
-    if (lgbtqDemoVals.includes('transgender')) {
+    if (demographicFilters.includes('Transgender')) {
       setTransgender(true);
     }
-    if (lgbtqDemoVals.includes('other')) {
+    if (demographicFilters.includes('Asexual/Aromantic')) {
+      setAsexualAromantic(true);
+    }
+    if (demographicFilters.includes('Other')) {
       setOtherLgbtq(true);
     }
     //
-    if (raceDemoVals.includes('pocAll')) {
+    if (backgroundFilters.includes('POC (All)')) {
       setPocAll(true);
     }
-    if (raceDemoVals.includes('asian')) {
+    if (backgroundFilters.includes('Asian')) {
       setAsian(true);
     }
-    if (raceDemoVals.includes('latinx')) {
+    if (backgroundFilters.includes('Latinx')) {
       setLatinx(true);
     }
-    if (raceDemoVals.includes('black')) {
+    if (backgroundFilters.includes('Black')) {
       setBlack(true);
     }
-    if (raceDemoVals.includes('pacificIslander')) {
+    if (backgroundFilters.includes('Pacific Islander')) {
       setPacificIslander(true);
     }
-    if (raceDemoVals.includes('nativeIndigeneous')) {
+    if (backgroundFilters.includes('Native/Indigeneous')) {
       setNativeIndigeneous(true);
     }
-    if (raceDemoVals.includes('other')) {
+    if (backgroundFilters.includes('Other')) {
       setOtherRace(true);
     }
   }
-
-  // sets new incoming lists...prepare to compare w current list
-  // DELETE LINE BELOW when implemented
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleAgeChange = (values: Array<AgeDemographic>): void => {
-    setAgeDemoVals(values);
-  };
-  // DELETE LINE BELOW when implemented
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleLgbtqChange = (values: Array<LgbtqDemographic>): void => {
-    setLgbtqDemoVals(values);
-  };
-  // DELETE LINE BELOW when implemented
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleRaceChange = (values: Array<RaceDemographic>): void => {
-    setRaceDemoVals(values);
-  };
 
   // orgs that will be shown to user
   const [orgsDisplayed, setOrgsDisplayed] = useState(orgs);
@@ -253,17 +242,35 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
     //
     return org;
   }
+
+  // cards for orgs
+  const displayOrgs = (): React.ElementType | void => {
+    <div className={styles.cards}>
+      {orgsDisplayed.length !== 0 ? (
+        orgsDisplayed.map((org) => (
+          <Card className={styles.card} key={org.id}>
+            <CardActionArea onClick={() => router.push(`/orgs/${org.id}`)}>
+              <CardContent>
+                <Typography variant="h5">{org.name}</Typography>
+                <Typography variant="body2">
+                  {org.organizationType}
+                  {org.organizationType && org.workType ? ' • ' : null}
+                  {org.workType}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+        ))
+      ) : (
+        <Typography>No Organizations</Typography>
+      )}
+    </div>;
+  };
+
   // filter the orgs; enacts when apply button pressed
   const handleApplyChange = (): void => {
     setsTrue();
     setOrgsDisplayed(orgs.filter(hasFilters));
-  };
-
-  // for testing purposes on backend
-  const testChange = (): void => {
-    setAgeDemoVals(['child']);
-    setLgbtqDemoVals(['lgbtqAll']);
-    setRaceDemoVals(['pocAll']);
   };
 
   // ///// ADDED [END] /////
@@ -271,32 +278,6 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
   // This is to verify whether or not the current user has a proper session configured to see the page.
   // Will be implemented in the next PR.
   // const [session, loading] = useSession();
-
-  const [demographicFilters, setDemographicFilters] = React.useState<string[]>(
-    []
-  );
-  const [backgroundFilters, setBackgroundFilters] = React.useState<string[]>(
-    []
-  );
-  const [audienceFilters, setAudienceFilters] = React.useState<string[]>([]);
-
-  const handleDemographicChange = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ): void => {
-    setDemographicFilters(event.target.value as string[]);
-  };
-
-  const handleBackgroundChange = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ): void => {
-    setBackgroundFilters(event.target.value as string[]);
-  };
-
-  const handleAudienceChange = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ): void => {
-    setAudienceFilters(event.target.value as string[]);
-  };
 
   return (
     <Layout>
@@ -329,7 +310,7 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                   multiple
                   value={demographicFilters}
                   onChange={handleDemographicChange}
-                  renderValue={(value) => (
+                  renderValue={() => (
                     <InputLabel classes={{ root: styles.selectedLabel }}>
                       Identities
                     </InputLabel>
@@ -368,7 +349,7 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                   multiple
                   value={backgroundFilters}
                   onChange={handleBackgroundChange}
-                  renderValue={(value) => (
+                  renderValue={() => (
                     <InputLabel classes={{ root: styles.selectedLabel }}>
                       Background
                     </InputLabel>
@@ -406,7 +387,7 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                   multiple
                   value={audienceFilters}
                   onChange={handleAudienceChange}
-                  renderValue={(value) => (
+                  renderValue={() => (
                     <InputLabel classes={{ root: styles.selectedLabel }}>
                       Audience
                     </InputLabel>
@@ -435,8 +416,14 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                   ))}
                 </Select>
               </FormControl>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleApplyChange}
+              >
+                Apply
+              </Button>
             </div>
-
             <div className={styles.cards}>
               {orgsDisplayed.length !== 0 ? (
                 orgsDisplayed.map((org) => (
@@ -459,6 +446,7 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                 <Typography>No Organizations</Typography>
               )}
             </div>
+            ;
           </div>
 
           <div className={styles.rightCol}>
