@@ -51,8 +51,8 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
               <Popup
                 onClose={() => setSelectedOrg(null)}
                 closeOnClick
-                latitude={org.lat}
-                longitude={org.long}
+                latitude={Number(org.lat)}
+                longitude={Number(org.long)}
               >
                 {org.name}
               </Popup>

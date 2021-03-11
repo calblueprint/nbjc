@@ -61,7 +61,9 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
         {category}
         <div className={styles.demographicTags}>
           {groups.length !== 0 ? (
-            groups.map((group) => <Chip label={group} variant="outlined" />)
+            groups.map((group, index) => (
+              <Chip label={group} variant="outlined" />
+            ))
           ) : (
             <Chip label="None" variant="outlined" />
           )}
