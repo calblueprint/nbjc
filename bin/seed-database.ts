@@ -1,14 +1,13 @@
 /* eslint-disable no-console */
 import {
+  Prisma,
   AgeDemographic,
-  ApplicationQuestionCreateArgs,
   ApplicationStatus,
   LgbtqDemographic,
   OrganizationType,
   PrismaClient,
   RaceDemographic,
   User,
-  UserCreateArgs,
   UserRole,
   WorkType,
 } from '@prisma/client';
@@ -125,7 +124,7 @@ export default async function seedDatabase(): Promise<void> {
   const appQuestionsCreateMessage = Ora(
     `Creating custom application questions`
   ).start();
-  const mockAppQuestions: ApplicationQuestionCreateArgs[] = SAMPLE_QUESTIONS.map(
+  const mockAppQuestions: Prisma.ApplicationQuestionCreateArgs[] = SAMPLE_QUESTIONS.map(
     (q) => ({
       data: q,
     })
@@ -160,7 +159,7 @@ export default async function seedDatabase(): Promise<void> {
   const orgUsersCreateMessage = Ora(
     `Creating ${NUMBER_USERS} org users`
   ).start();
-  const mockOrgUsers: UserCreateArgs[] = Array(NUMBER_USERS)
+  const mockOrgUsers: Prisma.UserCreateArgs[] = Array(NUMBER_USERS)
     .fill(null)
     .map((_value: null, index: number) => {
       return {
@@ -220,7 +219,7 @@ export default async function seedDatabase(): Promise<void> {
   const modUsersCreateMessage = Ora(
     `Creating ${NUMBER_USERS} org users`
   ).start();
-  const mockModUsers: UserCreateArgs[] = Array(NUMBER_USERS)
+  const mockModUsers: Prisma.UserCreateArgs[] = Array(NUMBER_USERS)
     .fill(null)
     .map((_value: null, index: number) => {
       return {
