@@ -1,5 +1,5 @@
 import prisma from 'utils/prisma';
-import { Organization } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import OrganizationSchema from 'interfaces/organization';
@@ -37,7 +37,11 @@ export default async (
 
   const applicationStatus = isSubmit ? 'submitted' : 'draft';
   const active = isSubmit ? false : undefined;
-  const data = { ...value, applicationStatus, active } as Organization;
+  const data = {
+    ...value,
+    applicationStatus,
+    active,
+  } as Prisma.OrganizationCreateInput;
 
   try {
     const newOrg = await prisma.organization.upsert({
