@@ -446,7 +446,6 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                 <Typography>No Organizations</Typography>
               )}
             </div>
-            ;
           </div>
 
           <div className={styles.rightCol}>
