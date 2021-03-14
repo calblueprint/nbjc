@@ -33,16 +33,14 @@ type HomeProps = {
 };
 
 // using lists for now, but maybe replace with enums?
-const demographicTypes = [
+const identityTypes = [
   'LGBTQ+',
   'SGL',
   'Transgender',
   'Asexual/Aromantic',
   'Other',
 ];
-
 const audienceTypes = ['Child', 'Teen', 'Adult', 'Senior'];
-
 const backgroundTypes = [
   'POC (All)',
   'Black',
@@ -56,41 +54,38 @@ const backgroundTypes = [
 const Home: React.FC<HomeProps> = ({ orgs }) => {
   const router = useRouter();
 
-  // ///// ADDED [START] /////
-
   // AUDIENCE TYPES
-  const [child, setChild] = useState(false);
-  const [teen, setTeen] = useState(false);
-  const [adult, setAdult] = useState(false);
-  const [senior, setSenior] = useState(false);
+  // const [child, setChild] = useState(false);
+  let child = false;
+  let teen = false;
+  let adult = false;
+  let senior = false;
   // IDENTITY TYPES
-  const [lgbtqAll, setLgbtqAll] = useState(false);
-  const [sgl, setSgl] = useState(false);
-  const [transgender, setTransgender] = useState(false);
-  const [asexualAromantic, setAsexualAromantic] = useState(false);
-  const [otherLgbtq, setOtherLgbtq] = useState(false);
+  let lgbtqAll = false;
+  let sgl = false;
+  let transgender = false;
+  let asexualAromantic = false;
+  let otherLgbtq = false;
   // BACKGROUND TYPES
-  const [pocAll, setPocAll] = useState(false);
-  const [asian, setAsian] = useState(false);
-  const [latinx, setLatinx] = useState(false);
-  const [black, setBlack] = useState(false);
-  const [pacificIslander, setPacificIslander] = useState(false);
-  const [nativeIndigeneous, setNativeIndigeneous] = useState(false);
-  const [otherRace, setOtherRace] = useState(false);
+  let pocAll = false;
+  let asian = false;
+  let latinx = false;
+  let black = false;
+  let pacificIslander = false;
+  let nativeIndigeneous = false;
+  let otherRace = false;
 
   // handle changes
-  const [demographicFilters, setDemographicFilters] = React.useState<string[]>(
-    []
-  );
+  const [identityFilters, setIdentityFilters] = React.useState<string[]>([]);
   const [backgroundFilters, setBackgroundFilters] = React.useState<string[]>(
     []
   );
   const [audienceFilters, setAudienceFilters] = React.useState<string[]>([]);
 
-  const handleDemographicChange = (
+  const handleIdentityChange = (
     event: React.ChangeEvent<{ value: unknown }>
   ): void => {
-    setDemographicFilters(event.target.value as string[]);
+    setIdentityFilters(event.target.value as string[]);
   };
 
   const handleBackgroundChange = (
@@ -107,74 +102,74 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
 
   // goes through vals and checks if they have been set true
   function setsTrue(): void {
-    setChild(false);
-    setTeen(false);
-    setAdult(false);
-    setSenior(false);
+    child = false;
+    teen = false;
+    adult = false;
+    senior = false;
     //
-    setLgbtqAll(false);
-    setSgl(false);
-    setTransgender(false);
-    setAsexualAromantic(false);
-    setOtherLgbtq(false);
+    lgbtqAll = false;
+    sgl = false;
+    transgender = false;
+    asexualAromantic = false;
+    otherLgbtq = false;
     //
-    setPocAll(false);
-    setAsian(false);
-    setLatinx(false);
-    setBlack(false);
-    setPacificIslander(false);
-    setNativeIndigeneous(false);
-    setOtherRace(false);
+    pocAll = false;
+    asian = false;
+    latinx = false;
+    black = false;
+    pacificIslander = false;
+    nativeIndigeneous = false;
+    otherRace = false;
     //
     if (audienceFilters.includes('Child')) {
-      setChild(true);
+      child = true;
     }
     if (audienceFilters.includes('Teen')) {
-      setTeen(true);
+      teen = true;
     }
     if (audienceFilters.includes('Adult')) {
-      setAdult(true);
+      adult = true;
     }
     if (audienceFilters.includes('Senior')) {
-      setSenior(true);
+      senior = true;
     }
     //
-    if (demographicFilters.includes('LGBTQ+')) {
-      setLgbtqAll(true);
+    if (identityFilters.includes('LGBTQ+')) {
+      lgbtqAll = true;
     }
-    if (demographicFilters.includes('SGL')) {
-      setSgl(true);
+    if (identityFilters.includes('SGL')) {
+      sgl = true;
     }
-    if (demographicFilters.includes('Transgender')) {
-      setTransgender(true);
+    if (identityFilters.includes('Transgender')) {
+      transgender = true;
     }
-    if (demographicFilters.includes('Asexual/Aromantic')) {
-      setAsexualAromantic(true);
+    if (identityFilters.includes('Asexual/Aromantic')) {
+      asexualAromantic = true;
     }
-    if (demographicFilters.includes('Other')) {
-      setOtherLgbtq(true);
+    if (identityFilters.includes('Other')) {
+      otherLgbtq = true;
     }
     //
     if (backgroundFilters.includes('POC (All)')) {
-      setPocAll(true);
+      pocAll = true;
     }
     if (backgroundFilters.includes('Asian')) {
-      setAsian(true);
+      asian = true;
     }
     if (backgroundFilters.includes('Latinx')) {
-      setLatinx(true);
+      latinx = true;
     }
     if (backgroundFilters.includes('Black')) {
-      setBlack(true);
+      black = true;
     }
     if (backgroundFilters.includes('Pacific Islander')) {
-      setPacificIslander(true);
+      pacificIslander = true;
     }
     if (backgroundFilters.includes('Native/Indigeneous')) {
-      setNativeIndigeneous(true);
+      nativeIndigeneous = true;
     }
     if (backgroundFilters.includes('Other')) {
-      setOtherRace(true);
+      otherRace = true;
     }
   }
 
@@ -243,37 +238,17 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
     return org;
   }
 
-  // cards for orgs
-  const displayOrgs = (): React.ElementType | void => {
-    <div className={styles.cards}>
-      {orgsDisplayed.length !== 0 ? (
-        orgsDisplayed.map((org) => (
-          <Card className={styles.card} key={org.id}>
-            <CardActionArea onClick={() => router.push(`/orgs/${org.id}`)}>
-              <CardContent>
-                <Typography variant="h5">{org.name}</Typography>
-                <Typography variant="body2">
-                  {org.organizationType}
-                  {org.organizationType && org.workType ? ' • ' : null}
-                  {org.workType}
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-          </Card>
-        ))
-      ) : (
-        <Typography>No Organizations</Typography>
-      )}
-    </div>;
-  };
-
   // filter the orgs; enacts when apply button pressed
   const handleApplyChange = (): void => {
+    console.log('Apply Button Pressed');
     setsTrue();
+    orgs.filter(hasFilters);
+    console.log('First:');
+    console.log(orgsDisplayed);
     setOrgsDisplayed(orgs.filter(hasFilters));
+    console.log('Second:');
+    console.log(orgsDisplayed);
   };
-
-  // ///// ADDED [END] /////
 
   // This is to verify whether or not the current user has a proper session configured to see the page.
   // Will be implemented in the next PR.
@@ -308,8 +283,8 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                   className={styles.filterDropDown}
                   label="Identities"
                   multiple
-                  value={demographicFilters}
-                  onChange={handleDemographicChange}
+                  value={identityFilters}
+                  onChange={handleIdentityChange}
                   renderValue={() => (
                     <InputLabel classes={{ root: styles.selectedLabel }}>
                       Identities
@@ -324,7 +299,7 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                     getContentAnchorEl: null,
                   }}
                 >
-                  {demographicTypes.map((filterOption: string) => (
+                  {identityTypes.map((filterOption: string) => (
                     <MenuItem
                       classes={{
                         selected: styles.selectedFilter,
