@@ -75,26 +75,22 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
   const handleSubmit = async (values: Form): Promise<void> => {
     if (session && session.user.role === 'organization') {
       const { short1, short2, short3, projects, ...tempValues } = values;
-      // console.log('org.projects', org?.organizationProjects);
-      // console.log('projects', projects);
-      const projSet = new Set();
-      const projToDelete = [];
+      // set to hold all current projects in front-end
+      const currStateProjSet = new Set();
+      // IDs of projects from original serverSideProps get request
+      const originalIDs = org?.organizationProjects?.map((o) => o.id) ?? [];
+      // will hold the IDs of the projects to delete
+      const projIDsToDelete = [];
       let ind = 0;
-      // FIXME: Logic bug in these loops? (not filtered correctly)
-      // More than just the projects we want seem to be getting deleted
-      const oP = org?.organizationProjects?.map((o) => o.id) ?? [];
       for (let i = 0; i < projects.length; i += 1) {
-        projSet.add(projects[i].id);
+        currStateProjSet.add(projects[i].id);
       }
-      for (let i = 0; i < oP.length; i += 1) {
-        if (!projSet.has(oP[i])) {
-          projToDelete[ind] = oP[i];
+      for (let i = 0; i < originalIDs.length; i += 1) {
+        if (!currStateProjSet.has(originalIDs[i])) {
+          projIDsToDelete[ind] = originalIDs[i];
           ind += 1;
         }
       }
-      console.log('hey');
-      console.log('projects to delete:', projToDelete);
-      // result: projToDelete contains ids of all projects to delete
       try {
         const res = await fetch(`/api/app/orgs?submitting=${!saveDraft}`, {
           method: 'POST',
@@ -105,7 +101,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
             userEmail: session.user.email,
             ...tempValues,
             projects,
-            projToDelete,
+            projIDsToDelete,
           }),
         });
 
@@ -140,25 +136,13 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
     short1: '',
     short2: '',
     short3: '',
-    // projects: [{ title: '', description: '' }],
-    // TODO: map projects out!
     projects:
       org?.organizationProjects?.map((o) => ({
-        // id: o.id,
+        id: o.id ?? null,
         title: o.title,
         description: o.description ?? '',
       })) ?? [],
   };
-
-  // console.log(org, 'this is org');
-  // console.log(org.projects, 'this is org');
-
-  // const formik = useFormik({
-  //   initialValues,
-  //   validate,
-  //   validateOnChange: false,
-  //   onSubmit: handleSubmit,
-  // });
 
   const addNewProj = (
     values: Form,

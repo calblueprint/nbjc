@@ -18,7 +18,7 @@ export default async (
 
   const isSubmit = req.query.submitting === 'true';
 
-  const { userEmail, projects, projToDelete, ...body } = req.body;
+  const { userEmail, projects, projIDsToDelete, ...body } = req.body;
   const { error, value } = OrganizationSchema.validate(body, {
     abortEarly: false,
     context: {
@@ -28,8 +28,6 @@ export default async (
   if (error) {
     return CreateError(400, parseValidationError(error), res);
   }
-  const appProjs = projects as Project[];
-  const deleteProjs = projToDelete as number[];
 
   const user = await prisma.user.findOne({
     where: {
@@ -48,8 +46,9 @@ export default async (
   const applicationStatus = isSubmit ? 'submitted' : 'draft';
   const active = isSubmit ? false : undefined;
   const data = { ...value, applicationStatus, active } as Organization;
-  // const filteredItems = items.filter(item => !!item.title)
 
+  const appProjs = projects as Project[];
+  const deleteProjs = projIDsToDelete as number[];
   const toCreate = appProjs.filter(({ id }) => !!id); // projects without id, to be created
   const toUpdate = appProjs.filter((i) => !i.id); // projects to update
   let newOrg;
@@ -60,26 +59,23 @@ export default async (
       },
       create: {
         ...data,
+        // Would prefer to use createMany here. Currently this causes a POST request error
+        // organizationProjects: {
+        //   create: toCreate.map(({ title, description }) => ({
+        //     title,
+        //     description,
+        //     connect: {
+        //       id: newOrg.id,
+        //     },
+        //   })),
+        // },
         user: {
           connect: {
             id: userId,
           },
         },
-        // organizationProjects: {
-        //   createMany: toCreate.map(({ id, title, description }) => ({
-        //     data:
-        //   })),
-
-        // organizationProjects: {
-        //   create: toCreate.map(({ id, title, description }) => ({
-        //     title,
-        //     description,
-        //     connect: {
-        //       id,
-        //     },
-        //   })),
-        // },
       },
+
       update: {
         ...data,
         organizationProjects: {
@@ -103,18 +99,7 @@ export default async (
 
   await prisma.organizationProject.deleteMany;
 
-  // try {
-  //   const deleteProjects = await prisma.user.deleteMany({
-  //     where: {
-  //       OR: projToDelete,
-  //     },
-  //   });
-  // } catch (err) {
-  //   return CreateError(500, 'Failed to delete project', res);
-  // }
-
-  // FIXME: projects aren't getting created. Would be ideal to make it work using createMany
-  // in the upsert above on line 68
+  // FIXME: This is a temporary (ugly) solution for creating projects
   try {
     for (let i = 0; i < toCreate.length; i += 1) {
       // eslint-disable-next-line no-await-in-loop
@@ -133,5 +118,6 @@ export default async (
   } catch (err) {
     return CreateError(500, 'Failed to create project', res);
   }
+
   return res.json(newOrg);
 };
