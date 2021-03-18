@@ -55,6 +55,7 @@ model Organization {
   user                 User?                 @relation("OrganizationsToUsers", fields: [userId], references: [id])
   applicationNote      ApplicationNote?      @relation("ApplicationNotesToOrganizations")
   applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
+  organization_events  organization_events[] @relation("organization_eventsToorganizations")
   organizationProjects OrganizationProject[] @relation("OrganizationProjectsToOrganizations")
 
   @@map("organizations")
@@ -151,13 +152,26 @@ model OrganizationProject {
   @@map("organization_projects")
 }
 
-enum AgeDemographic {
-  child   @map("Children")
-  teen    @map("Teens")
-  adult   @map("Adults")
-  senior  @map("Seniors")
+model organizationEvents {
+  id                Int                @id @default(autoincrement())
+  title             String
+  description       String
+  address           String?
+  link              String?
+  lgbtq_demographic LgbtqDemographic[]
+  race_demographic  RaceDemographic[]
+  age_demographic   AgeDemographic[]
+  organization_id   Int
+  organizations     Organization       @relation("organization_eventsToorganizations", fields: [organization_id], references: [id])
+}
 
-  @@map("age_demographic")
+enum AgeDemographic {
+  child @map("Children")
+  teen @map("Teens")
+  adult @map("Adults")
+  senior @map("Seniors")
+
+   @@map("age_demographic")
 }
 
 enum ApplicationStatus {
@@ -166,38 +180,38 @@ enum ApplicationStatus {
   approved
   rejected
 
-  @@map("application_status")
+   @@map("application_status")
 }
 
 enum LgbtqDemographic {
-  lgbtqAll          @map("LGBTQ+ (All)")
-  sgl               @map("SGL")
-  transgender       @map("Transgender")
-  asexualAromantic  @map("Asexual/Aromantic")
-  other             @map("Other")
+  lgbtqAll @map("LGBTQ+ (All)")
+  sgl @map("SGL")
+  transgender @map("Transgender")
+  asexualAromantic @map("Asexual/Aromantic")
+  other @map("Other")
 
-  @@map("lgbtq_demographic")
+   @@map("lgbtq_demographic")
 }
 
 enum OrganizationType {
-  grassrootsLocal  @map("Grassroots/Local")
-  statewide        @map("Statewide")
-  national         @map("National")
-  other            @map("Other")
+  grassrootsLocal @map("Grassroots/Local")
+  statewide @map("Statewide")
+  national @map("National")
+  other @map("Other")
 
-  @@map("organization_type")
+   @@map("organization_type")
 }
 
 enum RaceDemographic {
-  pocAll             @map("POC (All)")
-  black              @map("Black")
-  asian              @map("Asian")
-  pacificIslander    @map("Pacific Islander")
-  latinx             @map("Latinx")
-  nativeIndigeneous  @map("Native/Indigeneous")
-  other              @map("Other")
+  pocAll @map("POC (All)")
+  black @map("Black")
+  asian @map("Asian")
+  pacificIslander @map("Pacific Islander")
+  latinx @map("Latinx")
+  nativeIndigeneous @map("Native/Indigeneous")
+  other @map("Other")
 
-  @@map("race_demographic")
+   @@map("race_demographic")
 }
 
 enum UserRole {
@@ -205,13 +219,13 @@ enum UserRole {
   moderator
   admin
 
-  @@map("user_role")
+   @@map("user_role")
 }
 
 enum WorkType {
-  advocacy          @map("Advocacy")
-  directService     @map("Direct Service")
-  networkingSocial  @map("Networking/Social")
+  advocacy @map("Advocacy")
+  directService @map("Direct Service")
+  networkingSocial @map("Networking/Social")
 
-  @@map("work_type")
+   @@map("work_type")
 }
