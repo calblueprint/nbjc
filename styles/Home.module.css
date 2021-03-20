@@ -56,19 +56,20 @@
 .filterDropDown {
   border-radius: 35px;
   width: 110px;
-  height: 35px;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  height: 25px;
+  margin-top: 13px;
 }
 
 .filterOption {
   font-style: normal;
   font-size: 13px;
-  color: #423e45;
-  border-radius: 15px;
+  color: #908D93;
+  border-radius: 18px;
+  border: 1px solid #908D93;
   margin: 10px;
   justify-content: center;
-  background-color: #ebebeb;
+  text-transform: none;
+  height: 25px;
 }
 
 .filterLabel {
@@ -86,10 +87,13 @@
 .selectedFilter {
   font-style: normal;
   font-size: 13px;
-  color: #9056ef;
-  border-radius: 15px;
+  color: #423E45;
+  border-radius: 18px;
+  border: 1px solid #423E45;
   margin: 10px;
   justify-content: center;
+  text-transform: none;
+  background: #F8F4FF;
 }
 
 .textField {
