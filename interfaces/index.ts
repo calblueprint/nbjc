@@ -22,7 +22,7 @@ export type OrgApp = {
   website: string;
   workType: string;
   ages: string[];
-  orientation: string[];
+  identity: string[];
   ethnicity: string[];
   EIN: number;
 };

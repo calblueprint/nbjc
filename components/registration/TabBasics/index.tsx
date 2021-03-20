@@ -27,7 +27,7 @@ type TabProps = {
 };
 
 // TODO: create readable mapping
-const orientation = [
+const identity = [
   'lgbtqAll',
   'sgl',
   'transgender',
@@ -288,11 +288,11 @@ const TabBasics: React.FC<TabProps> = ({
         <p>Audience Demographics</p>
         <div className={styles.auto}>
           <div className={styles.autoField}>
-            <p>Orientation</p>
+            <p>Identity</p>
             <Autocomplete
               multiple
               id="lgbtqDemographic"
-              options={orientation}
+              options={identity}
               getOptionLabel={(option) => option}
               filterSelectedOptions
               value={values.lgbtqDemographic}

@@ -61,7 +61,7 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ org }) => {
       <div className={styles.row}>
         {org.lgbtqDemographic && (
           <div className={styles.section}>
-            <div className={styles.small}>Orientation</div>
+            <div className={styles.small}>Identity</div>
             <div className={styles.chips}>
               {org.lgbtqDemographic.length !== 0 ? (
                 org.lgbtqDemographic.map((item) => (

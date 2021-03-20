@@ -154,7 +154,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
               <div className={styles.rightContent}>
                 <h3 className={styles.audienceHeader}>Audience Demographics</h3>
                 <div className={styles.demographicSection}>
-                  {demographics('Orientation', org.lgbtqDemographic)}
+                  {demographics('Identities', org.lgbtqDemographic)}
                   {demographics('Background', org.raceDemographic)}
                   {demographics('Age Range', org.ageDemographic)}
                 </div>
