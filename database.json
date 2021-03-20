@@ -9,9 +9,7 @@
 
   "prod": {
     "driver": "pg",
-    "ssl": {
-      "rejectUnauthorized": false
-    }
+    "ssl": "true"
   },
 
   "pg": {
