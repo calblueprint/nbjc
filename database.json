@@ -2,18 +2,18 @@
   "dev": {
     "driver": "pg"
   },
-
   "test": {
     "driver": "pg"
   },
-
-  "prod": {
-    "driver": "pg",
-    "ssl": "true"
-  },
-
   "pg": {
     "driver": "pg",
     "url": { "ENV": "LOCAL_DATABASE_URL" }
+  },
+  "prod": {
+    "driver": "pg",
+    "ssl": {
+      "rejectUnauthorized": false
+    },
+    "url": { "ENV": "DATABASE_URL" }
   }
 }
