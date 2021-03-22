@@ -8,7 +8,11 @@
   },
 
   "prod": {
-    "driver": "pg"
+    "driver": "pg",
+    "ssl": {
+      "rejectUnauthorized": false
+    },
+    "url": { "ENV": "DATABASE_URL" }
   },
 
   "pg": {
