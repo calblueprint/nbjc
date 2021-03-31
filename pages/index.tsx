@@ -97,8 +97,10 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                       onClick={() => router.push(`/orgs/${org.id}`)}
                     >
                       <CardContent>
-                        <Typography variant="h5">{org.name}</Typography>
-                        <Typography variant="body2">
+                        <Typography variant="h4">
+                          <b>{org.name}</b>
+                        </Typography>
+                        <Typography variant="body1">
                           {org.organizationType}
                           {org.organizationType && org.workType ? ' • ' : null}
                           {org.workType}
