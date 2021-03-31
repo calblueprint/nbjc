@@ -12,7 +12,7 @@ import sanitizeUser from 'utils/sanitizeUser';
  * @param id - the ID of the User
  */
 export const getUser = async (id: string): Promise<SanitizedUser | null> => {
-  const user = await prisma.user.findOne({
+  const user = await prisma.user.findUnique({
     where: { id: Number(id) },
   });
   if (user) {

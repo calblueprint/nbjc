@@ -61,7 +61,9 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
         {category}
         <div className={styles.demographicTags}>
           {groups.length !== 0 ? (
-            groups.map((group) => <Chip label={group} variant="outlined" />)
+            groups.map((group) => (
+              <Chip key={group} label={group} variant="outlined" />
+            ))
           ) : (
             <Chip label="None" variant="outlined" />
           )}
@@ -187,7 +189,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       return { notFound: true };
     }
 
-    const resp = await await prisma.organization.findOne({
+    const resp = await await prisma.organization.findUnique({
       where: { id: Number(id) },
       select: {
         id: true,

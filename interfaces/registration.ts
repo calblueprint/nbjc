@@ -1,4 +1,4 @@
-import { ApplicationQuestionGetPayload, Organization } from '@prisma/client';
+import { Prisma, Organization } from '@prisma/client';
 import Joi from 'joi';
 
 export type Response = {
@@ -7,7 +7,7 @@ export type Response = {
 };
 
 export type AppQnR =
-  | ApplicationQuestionGetPayload<{
+  | Prisma.ApplicationQuestionGetPayload<{
       select: {
         id: true;
         placeholder: true;

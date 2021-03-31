@@ -2,11 +2,9 @@
   "dev": {
     "driver": "pg"
   },
-
   "test": {
     "driver": "pg"
   },
-
   "prod": {
     "driver": "pg",
     "ssl": {
@@ -14,7 +12,6 @@
     },
     "url": { "ENV": "DATABASE_URL" }
   },
-
   "pg": {
     "driver": "pg",
     "url": { "ENV": "LOCAL_DATABASE_URL" }
