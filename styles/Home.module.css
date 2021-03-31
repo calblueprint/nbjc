@@ -73,3 +73,7 @@
   width: 100%;
   margin: 3px;
 }
+.card {
+  margin: 8px;
+  text-align: left;
+}
