@@ -53,7 +53,7 @@ const Registration: React.FC = () => {
   };
 
   const handleSubmit = (values: Form): void => {
-    console.log('submitting', values);
+    console.log('submittingg', values);
     // TODO: Change status to submitted when submitted
   };
 
