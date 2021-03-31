@@ -21,33 +21,73 @@ export type PublicOrganization = OrganizationGetPayload<{
 }>;
 
 const schema = Joi.object({
-  name: Joi.string().when('$strict', { is: true, then: Joi.required() }),
+  name: Joi.string()
+    .empty('')
+    .default(null)
+    .when('$strict', { is: true, then: Joi.required() }),
   long: Joi.number(),
   lat: Joi.number(),
   applicationStatus: Joi.string().valid(...Object.values(ApplicationStatus)),
   active: Joi.boolean(),
-  contactName: Joi.string().when('$strict', { is: true, then: Joi.required() }),
-  contactEmail: Joi.string()
-    .email()
+  contactName: Joi.string()
+    .empty('')
+    .default(null)
     .when('$strict', { is: true, then: Joi.required() }),
-  organizationType: Joi.string().valid(...Object.values(OrganizationType)),
-  workType: Joi.string().valid(...Object.values(WorkType)),
-  address: Joi.string(),
-  missionStatement: Joi.string(),
-  shortHistory: Joi.string(),
-  keyValue: Joi.string(),
+  contactEmail: Joi.string()
+    .empty('')
+    .default(null)
+    .when('$strict', { is: true, then: Joi.string().email().required() }),
+  contactPhone: Joi.string()
+    .empty('')
+    .default(null)
+    .when('$strict', { is: true, then: Joi.required() }),
+  website: Joi.string()
+    .empty('')
+    .default(null)
+    .when('$strict', { is: true, then: Joi.string().uri({ domain: {} }) }),
+  organizationType: Joi.string()
+    .empty('')
+    .default(null)
+    .valid(...Object.values(OrganizationType))
+    .when('$strict', { is: true, then: Joi.required() }),
+  workType: Joi.string()
+    .empty('')
+    .default(null)
+    .valid(...Object.values(WorkType))
+    .when('$strict', { is: true, then: Joi.required() }),
+  address: Joi.string()
+    .empty('')
+    .default(null)
+    .when('$strict', { is: true, then: Joi.required() }),
+  missionStatement: Joi.string()
+    .empty('')
+    .default(null)
+    .when('$strict', { is: true, then: Joi.required() }),
+  shortHistory: Joi.string()
+    .empty('')
+    .default(null)
+    .when('$strict', { is: true, then: Joi.required() }),
   lgbtqDemographic: Joi.array()
     .unique()
-    .items(Joi.string().valid(...Object.values(LgbtqDemographic))),
+    .items(Joi.string().valid(...Object.values(LgbtqDemographic)))
+    .when('$strict', { is: true, then: Joi.array().min(1).required() }),
   raceDemographic: Joi.array()
     .unique()
-    .items(Joi.string().valid(...Object.values(RaceDemographic))),
+    .items(Joi.string().valid(...Object.values(RaceDemographic)))
+    .when('$strict', { is: true, then: Joi.array().min(1).required() }),
   ageDemographic: Joi.array()
     .unique()
-    .items(Joi.string().valid(...Object.values(AgeDemographic))),
-  capacity: Joi.number(),
-  ein: Joi.number(),
-  foundingDate: Joi.date(),
+    .items(Joi.string().valid(...Object.values(AgeDemographic)))
+    .when('$strict', { is: true, then: Joi.array().min(1).required() }),
+  // capacity: Joi.number(),
+  ein: Joi.string()
+    .empty('')
+    .default(null)
+    .when('$strict', {
+      is: true,
+      then: Joi.string().pattern(/^[0-9]\d?-?\d{7}$/),
+    }),
+  // foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
 }).when('$strict', { is: true, then: Joi.object().and('lat', 'long') });
 

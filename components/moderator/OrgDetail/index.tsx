@@ -1,19 +1,20 @@
-import { Organization } from '@prisma/client';
-import { CardMedia, Chip, TextField } from '@material-ui/core';
+import { ApplicationResponse, Organization } from '@prisma/client';
+import { CardMedia, Chip } from '@material-ui/core';
 import styles from './OrgDetail.module.css';
 
 type DetailProps = {
-  items: Organization;
+  org: Organization & {
+    applicationResponses: (ApplicationResponse & {
+      applicationQuestion: { question: string };
+    })[];
+  };
 };
 
-const response =
-  "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.";
-
-const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
+const OrgDetail: React.FunctionComponent<DetailProps> = ({ org }) => {
   return (
     <div className={styles.root}>
       <div className={styles.row}>
-        {items && (
+        {org && (
           <CardMedia
             className={styles.leftMedia}
             image="/logo2.png"
@@ -21,14 +22,14 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
           />
         )}
         <div className={styles.colMedia}>
-          {items && (
+          {org && (
             <CardMedia
               className={styles.rightMedia}
               image="/logo2.png"
               title="logo"
             />
           )}
-          {items && (
+          {org && (
             <CardMedia
               className={styles.rightMedia}
               image="/logo2.png"
@@ -40,92 +41,89 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ items }) => {
       <div className={styles.row}>
         <div className={styles.section}>
           <div className={styles.big}>Basics</div>
-          {items.contactName && <div>Website: {items.contactName}</div>}
-          {items.ein && <div>EIN: {items.ein}</div>}
-          {items.createdAt && <div>Founded: {items.createdAt}</div>}
+          <div>Website: {org.contactName || 'None'}</div>
+          <div>EIN: {org.ein || 'None'}</div>
+          <div>Founded: {org.foundingDate || 'None'}</div>
         </div>
         <div className={styles.section}>
           <div className={styles.big}>Point of Contact</div>
-          {items.contactName && <div>Name: {items.contactName}</div>}
-          {items.id && <div>Phone: {items.id}</div>}
-          {items.contactEmail && <div>Email: {items.contactEmail}</div>}
+          <div>Name: {org.contactName || 'None'}</div>
+          <div>Phone: {org.contactPhone || 'None'}</div>
+          <div>Email: {org.contactEmail || 'None'}</div>
         </div>
         <div className={styles.section}>
           <div className={styles.big}>Location</div>
-          {items.organizationType && <div>Type: {items.organizationType}</div>}
-          {items.missionStatement && (
-            <div>
-              Still need sample address data: <br />
-              {items.missionStatement}
-            </div>
-          )}
+          <div>Type: {org.organizationType || 'None'}</div>
+          <div>{org.address || 'None'}</div>
         </div>
       </div>
       <div className={styles.big}>Audience Demographics</div>
       <div className={styles.row}>
-        {items.lgbtqDemographic && (
+        {org.lgbtqDemographic && (
           <div className={styles.section}>
             <div className={styles.small}>Orientation</div>
             <div className={styles.chips}>
-              {items.lgbtqDemographic.map((item) => (
-                // TODO: Add accessibility support
-                // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-                <div key={0}>
-                  <Chip label={item} variant="outlined" />
-                </div>
-              ))}
+              {org.lgbtqDemographic.length !== 0 ? (
+                org.lgbtqDemographic.map((item) => (
+                  <div key={item}>
+                    <Chip label={item} variant="outlined" />
+                  </div>
+                ))
+              ) : (
+                <Chip label="None" variant="outlined" />
+              )}
             </div>
           </div>
         )}
-        {items.raceDemographic && (
+        {org.raceDemographic && (
           <div className={styles.section}>
             <div className={styles.small}>Ethnicity</div>
             <div className={styles.chips}>
-              {items.raceDemographic.map((item) => (
-                // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-                <div key={0}>
-                  <Chip label={item} variant="outlined" />
-                </div>
-              ))}
+              {org.raceDemographic.length !== 0 ? (
+                org.raceDemographic.map((item) => (
+                  <div key={item}>
+                    <Chip label={item} variant="outlined" />
+                  </div>
+                ))
+              ) : (
+                <Chip label="None" variant="outlined" />
+              )}
             </div>
           </div>
         )}
-        {items.ageDemographic && (
+        {org.ageDemographic && (
           <div className={styles.section}>
             <div className={styles.small}>Ages</div>
             <div className={styles.chips}>
-              {items.ageDemographic.map((item) => (
-                // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-                <div key={0}>
-                  <Chip label={item} variant="outlined" />
-                </div>
-              ))}
+              {org.ageDemographic.length !== 0 ? (
+                org.ageDemographic.map((item) => (
+                  <div key={item}>
+                    <Chip label={item} variant="outlined" />
+                  </div>
+                ))
+              ) : (
+                <Chip label="None" variant="outlined" />
+              )}
             </div>
           </div>
         )}
       </div>
-      <div className={styles.big}>Mission History</div>
-      <div className={styles.row}>
-        <TextField
-          name="missionHistory"
-          variant="outlined"
-          multiline
-          rows={6}
-          placeholder={response}
-          className={styles.full}
-        />
-      </div>
-      <div className={styles.big}>More responses</div>
-      <div className={styles.row}>
-        <TextField
-          name="missionHistory"
-          variant="outlined"
-          multiline
-          rows={6}
-          placeholder={response}
-          className={styles.full}
-        />
-      </div>
+      <div className={styles.big}>Description and Mission</div>
+      <div className={styles.row}>{org.missionStatement || 'None'}</div>
+      <div className={styles.big}>History</div>
+      <div className={styles.row}>{org.shortHistory || 'None'}</div>
+      {org.applicationResponses.map(
+        (qnr): JSX.Element => {
+          return (
+            <div key={qnr.id}>
+              <div className={styles.big}>
+                {qnr.applicationQuestion.question}
+              </div>
+              <div className={styles.row}>{qnr.answer}</div>
+            </div>
+          );
+        }
+      )}
     </div>
   );
 };

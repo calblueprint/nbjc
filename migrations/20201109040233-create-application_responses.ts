@@ -15,7 +15,7 @@ export async function up(
         id                           SERIAL,
         answer                       TEXT NOT NULL,
         question_id                  INTEGER NOT NULL,
-        organization_id              INTEGER,
+        organization_id              INTEGER NOT NULL,
         created_at                   TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at                   TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (id),

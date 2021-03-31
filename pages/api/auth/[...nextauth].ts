@@ -1,16 +1,24 @@
+import prisma from 'utils/prisma';
 import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
-import { PrismaClient } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import hashPassword from 'utils/hashPassword';
 import sanitizeUser from 'utils/sanitizeUser';
+import { SanitizedUser, SessionUser, Session } from 'interfaces/user';
 
 type AuthorizeDTO = {
   email: string;
   password: string;
 };
 
-const prisma = new PrismaClient();
+type CustomToken = SessionUser & { iat: number; exp: number };
+
+type Token = CustomToken;
+
+type Account = {
+  id: string;
+  type: 'credentials';
+};
 
 const options = {
   // Configure one or more authentication providers
@@ -26,16 +34,13 @@ const options = {
           where: { email: credentials.email },
         });
         if (!user) {
-          // Change this to be an error page
-          throw new Error('No account exists');
+          return Promise.reject(new Error('No account exists'));
         }
         // Verify that their password matches
         if (user.hashedPassword === hashPassword(credentials.password)) {
-          return sanitizeUser(user);
+          return Promise.resolve(sanitizeUser(user));
         }
-        // Password mismatch
-        // Change this to be an error page
-        throw new Error('Invalid password');
+        return Promise.reject(new Error('Invalid password'));
       },
     }),
   ],
@@ -46,19 +51,62 @@ const options = {
   jwt: {
     secret: process.env.JWT_SIGNING_PRIVATE_KEY,
   },
-
-  // Below are used for placeholder for now, can be used to redirect to different pages in the app later.
-
-  // pages: {
-  // signIn: '/credentials-signin', // Displays signin buttons
-  // signOut: '/api/auth/signout', // Displays form with sign out button
-  // error: '/api/auth/error', // Error code passed in query string as ?error=
-  // verifyRequest: '/api/auth/verify-request', // Used for check email page
-  // newUser: 'signin', // If set, new users will be directed here on first sign in
-  // },
+  pages: {
+    error: '/signin',
+  },
+  callbacks: {
+    session: async (session: Omit<Session, 'user'>, user: SessionUser) => {
+      const customSession: Session = {
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        },
+        accessToken: session.accessToken,
+        expires: session.expires,
+      };
+      return Promise.resolve(customSession);
+    },
+    jwt: async (
+      token: Token,
+      user?: SanitizedUser,
+      _account?: Account,
+      _profile?: SanitizedUser,
+      _isNewUser?: boolean
+    ) => {
+      if (token.id) {
+        const newUser = await prisma.user.findOne({
+          where: { id: token.id },
+          select: { email: true, role: true },
+        });
+        if (newUser) {
+          const customToken: SessionUser = {
+            id: token.id,
+            email: newUser.email,
+            role: newUser.role,
+          };
+          return Promise.resolve(customToken);
+        }
+      }
+      // Check if on sign in
+      if (user) {
+        const customToken: SessionUser = {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        };
+        return Promise.resolve(customToken);
+      }
+      return Promise.resolve(token);
+    },
+  },
 };
 
 export default (
   req: NextApiRequest,
   res: NextApiResponse<unknown>
-): Promise<void> => NextAuth(req, res, options);
+): Promise<void> => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore: Incompatible types in callbacks.session and callbacks.jwt
+  return NextAuth(req, res, options);
+};

@@ -12,4 +12,4 @@ _Optional - if you added anything to the database through migration(s)_
 
 _Required for visual changes_
 
-CC: @kwfk
+CC: @claalmve

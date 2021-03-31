@@ -3,40 +3,30 @@
   flex-direction: row;
   height: calc(100vh - 104px);
 }
-.leftCol {
-  display: flex;
-  justify-content: flex-start;
-  flex-direction: column;
-  height: 100%;
-  margin-left: 10px;
-}
 
 .rightCol {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding-right: 30px;
-  padding-left: 30px;
+  padding-left: 48px;
 }
 
 .header {
-  background-color: white;
   display: flex;
   justify-content: space-between;
-  padding: 10px;
+  padding-right: 48px;
 }
 
 .footer {
-  background-color: white;
   display: flex;
-  padding: 10px;
   justify-content: flex-end;
+  padding-right: 48px;
+  padding-top: 10px;
 }
 
 .content {
   flex: 1;
   overflow: auto;
-  background-color: white;
 }
 
 .large {
@@ -56,7 +46,8 @@
 }
 
 .menuButton {
-  margin-right: 10px;
+  position: absolute;
+  left: 12px;
 }
 
 .hide {
@@ -69,8 +60,8 @@
 
 .drawerPaperLeft {
   width: 350px;
-  height: calc(100% - 80px);
-  top: 105px;
+  height: calc(100% - 84px);
+  top: 84px;
 }
 
 .drawerPaperRight {
@@ -82,7 +73,6 @@
 
 .main {
   flex-grow: 1;
-  padding-left: 20px;
   margin-left: -350px;
   transition-property: margin-left;
   transition-duration: 250ms;
@@ -90,4 +80,24 @@
 
 .mainShift {
   margin-left: 0px;
+}
+
+.banner {
+  color: red;
+}
+
+.submitButton {
+  position: relative;
+}
+
+.submitProgress {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -12px;
+  margin-left: -12px;
+}
+
+.buttonSpace {
+  margin-left: 10px;
 }

@@ -1,9 +1,6 @@
 .root {
-  background-color: white;
   width: 100%;
-  height: 100%;
-  padding-left: 30px;
-  padding-right: 30px;
+  padding-right: 48px;
 }
 
 .row {
@@ -52,4 +49,5 @@
 .chips {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 }

@@ -1,7 +1,10 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Button } from '@material-ui/core';
+import { Button, LinearProgress, Menu, MenuItem } from '@material-ui/core';
 import { useRouter } from 'next/router';
+import useSession from 'utils/useSession';
+import { signOut } from 'next-auth/client';
+import { useState } from 'react';
 import styles from '../styles/Layout.module.css';
 
 type Props = {
@@ -13,7 +16,12 @@ const Layout: React.FunctionComponent<Props> = ({
   title = 'NBJC',
 }) => {
   const router = useRouter();
+  const [session, sessionLoading] = useSession();
+  const [userMenuAnchor, setUserMenuAnchor] = useState<HTMLElement | null>(
+    null
+  );
 
+  if (sessionLoading) return <LinearProgress />;
   return (
     <div>
       <Head>
@@ -30,31 +38,81 @@ const Layout: React.FunctionComponent<Props> = ({
           </Link>
           <div className={styles.nav}>
             <Link href="/">
-              <a className={styles.link}>Home</a>
+              <a className={styles.link}>Map</a>
             </Link>
-            <Link href="/moderator">
-              <a className={styles.link}>Moderator Dashboard</a>
-            </Link>
-            <Link href="/users/settings">
-              <a className={styles.link}>Users</a>
-            </Link>
+            {session && session.user.role === 'organization' ? (
+              <Link href="/orgs">
+                <a className={styles.link}>Profile</a>
+              </Link>
+            ) : null}
+            {session &&
+            (session.user.role === 'moderator' ||
+              session.user.role === 'admin') ? (
+              <Link href="/moderator">
+                <a className={styles.link}>Review</a>
+              </Link>
+            ) : null}
+            {session && session.user.role === 'admin' ? (
+              <Link href="/admin">
+                <a className={styles.link}>Dashboard</a>
+              </Link>
+            ) : null}
             <div className={styles.buttons}>
-              <Button
-                className={styles.logButtonSpace}
-                variant="contained"
-                color="primary"
-                onClick={() => router.push('/api/auth/signin')}
-              >
-                Log In
-              </Button>
-              <Button
-                className={styles.logButtonSpace}
-                variant="contained"
-                color="primary"
-                onClick={() => router.push('/registration')}
-              >
-                Join Us
-              </Button>
+              {!session ? (
+                <div>
+                  <Button
+                    className={styles.logButtonSpace}
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => router.push('/signin')}
+                  >
+                    Sign In
+                  </Button>
+                  <Button
+                    className={styles.logButtonSpace}
+                    variant="contained"
+                    color="primary"
+                    onClick={() => router.push('/signup')}
+                  >
+                    Join Us
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <Button
+                    className={styles.logButtonSpace}
+                    variant="contained"
+                    color="primary"
+                    onClick={(e) => setUserMenuAnchor(e.currentTarget)}
+                  >
+                    {session.user.role}
+                  </Button>
+                  <Menu
+                    anchorEl={userMenuAnchor}
+                    keepMounted
+                    open={Boolean(userMenuAnchor)}
+                    onClose={() => setUserMenuAnchor(null)}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        setUserMenuAnchor(null);
+                        router.push('/users/profile');
+                      }}
+                    >
+                      Settings
+                    </MenuItem>
+                    <MenuItem
+                      className={styles.signOutText}
+                      onClick={() => {
+                        setUserMenuAnchor(null);
+                        signOut();
+                      }}
+                    >
+                      Sign Out
+                    </MenuItem>
+                  </Menu>
+                </>
+              )}
             </div>
           </div>
         </nav>

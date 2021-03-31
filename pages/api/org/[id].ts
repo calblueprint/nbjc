@@ -1,11 +1,10 @@
-import { PrismaClient, Organization } from '@prisma/client';
+import prisma from 'utils/prisma';
+import { Organization } from '@prisma/client';
 import Joi, { ValidationError } from 'joi';
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import OrganizationSchema from 'interfaces/organization';
 import CreateError, { MethodNotAllowed } from 'utils/error';
-
-const prisma = new PrismaClient();
 
 /**
  * Retrieve an Organization by its ID

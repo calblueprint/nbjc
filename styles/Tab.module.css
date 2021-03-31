@@ -1,0 +1,14 @@
+.buttonGroup {
+  width: 100%;
+}
+
+.buttonInd {
+  width: 50%;
+  background-color: #f8f4ff;
+  color: #71579c;
+}
+
+.buttonIndSelected {
+  width: 50%;
+  background-color: #a793c8;
+}

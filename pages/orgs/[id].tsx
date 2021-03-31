@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
-import { Button, ButtonGroup, Chip } from '@material-ui/core';
-import { Organization, PrismaClient } from '@prisma/client';
+import prisma from 'utils/prisma';
+import { Organization } from '@prisma/client';
+import { Button, Chip } from '@material-ui/core';
 import Layout from 'components/Layout';
-import Project from 'components/organization/Project/index';
+import Project from 'components/organization/Project';
+import Tab from 'components/Tab';
 import computeDate from 'utils/computeDate';
 import styles from '../../styles/Organization.module.css';
-
-const prisma = new PrismaClient();
 
 type Props = {
   org: Pick<
@@ -19,7 +19,6 @@ type Props = {
     | 'address'
     | 'missionStatement'
     | 'shortHistory'
-    | 'keyValue'
     | 'lgbtqDemographic'
     | 'raceDemographic'
     | 'ageDemographic'
@@ -27,6 +26,7 @@ type Props = {
     | 'ein'
     | 'foundingDate'
     | 'is501c3'
+    | 'website'
   >;
   errors?: string;
 };
@@ -53,7 +53,7 @@ const projectsList = projects.map((project) => {
 });
 
 const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
-  const [showInfo, setshowInfo] = useState<boolean>(true);
+  const [tabState, setTabState] = useState<0 | 1 | 2>(0);
 
   const demographics = (category: string, groups: string[]): JSX.Element => {
     return (
@@ -103,18 +103,24 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
             <h2 className={styles.Header}>{org.name}</h2>
             <h3 className={styles.subHeader}>
               {org.workType}
-              {org.workType && org.organizationType ? ' ● ' : null}
+              {org.workType && org.organizationType ? ' • ' : null}
               {org.organizationType}
             </h3>
+            {/* Location */}
             <h3 className={styles.infoHeader}>Location</h3>
             <p className={styles.info}>
               <b>Type:</b> Headquarters
             </p>
             {org.address && <p className={styles.info}>{org.address}</p>}
-            <h3 className={styles.infoHeader}>Basics</h3>
-            <p className={styles.info}>
-              <b>Site:</b> currentwebsite.org
-            </p>
+            {/* Basics */}
+            {(org.website || org.ein || org.foundingDate) && (
+              <h3 className={styles.infoHeader}>Basics</h3>
+            )}
+            {org.website && (
+              <p className={styles.info}>
+                <b>Site:</b> {org.website}
+              </p>
+            )}
             {org.ein && (
               <p className={styles.info}>
                 <b>EIN:</b> {org.ein}
@@ -126,42 +132,25 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
                 <b>Founded:</b> {computeDate(new Date(org.foundingDate), 0)}
               </p>
             )}
+            {/* Members */}
             <h3 className={styles.infoHeader}>Members</h3>
-            <p className={styles.info}>Fred Kim, CEO of redprint</p>
-            <p className={styles.info}>Cindy Zhang, CEO of redprint</p>
-            <p className={styles.info}>Calvin Chen, CEO of redprint</p>
-            <p className={styles.info}>Sonja Johanson, CEO of redprint</p>
-            <p className={styles.info}>Elizabeth Wu, CEO of redprint</p>
-            <p className={styles.info}>Bryanna Gavino, CEO of redprint</p>
+            <p className={styles.info}>Frederick Kim, Project Leader</p>
+            <p className={styles.info}>Elizabeth Wu, Designer</p>
+            <p className={styles.info}>Cindy Zhang, Developer</p>
+            <p className={styles.info}>Calvin Chen, Developer</p>
+            <p className={styles.info}>Sonja Johanson, Developer</p>
+            <p className={styles.info}>Bryanna Gavino, Developer</p>
           </div>
           <div className={styles.rightColumn}>
             <div className={styles.headerButton}>
-              <ButtonGroup
-                variant="contained"
-                color="primary"
-                className={styles.buttonGroup}
-              >
-                <Button
-                  className={
-                    showInfo ? styles.buttonIndSelected : styles.buttonInd
-                  }
-                  onClick={() => setshowInfo(true)}
-                  disableElevation
-                >
-                  Information
-                </Button>
-                <Button
-                  className={
-                    showInfo ? styles.buttonInd : styles.buttonIndSelected
-                  }
-                  onClick={() => setshowInfo(false)}
-                  disableElevation
-                >
-                  Project and Events
-                </Button>
-              </ButtonGroup>
+              <Tab
+                tabName1="information"
+                tabName2="project and events"
+                tabState={tabState}
+                setTabState={setTabState}
+              />
             </div>
-            {showInfo ? (
+            {tabState === 0 ? (
               <div className={styles.rightContent}>
                 <h3 className={styles.audienceHeader}>Audience Demographics</h3>
                 <div className={styles.demographicSection}>
@@ -208,7 +197,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         address: true,
         missionStatement: true,
         shortHistory: true,
-        keyValue: true,
         lgbtqDemographic: true,
         raceDemographic: true,
         ageDemographic: true,
@@ -216,6 +204,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         ein: true,
         foundingDate: true,
         is501c3: true,
+        website: true,
       },
     });
     const org = JSON.parse(JSON.stringify(resp));

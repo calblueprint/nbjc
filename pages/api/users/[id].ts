@@ -1,12 +1,11 @@
-import { PrismaClient, User } from '@prisma/client';
+import prisma from 'utils/prisma';
+import { User } from '@prisma/client';
 import Joi, { ValidationError } from 'joi';
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import UserSchema, { SanitizedUser } from 'interfaces/user';
 import CreateError, { MethodNotAllowed } from 'utils/error';
 import sanitizeUser from 'utils/sanitizeUser';
-
-const prisma = new PrismaClient();
 
 /**
  * Retrieve a User by its ID
@@ -41,8 +40,6 @@ export const updateUser = async (
   const updatedUser = await prisma.user.update({
     where: { id: Number(id) },
     data: {
-      firstName: data.firstName,
-      lastName: data.lastName,
       role: data.role,
       email: data.email,
       emailVerified: data.emailVerified,
