@@ -15,6 +15,7 @@ import {
   Typography,
   CardActionArea,
   Button,
+  IconButton,
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import Layout from 'components/Layout';
@@ -81,6 +82,13 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
     []
   );
   const [audienceFilters, setAudienceFilters] = React.useState<string[]>([]);
+
+  const [searchFilters, setSearchFilters] = React.useState<string>('');
+  const handleSearchChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ): void => {
+    setSearchFilters(event.target.value as string);
+  };
 
   const handleIdentityChange = (
     event: React.ChangeEvent<{ value: unknown }>
@@ -240,14 +248,92 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
 
   // filter the orgs; enacts when apply button pressed
   const handleApplyChange = (): void => {
-    console.log('Apply Button Pressed');
     setsTrue();
     orgs.filter(hasFilters);
-    console.log('First:');
-    console.log(orgsDisplayed);
     setOrgsDisplayed(orgs.filter(hasFilters));
-    console.log('Second:');
-    console.log(orgsDisplayed);
+  };
+
+  // handles searchbar filter
+  let searchHandle = '';
+  let searchWords = [''];
+  let orgHandle = '';
+  let orgWords = [''];
+  const handleClickSearch = (): void => {
+    if (searchFilters.length === 0) {
+      setOrgsDisplayed(orgs);
+    } else {
+      // TODO:
+      // use searchFilters (string) and split up words by white space. save as list into searchWords (string[]) using setSearchWords
+      //    string.replace('characterToReplace', '');
+      searchHandle = searchFilters.replaceAll(',', '');
+      //    string.toLowerCase( );
+      searchHandle = searchHandle.toLowerCase();
+      //    string.split([separator][, limit]);
+      searchWords = searchHandle.split(' ');
+      // orgs not displayed
+      const orgsHidden: Organization[] = [];
+      // orgs for displaying at end
+      const orgsShowing: Organization[] = [];
+      const orgsShowingID: number[] = [];
+      // orgs to display initially
+      orgs.filter((org): Organization | undefined => {
+        if (org.name == null) {
+          return undefined;
+        }
+        orgHandle = org.name.replaceAll(',', '');
+        orgHandle = orgHandle.toLowerCase();
+        orgWords = orgHandle.split(' ');
+        // eslint-disable-next-line consistent-return
+        orgWords.forEach(function match(value) {
+          if (searchWords.includes(value)) {
+            orgsShowing.push(org);
+            orgsShowingID.push(org.id);
+            return org;
+          }
+        });
+        orgsHidden.push(org);
+        return undefined;
+      });
+      // orgs to add on at end of display
+      orgsHidden.filter((org): Organization | undefined => {
+        if (org.name == null) {
+          return undefined;
+        }
+        orgHandle = org.name.replaceAll(',', '');
+        orgHandle = orgHandle.toLowerCase();
+        orgWords = orgHandle.split(' ');
+        // eslint-disable-next-line consistent-return
+        let nextOrg = false;
+        orgWords.forEach(function matchOrg(orgWord) {
+          // eslint-disable-next-line consistent-return
+          if (nextOrg) {
+            return;
+          }
+          // eslint-disable-next-line consistent-return
+          searchWords.forEach(function matchSearch(searchWord) {
+            const reg = '';
+            const regex = new RegExp(reg.concat(searchWord));
+            if (
+              !orgsShowingID.includes(org.id) &&
+              searchWord.length > 0 &&
+              orgWord.match(regex)
+            ) {
+              orgsShowing.push(org);
+              nextOrg = true;
+              return org;
+            }
+          });
+        });
+        return undefined;
+      });
+      // split up organization names by white space: org.name
+      setOrgsDisplayed(orgsShowing);
+    }
+    //    string.replace('characterToReplace', '');
+    //    string.toLowerCase( );
+    //    string.split([separator][, limit]);
+    // regex match any words to organization title
+    //    console.log(s1.normalize() === s2.normalize());
   };
 
   // This is to verify whether or not the current user has a proper session configured to see the page.
@@ -264,11 +350,15 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon />
+                <IconButton onClick={handleClickSearch}>
+                  <SearchIcon />
+                </IconButton>
               </InputAdornment>
             ),
           }}
           variant="outlined"
+          value={searchFilters}
+          onChange={handleSearchChange}
         />
 
         <div className={styles.pageContent}>
