@@ -17,7 +17,7 @@ export default createMuiTheme({
     },
   },
   typography: {
-    fontFamily: "'Montserrat', 'Helvetica', 'Arial', sans-serif",
+    fontFamily: "'Epilogue', 'Montserrat', 'Helvetica', 'Arial', sans-serif",
     fontSize: 14,
     h1: {
       fontSize: '2.815rem',
