@@ -73,6 +73,7 @@ model Session {
 }
 
 model User {
+<<<<<<< HEAD
   id             Int           @id @default(autoincrement())
   role           UserRole?
   email          String        @unique @db.VarChar(255)
@@ -82,6 +83,18 @@ model User {
   createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt      DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   organization   Organization? @relation("OrganizationsToUsers")
+=======
+  id              Int               @id @default(autoincrement())
+  role            UserRole?
+  email           String            @unique @db.VarChar(255)
+  emailVerified   DateTime?         @map("email_verified") @db.Timestamptz(6)
+  image           String?           @db.VarChar(255)
+  hashedPassword  String            @map("hashed_password") @db.VarChar(255)
+  createdAt       DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization    Organization?     @relation("OrganizationsToUsers")
+  password_resets password_resets[] @relation("password_resetsTousers")
+>>>>>>> feat: added migrations for password_resets table
 
   @@map("users")
 }
@@ -151,13 +164,21 @@ model OrganizationProject {
   @@map("organization_projects")
 }
 
-enum AgeDemographic {
-  child   @map("Children")
-  teen    @map("Teens")
-  adult   @map("Adults")
-  senior  @map("Seniors")
+model password_resets {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id    Int
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  valid      Boolean  @default(true)
+  users      User     @relation("password_resetsTousers", fields: [user_id], references: [id])
+}
 
-  @@map("age_demographic")
+enum AgeDemographic {
+  child @map("Children")
+  teen @map("Teens")
+  adult @map("Adults")
+  senior @map("Seniors")
+
+   @@map("age_demographic")
 }
 
 enum ApplicationStatus {
@@ -166,10 +187,11 @@ enum ApplicationStatus {
   approved
   rejected
 
-  @@map("application_status")
+   @@map("application_status")
 }
 
 enum LgbtqDemographic {
+<<<<<<< HEAD
   queer                 @map("Queer")
   asexualAromantic      @map("Asexual/Aromantic")
   bisexual              @map("Bisexual")
@@ -179,20 +201,28 @@ enum LgbtqDemographic {
   straightHeterosexual  @map("Straight/Heterosexual")
   lgbtqPlus             @map("LGBTQ+")
   other                 @map("Other")
+=======
+  lgbtqAll @map("LGBTQ+ (All)")
+  sgl @map("SGL")
+  transgender @map("Transgender")
+  asexualAromantic @map("Asexual/Aromantic")
+  other @map("Other")
+>>>>>>> feat: added migrations for password_resets table
 
-  @@map("lgbtq_demographic")
+   @@map("lgbtq_demographic")
 }
 
 enum OrganizationType {
-  grassrootsLocal  @map("Grassroots/Local")
-  statewide        @map("Statewide")
-  national         @map("National")
-  other            @map("Other")
+  grassrootsLocal @map("Grassroots/Local")
+  statewide @map("Statewide")
+  national @map("National")
+  other @map("Other")
 
-  @@map("organization_type")
+   @@map("organization_type")
 }
 
 enum RaceDemographic {
+<<<<<<< HEAD
   black     @map("Black")
   native    @map("Native")
   hispanic  @map("Hispanic")
@@ -200,8 +230,17 @@ enum RaceDemographic {
   arab      @map("Arab")
   white     @map("White")
   other     @map("Other")
+=======
+  pocAll @map("POC (All)")
+  black @map("Black")
+  asian @map("Asian")
+  pacificIslander @map("Pacific Islander")
+  latinx @map("Latinx")
+  nativeIndigeneous @map("Native/Indigeneous")
+  other @map("Other")
+>>>>>>> feat: added migrations for password_resets table
 
-  @@map("race_demographic")
+   @@map("race_demographic")
 }
 
 enum UserRole {
@@ -209,13 +248,13 @@ enum UserRole {
   moderator
   admin
 
-  @@map("user_role")
+   @@map("user_role")
 }
 
 enum WorkType {
-  advocacy          @map("Advocacy")
-  directService     @map("Direct Service")
-  networkingSocial  @map("Networking/Social")
+  advocacy @map("Advocacy")
+  directService @map("Direct Service")
+  networkingSocial @map("Networking/Social")
 
-  @@map("work_type")
+   @@map("work_type")
 }
