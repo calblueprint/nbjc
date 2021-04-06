@@ -65,7 +65,7 @@ const projectsList = projects.map((project) => {
 });
 
 const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
-  const [tabState, setTabState] = useState<0 | 1 | 2>(0);
+  const [tabState, setTabState] = useState<0 | 1 | 2>(1);
 
   const demographics = (category: string, groups: string[]): JSX.Element => {
     return (
@@ -163,6 +163,8 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
               />
             </div>
             {tabState === 0 ? (
+              <div className={styles.projects}>{projectsList}</div>
+            ) : (
               <div className={styles.rightContent}>
                 <h3 className={styles.audienceHeader}>Audience Demographics</h3>
                 <div className={styles.demographicSection}>
@@ -179,8 +181,6 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
                   <p className={styles.infoContent}>{org.shortHistory}</p>
                 )}
               </div>
-            ) : (
-              <div className={styles.projects}>{projectsList}</div>
             )}
           </div>
         </div>

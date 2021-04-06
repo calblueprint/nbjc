@@ -17,15 +17,11 @@ import {
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import Layout from 'components/Layout';
-import styles from '../styles/Home.module.css';
+import styles from '../../styles/Events.module.css';
 
-const Map = dynamic(() => import('../components/Map'), {
+const Map = dynamic(() => import('../../components/Map'), {
   ssr: false,
 });
-
-type HomeProps = {
-  orgs: PublicOrganization[];
-};
 
 const Home: React.FC<HomeProps> = ({ orgs }) => {
   const router = useRouter();
@@ -39,7 +35,7 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
       <div className={styles.pageFlex}>
         <TextField
           id="outlined-size-small"
-          placeholder="Explore Organizations"
+          placeholder="Explore Events"
           fullWidth
           InputProps={{
             startAdornment: (
@@ -89,27 +85,33 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
               </FormControl>
             </div>
 
-            <div className={styles.cards}>
-              {orgs.length !== 0 ? (
-                orgs.map((org) => (
-                  <Card className={styles.card} key={org.id}>
-                    <CardActionArea
-                      onClick={() => router.push(`/orgs/${org.id}`)}
-                    >
-                      <CardContent>
-                        <Typography variant="h5">{org.name}</Typography>
-                        <Typography variant="body2">
-                          {org.organizationType}
-                          {org.organizationType && org.workType ? ' • ' : null}
-                          {org.workType}
+            <div className={styles.event_cards}>
+              <Card className={styles.event_card}>
+                <CardActionArea onClick={() => router.push(`/orgs/4`)}>
+                  <CardContent className={styles.event_card}>
+                    <div className={styles.card}>
+                      <div className={styles.left}>
+                        <Typography className={styles.event_date}>
+                          Monday, Feb 29, 10AM PST
                         </Typography>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
-                ))
-              ) : (
-                <Typography>No Organizations</Typography>
-              )}
+                        <Typography className={styles.event_name}>
+                          Event Name
+                        </Typography>
+                        <Typography className={styles.event_date}>
+                          Location
+                        </Typography>
+                        <br />
+                        <Typography className={styles.event_description}>
+                          Short Description: Lorem ipsum dolor sit amet,
+                          consectetur adipiscing elit, sed do eiusmod tempor
+                          incididunt ut labore et dolore magna aliqua.
+                        </Typography>
+                      </div>
+                      <div className={styles.right} />
+                    </div>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
             </div>
           </div>
           <div className={styles.rightCol}>

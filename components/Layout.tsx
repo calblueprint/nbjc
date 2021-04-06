@@ -38,13 +38,18 @@ const Layout: React.FunctionComponent<Props> = ({
           </Link>
           <div className={styles.nav}>
             <Link href="/">
-              <a className={styles.link}>Map</a>
+              <a className={styles.link}>Organizations</a>
             </Link>
             {session && session.user.role === 'organization' ? (
               <Link href="/orgs">
                 <a className={styles.link}>Profile</a>
               </Link>
             ) : null}
+
+            <Link href="/events">
+              <a className={styles.link}>Events</a>
+            </Link>
+
             {session &&
             (session.user.role === 'moderator' ||
               session.user.role === 'admin') ? (
