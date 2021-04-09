@@ -28,6 +28,7 @@ import {
   CardActions,
   LinearProgress,
   CircularProgress,
+  Typography,
 } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
@@ -337,15 +338,14 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             }}
           >
             <div className={styles.tabs}>
-              <Tabs value={selected} onChange={handleChange}>
-                <Tab label="Orgs" />
-                <Tab label="Events" />
-              </Tabs>
+              <Typography className={styles.appTitle}>Applications</Typography>
               <IconButton onClick={handleDrawerCloseLeft}>
                 <ChevronLeftIcon />
               </IconButton>
             </div>
-            <div className={styles.textField}>
+            {/* Removing search functionality? */}
+
+            {/* <div className={styles.textField}>
               <TextField
                 fullWidth
                 id="search"
@@ -360,7 +360,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
                 variant="outlined"
                 size="small"
               />
-            </div>
+            </div> */}
             {tab()}
           </Drawer>
           <main

@@ -101,3 +101,12 @@
 .buttonSpace {
   margin-left: 10px;
 }
+
+.appTitle {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  /* Change the below two with better styling in the future */
+  font-weight: bold;
+  font-size: x-large;
+}
