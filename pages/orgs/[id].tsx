@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import prisma from 'utils/prisma';
 import { Organization } from '@prisma/client';
-import { Button, Chip } from '@material-ui/core';
+import { Button, Chip, LinearProgress } from '@material-ui/core';
 import Layout from 'components/Layout';
 import Project from 'components/organization/Project';
 import Tab from 'components/Tab';
 import computeDate from 'utils/computeDate';
+import useSession from 'utils/useSession';
 import styles from '../../styles/Organization.module.css';
 
 type Props = {
@@ -28,6 +29,9 @@ type Props = {
     | 'is501c3'
     | 'website'
   >;
+  orgUser: {
+    id: number;
+  };
   errors?: string;
 };
 
@@ -52,9 +56,13 @@ const projectsList = projects.map((project) => {
   return <Project name={project.name} description={project.description} />;
 });
 
-const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
+const OrgProfile: React.FunctionComponent<Props> = ({
+  org,
+  orgUser,
+  errors,
+}) => {
   const [tabState, setTabState] = useState<0 | 1 | 2>(0);
-
+  const [session, sessionLoading] = useSession();
   const demographics = (category: string, groups: string[]): JSX.Element => {
     return (
       <div className={styles.demographic}>
@@ -82,6 +90,8 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
     );
   }
 
+  if (sessionLoading) return <LinearProgress />;
+
   return (
     <Layout title={`${org.name} Profile`}>
       <div className={styles.orgMargins}>
@@ -91,15 +101,17 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
             alt="Organization"
           />
         </div>
-        <div className={styles.editButton}>
-          <Button
-            variant="contained"
-            className={styles.editButtonStyles}
-            disableElevation
-          >
-            Edit
-          </Button>
-        </div>
+        {orgUser.id === session?.user.id ? (
+          <div className={styles.editButton}>
+            <Button
+              variant="contained"
+              className={styles.editButtonStyles}
+              disableElevation
+            >
+              Edit
+            </Button>
+          </div>
+        ) : null}
         <div className={styles.titleColumns}>
           <div className={styles.leftColumn}>
             <h2 className={styles.Header}>{org.name}</h2>
@@ -146,8 +158,8 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
           <div className={styles.rightColumn}>
             <div className={styles.headerButton}>
               <Tab
-                tabName1="information"
-                tabName2="project and events"
+                tabName1="About"
+                tabName2="Events"
                 tabState={tabState}
                 setTabState={setTabState}
               />
@@ -207,6 +219,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         foundingDate: true,
         is501c3: true,
         website: true,
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     const org = JSON.parse(JSON.stringify(resp));
@@ -216,7 +233,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       };
     }
     return {
-      props: { org },
+      props: { org, orgUser: org.user },
     };
   } catch (err) {
     return { props: { errors: err.message } };
