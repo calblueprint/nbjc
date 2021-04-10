@@ -23,8 +23,24 @@ const initialValues: homepageFields = {
 const Home: React.FC = () => {
   const formik = useFormik({
     initialValues,
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values): Promise<void> => {
+      try {
+        const res = await fetch('/api/search/orgs/', {
+          // This is a POST request because GET requests take no payload.
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            orgName: values.orgName,
+            ages: values.ages,
+            ethnicity: values.ethnicity,
+            orientation: values.orientation,
+          }),
+        });
+      } catch (err) {
+        console.log(err);
+      }
     },
   });
   return (
