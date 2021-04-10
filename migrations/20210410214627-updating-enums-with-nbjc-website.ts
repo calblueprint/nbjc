@@ -7,15 +7,19 @@ export async function up(
   db: Base,
   callback: Base.CallbackFunction
 ): Promise<void> {
-  db.runSql(
-    `
+  try {
+    db.runSql(
+      `
     ALTER TYPE lgbtq_demographic RENAME TO lgbtq_demographic_old;
     CREATE TYPE lgbtq_demographic AS ENUM ('Queer', 'Asexual/Aromantic', 'Bisexual', 'Pansexual', 'Lesbian/SGL', 'Gay/SGL', 'Straight/Heterosexual', 'Other');
-    ALTER TABLE organization ALTER COLUMN lgbtqDemographic TYPE lgbtq_demographic USING lgbtqDemographic::text::lgbtq_demographic;
+    ALTER TABLE organizations ALTER COLUMN lgbtq_demographic TYPE lgbtq_demographic USING lgbtq_demographic::text::lgbtq_demographic;
     DROP TYPE lgbtq_demographic_old;
     `,
-    callback
-  );
+      callback
+    );
+  } catch (err) {
+    callback(err, null);
+  }
 }
 
 // ALTER TYPE lgbtq_demographic ADD VALUE 'Queer' BEFORE 'LGBTQ+ (ALL)';
@@ -47,15 +51,19 @@ export async function down(
   db: Base,
   callback: Base.CallbackFunction
 ): Promise<void> {
-  db.runSql(
-    `
+  try {
+    db.runSql(
+      `
     ALTER TYPE lgbtq_demographic RENAME TO lgbtq_demographic_old;
-    CREATE TYPE lgbtq_demographic AS ENUM ('LBGTQ+ (All)', 'SGL', 'Transgender', 'Asexual/Aromantic', 'Other');
-    ALTER TABLE organization ALTER COLUMN lgbtqDemographic TYPE lgbtq_demographic USING lgbtqDemographic::text::lgbtq_demographic;
+    CREATE TYPE lgbtq_demographic AS ENUM ('LGBTQ+ (All)', 'SGL', 'Transgender', 'Asexual/Aromantic', 'Other');
+    ALTER TABLE organizations ALTER COLUMN lgbtq_demographic TYPE lgbtq_demographic USING lgbtq_demographic::text::lgbtq_demographic;
     DROP TYPE lgbtq_demographic_old;
     `,
-    callback
-  );
+      callback
+    );
+  } catch (err) {
+    callback(err, null);
+  }
 }
 
 // eslint-disable-next-line no-underscore-dangle
