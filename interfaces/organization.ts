@@ -7,6 +7,7 @@ import {
   LgbtqDemographic,
   RaceDemographic,
   AgeDemographic,
+  LocationType,
 } from '@prisma/client';
 
 export type PublicOrganization = Prisma.OrganizationGetPayload<{
@@ -55,9 +56,22 @@ const schema = Joi.object({
     .default(null)
     .valid(...Object.values(WorkType))
     .when('$strict', { is: true, then: Joi.required() }),
-  address: Joi.string()
+  street: Joi.string()
+    .empty('')
+    .when('$strict', { is: true, then: Joi.required() }),
+  city: Joi.string()
+    .empty('')
+    .when('$strict', { is: true, then: Joi.required() }),
+  state: Joi.string()
+    .empty('')
+    .when('$strict', { is: true, then: Joi.required() }),
+  zipCode: Joi.string()
+    .empty('')
+    .when('$strict', { is: true, then: Joi.required() }),
+  locationType: Joi.string()
     .empty('')
     .default(null)
+    .valid(...Object.values(LocationType))
     .when('$strict', { is: true, then: Joi.required() }),
   missionStatement: Joi.string()
     .empty('')
@@ -79,7 +93,6 @@ const schema = Joi.object({
     .unique()
     .items(Joi.string().valid(...Object.values(AgeDemographic)))
     .when('$strict', { is: true, then: Joi.array().min(1).required() }),
-  // capacity: Joi.number(),
   ein: Joi.string()
     .empty('')
     .default(null)
@@ -87,7 +100,7 @@ const schema = Joi.object({
       is: true,
       then: Joi.string().pattern(/^[0-9]\d?-?\d{7}$/),
     }),
-  // foundingDate: Joi.date(),
+  foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
 }).when('$strict', { is: true, then: Joi.object().and('lat', 'long') });
 

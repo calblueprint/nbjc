@@ -10,6 +10,7 @@ import {
   User,
   UserRole,
   WorkType,
+  LocationType,
 } from '@prisma/client';
 import Faker from 'faker';
 import Ora from 'ora';
@@ -173,9 +174,13 @@ export default async function seedDatabase(): Promise<void> {
                   applicationStatus: orgStatus[index][0],
                   active: orgStatus[index][1],
                   name: Faker.company.companyName(),
-                  lat: parseFloat(Faker.address.latitude()),
-                  long: parseFloat(Faker.address.longitude()),
-                  address: Faker.address.streetAddress(true),
+                  street: Faker.address.streetAddress(),
+                  city: Faker.address.city(),
+                  state: Faker.address.state(true),
+                  zipCode: Faker.address.zipCode(),
+                  locationType: Faker.random.objectElement<LocationType>(
+                    LocationType
+                  ),
                   contactName: Faker.name.findName(),
                   contactEmail: Faker.internet.email(),
                   contactPhone: Faker.phone.phoneNumber('(!##) !##-####'),

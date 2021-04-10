@@ -93,8 +93,11 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     values: Form
   ): Promise<void> => {
     if (session && session.user.role === 'organization') {
-      if (draft && Object.keys(handleValidate(true)(values)).length !== 0)
+      if (draft && Object.keys(handleValidate(true)(values)).length !== 0) {
+        console.log('yee haw');
         return;
+      }
+      // return;
       console.log('submitting', values);
       const { proj1, proj2, proj3, ...tempValues } = values;
 
@@ -128,20 +131,23 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     contactPhone: (org && org.contactPhone) ?? '',
     organizationType: (org && org.organizationType) ?? '',
     workType: (org && org.workType) ?? '',
-    address: (org && org.address) ?? '',
+    street: (org && org.street) ?? '',
+    city: (org && org.city) ?? '',
+    state: (org && org.state) ?? '',
+    zipCode: (org && org.zipCode) ?? '',
     missionStatement: (org && org.missionStatement) ?? '',
     shortHistory: (org && org.shortHistory) ?? '',
     lgbtqDemographic: org ? org.lgbtqDemographic : [],
     raceDemographic: org ? org.raceDemographic : [],
     ageDemographic: org ? org.ageDemographic : [],
-    // capacity: undefined,
     ein: (org && org.ein) ?? '',
-    // foundingDate: undefined,
+    foundingDate: (org && org.foundingDate) ?? undefined,
     is501c3: Boolean(org && org.is501c3),
     website: (org && org.website) ?? '',
     proj1: '',
     proj2: '',
     proj3: '',
+    locationType: '',
     qnr:
       appQnR?.map((q) => ({
         questionId: q.id,

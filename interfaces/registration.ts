@@ -32,8 +32,11 @@ export type Form = Pick<
   | 'contactName'
   | 'contactEmail'
   | 'contactPhone'
+  | 'street'
+  | 'city'
+  | 'state'
+  | 'zipCode'
   | 'website'
-  | 'address'
   | 'missionStatement'
   | 'shortHistory'
   | 'lgbtqDemographic'
@@ -48,8 +51,8 @@ export type Form = Pick<
   proj1: string;
   proj2: string;
   proj3: string;
-  // capacity: number | undefined;
-  // foundingDate: Date | undefined;
+  locationType: string;
+  foundingDate: Date | undefined;
 };
 
 const schema = Joi.object({
@@ -109,15 +112,33 @@ const schema = Joi.object({
         'Not a valid URL - remember http or https (https://nbjc.org)',
       'string.domain': 'Not a valid URL - missing domain (https://nbjc.org)',
     }),
-  // locationType: Joi.string()
-  //   .empty('')
-  //   .when('$strict', { is: true, then: Joi.required() })
-  //   .messages({ 'any.required': 'Location Type is required' }),
-  address: Joi.string()
+  locationType: Joi.string()
+    .empty('')
+    .when('$strict', { is: true, then: Joi.required() })
+    .messages({ 'any.required': 'Location Type is required' }),
+  street: Joi.string()
     .empty('')
     .when('$strict', { is: true, then: Joi.required() })
     .messages({
-      'any.required': 'Address is required',
+      'any.required': 'Street is required',
+    }),
+  city: Joi.string()
+    .empty('')
+    .when('$strict', { is: true, then: Joi.required() })
+    .messages({
+      'any.required': 'City is required',
+    }),
+  state: Joi.string()
+    .empty('')
+    .when('$strict', { is: true, then: Joi.required() })
+    .messages({
+      'any.required': 'State is required',
+    }),
+  zipCode: Joi.string()
+    .empty('')
+    .when('$strict', { is: true, then: Joi.required() })
+    .messages({
+      'any.required': 'Zip code is required',
     }),
   missionStatement: Joi.string()
     .empty('')
@@ -149,14 +170,11 @@ const schema = Joi.object({
     .unique()
     .items(Joi.string())
     .when('$strict', { is: true, then: Joi.required() }),
-  // capacity: Joi.string()
-  //   .empty('')
-  //   .when('$strict', { is: true, then: Joi.required() }),
   ein: Joi.string()
     .empty('')
     .pattern(/^[0-9]\d?-?\d{7}$/)
     .messages({ 'string.pattern.base': 'Not a valid EIN' }),
-  // foundingDate: Joi.date(),
+  foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
   proj1: Joi.string()
     .empty('')

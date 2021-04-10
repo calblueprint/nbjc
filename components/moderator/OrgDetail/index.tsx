@@ -54,7 +54,10 @@ const OrgDetail: React.FunctionComponent<DetailProps> = ({ org }) => {
         <div className={styles.section}>
           <div className={styles.big}>Location</div>
           <div>Type: {org.organizationType || 'None'}</div>
-          <div>{org.address || 'None'}</div>
+          <div>{org.street || 'None'}</div>
+          <div>{org.city || 'None'}</div>
+          <div>{org.state || 'None'}</div>
+          <div>{org.zipCode || 'None'}</div>
         </div>
       </div>
       <div className={styles.big}>Audience Demographics</div>

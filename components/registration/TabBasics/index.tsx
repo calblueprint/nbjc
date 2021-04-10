@@ -215,7 +215,7 @@ const TabBasics: React.FC<TabProps> = ({
           disabled={readOnly}
         />
       </div>
-      {/* <div className={styles.row}>
+      <div className={styles.row}>
         <p className={styles.descriptor}>Location Type</p>
         <FormControl
           className={styles.textField}
@@ -242,18 +242,55 @@ const TabBasics: React.FC<TabProps> = ({
             {touched.locationType ? errors.locationType : undefined}
           </FormHelperText>
         </FormControl>
-      </div> */}
+      </div>
       <div className={styles.row}>
         <p className={styles.descriptor}>Address</p>
         <TextField
           className={styles.textField}
           onChange={handleChange}
           onBlur={handleBlur}
-          value={values.address}
-          name="address"
+          value={values.street}
+          name="street"
+          placeholder="Street"
           variant="outlined"
-          error={Boolean(touched.address && errors.address)}
-          helperText={touched.address ? errors.address : undefined}
+          error={Boolean(touched.street && errors.street)}
+          helperText={touched.street ? errors.street : undefined}
+          disabled={readOnly}
+        />
+        <TextField
+          className={styles.textField}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.city}
+          name="city"
+          placeholder="City"
+          variant="outlined"
+          error={Boolean(touched.city && errors.city)}
+          helperText={touched.city ? errors.city : undefined}
+          disabled={readOnly}
+        />
+        <TextField
+          className={styles.textField}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.state}
+          name="state"
+          placeholder="State"
+          variant="outlined"
+          error={Boolean(touched.state && errors.state)}
+          helperText={touched.state ? errors.state : undefined}
+          disabled={readOnly}
+        />
+        <TextField
+          className={styles.textField}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.zipCode}
+          name="zipCode"
+          placeholder="Zip Code"
+          variant="outlined"
+          error={Boolean(touched.zipCode && errors.zipCode)}
+          helperText={touched.zipCode ? errors.zipCode : undefined}
           disabled={readOnly}
         />
       </div>
@@ -271,7 +308,7 @@ const TabBasics: React.FC<TabProps> = ({
           disabled={readOnly}
         />
       </div>
-      {/* <div className={styles.row}>
+      <div className={styles.row}>
         <p className={styles.descriptor}>Date of Founding</p>
         <TextField
           className={styles.textField}
@@ -283,7 +320,7 @@ const TabBasics: React.FC<TabProps> = ({
           error={Boolean(touched.foundingDate && errors.foundingDate)}
           helperText={touched.foundingDate ? errors.foundingDate : undefined}
         />
-      </div> */}
+      </div>
       <div className={styles.short}>
         <p>Audience Demographics</p>
         <div className={styles.auto}>

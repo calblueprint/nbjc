@@ -16,7 +16,10 @@ type Props = {
     | 'name'
     | 'organizationType'
     | 'workType'
-    | 'address'
+    | 'street'
+    | 'city'
+    | 'state'
+    | 'zipCode'
     | 'missionStatement'
     | 'shortHistory'
     | 'lgbtqDemographic'
@@ -113,7 +116,10 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
             <p className={styles.info}>
               <b>Type:</b> Headquarters
             </p>
-            {org.address && <p className={styles.info}>{org.address}</p>}
+            {org.street && <p className={styles.info}>{org.street}</p>}
+            {org.city && <p className={styles.info}>{org.city}</p>}
+            {org.state && <p className={styles.info}>{org.state}</p>}
+            {org.zipCode && <p className={styles.info}>{org.zipCode}</p>}
             {/* Basics */}
             {(org.website || org.ein || org.foundingDate) && (
               <h3 className={styles.infoHeader}>Basics</h3>
@@ -196,7 +202,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         name: true,
         organizationType: true,
         workType: true,
-        address: true,
+        street: true,
+        city: true,
+        state: true,
+        zipCode: true,
         missionStatement: true,
         shortHistory: true,
         lgbtqDemographic: true,
