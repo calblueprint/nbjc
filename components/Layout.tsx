@@ -73,21 +73,6 @@ const Layout: React.FunctionComponent<Props> = ({
                 </Link>
               </>
             )}
-            {/* <Link href="/users/settings">
-              <a className={styles.link}>
-                <Typography variant="h5">Users</Typography>
-              </a>
-            </Link> */}
-
-            {/* For easy access to own profile? */}
-
-            {/* {session && session.user.role === 'organization' ? (
-              <Link href="/orgs">
-                <a className={styles.link}>
-                  <Typography variant="h5">Profile</Typography>
-                </a>
-              </Link>
-            ) : null} */}
             {session && session.user.role === 'admin' ? (
               <Link href="/admin">
                 <a className={styles.link}>
@@ -131,6 +116,16 @@ const Layout: React.FunctionComponent<Props> = ({
                     open={Boolean(userMenuAnchor)}
                     onClose={() => setUserMenuAnchor(null)}
                   >
+                    {session.user.role === 'organization' ? (
+                      <MenuItem
+                        onClick={() => {
+                          setUserMenuAnchor(null);
+                          router.push('/orgs');
+                        }}
+                      >
+                        Profile
+                      </MenuItem>
+                    ) : null}
                     <MenuItem
                       onClick={() => {
                         setUserMenuAnchor(null);
