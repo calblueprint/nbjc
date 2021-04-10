@@ -93,11 +93,8 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     values: Form
   ): Promise<void> => {
     if (session && session.user.role === 'organization') {
-      if (draft && Object.keys(handleValidate(true)(values)).length !== 0) {
-        console.log('yee haw');
+      if (draft && Object.keys(handleValidate(true)(values)).length !== 0)
         return;
-      }
-      // return;
       console.log('submitting', values);
       const { proj1, proj2, proj3, ...tempValues } = values;
 

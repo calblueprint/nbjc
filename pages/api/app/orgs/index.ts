@@ -35,6 +35,7 @@ export default async (
 
   const appRes = qnr as QnR[];
 
+  // Create lat long here
   const applicationStatus = isSubmit ? 'submitted' : 'draft';
   const active = isSubmit ? false : undefined;
   const data = {
