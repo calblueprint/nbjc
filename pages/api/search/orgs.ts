@@ -27,7 +27,7 @@ export default async (
     where: {
       lgbtqDemographic: {
         // hasSome: req.body.orientation as Array<LgbtqDemographic>,
-        hasSome: [LgbtqDemographic.lgbtqAll, LgbtqDemographic.asexualAromantic],
+        hasSome: [LgbtqDemographic.asexualAromantic],
       },
     },
   });
