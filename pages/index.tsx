@@ -4,12 +4,14 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useFormik } from 'formik';
 import Layout from 'components/Layout';
 import { homepageFields } from 'interfaces';
+import {
+  AgeDemographicLabels,
+  RaceDemographicLabels,
+  LgbtqDemographicLabels,
+} from 'utils/typesLinker';
 import styles from 'styles/Home.module.css';
 
 const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
-const orientation = ['LGBTQ+ (all)', 'SGL', 'Transgender', 'Asexual/Aromantic'];
-const ethnicity = ['Black', 'Pacific Islander', 'Latinx', 'Native/Indigenous'];
-const ages = ['All ages', 'Children', 'Teens', 'Adults', 'Seniors'];
 
 const initialValues: homepageFields = {
   ages: [],
@@ -55,7 +57,7 @@ const Home: React.FC = () => {
                 <Autocomplete
                   multiple
                   id="tags-outlined"
-                  options={orientation}
+                  options={Object.values(LgbtqDemographicLabels)}
                   getOptionLabel={(option) => option}
                   filterSelectedOptions
                   onChange={(event, newValue) => {
@@ -73,7 +75,7 @@ const Home: React.FC = () => {
                 <Autocomplete
                   multiple
                   id="tags-outlined"
-                  options={ethnicity}
+                  options={Object.values(RaceDemographicLabels)}
                   getOptionLabel={(option) => option}
                   filterSelectedOptions
                   onChange={(event, newValue) => {
@@ -91,7 +93,7 @@ const Home: React.FC = () => {
                 <Autocomplete
                   multiple
                   id="tags-outlined"
-                  options={ages}
+                  options={Object.values(AgeDemographicLabels)}
                   getOptionLabel={(option) => option}
                   filterSelectedOptions
                   onChange={(event, newValue) => {
