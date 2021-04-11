@@ -1,7 +1,12 @@
 import prisma from 'utils/prisma';
-import { Organization, LgbtqDemographic } from '@prisma/client';
+import { Organization } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { MethodNotAllowed } from 'utils/error';
+import {
+  AgeDemographicLabels,
+  LgbtqDemographicLabels,
+  RaceDemographicLabels,
+} from 'utils/typesLinker';
 
 export const getFilteredOrganizations = async (): Promise<
   Organization[] | null
@@ -22,15 +27,36 @@ export default async (
     return MethodNotAllowed(req.method, res);
   }
 
-  // console.log(req.body);
+  // Only add filters if they are listed, otherwise use all filters
+  const orientationBody =
+    req.body.orientation.length === 0
+      ? Object.keys(LgbtqDemographicLabels)
+      : req.body.orientation;
+  const ethnicityBody =
+    req.body.ethnicity.length === 0
+      ? Object.keys(RaceDemographicLabels)
+      : req.body.ethnicity;
+  const agesBody =
+    req.body.ages.length === 0
+      ? Object.keys(AgeDemographicLabels)
+      : req.body.ages;
+
   const orgs = await prisma.organization.findMany({
     where: {
+      name: {
+        contains: req.body.orgName,
+        mode: 'insensitive',
+      },
       lgbtqDemographic: {
-        // hasSome: req.body.orientation as Array<LgbtqDemographic>,
-        hasSome: [LgbtqDemographic.asexualAromantic],
+        hasSome: orientationBody,
+      },
+      raceDemographic: {
+        hasSome: ethnicityBody,
+      },
+      ageDemographic: {
+        hasSome: agesBody,
       },
     },
   });
-
-  console.log(orgs);
+  return res.json(orgs);
 };
