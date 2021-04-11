@@ -8,8 +8,8 @@ export function up(db: Base, callback: Base.CallbackFunction): void {
       CREATE TYPE application_status AS ENUM ('draft', 'submitted', 'approved', 'rejected');
       CREATE TYPE organization_type AS ENUM ('Grassroots/Local', 'Statewide', 'National', 'Other');
       CREATE TYPE work_type AS ENUM ('Advocacy', 'Direct Service', 'Networking/Social');
-      CREATE TYPE lgbtq_demographic AS ENUM ('LGBTQ+ (All)', 'SGL', 'Transgender', 'Asexual/Aromantic', 'Other');
-      CREATE TYPE race_demographic AS ENUM ('POC (All)', 'Black', 'Asian', 'Pacific Islander', 'Latinx', 'Native/Indigeneous', 'Other');
+      CREATE TYPE lgbtq_demographic AS ENUM ('Queer', 'Asexual/Aromantic', 'Bisexual', 'Pansexual', 'Lesbian/SGL', 'Gay/SGL', 'Straight/Heterosexual', 'Other');
+      CREATE TYPE race_demographic AS ENUM ('Black', 'Native', 'Hispanic', 'Asian', 'Arab', 'White', 'Other');
       CREATE TYPE age_demographic AS ENUM ('Children', 'Teens', 'Adults', 'Seniors');
     `,
     callback

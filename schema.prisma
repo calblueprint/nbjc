@@ -170,11 +170,14 @@ enum ApplicationStatus {
 }
 
 enum LgbtqDemographic {
-  lgbtqAll          @map("LGBTQ+ (All)")
-  sgl               @map("SGL")
-  transgender       @map("Transgender")
-  asexualAromantic  @map("Asexual/Aromantic")
-  other             @map("Other")
+  queer                 @map("Queer")
+  asexualAromantic      @map("Asexual/Aromantic")
+  bisexual              @map("Bisexual")
+  pansexual             @map("Pansexual")
+  lesbianSgl            @map("Lesbian/SGL")
+  gaySgl                @map("Gay/SGL")
+  straightHeterosexual  @map("Straight/Heterosexual")
+  other                 @map("Other")
 
   @@map("lgbtq_demographic")
 }
@@ -189,13 +192,13 @@ enum OrganizationType {
 }
 
 enum RaceDemographic {
-  pocAll             @map("POC (All)")
-  black              @map("Black")
-  asian              @map("Asian")
-  pacificIslander    @map("Pacific Islander")
-  latinx             @map("Latinx")
-  nativeIndigeneous  @map("Native/Indigeneous")
-  other              @map("Other")
+  black     @map("Black")
+  native    @map("Native")
+  hispanic  @map("Hispanic")
+  asian     @map("Asian")
+  arab      @map("Arab")
+  white     @map("White")
+  other     @map("Other")
 
   @@map("race_demographic")
 }
