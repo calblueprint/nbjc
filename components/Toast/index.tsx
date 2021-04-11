@@ -33,12 +33,7 @@ const Toast: React.FunctionComponent<Props> = ({
   const handleClose = (): void => {
     setOpen(false);
   };
-  let message = '';
-  if (msg === null || msg === undefined) {
-    message = '';
-  } else {
-    message = msg;
-  }
+  let message = msg === null || msg === undefined ? '' : msg;
   if (variant === 'acceptedAlert') {
     message = 'Organization Name has been successfully accepted.';
   } else if (variant === 'verifyEmailAlert') {
@@ -109,8 +104,8 @@ const Toast: React.FunctionComponent<Props> = ({
     <div>
       <Snackbar
         anchorOrigin={{
-          vertical: vPos,
-          horizontal: hPos,
+          vertical: vPos as 'top' | 'bottom',
+          horizontal: hPos as 'left' | 'center' | 'right',
         }}
         open={open}
         onClose={handleClose}
