@@ -3,10 +3,10 @@ import { Prisma } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import OrganizationSchema from 'interfaces/organization';
+import { Project, QnR } from 'interfaces/registration';
 import CreateError, { MethodNotAllowed } from 'utils/error';
 import parseValidationError from 'utils/parseValidationError';
 import Joi from 'joi';
-import { QnR } from 'interfaces/registration';
 
 export default async (
   req: NextApiRequest,
@@ -18,7 +18,14 @@ export default async (
 
   const isSubmit = req.query.submitting === 'true';
 
-  const { userId, qnr, ...body } = req.body;
+  const {
+    userEmail,
+    userId,
+    qnr,
+    projects,
+    projIDsToDelete,
+    ...body
+  } = req.body;
   if (Joi.number().validate(userId).error) {
     return CreateError(400, `ID ${userId} is not a number`, res);
   }
@@ -43,8 +50,13 @@ export default async (
     active,
   } as Prisma.OrganizationCreateInput;
 
+  const appProjs = projects as Project[];
+  const deleteProjs = projIDsToDelete as number[];
+  const toCreate = appProjs.filter(({ id }) => !!id); // projects without id, to be created
+  const toUpdate = appProjs.filter((i) => !i.id); // projects to update
+  let newOrg;
   try {
-    const newOrg = await prisma.organization.upsert({
+    newOrg = await prisma.organization.upsert({
       where: {
         userId,
       },
@@ -66,8 +78,21 @@ export default async (
           },
         },
       },
+
       update: {
         ...data,
+        organizationProjects: {
+          updateMany: toUpdate.map(({ id, title, description }) => ({
+            where: {
+              id,
+            },
+            data: {
+              title,
+              description,
+            },
+          })),
+          deleteMany: deleteProjs.map((id) => ({ id })),
+        },
         applicationResponses: {
           updateMany: appRes.map(({ questionId, response: answer }) => ({
             where: {
@@ -80,9 +105,32 @@ export default async (
         },
       },
     });
-    return res.json(newOrg);
   } catch (err) {
     console.log(err);
     return CreateError(500, 'Failed to create organization', res);
   }
+
+  await prisma.organizationProject.deleteMany;
+
+  // FIXME: This is a temporary (ugly) solution for creating projects
+  try {
+    for (let i = 0; i < toCreate.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      const response = await prisma.organizationProject.create({
+        data: {
+          title: toCreate[i].title,
+          description: toCreate[i].description,
+          organization: {
+            connect: {
+              id: newOrg.id,
+            },
+          },
+        },
+      });
+    }
+  } catch (err) {
+    return CreateError(500, 'Failed to create project', res);
+  }
+
+  return res.json(newOrg);
 };

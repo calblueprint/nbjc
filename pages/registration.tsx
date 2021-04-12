@@ -1,8 +1,13 @@
 import { GetServerSideProps } from 'next';
-import prisma from 'utils/prisma';
-import { Organization } from '@prisma/client';
-import { FormikErrors, useFormik } from 'formik';
-import { useState, ChangeEvent } from 'react';
+import { Organization, PrismaClient, Prisma } from '@prisma/client';
+import {
+  Formik,
+  FormikErrors,
+  useFormik,
+  FormikValues,
+  FormikHelpers,
+} from 'formik';
+import { useState, useEffect, ChangeEvent } from 'react';
 import {
   Tabs,
   Tab,
@@ -26,10 +31,13 @@ import useSession from 'utils/useSession';
 import parseValidationError from 'utils/parseValidationError';
 import getSession from 'utils/getSession';
 import Joi from 'joi';
+import prisma from 'utils/prisma';
 import styles from '../styles/Registration.module.css';
 
 type RegistrationProps = {
-  org: Organization | null;
+  org: Prisma.OrganizationGetPayload<{
+    include: { organizationProjects: true };
+  }> | null;
   appQnR: AppQnR;
 };
 
@@ -40,6 +48,8 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
   const router = useRouter();
   const [session, sessionLoading] = useSession();
   const [selected, setSelected] = useState(0);
+  const [exitDialogOpen, setExitDialogOpen] = useState(false);
+  const [saveDraft, setSaveDraft] = useState(false);
   const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(
     router.query?.feedback === 'true'
   );
@@ -47,16 +57,23 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
   const status = org?.applicationStatus;
   const readOnly = status === 'submitted' || status === 'approved';
 
+  const exiting = (): void => {
+    setExitDialogOpen(true);
+    router.push('/users/profile');
+  };
+
   const handleValidate = (draft: boolean) => (
-    values: Form
+    values: FormikValues
   ): FormikErrors<Form> => {
-    const { qnr, ...rest } = values;
+    const { qnr, ...rest } = values as Form;
     const { error } = schema.validate(rest, {
       abortEarly: false,
       context: {
         strict: !draft,
       },
     });
+    // console.log('validate');
+    // console.log(parseValidationError(error));
 
     // Validate custom short response questions
     let qnrValidateEmpty = true;
@@ -82,10 +99,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     return { ...parseValidationError(error) };
   };
 
-  const handleChange = (
-    _event: ChangeEvent<unknown>,
-    newValue: number
-  ): void => {
+  const tabChange = (_event: ChangeEvent<unknown>, newValue: number): void => {
     setSelected(newValue);
   };
 
@@ -95,9 +109,23 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     if (session && session.user.role === 'organization') {
       if (draft && Object.keys(handleValidate(true)(values)).length !== 0)
         return;
-      console.log('submitting', values);
-      const { proj1, proj2, proj3, ...tempValues } = values;
-
+      const { short1, short2, short3, projects, ...tempValues } = values;
+      // set to hold all current projects in front-end
+      const currStateProjSet = new Set();
+      // IDs of projects from original serverSideProps get request
+      const originalIDs = org?.organizationProjects?.map((o) => o.id) ?? [];
+      // will hold the IDs of the projects to delete
+      const projIDsToDelete = [];
+      let ind = 0;
+      for (let i = 0; i < projects.length; i += 1) {
+        currStateProjSet.add(projects[i].id);
+      }
+      for (let i = 0; i < originalIDs.length; i += 1) {
+        if (!currStateProjSet.has(originalIDs[i])) {
+          projIDsToDelete[ind] = originalIDs[i];
+          ind += 1;
+        }
+      }
       try {
         const res = await fetch(`/api/app/orgs?submitting=${!draft}`, {
           method: 'POST',
@@ -107,6 +135,8 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
           body: JSON.stringify({
             userId: session.user.id,
             ...tempValues,
+            projects,
+            projIDsToDelete,
           }),
         });
 
@@ -120,8 +150,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
       }
     }
   };
-
-  const initialValues: Form = {
+  const formValues: Form = {
     name: (org && org.name) ?? '',
     contactName: (org && org.contactName) ?? '',
     contactEmail: (org && org.contactEmail) ?? '',
@@ -139,9 +168,15 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     // foundingDate: undefined,
     is501c3: Boolean(org && org.is501c3),
     website: (org && org.website) ?? '',
-    proj1: '',
-    proj2: '',
-    proj3: '',
+    short1: '',
+    short2: '',
+    short3: '',
+    projects:
+      org?.organizationProjects?.map((o) => ({
+        id: o.id ?? null,
+        title: o.title,
+        description: o.description ?? '',
+      })) ?? [],
     qnr:
       appQnR?.map((q) => ({
         questionId: q.id,
@@ -149,8 +184,27 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
       })) ?? [],
   };
 
+  const addNewProj = (
+    values: Form,
+    setFieldValue: FormikHelpers<string>['setFieldValue']
+  ): void => {
+    const currProjs = values.projects;
+    currProjs.push({ title: '', description: '' });
+    setFieldValue('projects', currProjs);
+  };
+
+  const deleteProj = (
+    values: Form,
+    setFieldValue: FormikHelpers<string>['setFieldValue'],
+    index: number
+  ): void => {
+    const currProjs = values.projects;
+    currProjs.splice(index, 1);
+    setFieldValue('projects', currProjs);
+  };
+
   const formik = useFormik({
-    initialValues,
+    initialValues: formValues,
     validate: handleValidate(false),
     validateOnChange: false,
     onSubmit: handleSubmit(false),
@@ -183,6 +237,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
         ) : null}
         <div className={styles.header}>
           <Typography variant="h4">Registration Form</Typography>
+          <h1 className={styles.header}>Registration Form</h1>
           {status === 'rejected' ? (
             <Button
               variant="outlined"
@@ -195,7 +250,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
         <form onSubmit={formik.handleSubmit}>
           <div className={styles.root}>
             <AppBar position="static" color="default" className={styles.appBar}>
-              <Tabs value={selected} onChange={handleChange}>
+              <Tabs value={selected} onChange={tabChange}>
                 <Tab label="Basics" />
                 <Tab label="Projects and Events" />
                 <Tab label="Short Response" />
@@ -220,6 +275,8 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                 setFieldValue={formik.setFieldValue}
                 touched={formik.touched}
                 errors={formik.errors}
+                addNewProj={addNewProj}
+                deleteProj={deleteProj}
                 readOnly={readOnly}
               />
             )}
@@ -241,9 +298,9 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
               <div>
                 <Button
                   variant="outlined"
-                  color="primary"
                   className={styles.autoField}
-                  onClick={() => handleSubmit(true)(formik.values)}
+                  type="submit"
+                  onClick={() => setSaveDraft(false)}
                 >
                   Save Changes
                 </Button>
@@ -251,7 +308,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                   variant="contained"
                   className={styles.autoField}
                   color="primary"
-                  type="submit"
+                  onClick={() => handleSubmit(true)}
                 >
                   Submit
                 </Button>
@@ -260,8 +317,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
             <div>
               <Button
                 variant={readOnly ? 'contained' : 'outlined'}
-                color="primary"
-                onClick={() => router.push('/users/profile')}
+                onClick={() => exiting()}
               >
                 Exit
               </Button>
@@ -282,6 +338,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       const organization = await prisma.organization.findUnique({
         where: {
           userId: session.user.id,
+        },
+        include: {
+          organizationProjects: true,
         },
       });
       // getting app questions

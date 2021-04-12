@@ -1,6 +1,12 @@
 import { Prisma, Organization } from '@prisma/client';
 import Joi from 'joi';
 
+export type Project = {
+  id?: number;
+  title: string;
+  description: string;
+};
+
 export type Response = {
   id: number[];
   response: string[];
@@ -44,10 +50,14 @@ export type Form = Pick<
 > & {
   organizationType: string;
   workType: string;
+  short1: string;
+  short2: string;
+  short3: string;
+  projects: Project[];
   qnr: QnR[];
-  proj1: string;
-  proj2: string;
-  proj3: string;
+  // proj1: string;
+  // proj2: string;
+  // proj3: string;
   // capacity: number | undefined;
   // foundingDate: Date | undefined;
 };
@@ -103,7 +113,7 @@ const schema = Joi.object({
     .messages({ 'any.required': 'Type of Work is required' }),
   website: Joi.string()
     .empty('')
-    .uri({ domain: { tlds: false } })
+    .uri({ domain: { tlds: false }, allowRelative: true })
     .messages({
       'string.uri':
         'Not a valid URL - remember http or https (https://nbjc.org)',
@@ -155,16 +165,35 @@ const schema = Joi.object({
   ein: Joi.string()
     .empty('')
     .pattern(/^[0-9]\d?-?\d{7}$/)
+    .when('$strict', {
+      is: true,
+      then: Joi.required(),
+    })
     .messages({ 'string.pattern.base': 'Not a valid EIN' }),
   // foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
-  proj1: Joi.string()
+  projects: Joi.array()
+    .empty('')
+    .when('$strict', {
+      is: true,
+      then: Joi.required(),
+    })
+    .messages({
+      'any.required': 'project is required',
+    }),
+  short1: Joi.string()
+    .empty('')
+    .when('$strict', {
+      is: true,
+      then: Joi.required(),
+    })
+    .messages({
+      'any.required': 'short1 is required',
+    }),
+  short2: Joi.string()
     .empty('')
     .when('$strict', { is: true, then: Joi.required() }),
-  proj2: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
-  proj3: Joi.string()
+  short3: Joi.string()
     .empty('')
     .when('$strict', { is: true, then: Joi.required() }),
 });
