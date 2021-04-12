@@ -343,24 +343,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
                 <ChevronLeftIcon />
               </IconButton>
             </div>
-            {/* Removing search functionality? */}
-
-            {/* <div className={styles.textField}>
-              <TextField
-                fullWidth
-                id="search"
-                type="search"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                variant="outlined"
-                size="small"
-              />
-            </div> */}
             {tab()}
           </Drawer>
           <main
