@@ -38,6 +38,7 @@ export const LgbtqDemographicLabels: Record<LgbtqDemographic, string> = {
   [LgbtqDemographic.lesbianSgl]: 'Lesbian/SGL',
   [LgbtqDemographic.gaySgl]: 'Gay/SGL',
   [LgbtqDemographic.straightHeterosexual]: 'Straight/Heterosexual',
+  [LgbtqDemographic.lgbtqPlus]: 'LGBTQ+',
   [LgbtqDemographic.other]: 'Other',
 };
 

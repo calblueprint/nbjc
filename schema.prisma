@@ -177,6 +177,7 @@ enum LgbtqDemographic {
   lesbianSgl            @map("Lesbian/SGL")
   gaySgl                @map("Gay/SGL")
   straightHeterosexual  @map("Straight/Heterosexual")
+  lgbtqPlus             @map("LGBTQ+")
   other                 @map("Other")
 
   @@map("lgbtq_demographic")
