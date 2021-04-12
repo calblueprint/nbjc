@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Layout from 'components/Layout';
-import styles from 'styles/users/Settings.module.css';
+import styles from 'styles/users/Profile.module.css';
 import { Button, TextField, Link, LinearProgress } from '@material-ui/core';
 import { useSession } from 'next-auth/client';
 import ProgressStepper from '../../components/user/ProgressStepper/index';
