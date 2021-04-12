@@ -341,26 +341,13 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
   // const [session, loading] = useSession();
 
   return (
-    <Layout>
+    <Layout
+      handleClickSearch={handleClickSearch}
+      searchFilters={searchFilters}
+      handleSearchChange={handleSearchChange}
+      page
+    >
       <div className={styles.pageFlex}>
-        <TextField
-          id="outlined-size-small"
-          placeholder="Explore Organizations"
-          fullWidth
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <IconButton onClick={handleClickSearch}>
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          variant="outlined"
-          value={searchFilters}
-          onChange={handleSearchChange}
-        />
-
         <div className={styles.pageContent}>
           <div className={styles.leftCol}>
             <div className={styles.filters}>

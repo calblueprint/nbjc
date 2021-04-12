@@ -1,6 +1,16 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Button, LinearProgress, Menu, MenuItem } from '@material-ui/core';
+import {
+  TextField,
+  FilledInput,
+  InputAdornment,
+  IconButton,
+  Button,
+  LinearProgress,
+  Menu,
+  MenuItem,
+} from '@material-ui/core';
+import SearchIcon from '@material-ui/icons/Search';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import { signOut } from 'next-auth/client';
@@ -9,17 +19,53 @@ import styles from '../styles/Layout.module.css';
 
 type Props = {
   title?: string;
+  page?: boolean;
+  handleClickSearch?: React.ChangeEventHandler<Element> | undefined;
+  searchFilters?: string;
+  handleSearchChange?: React.ChangeEventHandler;
 };
 
 const Layout: React.FunctionComponent<Props> = ({
   children,
   title = 'NBJC',
+  page,
+  handleClickSearch,
+  searchFilters,
+  handleSearchChange,
 }) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
   const [userMenuAnchor, setUserMenuAnchor] = useState<HTMLElement | null>(
     null
   );
+
+  let searchBar = null;
+  if (page) {
+    searchBar = (
+      <div className={styles.searchbar}>
+        <TextField
+          classes={{
+            root: styles.searchField,
+          }}
+          placeholder="Explore Organizations"
+          fullWidth
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <IconButton onClick={handleClickSearch}>
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          disableUnderline
+          variant="standard"
+          value={searchFilters}
+          onChange={handleSearchChange}
+        />
+      </div>
+    );
+  }
 
   if (sessionLoading) return <LinearProgress />;
   return (
@@ -36,6 +82,7 @@ const Layout: React.FunctionComponent<Props> = ({
               <h1>NBJC</h1>
             </a>
           </Link>
+          {searchBar}
           <div className={styles.nav}>
             <Link href="/">
               <a className={styles.link}>Map</a>
