@@ -8,7 +8,6 @@ import getSession from 'utils/getSession';
 import {
   Dialog,
   DialogActions,
-  DialogTitle,
   DialogContentText,
   Button,
   TextField,
