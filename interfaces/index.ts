@@ -9,6 +9,13 @@ export type Moderator = {
   name: string;
 };
 
+export type homepageFields = {
+  orgName: string;
+  ages: string[];
+  ethnicity: string[];
+  orientation: string[];
+};
+
 // TODO: logo needs to be type of an image.... saving as string for now
 export type OrgApp = {
   id: number;

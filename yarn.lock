@@ -1374,7 +1374,7 @@
   resolved "https://registry.yarnpkg.com/@prisma/bar/-/bar-0.0.0.tgz#9daff159a1a09abf7665a8b6e40ddc1fdc1ed4f7"
   integrity sha512-3nez9n/vMyAr4+nmqj6Xh3cGZbreYHr3RWX0vgtrFRpiN6otuCzL+9HW8MW/DfZNuFz5YyIdfwnRSPueUZPoWQ==
 
-"@prisma/cli@^2.4.1", "@prisma/cli@^2.9.0":
+"@prisma/cli@^2.4.1":
   version "2.10.1"
   resolved "https://registry.yarnpkg.com/@prisma/cli/-/cli-2.10.1.tgz#e99ebff7290e27c13062543f464f169448e5587c"
   integrity sha512-I+51GBJyuGS5xsCl8pf4XfTt9HIdhCJQoaGCA9KLDzVRbFHElMQ++hhyhLohJ4buFZlSagIq8NI8yIC5yu+Wkg==
@@ -1382,12 +1382,12 @@
     "@prisma/bar" "^0.0.0"
     "@prisma/engines" "2.10.1-6-7d0087eadc7265e12d4b8d8c3516b02c4c965111"
 
-"@prisma/client@^2.9.0":
-  version "2.10.1"
-  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-2.10.1.tgz#96fe79ad0d7763d0eda1ea91870a8882e4dbb21f"
-  integrity sha512-VwasxCCwdRmrcVVoLwXTEbwrBiqOYr2Umqw9btvMvHGRhA1nRKCvmt7SCiCjGrx6CuC8eCG/HGxruv04001YKQ==
+"@prisma/client@^2.18.0":
+  version "2.18.0"
+  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-2.18.0.tgz#bff0a206f3caf7525583c703146f835dee0b5ad6"
+  integrity sha512-tRu0bdYNKIdWnFIbtgUmZyPgtDLV3AgwO8NYXirlbSn5poygbSaV87UfOBh1NmrvjS9EBP5dQv+bs62sVB84hA==
   dependencies:
-    "@prisma/engines-version" "2.10.1-6-7d0087eadc7265e12d4b8d8c3516b02c4c965111"
+    "@prisma/engines-version" "2.18.0-34.da6fafb57b24e0b61ca20960c64e2d41f9e8cff1"
 
 "@prisma/debug@2.10.1":
   version "2.10.1"
@@ -1415,15 +1415,20 @@
     terminal-link "^2.1.1"
     undici "2.1.0"
 
-"@prisma/engines-version@2.10.1-6-7d0087eadc7265e12d4b8d8c3516b02c4c965111":
-  version "2.10.1-6-7d0087eadc7265e12d4b8d8c3516b02c4c965111"
-  resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-2.10.1-6-7d0087eadc7265e12d4b8d8c3516b02c4c965111.tgz#7f96aa61085fc803f81b3df0fa32297909ce4b08"
-  integrity sha512-OuOSTvEzXJwCJzNqZ9N/+J3lO64HgX9uGiVOuvlTrRSXoLZk0Q2IiLAx8qhY1U7jPpHJ7LTlZuGNScimqonpJg==
+"@prisma/engines-version@2.18.0-34.da6fafb57b24e0b61ca20960c64e2d41f9e8cff1":
+  version "2.18.0-34.da6fafb57b24e0b61ca20960c64e2d41f9e8cff1"
+  resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-2.18.0-34.da6fafb57b24e0b61ca20960c64e2d41f9e8cff1.tgz#c595c9d85ab2c67b67d0eb7bfbb0a3b05b41fdbe"
+  integrity sha512-+Eljsb1XItfq9B6vRTA1Oe4CQOGAxbsjtPAIORZwaU4Gt9RybnXapFlrQ8Mac89PXeSgcO4RnPSLEYhcd3kSVg==
 
 "@prisma/engines@2.10.1-6-7d0087eadc7265e12d4b8d8c3516b02c4c965111":
   version "2.10.1-6-7d0087eadc7265e12d4b8d8c3516b02c4c965111"
   resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-2.10.1-6-7d0087eadc7265e12d4b8d8c3516b02c4c965111.tgz#614e82316270333d31a1581e533ef0c275b2b5f6"
   integrity sha512-F/I8mmYMQnEFX47jl7Su8Pmvpua1wti9Uq3IUlSCqLQsrOmuMj+GKQ5nYEewmcynqBlyVcpUyxF5iAWbmUVdjw==
+
+"@prisma/engines@2.18.0-34.da6fafb57b24e0b61ca20960c64e2d41f9e8cff1":
+  version "2.18.0-34.da6fafb57b24e0b61ca20960c64e2d41f9e8cff1"
+  resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-2.18.0-34.da6fafb57b24e0b61ca20960c64e2d41f9e8cff1.tgz#647a7e2735b08fe28425be135120bb54ea408256"
+  integrity sha512-Q5q5mQePRFSSGbd/14Ogq1RNkebbbwskiTbWsvrSq14t9Us0rC9Xsecd4mr4rEAy8Yd6sXEJW4czZ/88DGzz2w==
 
 "@prisma/fetch-engine@2.10.1":
   version "2.10.1"
@@ -7167,6 +7172,13 @@ prisma-schema-transformer@^0.5.0:
     immer "^6.0.6"
     pluralize "^8.0.0"
 
+prisma@^2.18.0:
+  version "2.18.0"
+  resolved "https://registry.yarnpkg.com/prisma/-/prisma-2.18.0.tgz#b19a2d4a487b8b62759777be55506567af41f6ae"
+  integrity sha512-03po/kFW3/oGHtnANgZiKYz22KEx6NpdaIP2r4eievmVam9f2+0PdP4x/KSFdMCT6B6VHh+3ILTi2z3bYosCgA==
+  dependencies:
+    "@prisma/engines" "2.18.0-34.da6fafb57b24e0b61ca20960c64e2d41f9e8cff1"
+
 process-nextick-args@~2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
@@ -8826,10 +8838,10 @@ typeorm@^0.2.24:
     yargonaut "^1.1.2"
     yargs "^16.0.3"
 
-typescript@^4.0.3:
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.0.5.tgz#ae9dddfd1069f1cb5beb3ef3b2170dd7c1332389"
-  integrity sha512-ywmr/VrTVCmNTJ6iV2LwIrfG1P+lv6luD8sUJs+2eI9NLGigaN+nUQc13iHqisq7bra9lnmUSYqbJvegraBOPQ==
+typescript@^4.1.5:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.2.3.tgz#39062d8019912d43726298f09493d598048c1ce3"
+  integrity sha512-qOcYwxaByStAWrBf4x0fibwZvMRG+r4cQoTjbPtUlrWjBHbmCAww1i448U0GJ+3cNNEtebDteo/cHOR3xJ4wEw==
 
 undici@2.1.0:
   version "2.1.0"

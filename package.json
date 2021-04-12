@@ -14,10 +14,10 @@
     "build": "next build",
     "build:scripts": "tsc --project tsconfig.scripts.json",
     "start": "next start -p $PORT",
-    "heroku-postbuild": "yarn build && yarn build:scripts && yarn db:migrate up",
+    "heroku-postbuild": "yarn build && yarn build:scripts && yarn db:migrate up -e prod",
     "heroku-review-app-init": "node build/bin/set-nextauth-url.js && node build/bin/seed-database.js",
     "cm": "cz",
-    "prisma:update": "prisma introspect && prisma generate",
+    "prisma:update": "prisma db pull && prisma generate && prisma format",
     "prisma:transform": "prisma-schema-transformer ./schema.prisma",
     "db:drop": "db-migrate db:drop nbjc_development -e pg",
     "db:create": "db-migrate db:create nbjc_development -e pg",
@@ -49,7 +49,7 @@
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
-    "@prisma/client": "^2.9.0",
+    "@prisma/client": "^2.18.0",
     "clsx": "^1.1.1",
     "db-migrate": "^0.11.11",
     "db-migrate-base": "^2.3.0",
@@ -66,7 +66,6 @@
     "react-map-gl": "^5.2.9"
   },
   "devDependencies": {
-    "@prisma/cli": "^2.9.0",
     "@types/db-migrate-base": "^0.0.8",
     "@types/faker": "^5.1.5",
     "@types/next-auth": "^3.1.11",
@@ -92,9 +91,10 @@
     "husky": "^4.3.0",
     "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",
+    "prisma": "^2.18.0",
     "prisma-schema-transformer": "^0.5.0",
     "ts-node": "^9.0.0",
-    "typescript": "^4.0.3"
+    "typescript": "^4.1.5"
   },
   "config": {
     "commitizen": {
