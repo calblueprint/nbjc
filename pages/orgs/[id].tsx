@@ -7,6 +7,16 @@ import Layout from 'components/Layout';
 import Project from 'components/organization/Project';
 import Tab from 'components/Tab';
 import computeDate from 'utils/computeDate';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  Checkbox,
+  Typography,
+  CircularProgress,
+  DialogActions,
+} from '@material-ui/core';
 import styles from '../../styles/Organization.module.css';
 
 type Props = {
@@ -53,6 +63,12 @@ const projectsList = projects.map((project) => {
 });
 
 const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
+  const [openModal, setOpenModal] = useState(false);
+
+  const closeModal = () => (): void => {
+    setOpenModal(false);
+  };
+
   const [tabState, setTabState] = useState<0 | 1 | 2>(0);
 
   const demographics = (category: string, groups: string[]): JSX.Element => {
@@ -84,6 +100,28 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
 
   return (
     <Layout title={`${org.name} Profile`}>
+      <Dialog
+        onClose={closeModal()}
+        className={styles.newModal}
+        fullWidth
+        open={openModal}
+      >
+        <DialogTitle>Reason For Declining</DialogTitle>
+        <DialogContent>
+          <div className={styles.modContent}>
+            <div className={styles.modTab}>
+              Notes
+              <div>[User's notes on organization here.]</div>
+            </div>
+            <div>Text Input</div>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" color="primary" onClick={closeModal()}>
+            Send
+          </Button>
+        </DialogActions>
+      </Dialog>
       <div className={styles.orgMargins}>
         <div className={styles.orgImages}>
           <img
@@ -172,6 +210,24 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
             ) : (
               <div className={styles.projects}>{projectsList}</div>
             )}
+            <div>
+              <Button
+                variant="contained"
+                className={styles.editButtonStyles}
+                disableElevation
+              >
+                Decline
+              </Button>
+              <Button
+                variant="contained"
+                className={styles.editButtonStyles}
+                disableElevation
+                color="primary"
+                onClick={() => setOpenModal(true)}
+              >
+                Approve
+              </Button>
+            </div>
           </div>
         </div>
       </div>
