@@ -4,12 +4,21 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useFormik } from 'formik';
 import Layout from 'components/Layout';
 import { homepageFields } from 'interfaces';
+import Link from 'next/link';
+import Router from 'next/router';
+import {
+  AgeDemographicLabels,
+  RaceDemographicLabels,
+  LgbtqDemographicLabels,
+} from 'utils/typesLinker';
 import styles from 'styles/Home.module.css';
+import {
+  LgbtqDemographic,
+  RaceDemographic,
+  AgeDemographic,
+} from '@prisma/client';
 
 const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
-const orientation = ['LGBTQ+ (all)', 'SGL', 'Transgender', 'Asexual/Aromantic'];
-const ethnicity = ['Black', 'Pacific Islander', 'Latinx', 'Native/Indigenous'];
-const ages = ['All ages', 'Children', 'Teens', 'Adults', 'Seniors'];
 
 const initialValues: homepageFields = {
   ages: [],
@@ -23,8 +32,16 @@ const initialValues: homepageFields = {
 const Home: React.FC = () => {
   const formik = useFormik({
     initialValues,
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values): Promise<void> => {
+      Router.push({
+        pathname: 'results',
+        query: {
+          orgName: values.orgName,
+          ages: values.ages,
+          ethnicity: values.ethnicity,
+          orientation: values.orientation,
+        },
+      });
     },
   });
   return (
@@ -39,8 +56,12 @@ const Home: React.FC = () => {
                 <Autocomplete
                   multiple
                   id="tags-outlined"
-                  options={orientation}
-                  getOptionLabel={(option) => option}
+                  options={
+                    Object.keys(LgbtqDemographicLabels) as LgbtqDemographic[]
+                  }
+                  getOptionLabel={(option: LgbtqDemographic) =>
+                    LgbtqDemographicLabels[option]
+                  }
                   filterSelectedOptions
                   onChange={(event, newValue) => {
                     formik.setFieldValue('orientation', newValue);
@@ -57,8 +78,12 @@ const Home: React.FC = () => {
                 <Autocomplete
                   multiple
                   id="tags-outlined"
-                  options={ethnicity}
-                  getOptionLabel={(option) => option}
+                  options={
+                    Object.keys(RaceDemographicLabels) as RaceDemographic[]
+                  }
+                  getOptionLabel={(option: RaceDemographic) =>
+                    RaceDemographicLabels[option]
+                  }
                   filterSelectedOptions
                   onChange={(event, newValue) => {
                     formik.setFieldValue('ethnicity', newValue);
@@ -75,8 +100,12 @@ const Home: React.FC = () => {
                 <Autocomplete
                   multiple
                   id="tags-outlined"
-                  options={ages}
-                  getOptionLabel={(option) => option}
+                  options={
+                    Object.keys(AgeDemographicLabels) as AgeDemographic[]
+                  }
+                  getOptionLabel={(option: AgeDemographic) =>
+                    AgeDemographicLabels[option]
+                  }
                   filterSelectedOptions
                   onChange={(event, newValue) => {
                     formik.setFieldValue('ages', newValue);
