@@ -1,9 +1,5 @@
 import { GetServerSideProps } from 'next';
-import {
-  Organization,
-  PrismaClient,
-  OrganizationGetPayload,
-} from '@prisma/client';
+import { Organization, PrismaClient, Prisma } from '@prisma/client';
 import {
   Formik,
   FormikErrors,
@@ -39,7 +35,7 @@ import prisma from 'utils/prisma';
 import styles from '../styles/Registration.module.css';
 
 type RegistrationProps = {
-  org: OrganizationGetPayload<{
+  org: Prisma.OrganizationGetPayload<{
     include: { organizationProjects: true };
   }> | null;
   appQnR: AppQnR;
