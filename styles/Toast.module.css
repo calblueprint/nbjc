@@ -1,5 +1,4 @@
 .root {
-  background: #f8f4ff;
   color: black;
   border-radius: 20px;
   box-shadow: 1px 2px 20px rgba(128, 128, 128, 0.171);
@@ -10,37 +9,27 @@
   padding: 12px;
   padding-left: 25px;
   padding-right: 25px;
+  max-width: 600px;
+}
+
+.default {
+  background: #f8f4ff;
 }
 
 .error {
   background: #fff0f0;
-  color: black;
-  border-radius: 20px;
-  box-shadow: 1px 2px 20px rgba(128, 128, 128, 0.171);
-  border-style: solid;
-  border-color: #b0a4c580;
-  border-width: 1px;
-  font-weight: 100;
-  padding: 12px;
-  padding-left: 25px;
-  padding-right: 25px;
+}
+
+.defaultMaxWidth {
+  max-width: 600px;
 }
 
 .lavendarButton {
   color: #71579c;
 }
 
-.signIn {
+.redButton {
   color: #be0000;
-}
-
-.grayButton {
-  color: #908d93;
-}
-
-.linkButton {
-  color: #71579c;
-  font-weight: 500;
 }
 
 .action {
