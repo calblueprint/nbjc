@@ -10,7 +10,6 @@ import {
   DialogContent,
   TextField,
   IconButton,
-  DialogActions,
 } from '@material-ui/core';
 import Layout from 'components/Layout';
 import Toast from 'components/Toast';
