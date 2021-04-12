@@ -13,7 +13,7 @@ import CreateError, { MethodNotAllowed } from 'utils/error';
 export const getEvent = async (
   id: string
 ): Promise<OrganizationEvent | null> => {
-  const org = await prisma.organizationEvent.findOne({
+  const org = await prisma.organizationEvent.findUnique({
     where: { id: Number(id) },
   });
   return org;
