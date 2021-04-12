@@ -21,8 +21,12 @@ import {
   WorkTypeLabels,
 } from 'utils/typesLinker';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import {
+  LgbtqDemographic,
+  RaceDemographic,
+  AgeDemographic,
+} from '@prisma/client';
 import styles from './TabBasics.module.css';
-import { LgbtqDemographic } from '.prisma/client';
 
 type TabProps = {
   values: Form;
@@ -48,7 +52,6 @@ const TabBasics: React.FC<TabProps> = ({
   setFieldValue,
   readOnly,
 }) => {
-  console.log(values);
   return (
     <>
       <div className={styles.row}>
@@ -281,7 +284,6 @@ const TabBasics: React.FC<TabProps> = ({
               filterSelectedOptions
               value={values.lgbtqDemographic}
               onChange={(event, newValue) => {
-                console.log(newValue);
                 setFieldValue('lgbtqDemographic', newValue);
               }}
               onBlur={handleBlur}
@@ -307,8 +309,10 @@ const TabBasics: React.FC<TabProps> = ({
             <Autocomplete
               multiple
               id="raceDemographic"
-              options={Object.values(RaceDemographicLabels)}
-              getOptionLabel={(option) => option}
+              options={Object.keys(RaceDemographicLabels) as RaceDemographic[]}
+              getOptionLabel={(option: RaceDemographic) =>
+                RaceDemographicLabels[option]
+              }
               filterSelectedOptions
               value={values.raceDemographic}
               onChange={(event, newValue) => {
@@ -335,8 +339,10 @@ const TabBasics: React.FC<TabProps> = ({
             <Autocomplete
               multiple
               id="ageDemographic"
-              options={Object.values(AgeDemographicLabels)}
-              getOptionLabel={(option) => option}
+              options={Object.keys(AgeDemographicLabels) as AgeDemographic[]}
+              getOptionLabel={(option: AgeDemographic) =>
+                AgeDemographicLabels[option]
+              }
               filterSelectedOptions
               onChange={(event, newValue) => {
                 setFieldValue('ageDemographic', newValue);
