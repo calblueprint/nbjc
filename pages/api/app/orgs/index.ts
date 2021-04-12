@@ -92,16 +92,16 @@ export default async (
             },
           })),
           deleteMany: deleteProjs.map((id) => ({ id })),
-          applicationResponses: {
-            updateMany: appRes.map(({ questionId, response: answer }) => ({
-              where: {
-                questionId,
-              },
-              data: {
-                answer,
-              },
-            })),
-          },
+        },
+        applicationResponses: {
+          updateMany: appRes.map(({ questionId, response: answer }) => ({
+            where: {
+              questionId,
+            },
+            data: {
+              answer,
+            },
+          })),
         },
       },
     });
