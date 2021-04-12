@@ -157,6 +157,8 @@ model OrganizationApplicationReviews {
   reason         String?
   organizationId Int          @map("organization_id")
   organization   Organization @relation("OrganizationApplicationReviewsToOrganizations", fields: [organizationId], references: [id])
+
+  @@map("organization_application_reviews")
 }
 
 enum AgeDemographic {

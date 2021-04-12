@@ -13,6 +13,7 @@ import {
   Organization,
   ApplicationNote,
   ApplicationResponse,
+  OrganizationApplicationReviews,
 } from '@prisma/client';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
@@ -37,6 +38,7 @@ import styles from '../styles/Moderator.module.css';
 
 type Props = {
   orgs: (Organization & {
+    organizationApplicationReviews: OrganizationApplicationReviews[] | null;
     applicationNote: ApplicationNote | null;
     applicationResponses: (ApplicationResponse & {
       applicationQuestion: { question: string };
@@ -74,12 +76,20 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     setOpenLeft(false);
   };
 
-  const [openRight, setOpenRight] = useState<boolean>(false);
+  const [openNote, setOpenNote] = useState<boolean>(false);
+  const [openReview, setOpenReview] = useState<boolean>(false);
 
-  const handleDrawerOpenRight = (note: ApplicationNote | null): void => {
-    setText(note && note.note ? note.note : '');
-    setLastText(note && note.note ? note.note : '');
-    setOpenRight(true);
+  const handleDrawerOpenRight = (
+    isNote: boolean,
+    note?: ApplicationNote | null
+  ): void => {
+    if (isNote) {
+      setText(note && note.note ? note.note : '');
+      setLastText(note && note.note ? note.note : '');
+      setOpenNote(true);
+    } else {
+      setOpenReview(true);
+    }
   };
 
   const handleDrawerCloseRight = async (): Promise<void> => {
@@ -95,7 +105,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     router.replace(router.asPath);
     setText('');
     setLastText('');
-    setOpenRight(false);
+    setOpenNote(false);
   };
 
   const clickCard = (newIndex: number): void => {
@@ -148,6 +158,21 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           }
         } catch (err) {
           setErrorBanner('Failed to process rejection');
+        }
+
+        // Add to rejection history
+        try {
+          const res = await fetch('/api/app/question/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            // body: JSON.stringify({
+            //   review,
+            // }),
+          });
+        } catch (err) {
+          setErrorBanner('Failed to add rejection history');
         }
       }
     } else {
@@ -228,6 +253,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           <Button
             variant="outlined"
             color="primary"
+            onClick={() => handleDrawerOpenRight(false)}
             className={styles.buttonSpace}
           >
             Rejection history
@@ -235,7 +261,9 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => handleDrawerOpenRight(orgs[index].applicationNote)}
+            onClick={() =>
+              handleDrawerOpenRight(true, orgs[index].applicationNote)
+            }
             className={styles.buttonSpace}
           >
             Notepad
@@ -246,30 +274,42 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         className={styles.drawer}
         variant="persistent"
         anchor="right"
-        open={openRight}
+        open={openNote || openReview}
         classes={{
           paper: styles.drawerPaperRight,
         }}
       >
-        <div>
-          <IconButton onClick={handleDrawerCloseRight}>
-            <ChevronRightIcon />
-          </IconButton>
-        </div>
-        <div className={styles.textField}>
-          notes for {orgs[index] && orgs[index].name}
-        </div>
-        <div className={styles.row}>
-          <p className={styles.descriptor}>Notes</p>
-          <TextField
-            className={styles.textField}
-            onChange={(e) => setText(e.target.value)}
-            value={text}
-            name="orgName"
-            variant="outlined"
-            multiline
-          />
-        </div>
+        {/* HERE CALVIN HERE */}
+        {openNote ? (
+          <div>
+            <div className={styles.textField}>
+              notes for {orgs[index] && orgs[index].name}
+            </div>
+            <div className={styles.row}>
+              <p className={styles.descriptor}>Notes</p>
+              <TextField
+                className={styles.textField}
+                onChange={(e) => setText(e.target.value)}
+                value={text}
+                name="orgName"
+                variant="outlined"
+                multiline
+              />
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div className={styles.textField}>
+              reviews for {orgs[index] && orgs[index].name}
+            </div>
+            <div className={styles.row}>
+              <p className={styles.descriptor}>Reviews</p>
+              {orgs[index].organizationApplicationReviews?.map((r) => {
+                <p>{r.reason}</p>;
+              })}
+            </div>
+          </div>
+        )}
       </Drawer>
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
       <div className={styles.content} onClick={handleDrawerCloseRight}>
@@ -313,9 +353,13 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     </div>
   );
 
-  if (!sessionLoading && (!session || session.user.role !== 'moderator'))
+  if (sessionLoading || !session || session.user.role === 'organization')
     router.push('/');
-  if (!sessionLoading && session && session.user.role === 'moderator')
+  if (
+    !sessionLoading &&
+    session &&
+    (session.user.role === 'moderator' || session.user.role === 'admin')
+  )
     return (
       <Layout title="Moderator Dashboard">
         <div className={styles.root}>
@@ -361,11 +405,15 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
-    if (session && session.user.role === 'moderator') {
+    if (
+      session &&
+      (session.user.role === 'moderator' || session.user.role === 'admin')
+    ) {
       const res = await prisma.organization.findMany({
         where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
         include: {
           applicationNote: true,
+          organizationApplicationReviews: true,
           applicationResponses: {
             include: {
               applicationQuestion: {
@@ -378,6 +426,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
       const orgs = JSON.parse(JSON.stringify(res)) as (Organization & {
         applicationNote: ApplicationNote | null;
+        organizationApplicationReviews: OrganizationApplicationReviews[] | null;
         applicationResponses: (ApplicationResponse & {
           applicationQuestion: { question: string };
         })[];
