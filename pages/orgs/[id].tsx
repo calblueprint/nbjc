@@ -113,7 +113,15 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
               Notes
               <div>[User's notes on organization here.]</div>
             </div>
-            <div>Text Input</div>
+            <div className={styles.modTab}>
+              <TextField
+                id="outlined-basic"
+                label="Reasons for decline."
+                variant="outlined"
+                multiline
+                rows={13}
+              />
+            </div>
           </div>
         </DialogContent>
         <DialogActions>

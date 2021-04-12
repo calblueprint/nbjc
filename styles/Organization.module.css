@@ -117,6 +117,9 @@
   padding: 1px;
 }
 
+.newModal {
+}
+
 .modContent {
   display: flex;
   justify-content: space-between;
@@ -125,4 +128,5 @@
 
 .modTab {
   width: 50%;
+  height: 300px;
 }
