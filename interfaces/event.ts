@@ -1,9 +1,7 @@
-// TODO: change Organization code to Event code
-
 import Joi from 'joi';
-import { OrganizationEventGetPayload } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
-export type Event = OrganizationEventGetPayload<{
+export type Event = Prisma.OrganizationEventGetPayload<{
   select: {
     id: true;
     title: true;
