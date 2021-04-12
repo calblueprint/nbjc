@@ -15,7 +15,6 @@ import {
   ApplicationResponse,
   OrganizationApplicationReviews,
 } from '@prisma/client';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Toast from 'components/Toast';
 import {
   Tabs,
@@ -30,6 +29,7 @@ import {
   LinearProgress,
   CircularProgress,
   Typography,
+  ClickAwayListener,
 } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
@@ -106,6 +106,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     setText('');
     setLastText('');
     setOpenNote(false);
+    setOpenReview(false);
   };
 
   const clickCard = (newIndex: number): void => {
@@ -135,7 +136,9 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             method: 'POST',
           });
           if (res.ok) {
-            setSuccessBanner('Successfully approved.');
+            setSuccessBanner(
+              `${orgs[index].name} has been successfully approved.`
+            );
             // Refresh data without full page reload
             router.replace(router.asPath);
           } else {
@@ -150,7 +153,9 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             method: 'POST',
           });
           if (res.ok) {
-            setSuccessBanner('Successfully rejected.');
+            setSuccessBanner(
+              `${orgs[index].name} has been successfully rejected.`
+            );
             // Refresh data without full page reload
             router.replace(router.asPath);
           } else {
@@ -270,6 +275,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           </Button>
         </div>
       </div>
+      {/* <ClickAwayListener onClickAway={handleDrawerCloseRight}> */}
       <Drawer
         className={styles.drawer}
         variant="persistent"
@@ -311,18 +317,16 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           </div>
         )}
       </Drawer>
+      {/* </ClickAwayListener> */}
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
       <div className={styles.content} onClick={handleDrawerCloseRight}>
+        {/* </div> onClick={handleDrawerCloseRight}> */}
         <OrgDetail org={app} />
       </div>
       <div className={styles.footer}>
-        {/* TODO: Replace with toasts */}
-        {errorBanner ? (
-          <div className={styles.banner}>{errorBanner}</div>
-        ) : null}
-        {/* <Toast showDismissButton>HI THERE</Toast> */}
+        {errorBanner ? <Toast showDismissButton>{errorBanner}</Toast> : null}
         {successBanner ? (
-          <div className={styles.banner}>{successBanner}</div>
+          <Toast showDismissButton>{successBanner}</Toast>
         ) : null}
         <div className={`${styles.submitButton} ${styles.buttonSpace}`}>
           <Button
@@ -354,8 +358,8 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     </div>
   );
 
-  if (sessionLoading || !session || session.user.role === 'organization')
-    router.push('/');
+  // Is it ok to comment this out?
+  // if (!session || session.user.role === 'organization') router.push('/');
   if (
     !sessionLoading &&
     session &&
