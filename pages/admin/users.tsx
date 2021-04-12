@@ -32,6 +32,8 @@ const AdminUsersIndex: React.FunctionComponent<AdminUsersIndexProps> = ({
   };
 
   const handleClickClose = (): void => {
+    console.log(inviteEmail);
+    console.log(inviteName);
     setModal(false);
   };
 
@@ -53,7 +55,7 @@ const AdminUsersIndex: React.FunctionComponent<AdminUsersIndexProps> = ({
             variant="outlined"
             placeholder="FirstName LastName"
             value={inviteName}
-            onInput={(event) => setInviteName(event.target.value)}
+            onChange={(event) => setInviteName(event.target.value)}
           />
         </div>
         <div className={styles.modalInput}>
@@ -66,7 +68,7 @@ const AdminUsersIndex: React.FunctionComponent<AdminUsersIndexProps> = ({
             variant="outlined"
             placeholder="email@example.org"
             value={inviteEmail}
-            onInput={(event) => setInviteEmail(event.target.value)}
+            onChange={(event) => setInviteEmail(event.target.value)}
           />
         </div>
         <DialogActions>
