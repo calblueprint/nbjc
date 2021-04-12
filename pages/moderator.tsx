@@ -16,7 +16,7 @@ import {
   OrganizationApplicationReviews,
 } from '@prisma/client';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-
+import Toast from 'components/Toast';
 import {
   Tabs,
   Tab,
@@ -320,6 +320,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         {errorBanner ? (
           <div className={styles.banner}>{errorBanner}</div>
         ) : null}
+        {/* <Toast showDismissButton>HI THERE</Toast> */}
         {successBanner ? (
           <div className={styles.banner}>{successBanner}</div>
         ) : null}
