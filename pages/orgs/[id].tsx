@@ -2,21 +2,22 @@ import { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import prisma from 'utils/prisma';
 import { Organization } from '@prisma/client';
-import { Button, Chip } from '@material-ui/core';
-import Layout from 'components/Layout';
-import Project from 'components/organization/Project';
-import Tab from 'components/Tab';
-import computeDate from 'utils/computeDate';
 import {
+  Button,
+  Chip,
   Dialog,
   DialogTitle,
   DialogContent,
   TextField,
-  Checkbox,
-  Typography,
-  CircularProgress,
+  IconButton,
   DialogActions,
 } from '@material-ui/core';
+import Layout from 'components/Layout';
+import Toast from 'components/Toast';
+import Project from 'components/organization/Project';
+import Tab from 'components/Tab';
+import computeDate from 'utils/computeDate';
+import CloseIcon from '@material-ui/icons/Close';
 import styles from '../../styles/Organization.module.css';
 
 type Props = {
@@ -69,6 +70,21 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
     setOpenModal(false);
   };
 
+  const [openApprove, setOpenApprove] = useState(false);
+  const approveToast = openApprove ? (
+    <Toast showDismissButton>{org.name} has been successfully accepted.</Toast>
+  ) : null;
+
+  const [openDecline, setOpenDecline] = useState(false);
+  const declineToast = openDecline ? (
+    <Toast showDismissButton>{org.name} has been declined.</Toast>
+  ) : null;
+
+  const declineOrg = () => (): void => {
+    setOpenModal(false);
+    setOpenDecline(true);
+  };
+
   const [tabState, setTabState] = useState<0 | 1 | 2>(0);
 
   const demographics = (category: string, groups: string[]): JSX.Element => {
@@ -100,27 +116,49 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
 
   return (
     <Layout title={`${org.name} Profile`}>
-      <Dialog
-        onClose={closeModal()}
-        className={styles.newModal}
-        fullWidth
-        open={openModal}
-      >
-        <DialogTitle>Reason For Declining</DialogTitle>
+      {approveToast}
+      {declineToast}
+      <Dialog onClose={closeModal()} fullWidth maxWidth="md" open={openModal}>
+        <DialogTitle>
+          <div className={styles.dialogTitle}>
+            Reason For Declining
+            <IconButton aria-label="close" onClick={closeModal()}>
+              <CloseIcon />
+            </IconButton>
+          </div>
+        </DialogTitle>
         <DialogContent>
           <div className={styles.modContent}>
             <div className={styles.modTab}>
-              Notes
-              <div>[User's notes on organization here.]</div>
+              <div className={styles.declineNotes}>Notes</div>
+              <div className={styles.declineNotesContent}>
+                {org.shortHistory}
+              </div>
             </div>
-            <div>Text Input</div>
+            <div className={styles.modTab}>
+              <TextField
+                id="outlined-basic"
+                label="Reasons for decline."
+                variant="outlined"
+                multiline
+                size="small"
+                rows={13}
+                className={styles.declineReason}
+              />
+            </div>
+          </div>
+          <div className={styles.send}>
+            <Button
+              variant="outlined"
+              className={styles.editButtonStyles}
+              disableElevation
+              color="primary"
+              onClick={declineOrg()}
+            >
+              Send
+            </Button>
           </div>
         </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" color="primary" onClick={closeModal()}>
-            Send
-          </Button>
-        </DialogActions>
       </Dialog>
       <div className={styles.orgMargins}>
         <div className={styles.orgImages}>
@@ -210,23 +248,28 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
             ) : (
               <div className={styles.projects}>{projectsList}</div>
             )}
-            <div>
-              <Button
-                variant="contained"
-                className={styles.editButtonStyles}
-                disableElevation
-              >
-                Decline
-              </Button>
-              <Button
-                variant="contained"
-                className={styles.editButtonStyles}
-                disableElevation
-                color="primary"
-                onClick={() => setOpenModal(true)}
-              >
-                Approve
-              </Button>
+            <div className={styles.declineButtons}>
+              <div className={styles.customButton}>
+                <Button
+                  variant="contained"
+                  className={styles.editButtonStyles}
+                  disableElevation
+                  onClick={() => setOpenModal(true)}
+                >
+                  Decline
+                </Button>
+              </div>
+              <div className={styles.customButton}>
+                <Button
+                  variant="contained"
+                  className={styles.editButtonStyles}
+                  disableElevation
+                  color="primary"
+                  onClick={() => setOpenApprove(true)}
+                >
+                  Approve
+                </Button>
+              </div>
             </div>
           </div>
         </div>
