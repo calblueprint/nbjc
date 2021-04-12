@@ -1,5 +1,5 @@
 import SearchIcon from '@material-ui/icons/Search';
-import { InputAdornment, TextField } from '@material-ui/core';
+import { Button, InputAdornment, TextField } from '@material-ui/core';
 import AdminDrawer from 'components/admin/AdminDrawer';
 import styles from './AdminIndex.module.css';
 
@@ -7,12 +7,14 @@ type Props = {
   title?: string;
   page: string;
   search: string;
+  addButtonOnClick: () => void;
 };
 
 const AdminIndex: React.FunctionComponent<Props> = ({
   children,
   page,
   search,
+  addButtonOnClick,
 }) => (
   <div className={styles.page}>
     <div className={styles.content}>
@@ -20,9 +22,16 @@ const AdminIndex: React.FunctionComponent<Props> = ({
       <div className={styles.rightCol}>
         <div className={styles.header}>
           <div className={styles.title}>{page}s</div>
-          <div>
+          <div className={styles.headerActions}>
+            <Button
+              variant="contained"
+              color="primary"
+              className={styles.addButton}
+              onClick={addButtonOnClick}
+            >
+              Add New {page}
+            </Button>
             <TextField
-              fullWidth
               id={search}
               label={search}
               type="search"

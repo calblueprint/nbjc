@@ -9,16 +9,16 @@ datasource db {
 
 model Account {
   id                Int       @id @default(autoincrement())
-  compoundId        String    @unique @map("compound_id")
+  compoundId        String    @unique @map("compound_id") @db.VarChar(255)
   userId            Int       @map("user_id")
-  providerType      String    @map("provider_type")
-  providerId        String    @map("provider_id")
-  providerAccountId String    @map("provider_account_id")
+  providerType      String    @map("provider_type") @db.VarChar(255)
+  providerId        String    @map("provider_id") @db.VarChar(255)
+  providerAccountId String    @map("provider_account_id") @db.VarChar(255)
   refreshToken      String?   @map("refresh_token")
   accessToken       String?   @map("access_token")
-  accessTokenExpire DateTime? @map("access_token_expires")
-  createdAt         DateTime  @default(now()) @map("created_at")
-  updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at")
+  accessTokenExpire DateTime? @map("access_token_expires") @db.Timestamptz(6)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@index([providerAccountId], name: "provider_account_id")
   @@index([providerId], name: "provider_id")
@@ -28,30 +28,30 @@ model Account {
 
 model Organization {
   id                   Int                   @id @default(autoincrement())
-  name                 String?
-  long                 Float?
-  lat                  Float?
-  createdAt            DateTime              @default(now()) @map("created_at")
-  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
+  name                 String?               @db.VarChar(255)
+  long                 Decimal?              @db.Decimal
+  lat                  Decimal?              @db.Decimal
+  createdAt            DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   applicationStatus    ApplicationStatus     @default(draft) @map("application_status")
   active               Boolean               @default(false)
-  contactName          String?               @map("contact_name")
-  contactEmail         String?               @map("contact_email")
+  contactName          String?               @map("contact_name") @db.VarChar(255)
+  contactEmail         String?               @map("contact_email") @db.VarChar(255)
   organizationType     OrganizationType?     @map("organization_type")
   workType             WorkType?             @map("work_type")
-  address              String?
+  address              String?               @db.VarChar(255)
   missionStatement     String?               @map("mission_statement")
   shortHistory         String?               @map("short_history")
   lgbtqDemographic     LgbtqDemographic[]    @map("lgbtq_demographic")
   raceDemographic      RaceDemographic[]     @map("race_demographic")
   ageDemographic       AgeDemographic[]      @map("age_demographic")
   capacity             Int?
-  ein                  String?
-  foundingDate         DateTime?             @map("founding_date")
+  ein                  String?               @db.VarChar(255)
+  foundingDate         DateTime?             @map("founding_date") @db.Date
   is501c3              Boolean               @default(false) @map("is_501c3")
   userId               Int?                  @unique @map("user_id")
-  contactPhone         String?               @map("contact_phone")
-  website              String?
+  contactPhone         String?               @map("contact_phone") @db.VarChar(255)
+  website              String?               @db.VarChar(255)
   user                 User?                 @relation("OrganizationsToUsers", fields: [userId], references: [id])
   applicationNote      ApplicationNote?      @relation("ApplicationNotesToOrganizations")
   applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
@@ -63,11 +63,11 @@ model Organization {
 model Session {
   id           Int      @id @default(autoincrement())
   userId       Int      @map("user_id")
-  expire       DateTime @map("expires")
-  sessionToken String   @unique @map("session_token")
-  accessToken  String   @unique @map("access_token")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+  expire       DateTime @map("expires") @db.Timestamptz(6)
+  sessionToken String   @unique @map("session_token") @db.VarChar(255)
+  accessToken  String   @unique @map("access_token") @db.VarChar(255)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("sessions")
 }
@@ -75,12 +75,12 @@ model Session {
 model User {
   id             Int           @id @default(autoincrement())
   role           UserRole?
-  email          String        @unique
-  emailVerified  DateTime?     @map("email_verified")
-  image          String?
-  hashedPassword String        @map("hashed_password")
-  createdAt      DateTime      @default(now()) @map("created_at")
-  updatedAt      DateTime      @default(now()) @updatedAt @map("updated_at")
+  email          String        @unique @db.VarChar(255)
+  emailVerified  DateTime?     @map("email_verified") @db.Timestamptz(6)
+  image          String?       @db.VarChar(255)
+  hashedPassword String        @map("hashed_password") @db.VarChar(255)
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   organization   Organization? @relation("OrganizationsToUsers")
 
   @@map("users")
@@ -88,24 +88,24 @@ model User {
 
 model VerificationRequest {
   id         Int      @id @default(autoincrement())
-  identifier String
-  token      String   @unique
-  expire     DateTime @map("expires")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+  identifier String   @db.VarChar(255)
+  token      String   @unique @db.VarChar(255)
+  expire     DateTime @map("expires") @db.Timestamptz(6)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("verification_requests")
 }
 
 model ApplicationQuestion {
   id                   Int                   @id @default(autoincrement())
-  question             String
+  question             String                @db.VarChar(255)
   hint                 String?
   placeholder          String?
   required             Boolean               @default(false)
   wordLimit            Int?                  @map("word_limit")
-  createdAt            DateTime              @default(now()) @map("created_at")
-  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
+  createdAt            DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   applicationResponses ApplicationResponse[] @relation("ApplicationQuestionsToApplicationResponses")
 
   @@map("application_questions")
@@ -116,8 +116,8 @@ model ApplicationResponse {
   answer              String
   questionId          Int                 @map("question_id")
   organizationId      Int                 @map("organization_id")
-  createdAt           DateTime            @default(now()) @map("created_at")
-  updatedAt           DateTime            @default(now()) @updatedAt @map("updated_at")
+  createdAt           DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   organization        Organization        @relation("ApplicationResponsesToOrganizations", fields: [organizationId], references: [id])
   applicationQuestion ApplicationQuestion @relation("ApplicationQuestionsToApplicationResponses", fields: [questionId], references: [id])
 
@@ -126,15 +126,15 @@ model ApplicationResponse {
 
 model migrations {
   id     Int      @id @default(autoincrement())
-  name   String
-  run_on DateTime
+  name   String   @db.VarChar(255)
+  run_on DateTime @db.Timestamp(6)
 }
 
 model ApplicationNote {
   id             Int          @id @default(autoincrement())
   note           String?
-  createdAt      DateTime     @default(now()) @map("created_at")
-  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   organizationId Int          @unique @map("organization_id")
   organization   Organization @relation("ApplicationNotesToOrganizations", fields: [organizationId], references: [id])
 

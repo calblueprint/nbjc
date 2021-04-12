@@ -1,4 +1,5 @@
-import { PrismaClient, User } from '@prisma/client';
+import prisma from 'utils/prisma';
+import { User } from '@prisma/client';
 import Joi, { ValidationError } from 'joi';
 
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -6,14 +7,12 @@ import UserSchema, { SanitizedUser } from 'interfaces/user';
 import CreateError, { MethodNotAllowed } from 'utils/error';
 import sanitizeUser from 'utils/sanitizeUser';
 
-const prisma = new PrismaClient();
-
 /**
  * Retrieve a User by its ID
  * @param id - the ID of the User
  */
 export const getUser = async (id: string): Promise<SanitizedUser | null> => {
-  const user = await prisma.user.findOne({
+  const user = await prisma.user.findUnique({
     where: { id: Number(id) },
   });
   if (user) {

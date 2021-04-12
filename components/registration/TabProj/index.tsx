@@ -25,6 +25,7 @@ type TabProps = {
     setFieldValue: FormikHelpers<string>['setFieldValue'],
     index: number
   ) => void;
+  readOnly: boolean;
 };
 
 // Replace later
@@ -36,6 +37,7 @@ type Project = {
 type ProjectTouched = {
   title: boolean;
   description: boolean;
+  readOnly: boolean;
 };
 
 const TabProj: React.FC<TabProps> = ({
@@ -47,6 +49,7 @@ const TabProj: React.FC<TabProps> = ({
   values,
   addNewProj,
   deleteProj,
+  readOnly,
 }) => {
   // Need this for weird validation bug
   let touchedProjs: ProjectTouched[];
@@ -72,6 +75,7 @@ const TabProj: React.FC<TabProps> = ({
             <div>
               {values.projects && values.projects.length > 0
                 ? values.projects.map((project, index) => (
+                    // eslint-disable-next-line react/no-array-index-key
                     <div className={styles.row} key={index}>
                       <div className={styles.rowEntry}>
                         <p>Project or Event Name</p>

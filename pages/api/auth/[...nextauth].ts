@@ -1,6 +1,6 @@
-import NextAuth, { User } from 'next-auth';
+import prisma from 'utils/prisma';
+import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
-import { PrismaClient } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import hashPassword from 'utils/hashPassword';
 import sanitizeUser from 'utils/sanitizeUser';
@@ -13,14 +13,12 @@ type AuthorizeDTO = {
 
 type CustomToken = SessionUser & { iat: number; exp: number };
 
-type Token = CustomToken | Partial<User>;
+type Token = CustomToken;
 
 type Account = {
   id: string;
   type: 'credentials';
 };
-
-const prisma = new PrismaClient();
 
 const options = {
   // Configure one or more authentication providers
@@ -32,7 +30,7 @@ const options = {
         password: { label: 'Password', type: 'password' },
       },
       authorize: async (credentials: AuthorizeDTO) => {
-        const user = await prisma.user.findOne({
+        const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
         if (!user) {
@@ -60,6 +58,7 @@ const options = {
     session: async (session: Omit<Session, 'user'>, user: SessionUser) => {
       const customSession: Session = {
         user: {
+          id: user.id,
           email: user.email,
           role: user.role,
         },
@@ -75,9 +74,24 @@ const options = {
       _profile?: SanitizedUser,
       _isNewUser?: boolean
     ) => {
+      if (token.id) {
+        const newUser = await prisma.user.findUnique({
+          where: { id: token.id },
+          select: { email: true, role: true },
+        });
+        if (newUser) {
+          const customToken: SessionUser = {
+            id: token.id,
+            email: newUser.email,
+            role: newUser.role,
+          };
+          return Promise.resolve(customToken);
+        }
+      }
       // Check if on sign in
       if (user) {
         const customToken: SessionUser = {
+          id: user.id,
           email: user.email,
           role: user.role,
         };

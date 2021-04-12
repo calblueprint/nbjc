@@ -1,8 +1,16 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Button, LinearProgress } from '@material-ui/core';
+import {
+  Button,
+  Typography,
+  LinearProgress,
+  Menu,
+  MenuItem,
+} from '@material-ui/core';
 import { useRouter } from 'next/router';
-import { useSession, signOut } from 'next-auth/client';
+import useSession from 'utils/useSession';
+import { signOut } from 'next-auth/client';
+import { useState } from 'react';
 import styles from '../styles/Layout.module.css';
 
 type Props = {
@@ -15,6 +23,9 @@ const Layout: React.FunctionComponent<Props> = ({
 }) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
+  const [userMenuAnchor, setUserMenuAnchor] = useState<HTMLElement | null>(
+    null
+  );
 
   if (sessionLoading) return <LinearProgress />;
   return (
@@ -33,24 +44,49 @@ const Layout: React.FunctionComponent<Props> = ({
           </Link>
           <div className={styles.nav}>
             <Link href="/">
-              <a className={styles.link}>Home</a>
+              <a className={styles.link}>
+                <Typography variant="h5">Home</Typography>
+              </a>
             </Link>
             <Link href="/moderator">
-              <a className={styles.link}>Moderator Dashboard</a>
+              <a className={styles.link}>
+                <Typography variant="h5">Moderator Dashboard</Typography>
+              </a>
             </Link>
             <Link href="/users/settings">
-              <a className={styles.link}>Users</a>
+              <a className={styles.link}>
+                <Typography variant="h5">Users</Typography>
+              </a>
             </Link>
+            {session && session.user.role === 'organization' ? (
+              <Link href="/orgs">
+                <a className={styles.link}>
+                  <Typography variant="h5">Profile</Typography>
+                </a>
+              </Link>
+            ) : null}
+            {session &&
+            (session.user.role === 'moderator' ||
+              session.user.role === 'admin') ? (
+              <Link href="/moderator">
+                <a className={styles.link}>Review</a>
+              </Link>
+            ) : null}
+            {session && session.user.role === 'admin' ? (
+              <Link href="/admin">
+                <a className={styles.link}>Dashboard</a>
+              </Link>
+            ) : null}
             <div className={styles.buttons}>
               {!session ? (
                 <div>
                   <Button
                     className={styles.logButtonSpace}
-                    variant="contained"
+                    variant="outlined"
                     color="primary"
                     onClick={() => router.push('/signin')}
                   >
-                    Log In
+                    Sign In
                   </Button>
                   <Button
                     className={styles.logButtonSpace}
@@ -62,14 +98,40 @@ const Layout: React.FunctionComponent<Props> = ({
                   </Button>
                 </div>
               ) : (
-                <Button
-                  className={styles.logButtonSpace}
-                  variant="contained"
-                  color="primary"
-                  onClick={() => signOut()}
-                >
-                  Sign Out
-                </Button>
+                <>
+                  <Button
+                    className={styles.logButtonSpace}
+                    variant="contained"
+                    color="primary"
+                    onClick={(e) => setUserMenuAnchor(e.currentTarget)}
+                  >
+                    {session.user.role}
+                  </Button>
+                  <Menu
+                    anchorEl={userMenuAnchor}
+                    keepMounted
+                    open={Boolean(userMenuAnchor)}
+                    onClose={() => setUserMenuAnchor(null)}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        setUserMenuAnchor(null);
+                        router.push('/users/profile');
+                      }}
+                    >
+                      Settings
+                    </MenuItem>
+                    <MenuItem
+                      className={styles.signOutText}
+                      onClick={() => {
+                        setUserMenuAnchor(null);
+                        signOut();
+                      }}
+                    >
+                      Sign Out
+                    </MenuItem>
+                  </Menu>
+                </>
               )}
             </div>
           </div>

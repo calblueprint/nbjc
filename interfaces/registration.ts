@@ -1,4 +1,4 @@
-import { Organization } from '@prisma/client';
+import { Prisma, Organization } from '@prisma/client';
 import Joi from 'joi';
 
 export type Project = {
@@ -6,6 +6,31 @@ export type Project = {
   title: string;
   description: string;
 };
+
+export type Response = {
+  id: number[];
+  response: string[];
+};
+
+export type AppQnR =
+  | Prisma.ApplicationQuestionGetPayload<{
+      select: {
+        id: true;
+        placeholder: true;
+        question: true;
+        hint: true;
+        required: true;
+        wordLimit: true;
+        applicationResponses: {
+          select: {
+            answer: true;
+          };
+        };
+      };
+    }>[]
+  | null;
+
+export type QnR = { questionId: number; response: string };
 
 export type Form = Pick<
   Organization,
@@ -29,6 +54,10 @@ export type Form = Pick<
   short2: string;
   short3: string;
   projects: Project[];
+  qnr: QnR[];
+  // proj1: string;
+  // proj2: string;
+  // proj3: string;
   // capacity: number | undefined;
   // foundingDate: Date | undefined;
 };

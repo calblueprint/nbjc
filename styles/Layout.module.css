@@ -19,7 +19,10 @@
 
 .logButtonSpace {
   margin-left: 10px;
-  height: 50%;
+}
+
+.signOutText {
+  color: #be0000;
 }
 
 .footer {

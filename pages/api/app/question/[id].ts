@@ -1,10 +1,9 @@
 import Joi, { ValidationError } from 'joi';
-import { PrismaClient, ApplicationQuestion } from '@prisma/client';
+import prisma from 'utils/prisma';
+import { ApplicationQuestion } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import CreateError, { MethodNotAllowed } from 'utils/error';
 import { AppQuestionSchema } from 'interfaces/appQuestion';
-
-const prisma = new PrismaClient();
 
 /**
  * Update an Organization by the given ID and fields and return the updated Organization

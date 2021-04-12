@@ -24,6 +24,7 @@ type TabProps = {
   handleBlur: FormikHandlers['handleBlur'];
   touched: FormikTouched<Form>;
   errors: FormikErrors<Form>;
+  readOnly: boolean;
 };
 
 // TODO: create readable mapping
@@ -67,6 +68,7 @@ const TabBasics: React.FC<TabProps> = ({
   errors,
   values,
   setFieldValue,
+  readOnly,
 }) => {
   return (
     <>
@@ -83,6 +85,7 @@ const TabBasics: React.FC<TabProps> = ({
           variant="outlined"
           error={Boolean(touched.name && errors.name)}
           helperText={touched.name ? errors.name : undefined}
+          disabled={readOnly}
         />
       </div>
       <div className={styles.row}>
@@ -91,6 +94,7 @@ const TabBasics: React.FC<TabProps> = ({
           className={styles.textField}
           variant="outlined"
           error={Boolean(touched.workType && errors.workType)}
+          disabled={readOnly}
         >
           <Select
             id="workType"
@@ -119,6 +123,7 @@ const TabBasics: React.FC<TabProps> = ({
           className={styles.textField}
           variant="outlined"
           error={Boolean(touched.organizationType && errors.organizationType)}
+          disabled={readOnly}
         >
           <Select
             id="organizationType"
@@ -149,6 +154,7 @@ const TabBasics: React.FC<TabProps> = ({
             onChange={handleChange}
             name="is501c3"
             color="primary"
+            disabled={readOnly}
           />
         </div>
       </div>
@@ -165,6 +171,7 @@ const TabBasics: React.FC<TabProps> = ({
           variant="outlined"
           error={Boolean(touched.contactName && errors.contactName)}
           helperText={touched.contactName ? errors.contactName : undefined}
+          disabled={readOnly}
         />
       </div>
       <div className={styles.row}>
@@ -178,6 +185,7 @@ const TabBasics: React.FC<TabProps> = ({
           variant="outlined"
           error={Boolean(touched.contactEmail && errors.contactEmail)}
           helperText={touched.contactEmail ? errors.contactEmail : undefined}
+          disabled={readOnly}
         />
       </div>
       <div className={styles.row}>
@@ -191,6 +199,7 @@ const TabBasics: React.FC<TabProps> = ({
           variant="outlined"
           error={Boolean(touched.contactPhone && errors.contactPhone)}
           helperText={touched.contactPhone ? errors.contactPhone : undefined}
+          disabled={readOnly}
         />
       </div>
       <div className={styles.row}>
@@ -204,6 +213,7 @@ const TabBasics: React.FC<TabProps> = ({
           variant="outlined"
           error={Boolean(touched.website && errors.website)}
           helperText={touched.website ? errors.website : undefined}
+          disabled={readOnly}
         />
       </div>
       {/* <div className={styles.row}>
@@ -245,6 +255,7 @@ const TabBasics: React.FC<TabProps> = ({
           variant="outlined"
           error={Boolean(touched.address && errors.address)}
           helperText={touched.address ? errors.address : undefined}
+          disabled={readOnly}
         />
       </div>
       <div className={styles.row}>
@@ -258,6 +269,7 @@ const TabBasics: React.FC<TabProps> = ({
           variant="outlined"
           error={Boolean(touched.ein && errors.ein)}
           helperText={touched.ein ? errors.ein : undefined}
+          disabled={readOnly}
         />
       </div>
       {/* <div className={styles.row}>
@@ -303,6 +315,7 @@ const TabBasics: React.FC<TabProps> = ({
                   }
                 />
               )}
+              disabled={readOnly}
             />
           </div>
           <div className={styles.autoField}>
@@ -330,6 +343,7 @@ const TabBasics: React.FC<TabProps> = ({
                   }
                 />
               )}
+              disabled={readOnly}
             />
           </div>
           <div className={styles.autoField}>
@@ -357,6 +371,7 @@ const TabBasics: React.FC<TabProps> = ({
                   }
                 />
               )}
+              disabled={readOnly}
             />
           </div>
         </div>
@@ -375,6 +390,7 @@ const TabBasics: React.FC<TabProps> = ({
           helperText={
             touched.missionStatement ? errors.missionStatement : undefined
           }
+          disabled={readOnly}
         />
       </div>
       <div className={styles.short}>
@@ -389,6 +405,7 @@ const TabBasics: React.FC<TabProps> = ({
           multiline
           error={Boolean(touched.shortHistory && errors.shortHistory)}
           helperText={touched.shortHistory ? errors.shortHistory : undefined}
+          disabled={readOnly}
         />
       </div>
     </>

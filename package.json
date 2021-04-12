@@ -1,21 +1,33 @@
 {
   "name": "nbjc",
   "version": "0.1.0",
+  "engines": {
+    "node": "12.18.4"
+  },
   "private": true,
+  "cacheDirectories": [
+    ".next/cache",
+    "node_modules"
+  ],
   "scripts": {
     "dev": "next dev",
-    "build": "next build && yarn db:migrate up",
+    "build": "next build",
+    "build:scripts": "tsc --project tsconfig.scripts.json",
     "start": "next start -p $PORT",
+    "heroku-postbuild": "yarn build && yarn build:scripts && yarn db:migrate up -e prod",
+    "heroku-review-app-init": "node build/bin/set-nextauth-url.js && node build/bin/seed-database.js",
     "cm": "cz",
-    "db:up": "yarn db:migrate up && prisma generate",
-    "prisma:update": "prisma introspect && prisma generate",
+    "prisma:update": "prisma db pull && prisma generate && prisma format",
     "prisma:transform": "prisma-schema-transformer ./schema.prisma",
-    "db:create": "db-migrate db:create nbjc_development -e pg",
     "db:drop": "db-migrate db:drop nbjc_development -e pg",
-    "db:reset": "yarn db:drop && yarn db:create",
+    "db:create": "db-migrate db:create nbjc_development -e pg",
+    "db:up": "yarn db:migrate up && prisma generate",
+    "db:setup": "yarn db:create && yarn db:up && yarn db:seed",
+    "db:reset": "yarn db:drop && yarn db:setup",
     "db:update": "yarn db:migrate up && yarn prisma:update",
     "db:migrate": "ts-node -O '{ \"module\": \"commonjs\" }' $(yarn bin db-migrate)",
-    "db:migrate:create": "ts-node -O '{ \"module\": \"commonjs\" }' bin/create-migration.ts"
+    "db:migrate:create": "ts-node -O '{ \"module\": \"commonjs\" }' bin/create-migration.ts",
+    "db:seed": "ts-node -O '{ \"module\": \"commonjs\" }' bin/seed-database.ts"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx,json}": [
@@ -37,24 +49,28 @@
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
-    "@prisma/client": "^2.9.0",
+    "@prisma/client": "^2.18.0",
     "clsx": "^1.1.1",
     "db-migrate": "^0.11.11",
     "db-migrate-base": "^2.3.0",
     "db-migrate-pg": "^1.2.2",
+    "faker": "^5.1.0",
     "formik": "^2.2.1",
     "joi": "^17.2.1",
     "next": "10.0.0",
     "next-auth": "^3.1.0",
+    "node-fetch": "^2.6.1",
+    "ora": "^5.1.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-map-gl": "^5.2.9"
   },
   "devDependencies": {
-    "@prisma/cli": "^2.9.0",
     "@types/db-migrate-base": "^0.0.8",
+    "@types/faker": "^5.1.5",
     "@types/next-auth": "^3.1.11",
     "@types/node": "^14.11.1",
+    "@types/node-fetch": "^2.5.7",
     "@types/react": "^16.9.49",
     "@types/react-dom": "^16.9.8",
     "@types/react-map-gl": "^5.2.7",
@@ -75,9 +91,10 @@
     "husky": "^4.3.0",
     "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",
+    "prisma": "^2.18.0",
     "prisma-schema-transformer": "^0.5.0",
     "ts-node": "^9.0.0",
-    "typescript": "^4.0.3"
+    "typescript": "^4.1.5"
   },
   "config": {
     "commitizen": {

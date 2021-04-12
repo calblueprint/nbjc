@@ -1,3 +1,19 @@
 {
-  "addons": ["heroku-postgresql:hobby-dev"]
+  "addons": ["heroku-postgresql:hobby-dev"],
+  "env": {
+    "JWT_SIGNING_PRIVATE_KEY": {
+      "description": "A secret key for verifying the integrity of signed JWTs",
+      "generator": "secret",
+      "required": true
+    }
+  },
+  "environments": {
+    "review": {
+      "env": {
+        "HEROKU_API_KEY": {
+          "required": true
+        }
+      }
+    }
+  }
 }

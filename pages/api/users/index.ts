@@ -1,11 +1,10 @@
-import { PrismaClient, User } from '@prisma/client';
+import prisma from 'utils/prisma';
+import { User } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import sanitizeUser from 'utils/sanitizeUser';
 import UserSchema from 'interfaces/user';
 import CreateError, { MethodNotAllowed } from 'utils/error';
 import hash from 'utils/hashPassword';
-
-const prisma = new PrismaClient();
 
 export default async (
   req: NextApiRequest,

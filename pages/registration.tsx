@@ -20,60 +20,99 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
   LinearProgress,
+  Typography,
+  IconButton,
 } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import Layout from 'components/Layout';
 import TabShortResponse from 'components/registration/TabShortResponse';
 import TabBasics from 'components/registration/TabBasics';
 import TabProj from 'components/registration/TabProj';
-import schema, { Form } from 'interfaces/registration';
+import schema, { AppQnR, Form } from 'interfaces/registration';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import parseValidationError from 'utils/parseValidationError';
 import getSession from 'utils/getSession';
+import Joi from 'joi';
+import prisma from 'utils/prisma';
 import styles from '../styles/Registration.module.css';
-
-const prisma = new PrismaClient();
 
 type RegistrationProps = {
   org: OrganizationGetPayload<{
     include: { organizationProjects: true };
   }> | null;
+  appQnR: AppQnR;
 };
 
-const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
+const Registration: React.FunctionComponent<RegistrationProps> = ({
+  org,
+  appQnR,
+}) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
   const [selected, setSelected] = useState(0);
   const [exitDialogOpen, setExitDialogOpen] = useState(false);
   const [saveDraft, setSaveDraft] = useState(false);
+  const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(
+    router.query?.feedback === 'true'
+  );
 
   const status = org?.applicationStatus;
-  // if (status && status !== 'draft') {
-  //   router.back();
-  // }
+  const readOnly = status === 'submitted' || status === 'approved';
 
-  const validate = (values: FormikValues): FormikErrors<Form> => {
-    const formValues = values as Form;
-    const { error } = schema.validate(formValues, {
+  const exiting = (): void => {
+    setExitDialogOpen(true);
+    router.push('/users/profile');
+  };
+
+  const handleValidate = (draft: boolean) => (
+    values: FormikValues
+  ): FormikErrors<Form> => {
+    const { qnr, ...rest } = values as Form;
+    const { error } = schema.validate(rest, {
       abortEarly: false,
       context: {
-        strict: !saveDraft,
+        strict: !draft,
       },
     });
     // console.log('validate');
     // console.log(parseValidationError(error));
 
-    return parseValidationError(error);
+    // Validate custom short response questions
+    let qnrValidateEmpty = true;
+    const qnrValidate: string[] = qnr.map(({ response: value }, i) => {
+      if (!draft && appQnR && appQnR[i].required) {
+        const response = Joi.string()
+          .messages({ 'string.empty': 'This prompt is required.' })
+          .validate(value).error?.message;
+        if (qnrValidateEmpty && response) qnrValidateEmpty = false;
+        return response ?? '';
+      }
+
+      const response = Joi.string().empty('').validate(value).error?.message;
+      if (qnrValidateEmpty && response) qnrValidateEmpty = false;
+      return response ?? '';
+    });
+
+    if (!qnrValidateEmpty)
+      return {
+        ...parseValidationError(error),
+        qnr: qnrValidate,
+      };
+    return { ...parseValidationError(error) };
   };
 
   const tabChange = (_event: ChangeEvent<unknown>, newValue: number): void => {
     setSelected(newValue);
   };
 
-  const handleSubmit = async (values: Form): Promise<void> => {
+  const handleSubmit = (draft: boolean) => async (
+    values: Form
+  ): Promise<void> => {
     if (session && session.user.role === 'organization') {
+      if (draft && Object.keys(handleValidate(true)(values)).length !== 0)
+        return;
       const { short1, short2, short3, projects, ...tempValues } = values;
       // set to hold all current projects in front-end
       const currStateProjSet = new Set();
@@ -92,20 +131,20 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
         }
       }
       try {
-        const res = await fetch(`/api/app/orgs?submitting=${!saveDraft}`, {
+        const res = await fetch(`/api/app/orgs?submitting=${!draft}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            userEmail: session.user.email,
+            userId: session.user.id,
             ...tempValues,
             projects,
             projIDsToDelete,
           }),
         });
 
-        if (res.ok && !saveDraft) router.push('/users/settings');
+        if (res.ok && !draft) router.push('/users/profile');
         if (!res.ok) {
           console.log('patch not successful');
         }
@@ -115,7 +154,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
       }
     }
   };
-  const initialValues: Form = {
+  const formValues: Form = {
     name: (org && org.name) ?? '',
     contactName: (org && org.contactName) ?? '',
     contactEmail: (org && org.contactEmail) ?? '',
@@ -142,6 +181,11 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
         title: o.title,
         description: o.description ?? '',
       })) ?? [],
+    qnr:
+      appQnR?.map((q) => ({
+        questionId: q.id,
+        response: q.applicationResponses[0]?.answer ?? '',
+      })) ?? [],
   };
 
   const addNewProj = (
@@ -163,137 +207,127 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({ org }) => {
     setFieldValue('projects', currProjs);
   };
 
-  // useEffect(() => {
-  //   async function submitForm(): Promise<void> {
-  //     await formik.submitForm();
-  //     setSaveDraft(true);
-  //   }
-  //   if (!saveDraft) {
-  //     submitForm();
-  //   }
-  // }, [saveDraft, formik]);
+  const formik = useFormik({
+    initialValues: formValues,
+    validate: handleValidate(false),
+    validateOnChange: false,
+    onSubmit: handleSubmit(false),
+  });
 
-  if (!sessionLoading && !session) router.push('/');
+  if (!sessionLoading && (!session || session.user.role !== 'organization'))
+    router.push('/');
   if (!sessionLoading && session && session.user.role === 'organization')
     return (
       <Layout title="Register">
-        <Dialog open={exitDialogOpen} onClose={() => setExitDialogOpen(false)}>
-          <DialogTitle>Exit Without Saving</DialogTitle>
-          <DialogContent>
-            Are you sure you wish to exit without saving?
-          </DialogContent>
-          <DialogActions>
+        {status === 'rejected' ? (
+          <Dialog
+            open={feedbackDialogOpen}
+            onClose={() => setFeedbackDialogOpen(false)}
+          >
+            <DialogTitle disableTypography className={styles.feedbackHeader}>
+              <Typography variant="h6">Reason For Declining</Typography>
+              <IconButton
+                aria-label="close"
+                onClick={() => setFeedbackDialogOpen(false)}
+              >
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent>
+              This is where the feedback text will go asd sda fa sdf asd fas df
+              asdf asd fas df asd fas df asdf asd fas df asdf as dfas dfs adf
+            </DialogContent>
+          </Dialog>
+        ) : null}
+        <div className={styles.header}>
+          <Typography variant="h4">Registration Form</Typography>
+          <h1 className={styles.header}>Registration Form</h1>
+          {status === 'rejected' ? (
             <Button
               variant="outlined"
-              color="primary"
-              onClick={() => router.push('/users/settings')}
+              onClick={() => setFeedbackDialogOpen(true)}
             >
-              Yes
+              View Feedback
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              autoFocus
-              onClick={() => setExitDialogOpen(false)}
-            >
-              No
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <h1 className={styles.header}>Registration Form</h1>
-        <Formik
-          initialValues={initialValues}
-          validate={validate}
-          onSubmit={handleSubmit}
-          render={({
-            handleChange,
-            handleBlur,
-            setFieldValue,
-            values,
-            touched,
-            errors,
-          }): React.ReactNode => {
-            // console.log(errors);
-            const formValues = values as Form;
-            return (
-              <>
-                <div className={styles.root}>
-                  <AppBar
-                    position="static"
-                    color="default"
-                    className={styles.appBar}
-                  >
-                    <Tabs value={selected} onChange={tabChange}>
-                      <Tab label="Basics" />
-                      <Tab label="Projects and Events" />
-                      <Tab label="Short Response" />
-                    </Tabs>
-                  </AppBar>
-                  {selected === 0 && (
-                    <TabBasics
-                      handleChange={handleChange}
-                      handleBlur={handleBlur}
-                      values={formValues}
-                      setFieldValue={setFieldValue}
-                      touched={touched}
-                      errors={errors}
-                    />
-                  )}
-                  {selected === 1 && (
-                    <TabProj
-                      handleChange={handleChange}
-                      handleBlur={handleBlur}
-                      values={formValues}
-                      setFieldValue={setFieldValue}
-                      touched={touched}
-                      errors={errors}
-                      addNewProj={addNewProj}
-                      deleteProj={deleteProj}
-                    />
-                  )}
-                  {selected === 2 && (
-                    <TabShortResponse
-                      handleChange={handleChange}
-                      handleBlur={handleBlur}
-                      values={formValues}
-                      setFieldValue={setFieldValue}
-                      touched={touched}
-                      errors={errors}
-                    />
-                  )}
-                </div>
-                <div className={styles.bottomButtons}>
-                  <div>
-                    <Button
-                      variant="contained"
-                      onClick={() => setExitDialogOpen(true)}
-                    >
-                      Exit
-                    </Button>
-                  </div>
-                  <div>
-                    <Button
-                      variant="contained"
-                      className={styles.autoField}
-                      type="submit"
-                      onClick={() => setSaveDraft(false)}
-                    >
-                      Save Changes
-                    </Button>
-                    <Button
-                      variant="contained"
-                      className={styles.autoField}
-                      color="primary"
-                      onClick={() => handleSubmit(formValues)}
-                    >
-                      Submit
-                    </Button>
-                  </div>
-                </div>
-              </>
-            );
-          }}
-        />
+          ) : null}
+        </div>
+        <form onSubmit={formik.handleSubmit}>
+          <div className={styles.root}>
+            <AppBar position="static" color="default" className={styles.appBar}>
+              <Tabs value={selected} onChange={tabChange}>
+                <Tab label="Basics" />
+                <Tab label="Projects and Events" />
+                <Tab label="Short Response" />
+              </Tabs>
+            </AppBar>
+            {selected === 0 && (
+              <TabBasics
+                handleChange={formik.handleChange}
+                handleBlur={formik.handleBlur}
+                values={formik.values}
+                setFieldValue={formik.setFieldValue}
+                touched={formik.touched}
+                errors={formik.errors}
+                readOnly={readOnly}
+              />
+            )}
+            {selected === 1 && (
+              <TabProj
+                handleChange={formik.handleChange}
+                handleBlur={formik.handleBlur}
+                values={formik.values}
+                setFieldValue={formik.setFieldValue}
+                touched={formik.touched}
+                errors={formik.errors}
+                addNewProj={addNewProj}
+                deleteProj={deleteProj}
+                readOnly={readOnly}
+              />
+            )}
+            {selected === 2 && (
+              <TabShortResponse
+                handleChange={formik.handleChange}
+                handleBlur={formik.handleBlur}
+                values={formik.values}
+                setFieldValue={formik.setFieldValue}
+                touched={formik.touched}
+                errors={formik.errors}
+                appQnR={appQnR}
+                readOnly={readOnly}
+              />
+            )}
+          </div>
+          <div className={styles.bottomButtons}>
+            {!readOnly ? (
+              <div>
+                <Button
+                  variant="outlined"
+                  className={styles.autoField}
+                  type="submit"
+                  onClick={() => setSaveDraft(false)}
+                >
+                  Save Changes
+                </Button>
+                <Button
+                  variant="contained"
+                  className={styles.autoField}
+                  color="primary"
+                  onClick={() => handleSubmit(true)}
+                >
+                  Submit
+                </Button>
+              </div>
+            ) : null}
+            <div>
+              <Button
+                variant={readOnly ? 'contained' : 'outlined'}
+                onClick={() => exiting()}
+              >
+                Exit
+              </Button>
+            </div>
+          </div>
+        </form>
       </Layout>
     );
   return <LinearProgress />;
@@ -305,30 +339,37 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
     if (session && session.user.role === 'organization') {
-      const email = session?.user.email;
-      // Temp solution until merged with main
-      const user = await prisma.user.findOne({
+      const organization = await prisma.organization.findUnique({
         where: {
-          email,
-        },
-        select: {
-          id: true,
-        },
-      });
-
-      const org = await prisma.organization.findOne({
-        where: {
-          userId: user?.id,
+          userId: session.user.id,
         },
         include: {
           organizationProjects: true,
         },
       });
+      // getting app questions
+      const appQnR = await prisma.applicationQuestion.findMany({
+        select: {
+          id: true,
+          placeholder: true,
+          question: true,
+          hint: true,
+          required: true,
+          wordLimit: true,
+          applicationResponses: {
+            where: {
+              organizationId: organization?.id ?? -1,
+            },
+            select: {
+              answer: true,
+            },
+          },
+        },
+      });
 
-      const parsedOrg = JSON.parse(JSON.stringify(org));
-      console.log(parsedOrg, 'printing in serversideprops');
+      const org = JSON.parse(JSON.stringify(organization));
       return {
-        props: { org: parsedOrg },
+        props: { org, appQnR },
       };
     }
     return {
@@ -339,6 +380,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   } catch (err) {
     console.log('error');
-    return { props: { errors: err.message } };
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+    };
   }
 };

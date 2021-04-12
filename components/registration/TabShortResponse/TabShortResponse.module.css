@@ -31,3 +31,13 @@
   color: red;
   margin-left: 2%;
 }
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-right: 15%;
+  margin-left: 15%;
+  margin: 10px;
+  font-size: 15px;
+}

@@ -1,11 +1,10 @@
-import { PrismaClient, Organization } from '@prisma/client';
+import prisma from 'utils/prisma';
+import { Organization } from '@prisma/client';
 import Joi, { ValidationError } from 'joi';
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import OrganizationSchema from 'interfaces/organization';
 import CreateError, { MethodNotAllowed } from 'utils/error';
-
-const prisma = new PrismaClient();
 
 /**
  * Retrieve an Organization by its ID
@@ -14,7 +13,7 @@ const prisma = new PrismaClient();
 export const getOrganization = async (
   id: string
 ): Promise<Organization | null> => {
-  const org = await prisma.organization.findOne({
+  const org = await prisma.organization.findUnique({
     where: { id: Number(id) },
   });
   return org;

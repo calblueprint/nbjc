@@ -1,12 +1,12 @@
-import { PrismaClient, Organization } from '@prisma/client';
+import prisma from 'utils/prisma';
+import { Prisma } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import OrganizationSchema from 'interfaces/organization';
-import { Project } from 'interfaces/registration';
+import { Project, QnR } from 'interfaces/registration';
 import CreateError, { MethodNotAllowed } from 'utils/error';
 import parseValidationError from 'utils/parseValidationError';
-
-const prisma = new PrismaClient();
+import Joi from 'joi';
 
 export default async (
   req: NextApiRequest,
@@ -18,7 +18,18 @@ export default async (
 
   const isSubmit = req.query.submitting === 'true';
 
-  const { userEmail, projects, projIDsToDelete, ...body } = req.body;
+  const {
+    userEmail,
+    userId,
+    qnr,
+    projects,
+    projIDsToDelete,
+    ...body
+  } = req.body;
+  if (Joi.number().validate(userId).error) {
+    return CreateError(400, `ID ${userId} is not a number`, res);
+  }
+
   const { error, value } = OrganizationSchema.validate(body, {
     abortEarly: false,
     context: {
@@ -29,23 +40,15 @@ export default async (
     return CreateError(400, parseValidationError(error), res);
   }
 
-  const user = await prisma.user.findOne({
-    where: {
-      email: userEmail,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  const userId = user?.id;
-  if (!userId) {
-    return CreateError(500, 'Failed to find user', res);
-  }
+  const appRes = qnr as QnR[];
 
   const applicationStatus = isSubmit ? 'submitted' : 'draft';
   const active = isSubmit ? false : undefined;
-  const data = { ...value, applicationStatus, active } as Organization;
+  const data = {
+    ...value,
+    applicationStatus,
+    active,
+  } as Prisma.OrganizationCreateInput;
 
   const appProjs = projects as Project[];
   const deleteProjs = projIDsToDelete as number[];
@@ -59,16 +62,16 @@ export default async (
       },
       create: {
         ...data,
-        // Would prefer to use createMany here. Currently this causes a POST request error
-        // organizationProjects: {
-        //   create: toCreate.map(({ title, description }) => ({
-        //     title,
-        //     description,
-        //     connect: {
-        //       id: newOrg.id,
-        //     },
-        //   })),
-        // },
+        applicationResponses: {
+          create: appRes.map(({ questionId, response: answer }) => ({
+            answer,
+            applicationQuestion: {
+              connect: {
+                id: questionId,
+              },
+            },
+          })),
+        },
         user: {
           connect: {
             id: userId,
@@ -89,6 +92,16 @@ export default async (
             },
           })),
           deleteMany: deleteProjs.map((id) => ({ id })),
+          applicationResponses: {
+            updateMany: appRes.map(({ questionId, response: answer }) => ({
+              where: {
+                questionId,
+              },
+              data: {
+                answer,
+              },
+            })),
+          },
         },
       },
     });
