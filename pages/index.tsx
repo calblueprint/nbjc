@@ -18,36 +18,19 @@ import {
   IconButton,
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import { useFormik } from 'formik';
 import Layout from 'components/Layout';
 // DELETE LINE BELOW when implemented
 // eslint-disable-next-line no-use-before-define
 import React, { useState } from 'react';
 import { Organization } from '@prisma/client';
 import styles from '../styles/Home.module.css';
-import { homepageFields } from 'interfaces';
-import Link from 'next/link';
-import Router from 'next/router';
-import {
-  AgeDemographicLabels,
-  RaceDemographicLabels,
-  LgbtqDemographicLabels,
-} from 'utils/typesLinker';
-import styles from 'styles/Home.module.css';
-import {
-  LgbtqDemographic,
-  RaceDemographic,
-  AgeDemographic,
-} from '@prisma/client';
 
-const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
+const Map = dynamic(() => import('../components/Map'), {
+  ssr: false,
+});
 
-const initialValues: homepageFields = {
-  ages: [],
-  orientation: [],
-  ethnicity: [],
-  orgName: '',
+type HomeProps = {
+  orgs: PublicOrganization[];
 };
 
 // using lists for now, but maybe replace with enums?
@@ -357,21 +340,6 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
   // Will be implemented in the next PR.
   // const [session, loading] = useSession();
 
-const Home: React.FC = () => {
-  const formik = useFormik({
-    initialValues,
-    onSubmit: async (values): Promise<void> => {
-      Router.push({
-        pathname: 'results',
-        query: {
-          orgName: values.orgName,
-          ages: values.ages,
-          ethnicity: values.ethnicity,
-          orientation: values.orientation,
-        },
-      });
-    },
-  });
   return (
     <Layout
       handleClickSearch={handleClickSearch}
@@ -536,13 +504,12 @@ const Home: React.FC = () => {
             <Map orgs={orgsDisplayed} width="100%" height="100%" />
           </div>
         </div>
-      </form>
+      </div>
     </Layout>
   );
 };
 
 export default Home;
-<<<<<<< HEAD
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
@@ -575,5 +542,3 @@ export const getServerSideProps: GetServerSideProps = async () => {
     return { props: { errors: err.message } };
   }
 };
-=======
->>>>>>> 329b4a695145a4f7b8d250b78a8d0927f41bf8db
