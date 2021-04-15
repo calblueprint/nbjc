@@ -10,7 +10,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
     if (session && session.user.role === 'organization') {
-      const org = await prisma.organization.findUnique({
+      const org = await prisma.organization.findOne({
         where: {
           userId: session.user.id,
         },
