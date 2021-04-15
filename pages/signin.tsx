@@ -1,4 +1,6 @@
-import { signIn, useSession } from 'next-auth/client';
+import { useState } from 'react';
+import { signIn } from 'next-auth/client';
+import useSession from 'utils/useSession';
 import Link from 'next/link';
 import {
   TextField,
@@ -23,7 +25,7 @@ const UserSignIn: React.FC = () => {
   // Get URL params for error callbacks.
   const router = useRouter();
   const [session, sessionLoading] = useSession();
-  const errorBanner = router.query.error;
+  const [errorBanner, setErrorBanner] = useState('');
 
   const handleSubmit = async (
     values: FormValues,
@@ -31,14 +33,12 @@ const UserSignIn: React.FC = () => {
   ): Promise<void> => {
     try {
       // Sign in with credentials
-
-      // NOTE: If the below method fails because of 'Invalid password' or 'Unknown email', the error will be passed
-      // into the URL params.
-      signIn('credentials', {
+      const res = await signIn('credentials', {
         email: values.email,
         password: values.password,
-        callbackUrl: '/',
+        redirect: false,
       });
+      setErrorBanner(res.error ?? '');
     } catch (err) {
       console.log(err);
     } finally {
@@ -76,6 +76,7 @@ const UserSignIn: React.FC = () => {
       </div>
       <TextField
         className={styles.textField}
+        autoFocus={varName === 'email'}
         size="small"
         error={Boolean(error)}
         name={varName}
@@ -102,7 +103,18 @@ const UserSignIn: React.FC = () => {
     onSubmit: handleSubmit,
   });
 
-  if (!sessionLoading && session) router.push('/');
+  if (!sessionLoading && session) {
+    const { role } = session.user;
+    if (role === 'admin') {
+      router.push('/admin');
+    } else if (role === 'moderator') {
+      router.push('/moderator');
+    } else if (role === 'organization') {
+      router.push(`/orgs`);
+    } else {
+      router.push('/');
+    }
+  }
   if (!sessionLoading && !session)
     return (
       <Layout title="Sign In">
