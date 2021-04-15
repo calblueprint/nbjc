@@ -13,6 +13,7 @@ import { useFormik, FormikHandlers, FormikHelpers, FormikErrors } from 'formik';
 import { signinSchema } from 'interfaces/auth';
 import Layout from 'components/Layout';
 import { useRouter } from 'next/router';
+import signInRedirect from 'utils/signInRedirect';
 import styles from '../styles/Auth.module.css';
 
 type FormValues = {
@@ -103,18 +104,7 @@ const UserSignIn: React.FC = () => {
     onSubmit: handleSubmit,
   });
 
-  if (!sessionLoading && session) {
-    const { role } = session.user;
-    if (role === 'admin') {
-      router.push('/admin');
-    } else if (role === 'moderator') {
-      router.push('/moderator');
-    } else if (role === 'organization') {
-      router.push(`/orgs`);
-    } else {
-      router.push('/');
-    }
-  }
+  if (!sessionLoading && session) signInRedirect(router, session);
   if (!sessionLoading && !session)
     return (
       <Layout title="Sign In">
