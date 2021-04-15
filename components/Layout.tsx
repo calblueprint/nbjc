@@ -22,7 +22,7 @@ type Props = {
   page?: boolean;
   handleClickSearch?: React.ChangeEventHandler<Element> | undefined;
   searchFilters?: string;
-  handleSearchChange?: React.ChangeEventHandler;
+  handleSearchChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
 };
 
 const Layout: React.FunctionComponent<Props> = ({
@@ -44,9 +44,6 @@ const Layout: React.FunctionComponent<Props> = ({
     searchBar = (
       <div className={styles.searchbar}>
         <TextField
-          classes={{
-            root: styles.searchField,
-          }}
           placeholder="Explore Organizations"
           fullWidth
           InputProps={{
@@ -58,8 +55,7 @@ const Layout: React.FunctionComponent<Props> = ({
               </InputAdornment>
             ),
           }}
-          disableUnderline
-          variant="standard"
+          variant="outlined"
           value={searchFilters}
           onChange={handleSearchChange}
         />
