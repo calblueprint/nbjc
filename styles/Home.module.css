@@ -45,55 +45,6 @@
   display: flex;
   flex-direction: row;
   padding: 10px;
-  flex-wrap: wrap;
-  justify-content: space-around;
-}
-
-.filter {
-  min-width: 130px;
-}
-
-.filterDropDown {
-  border-radius: 35px;
-  width: 110px;
-  height: 25px;
-  margin-top: 13px;
-}
-
-.filterOption {
-  font-style: normal;
-  font-size: 13px;
-  color: #908D93;
-  border-radius: 18px;
-  border: 1px solid #908D93;
-  margin: 10px;
-  justify-content: center;
-  text-transform: none;
-  height: 25px;
-}
-
-.filterLabel {
-  font-style: normal;
-  font-size: 13px;
-}
-
-.selectedLabel {
-  font-style: normal;
-  font-size: 13px;
-  margin-top: 4px;
-  color: #9056ef;
-}
-
-.selectedFilter {
-  font-style: normal;
-  font-size: 13px;
-  color: #423E45;
-  border-radius: 18px;
-  border: 1px solid #423E45;
-  margin: 10px;
-  justify-content: center;
-  text-transform: none;
-  background: #F8F4FF;
 }
 
 .textField {

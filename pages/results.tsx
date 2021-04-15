@@ -1,13 +1,14 @@
 import { GetServerSideProps } from 'next';
-<<<<<<< HEAD
 import {
-  PrismaClient,
   LgbtqDemographic,
   RaceDemographic,
   AgeDemographic,
 } from '@prisma/client';
-=======
->>>>>>> feat: front end filters
+import {
+  AgeDemographicLabels,
+  LgbtqDemographicLabels,
+  RaceDemographicLabels,
+} from 'utils/typesLinker';
 import prisma from 'utils/prisma';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
@@ -23,31 +24,18 @@ import {
   CardContent,
   Typography,
   CardActionArea,
-<<<<<<< HEAD
+  Button,
+  ButtonProps,
 } from '@material-ui/core';
-import {
-  AgeDemographicLabels,
-  LgbtqDemographicLabels,
-  RaceDemographicLabels,
-} from 'utils/typesLinker';
-
 import SearchIcon from '@material-ui/icons/Search';
 import Layout from 'components/Layout';
+import { useState } from 'react';
 import styles from '../styles/Results.module.css';
-=======
-  Chip,
-  Button
-} from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
-import Layout from 'components/Layout';
-import styles from '../styles/Home.module.css';
->>>>>>> feat: front end filters
 
 const Map = dynamic(() => import('../components/Map'), {
   ssr: false,
 });
 
-<<<<<<< HEAD
 type ResultsProps = {
   orgs: PublicOrganization[];
 };
@@ -55,49 +43,25 @@ type ResultsProps = {
 // const prisma = new PrismaClient();
 
 const Results: React.FC<ResultsProps> = ({ orgs }) => {
-=======
-type HomeProps = {
-  orgs: PublicOrganization[];
-};
-
-// using lists for now, but maybe replace with enums?
-const demographicTypes = [
-  'LGBTQ+',
-  'SGL',
-  'Transgender',
-  'Asexual/Aromantic',
-  'Other',
-];
-
-const backgroundTypes = ['Grassroots/Local', 'Statewide', 'National', 'Other'];
-
-const audienceTypes = [
-  'POC (All)',
-  'Black',
-  'Asian',
-  'Pacific Islander',
-  'Latinx',
-  'Native/Indigeneous',
-  'Other',
-];
-
-const Home: React.FC<HomeProps> = ({ orgs }) => {
->>>>>>> feat: front end filters
   const router = useRouter();
+
+  // TO-DO optimize theme/color changes with Select, MenuItem, & Button components
+  const demographicTypes = Object.keys(
+    LgbtqDemographicLabels
+  ) as LgbtqDemographic[];
+  const backgroundTypes = Object.keys(
+    RaceDemographicLabels
+  ) as RaceDemographic[];
+  const audienceTypes = Object.keys(AgeDemographicLabels) as AgeDemographic[];
 
   // This is to verify whether or not the current user has a proper session configured to see the page.
   // Will be implemented in the next PR.
   // const [session, loading] = useSession();
 
-<<<<<<< HEAD
-=======
-  const [demographicFilters, setDemographicFilters] = React.useState<string[]>(
-    []
-  );
-  const [backgroundFilters, setBackgroundFilters] = React.useState<string[]>(
-    []
-  );
-  const [audienceFilters, setAudienceFilters] = React.useState<string[]>([]);
+  const [demographicFilters, setDemographicFilters] = useState<string[]>([]);
+  const [backgroundFilters, setBackgroundFilters] = useState<string[]>([]);
+
+  const [audienceFilters, setAudienceFilters] = useState<string[]>([]);
 
   const handleDemographicChange = (
     event: React.ChangeEvent<{ value: unknown }>
@@ -109,7 +73,6 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
     event: React.ChangeEvent<{ value: unknown }>
   ): void => {
     setBackgroundFilters(event.target.value as string[]);
-    console.log(event.target.value as string[]);
   };
 
   const handleAudienceChange = (
@@ -118,9 +81,11 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
     setAudienceFilters(event.target.value as string[]);
   };
 
-  const outlinedButton = (props) => <Button variant="outlined" disableRipple {...props}/>
+  // TO-DO fix return type here
+  const outlinedButton = (props: ButtonProps): any => (
+    <Button variant="outlined" disableRipple {...props} />
+  );
 
->>>>>>> feat: front end filters
   return (
     <Layout>
       <div className={styles.pageFlex}>
@@ -141,50 +106,28 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
         <div className={styles.pageContent}>
           <div className={styles.leftCol}>
             <div className={styles.filters}>
-<<<<<<< HEAD
-              <FormControl className={styles.filter} variant="outlined">
-                <InputLabel>Keyword</InputLabel>
-                <Select label="Keyword">
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={1}>One</MenuItem>
-                  <MenuItem value={2}>Two</MenuItem>
-                  <MenuItem value={3}>Three</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl className={styles.filter} variant="outlined">
-                <InputLabel>Keyword</InputLabel>
-                <Select label="Keyword">
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={1}>One</MenuItem>
-                  <MenuItem value={2}>Two</MenuItem>
-                  <MenuItem value={3}>Three</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl className={styles.filter} variant="outlined">
-                <InputLabel>More</InputLabel>
-                <Select label="More">
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={1}>One</MenuItem>
-                  <MenuItem value={2}>Two</MenuItem>
-                  <MenuItem value={3}>Three</MenuItem>
-=======
-              <FormControl focused={Boolean(demographicFilters.length)} className={styles.filter} variant="outlined">
-                <InputLabel shrink={false} classes={{ root: styles.filterLabel}}>
-                  {!Boolean(demographicFilters.length) && "Identities"}
+              <FormControl
+                focused={Boolean(demographicFilters.length)}
+                className={styles.filter}
+                variant="outlined"
+              >
+                <InputLabel
+                  shrink={false}
+                  classes={{ root: styles.filterLabel }}
+                >
+                  {!demographicFilters.length && 'Identities'}
                 </InputLabel>
                 <Select
                   native={false}
-                  className={styles.filterDropDown}
+                  className={
+                    demographicFilters.length > 0
+                      ? styles.filterDropDownActive
+                      : styles.filterDropDown
+                  }
                   multiple
                   value={demographicFilters}
                   onChange={handleDemographicChange}
-                  renderValue={(value) => (
+                  renderValue={() => (
                     <InputLabel classes={{ root: styles.selectedLabel }}>
                       Identities
                     </InputLabel>
@@ -198,33 +141,46 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                     getContentAnchorEl: null,
                   }}
                 >
-                  {demographicTypes.map((filterOption: string) => (
+                  {demographicTypes.map((filterOption: LgbtqDemographic) => (
                     <MenuItem
                       classes={{
                         selected: styles.selectedFilter,
                         root: styles.filterOption,
                       }}
-                      style={{ backgroundColor: demographicFilters.includes(filterOption) ? '#F8F4FF' :  'transparent'}}
+                      style={{
+                        backgroundColor: demographicFilters.includes(
+                          LgbtqDemographicLabels[filterOption]
+                        )
+                          ? '#F8F4FF'
+                          : 'transparent',
+                      }}
                       component={outlinedButton}
                       disableRipple
-                      value={filterOption}
-                      key={filterOption}
+                      value={LgbtqDemographicLabels[filterOption]}
                     >
-                      {filterOption}
+                      {LgbtqDemographicLabels[filterOption]}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-              <FormControl focused={Boolean(backgroundFilters.length)} className={styles.filter} variant="outlined">
+              <FormControl
+                focused={Boolean(backgroundFilters.length)}
+                className={styles.filter}
+                variant="outlined"
+              >
                 <InputLabel shrink={false} className={styles.filterLabel}>
-                  {!Boolean(backgroundFilters.length) && "Background"}
+                  {!backgroundFilters.length && 'Background'}
                 </InputLabel>
                 <Select
-                  className={styles.filterDropDown}
+                  className={
+                    backgroundFilters.length > 0
+                      ? styles.filterDropDownActive
+                      : styles.filterDropDown
+                  }
                   multiple
                   value={backgroundFilters}
                   onChange={handleBackgroundChange}
-                  renderValue={(value) => (
+                  renderValue={() => (
                     <InputLabel classes={{ root: styles.selectedLabel }}>
                       Background
                     </InputLabel>
@@ -238,7 +194,7 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                     getContentAnchorEl: null,
                   }}
                 >
-                  {backgroundTypes.map((filterOption: string) => (
+                  {backgroundTypes.map((filterOption: RaceDemographic) => (
                     <MenuItem
                       classes={{
                         selected: styles.selectedFilter,
@@ -246,26 +202,39 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                       }}
                       component={outlinedButton}
                       className={styles.filterOption}
-                      style={{ backgroundColor: backgroundFilters.includes(filterOption) ? '#F8F4FF' :  'transparent'}}
+                      style={{
+                        backgroundColor: backgroundFilters.includes(
+                          RaceDemographicLabels[filterOption]
+                        )
+                          ? '#F8F4FF'
+                          : 'transparent',
+                      }}
                       disableRipple
-                      value={filterOption}
-                      key={filterOption}
+                      value={RaceDemographicLabels[filterOption]}
                     >
-                      {filterOption}
+                      {RaceDemographicLabels[filterOption]}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-              <FormControl focused={Boolean(audienceFilters.length)} className={styles.filter} variant="outlined">
+              <FormControl
+                focused={Boolean(audienceFilters.length)}
+                className={styles.filter}
+                variant="outlined"
+              >
                 <InputLabel shrink={false} className={styles.filterLabel}>
-                {!Boolean(audienceFilters.length) && "Audience"}
+                  {!audienceFilters.length && 'Audience'}
                 </InputLabel>
                 <Select
-                  className={styles.filterDropDown}
+                  className={
+                    audienceFilters.length > 0
+                      ? styles.filterDropDownActive
+                      : styles.filterDropDown
+                  }
                   multiple
                   value={audienceFilters}
                   onChange={handleAudienceChange}
-                  renderValue={(value) => (
+                  renderValue={() => (
                     <InputLabel classes={{ root: styles.selectedLabel }}>
                       Audience
                     </InputLabel>
@@ -279,7 +248,7 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                     getContentAnchorEl: null,
                   }}
                 >
-                  {audienceTypes.map((filterOption: string) => (
+                  {audienceTypes.map((filterOption: AgeDemographic) => (
                     <MenuItem
                       classes={{
                         selected: styles.selectedFilter,
@@ -287,24 +256,24 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                       }}
                       component={outlinedButton}
                       disableRipple
-                      style={{ backgroundColor: audienceFilters.includes(filterOption) ? '#F8F4FF' :  'transparent'}}
-                      value={filterOption}
-                      key={filterOption}
+                      style={{
+                        backgroundColor: audienceFilters.includes(
+                          AgeDemographicLabels[filterOption]
+                        )
+                          ? '#F8F4FF'
+                          : 'transparent',
+                      }}
+                      value={AgeDemographicLabels[filterOption]}
                     >
-                      {filterOption}
+                      {AgeDemographicLabels[filterOption]}
                     </MenuItem>
                   ))}
->>>>>>> feat: front end filters
                 </Select>
               </FormControl>
             </div>
 
             <div className={styles.cards}>
-<<<<<<< HEAD
               {orgs && orgs.length !== 0 ? (
-=======
-              {orgs.length !== 0 ? (
->>>>>>> feat: front end filters
                 orgs.map((org) => (
                   <Card className={styles.card} key={org.id}>
                     <CardActionArea
@@ -336,55 +305,7 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
   );
 };
 
-<<<<<<< HEAD
 export default Results;
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  try {
-    // Only add filters if they are listed, otherwise use all filters
-    const orientationBody = context.query.orientation
-      ? context.query.orientation
-      : Object.keys(LgbtqDemographicLabels);
-    const ethnicityBody = context.query.ethnicity
-      ? context.query.ethnicity
-      : Object.keys(RaceDemographicLabels);
-    const agesBody = context.query.ages
-      ? context.query.ages
-      : Object.keys(AgeDemographicLabels);
-    const orgs = await prisma.organization.findMany({
-      where: {
-        name: {
-          contains: context.query?.orgName as string,
-          mode: 'insensitive',
-        },
-        lgbtqDemographic: {
-          hasSome: orientationBody as LgbtqDemographic[],
-        },
-        raceDemographic: {
-          hasSome: ethnicityBody as RaceDemographic[],
-        },
-        ageDemographic: {
-          hasSome: agesBody as AgeDemographic[],
-        },
-      },
-    });
-    const propOrgs = JSON.parse(JSON.stringify(orgs)) as PublicOrganization[];
-    return {
-      props: {
-        orgs: propOrgs,
-      },
-    };
-  } catch (err) {
-    // Probably do a better error state, toast? Not just redirect and not indicate anything.
-    console.log(err);
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/',
-      },
-    };
-=======
-export default Home;
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
@@ -410,6 +331,5 @@ export const getServerSideProps: GetServerSideProps = async () => {
     };
   } catch (err) {
     return { props: { errors: err.message } };
->>>>>>> feat: front end filters
   }
 };
