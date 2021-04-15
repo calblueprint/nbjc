@@ -2,15 +2,14 @@ import Head from 'next/head';
 import Link from 'next/link';
 import {
   TextField,
-  FilledInput,
   InputAdornment,
   IconButton,
   Button,
+  Typography,
   LinearProgress,
   Menu,
   MenuItem,
 } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import { signOut } from 'next-auth/client';
@@ -80,24 +79,41 @@ const Layout: React.FunctionComponent<Props> = ({
           </Link>
           {searchBar}
           <div className={styles.nav}>
-            <Link href="/">
-              <a className={styles.link}>Map</a>
-            </Link>
-            {session && session.user.role === 'organization' ? (
-              <Link href="/orgs">
-                <a className={styles.link}>Profile</a>
-              </Link>
-            ) : null}
             {session &&
             (session.user.role === 'moderator' ||
               session.user.role === 'admin') ? (
-              <Link href="/moderator">
-                <a className={styles.link}>Review</a>
-              </Link>
-            ) : null}
+              <>
+                <Link href="/moderator">
+                  <a className={styles.link}>
+                    <Typography variant="h5">Map</Typography>
+                  </a>
+                </Link>
+                <Link href="/moderator">
+                  <a className={styles.link}>
+                    <Typography variant="h5">Review</Typography>
+                  </a>
+                </Link>
+              </>
+            ) : (
+              // Change below link to new events search page
+              <>
+                <Link href="/">
+                  <a className={styles.link}>
+                    <Typography variant="h5">Organizations</Typography>
+                  </a>
+                </Link>
+                <Link href="/">
+                  <a className={styles.link}>
+                    <Typography variant="h5">Events</Typography>
+                  </a>
+                </Link>
+              </>
+            )}
             {session && session.user.role === 'admin' ? (
               <Link href="/admin">
-                <a className={styles.link}>Dashboard</a>
+                <a className={styles.link}>
+                  <Typography variant="h5">Dashboard</Typography>
+                </a>
               </Link>
             ) : null}
             <div className={styles.buttons}>
@@ -136,6 +152,16 @@ const Layout: React.FunctionComponent<Props> = ({
                     open={Boolean(userMenuAnchor)}
                     onClose={() => setUserMenuAnchor(null)}
                   >
+                    {session.user.role === 'organization' ? (
+                      <MenuItem
+                        onClick={() => {
+                          setUserMenuAnchor(null);
+                          router.push('/orgs');
+                        }}
+                      >
+                        Profile
+                      </MenuItem>
+                    ) : null}
                     <MenuItem
                       onClick={() => {
                         setUserMenuAnchor(null);
@@ -148,7 +174,7 @@ const Layout: React.FunctionComponent<Props> = ({
                       className={styles.signOutText}
                       onClick={() => {
                         setUserMenuAnchor(null);
-                        signOut();
+                        signOut({ callbackUrl: '/' });
                       }}
                     >
                       Sign Out

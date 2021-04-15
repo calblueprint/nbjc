@@ -252,6 +252,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                   className={styles.autoField}
                   color="primary"
                   type="submit"
+                  onClick={() => handleSubmit(false)(formik.values)}
                 >
                   Submit
                 </Button>
@@ -279,7 +280,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
     if (session && session.user.role === 'organization') {
-      const organization = await prisma.organization.findOne({
+      const organization = await prisma.organization.findUnique({
         where: {
           userId: session.user.id,
         },

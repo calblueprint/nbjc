@@ -30,7 +30,7 @@ const options = {
         password: { label: 'Password', type: 'password' },
       },
       authorize: async (credentials: AuthorizeDTO) => {
-        const user = await prisma.user.findOne({
+        const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
         if (!user) {
@@ -75,7 +75,7 @@ const options = {
       _isNewUser?: boolean
     ) => {
       if (token.id) {
-        const newUser = await prisma.user.findOne({
+        const newUser = await prisma.user.findUnique({
           where: { id: token.id },
           select: { email: true, role: true },
         });

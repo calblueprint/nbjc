@@ -33,7 +33,6 @@ export default async (
     });
     return res.json(newResponse);
   } catch (err) {
-    console.log(data);
     console.log(err);
     return CreateError(500, 'Failed to create response', res);
   }

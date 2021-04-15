@@ -1,15 +1,15 @@
 import Joi from 'joi';
 import {
+  Prisma,
   ApplicationStatus,
   OrganizationType,
   WorkType,
   LgbtqDemographic,
   RaceDemographic,
   AgeDemographic,
-  OrganizationGetPayload,
 } from '@prisma/client';
 
-export type PublicOrganization = OrganizationGetPayload<{
+export type PublicOrganization = Prisma.OrganizationGetPayload<{
   select: {
     id: true;
     name: true;
