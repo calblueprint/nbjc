@@ -1,11 +1,10 @@
 import { Button, TextField } from '@material-ui/core';
 import Layout from 'components/Layout';
+import { useState } from 'react';
+import { ForgotPasswordDTO } from 'pages/api/auth/forgot-password';
 import styles from '../../styles/users/PasswordChange.module.css';
 
 const ForgotPassword : React.FC = () => {
-<<<<<<< HEAD
-    return (
-=======
     const [userEmail, setEmail] = useState('');
 
     async function onClick() : Promise<void> {
@@ -31,7 +30,6 @@ const ForgotPassword : React.FC = () => {
     }
 
     return(
->>>>>>> 6f3453e... feat: password reset
     <Layout>
         <div className={styles.page}>
             <div className={styles.content}>
@@ -46,11 +44,8 @@ const ForgotPassword : React.FC = () => {
                             id="email"
                             label="email"
                             variant="outlined"
-<<<<<<< HEAD
-=======
                             value={userEmail}
                             onChange={(event) => setEmail(event.target.value)}
->>>>>>> 6f3453e... feat: password reset
                         />
                     </div>
                 </div>
@@ -59,6 +54,7 @@ const ForgotPassword : React.FC = () => {
                         color="primary"
                         variant="contained"
                         disableElevation
+                        onClick={onClick}
                         disableRipple>
                         Confirm
                     </Button>

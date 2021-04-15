@@ -1,41 +1,79 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from ".prisma/client";
-import { SanitizedUser } from 'interfaces/user';
+import { PrismaClient, password_resets } from "@prisma/client";
 import Joi from 'joi';
 
 const prisma = new PrismaClient();
 
-type NewPasswordDTO = {
-    resetCode:   string,
-    newPassword: string,
-}
+export type ForgotPasswordDTO = {
+    email: string,
+};
 
-export const resetPassword = async(
-    body: NewPasswordDTO
-): Promise<SanitizedUser | null> => {
-    if(Joi.string().uuid({ version: "uuidv4" }).validate(body.resetCode).error) {
-        throw new Error("Invalid Reset Code");
+export const forgotPassword = async(
+    user: ForgotPasswordDTO
+): Promise<password_resets | null> => {
+
+    const resetUser = await prisma.user.findUnique({
+        where: { email: user.email }
+    });
+
+    if (!resetUser) {
+        throw new Error(`No account found with email ${user.email}`);
+    }
+
+    const resetData = await prisma.password_resets.create({
+        data: {
+            users: { connect: {email: user.email} },
+        }
+    });
+
+    // Invalidate old reset codes
+    await prisma.password_resets.updateMany({
+        data: {valid: false},
+        where: {created_at: {lt: resetData.created_at}}
+    });
+
+    if (!resetData) {
+        return null;
     }
     
-    return null;
+    // TO-DO send email notification, etc.
+    
+    return resetData;
 }
 
 const handler = async(
     req: NextApiRequest,
     res: NextApiResponse,
 ) : Promise<void> => {
-    const expectedBody = Joi.object({
-        resetCode:   Joi.string().required(),
-        newPassword: Joi.string().required(),
-    });
-
-    const { value, error } = expectedBody.validate(req.body);
-
-    if (error) {
-        throw new Error(error.message);
+    try {
+        const expectedBody = Joi.object({
+            email: Joi.string().email().required(),
+        });
+    
+        const { value, error } = expectedBody.validate(req.body);
+    
+        if (error) {
+            throw new Error(error.message);
+        }
+    
+        const body = value as ForgotPasswordDTO;
+    
+        const resetData = await forgotPassword(body);
+        
+        if (resetData) {
+            res.status(200).json(resetData);
+        } else {
+            res.status(404).json({
+                statusCode: 404,
+                message:    "Could not initiate forgot password process",
+            })
+        }
+    } catch (err) {
+        res.status(500).json({
+            statusCode: 500,
+            message:    err.message,
+        });
     }
-
-    const body = value as NewPasswordDTO;
 };
 
 export default handler;

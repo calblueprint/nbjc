@@ -24,8 +24,8 @@ const resetPasswordPage : React.FC = () => {
           headers: { 'Content-Type': 'application/json'},
           credentials: 'include',
           body: JSON.stringify({
+            resetCode:   router.query['resetCode'],
             newPassword: password,
-            resetCode:   router.query['resetCode']
           } as NewPasswordDTO),
         });
 
@@ -36,6 +36,7 @@ const resetPasswordPage : React.FC = () => {
         } else {
           // TO-DO Link back to main page logged in as user
           const userInfo = await response.json();
+          console.log(userInfo);
           signIn('credentials', {
             email: userInfo['email'],
             password: password,
