@@ -8,7 +8,9 @@
   height: calc(100vh - 115px);
   border-radius: 25px;
   padding: 80px;
-  background-image: url('public/homepage.png');
+  background-image: url('/homepage.png');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .leftCol {
