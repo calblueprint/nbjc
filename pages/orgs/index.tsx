@@ -29,7 +29,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
       }
       return {
-        notFound: true,
+        redirect: {
+          permanent: false,
+          destination: `/users/profile`,
+        },
       };
     }
     return {
