@@ -1,12 +1,16 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import {
+  TextField,
+  FilledInput,
+  InputAdornment,
+  IconButton,
   Button,
-  Typography,
   LinearProgress,
   Menu,
   MenuItem,
 } from '@material-ui/core';
+import SearchIcon from '@material-ui/icons/Search';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import { signOut } from 'next-auth/client';
@@ -15,17 +19,49 @@ import styles from '../styles/Layout.module.css';
 
 type Props = {
   title?: string;
+  page?: boolean;
+  handleClickSearch?: React.ChangeEventHandler<Element> | undefined;
+  searchFilters?: string;
+  handleSearchChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
 };
 
 const Layout: React.FunctionComponent<Props> = ({
   children,
   title = 'NBJC',
+  page,
+  handleClickSearch,
+  searchFilters,
+  handleSearchChange,
 }) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
   const [userMenuAnchor, setUserMenuAnchor] = useState<HTMLElement | null>(
     null
   );
+
+  let searchBar = null;
+  if (page) {
+    searchBar = (
+      <div className={styles.searchbar}>
+        <TextField
+          placeholder="Explore Organizations"
+          fullWidth
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <IconButton onClick={handleClickSearch}>
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          variant="outlined"
+          value={searchFilters}
+          onChange={handleSearchChange}
+        />
+      </div>
+    );
+  }
 
   if (sessionLoading) return <LinearProgress />;
   return (
@@ -42,42 +78,26 @@ const Layout: React.FunctionComponent<Props> = ({
               <h1>NBJC</h1>
             </a>
           </Link>
+          {searchBar}
           <div className={styles.nav}>
+            <Link href="/">
+              <a className={styles.link}>Map</a>
+            </Link>
+            {session && session.user.role === 'organization' ? (
+              <Link href="/orgs">
+                <a className={styles.link}>Profile</a>
+              </Link>
+            ) : null}
             {session &&
             (session.user.role === 'moderator' ||
               session.user.role === 'admin') ? (
-              <>
-                <Link href="/moderator">
-                  <a className={styles.link}>
-                    <Typography variant="h5">Map</Typography>
-                  </a>
-                </Link>
-                <Link href="/moderator">
-                  <a className={styles.link}>
-                    <Typography variant="h5">Review</Typography>
-                  </a>
-                </Link>
-              </>
-            ) : (
-              // Change below link to new events search page
-              <>
-                <Link href="/">
-                  <a className={styles.link}>
-                    <Typography variant="h5">Organizations</Typography>
-                  </a>
-                </Link>
-                <Link href="/">
-                  <a className={styles.link}>
-                    <Typography variant="h5">Events</Typography>
-                  </a>
-                </Link>
-              </>
-            )}
+              <Link href="/moderator">
+                <a className={styles.link}>Review</a>
+              </Link>
+            ) : null}
             {session && session.user.role === 'admin' ? (
               <Link href="/admin">
-                <a className={styles.link}>
-                  <Typography variant="h5">Dashboard</Typography>
-                </a>
+                <a className={styles.link}>Dashboard</a>
               </Link>
             ) : null}
             <div className={styles.buttons}>
@@ -116,16 +136,6 @@ const Layout: React.FunctionComponent<Props> = ({
                     open={Boolean(userMenuAnchor)}
                     onClose={() => setUserMenuAnchor(null)}
                   >
-                    {session.user.role === 'organization' ? (
-                      <MenuItem
-                        onClick={() => {
-                          setUserMenuAnchor(null);
-                          router.push('/orgs');
-                        }}
-                      >
-                        Profile
-                      </MenuItem>
-                    ) : null}
                     <MenuItem
                       onClick={() => {
                         setUserMenuAnchor(null);
@@ -138,7 +148,7 @@ const Layout: React.FunctionComponent<Props> = ({
                       className={styles.signOutText}
                       onClick={() => {
                         setUserMenuAnchor(null);
-                        signOut({ callbackUrl: '/' });
+                        signOut();
                       }}
                     >
                       Sign Out
