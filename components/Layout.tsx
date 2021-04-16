@@ -136,9 +136,15 @@ const Layout: React.FunctionComponent<Props> = ({
                     </MenuItem>
                     <MenuItem
                       className={styles.signOutText}
-                      onClick={() => {
+                      onClick={async () => {
                         setUserMenuAnchor(null);
-                        signOut({ callbackUrl: '/' });
+                        try {
+                          await signOut({ redirect: false });
+                          router.push('/');
+                        } catch (err) {
+                          // TODO: Add a toast
+                          console.error('failed to sign out');
+                        }
                       }}
                     >
                       Sign Out
