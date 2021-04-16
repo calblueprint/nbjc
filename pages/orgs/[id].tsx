@@ -7,6 +7,7 @@ import Layout from 'components/Layout';
 import Project from 'components/organization/Project';
 import Tab from 'components/Tab';
 import computeDate from 'utils/computeDate';
+import { useRouter } from 'next/router';
 import styles from '../../styles/Organization.module.css';
 
 type Props = {
@@ -36,36 +37,41 @@ const projects = [
     name: 'Project 1 Name',
     description:
       'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
-    image:
-      'https://1mktxg24rspz19foqjixu9rl-wpengine.netdna-ssl.com/wp-content/uploads/2020/01/eia-berkeley-Cover.png',
   },
   {
     name: 'Project 2 Name',
     description:
       'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
-    image:
-      'https://1mktxg24rspz19foqjixu9rl-wpengine.netdna-ssl.com/wp-content/uploads/2020/01/eia-berkeley-Cover.png',
   },
   {
     name: 'Annual Event 1 Name',
     description:
       'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
-    image:
-      'https://1mktxg24rspz19foqjixu9rl-wpengine.netdna-ssl.com/wp-content/uploads/2020/01/eia-berkeley-Cover.png',
+  },
+  {
+    name: 'Project 3 Name',
+    description:
+      'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
+  },
+  {
+    name: 'Project 4 Name',
+    description:
+      'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
+  },
+  {
+    name: 'Annual Event 2 Name',
+    description:
+      'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
   },
 ];
 const projectsList = projects.map((project) => {
-  return (
-    <Project
-      name={project.name}
-      description={project.description}
-      image="{project.image}"
-    />
-  );
+  return <Project name={project.name} description={project.description} />;
 });
 
 const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
-  const [tabState, setTabState] = useState<0 | 1 | 2>(0);
+  const router = useRouter();
+  const { isEvent } = router.query;
+  const [tabState, setTabState] = useState<0 | 1 | 2>(isEvent ? 1 : 0);
 
   const demographics = (category: string, groups: string[]): JSX.Element => {
     return (

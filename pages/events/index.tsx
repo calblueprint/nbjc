@@ -17,6 +17,7 @@ import {
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import Layout from 'components/Layout';
+import Image from 'next/image';
 import styles from '../../styles/Events.module.css';
 
 const Map = dynamic(() => import('../../components/Map'), {
@@ -87,10 +88,12 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
 
             <div className={styles.event_cards}>
               <Card className={styles.event_card}>
-                <CardActionArea onClick={() => router.push(`/orgs/4`)}>
+                <CardActionArea
+                  onClick={() => router.push(`/orgs/4?isEvent=${true}`)}
+                >
                   <CardContent className={styles.event_card}>
-                    <div className={styles.card}>
-                      <div className={styles.left}>
+                    {/* <div className={styles.card}> */}
+                    {/* <div className={styles.left}>
                         <Typography className={styles.event_date}>
                           Monday, Feb 29, 10AM PST
                         </Typography>
@@ -107,7 +110,27 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
                           incididunt ut labore et dolore magna aliqua.
                         </Typography>
                       </div>
-                      <div className={styles.right} />
+                      <div className={styles.right} /> */}
+                    <div className={styles.card2}>
+                      <div className={styles.top}>
+                        <Image
+                          src="/homepage.png"
+                          alt="event image"
+                          width={600}
+                          height={100}
+                        />
+                      </div>
+                      <div className={styles.bottom}>
+                        <Typography className={styles.bottom_date}>
+                          Monday, Feb 29, 10AM PST • Location
+                        </Typography>
+                        <Typography className={styles.bottom_name}>
+                          Event Name
+                        </Typography>
+                        <Typography className={styles.bottom_host}>
+                          Host Organization Name
+                        </Typography>
+                      </div>
                     </div>
                   </CardContent>
                 </CardActionArea>

@@ -210,3 +210,39 @@
   background-image: url('public/homepage.png');
   background-size: cover;
 }
+
+.card2 {
+  display: flex;
+  /* flex-direction: column; */
+  flex-direction: column;
+}
+
+/* .card2 :hover {
+  background-color: #F8F4FF;
+} */
+
+.top {
+  width: 100%;
+  height: 100%;
+  /* background-image: url('public/homepage.png'); */
+  /* background-size: cover; */
+  padding-bottom: 10px;
+}
+
+.bottom {
+  width: 100%;
+}
+
+.bottom_date {
+  font-size: 14px;
+}
+
+.bottom_name {
+  font-size: 25px;
+  color: #71579c;
+  font-weight: bolder;
+}
+
+.bottom_host {
+  font-size: 12px;
+}
