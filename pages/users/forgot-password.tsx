@@ -3,11 +3,17 @@ import Layout from 'components/Layout';
 import { useState } from 'react';
 import { ForgotPasswordDTO } from 'pages/api/auth/forgot-password';
 import styles from '../../styles/users/PasswordChange.module.css';
+import Toast from 'components/Toast';
 
 const ForgotPassword : React.FC = () => {
     const [userEmail, setEmail] = useState('');
+    const [submitted, setSubmitted] = useState(false);
+    const [submissionError, setSubmissionError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     async function onClick() : Promise<void> {
+        setSubmitted(false);
+        setSubmissionError(false);
         try {
             const response = await fetch('/api/auth/forgot-password', {
                 method: "POST",
@@ -21,16 +27,51 @@ const ForgotPassword : React.FC = () => {
             if (!response.ok) {
                 throw await response.json();
             } else {
-                // TO-DO Notify of password reset (toast)
+                setSubmitted(true);
                 setEmail("");
             }
         } catch (err) {
-            // TO-DO Error handling Notify user as well (toast)
+            setSubmissionError(true);
+            setEmail("");
+            setErrorMessage(err.error.message);
         }
+    }
+
+    const renderToast = () => {
+        return(
+        <Toast
+            snackbarProps={{
+                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            }}
+            type="success"
+            showDismissButton
+            >
+            <div>
+                Please check your inbox for an email with
+                password reset instructions.
+            </div>
+        </Toast>
+    )};
+
+    const renderErrorToast = () => {
+        return(
+            <Toast
+            snackbarProps={{
+                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            }}
+            type="error"
+            showDismissButton
+            disableClickaway
+            > 
+            {errorMessage}
+            </Toast>
+        );
     }
 
     return(
     <Layout>
+        {submitted && !submissionError ? renderToast() : null}
+        {submissionError ? renderErrorToast() : null}
         <div className={styles.page}>
             <div className={styles.content}>
                 <div className={styles.title}>Forgot Password?</div>
@@ -49,7 +90,7 @@ const ForgotPassword : React.FC = () => {
                         />
                     </div>
                 </div>
-                <div className={styles.confirmEmail}>
+                <div className={styles.confirm}>
                     <Button 
                         color="primary"
                         variant="contained"

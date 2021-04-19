@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient, password_resets} from "@prisma/client";
+import { PrismaClient} from "@prisma/client";
 import { SanitizedUser } from 'interfaces/user';
 import Joi from 'joi';
 import hashPassword from 'utils/hashPassword';
 import sanitizeUser from "utils/sanitizeUser";
+import CreateError, { MethodNotAllowed } from 'utils/error';
 
 const prisma = new PrismaClient();
 
@@ -28,7 +29,7 @@ export const resetPassword = async(
     }
 
     if (!resetData.valid) {
-        throw new Error('Reset Code Used/Expired');
+        throw new Error('Reset Link/Code has been used or is expired');
     }
 
     const updatedPasswordRecord = await prisma.password_resets.update({
@@ -57,6 +58,10 @@ const handler = async(
     res: NextApiResponse,
 ) : Promise<void> => {
     try {
+        if (req.method != 'POST') {
+            return MethodNotAllowed(req.method, res);
+        }
+
         const expectedBody = Joi.object({
             resetCode:   Joi.string().required(),
             newPassword: Joi.string().min(6).max(50).required().messages({
@@ -69,24 +74,18 @@ const handler = async(
         const { value, error } = expectedBody.validate(req.body);
     
         if (error) {
-            throw new Error(error.message);
+            return CreateError(400, error.message, res);
         }
     
         const body = value as NewPasswordDTO;
         const updatedUserData = await resetPassword(body);
         if (updatedUserData) {
-            res.status(200).json(updatedUserData);
+            return res.status(200).json(updatedUserData);
         } else {
-            res.status(404).json({
-                statusCode: 404,
-                message: "Failed to reset password",
-            });
+            return CreateError(404, 'Failed to update password', res);
         }
     } catch (err) {
-        res.status(500).json({
-            statusCode: 500,
-            message:    err.message,
-        })
+        return CreateError(500, err.message, res);
     }
 };
 

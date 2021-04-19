@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient, password_resets } from "@prisma/client";
 import Joi from 'joi';
+import CreateError, { MethodNotAllowed } from 'utils/error';
+import sendEmail from 'utils/sendEmail';
 
 const prisma = new PrismaClient();
 
@@ -36,8 +38,10 @@ export const forgotPassword = async(
         return null;
     }
     
-    // TO-DO send email notification, etc.
-    
+    // TO-DO Format Email body, update resetUrl
+    const resetUrl = `http://localhost:3000/users/reset-password/${resetData.id}`;
+    await sendEmail('[NBJC] Password Reset Link', user.email, resetUrl);
+
     return resetData;
 }
 
@@ -46,6 +50,10 @@ const handler = async(
     res: NextApiResponse,
 ) : Promise<void> => {
     try {
+        if (req.method !== 'POST') {
+            return MethodNotAllowed(req.method, res);
+        }
+
         const expectedBody = Joi.object({
             email: Joi.string().email().required(),
         });
@@ -53,7 +61,7 @@ const handler = async(
         const { value, error } = expectedBody.validate(req.body);
     
         if (error) {
-            throw new Error(error.message);
+            return CreateError(400, error.message, res);
         }
     
         const body = value as ForgotPasswordDTO;
@@ -61,18 +69,12 @@ const handler = async(
         const resetData = await forgotPassword(body);
         
         if (resetData) {
-            res.status(200).json(resetData);
+            return res.status(200).json(resetData);
         } else {
-            res.status(404).json({
-                statusCode: 404,
-                message:    "Could not initiate forgot password process",
-            })
+            return CreateError(400, 'Could not finish forgot password flow', res);
         }
     } catch (err) {
-        res.status(500).json({
-            statusCode: 500,
-            message:    err.message,
-        });
+        return CreateError(500, err.message, res);
     }
 };
 

@@ -50,6 +50,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@prisma/client": "^2.18.0",
+    "@sendgrid/mail": "^7.4.2",
     "clsx": "^1.1.1",
     "db-migrate": "^0.11.11",
     "db-migrate-base": "^2.3.0",

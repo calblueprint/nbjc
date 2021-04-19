@@ -5,16 +5,19 @@ import styles from '../../../styles/users/PasswordChange.module.css';
 import { NewPasswordDTO } from 'pages/api/auth/reset-password';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/client';
+import Toast from 'components/Toast';
 
 const resetPasswordPage : React.FC = () => {
     const router = useRouter();
 
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [submissionError, setSubmissionError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     async function onClick(): Promise<void> {
       try {
-        // Compare inputed passwords
+        setSubmissionError(false);
         if (password !== confirmPassword) {
           throw new Error("Passwords do not match!");
         }
@@ -30,13 +33,12 @@ const resetPasswordPage : React.FC = () => {
         });
 
         if (!response.ok) {
-          // TO-DO fix as toast notification and message along the lines of
-          // link used to reset has expired
+          setSubmissionError(true);
+          const respJson = await response.json();
+          setErrorMessage(String(respJson.error.message));
           return;
         } else {
-          // TO-DO Link back to main page logged in as user
           const userInfo = await response.json();
-          console.log(userInfo);
           signIn('credentials', {
             email: userInfo['email'],
             password: password,
@@ -44,12 +46,29 @@ const resetPasswordPage : React.FC = () => {
           });
         }
       } catch (err) {
-        // Error handling, notify user as well (Toast notification)
+        setSubmissionError(true);
+        setErrorMessage(err.error.message);
       }
     };
 
+    const renderErrorToast = () => {
+      return(
+          <Toast
+          snackbarProps={{
+              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          }}
+          type="error"
+          showDismissButton
+          disableClickaway
+          > 
+          {errorMessage}
+          </Toast>
+      );
+    }
+
     return(
     <Layout>
+      { submissionError ? renderErrorToast() : null}
       <div className={styles.page}>
         <div className={styles.content}>
           <div className={styles.title}>Reset Password</div>
@@ -66,7 +85,7 @@ const resetPasswordPage : React.FC = () => {
               />
             </div>
             <div className={styles.field}>
-              Confirm New Password
+              Confirm Password
               <TextField
                 size="small"
                 id="confirm-password"
@@ -77,7 +96,7 @@ const resetPasswordPage : React.FC = () => {
               />
             </div>
           </div>
-          <div className={styles.saveSingle}>
+          <div className={styles.confirm}>
             <Button
               color="primary"
               variant="contained"
