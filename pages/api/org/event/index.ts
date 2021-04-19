@@ -42,6 +42,8 @@ export default async (
         organizations: {
           connect: { id: data.organizationId },
         },
+        startDatetime: data.startDatetime,
+        endDatetime: data.endDatetime,
       },
     });
     return res.json(newEvent);
