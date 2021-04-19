@@ -20,6 +20,29 @@ export type PublicOrganization = Prisma.OrganizationGetPayload<{
   };
 }>;
 
+export type EditForm = Prisma.OrganizationGetPayload<{
+  select: {
+    name: true;
+    contactName: true;
+    contactEmail: true;
+    contactPhone: true;
+    organizationType: true;
+    workType: true;
+    address: true;
+    missionStatement: true;
+    shortHistory: true;
+    lgbtqDemographic: true;
+    raceDemographic: true;
+    ageDemographic: true;
+    capacity: true;
+    ein: true;
+    foundingDate: true;
+    is501c3: true;
+    website: true;
+    organizationProjects: true;
+  };
+}>;
+
 const schema = Joi.object({
   name: Joi.string()
     .empty('')

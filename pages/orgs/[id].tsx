@@ -2,29 +2,35 @@ import { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { useFormik, FormikHandlers, FormikHelpers, FormikErrors } from 'formik';
 import prisma from 'utils/prisma';
-import {
-  Organization,
-  PrismaClient,
-  OrganizationGetPayload,
-} from '@prisma/client';
-import { Button, Chip } from '@material-ui/core';
+import { Organization, PrismaClient, Prisma } from '@prisma/client';
+import { Button, Chip, TextField } from '@material-ui/core';
 import Layout from 'components/Layout';
 import { AppQnR, Form } from 'interfaces/registration';
+import { EditForm } from 'interfaces/organization';
 import Project from 'components/organization/Project';
 import Tab from 'components/Tab';
 import computeDate from 'utils/computeDate';
 import styles from '../../styles/Organization.module.css';
 
 type Props = {
-  org: OrganizationGetPayload<{
+  org: Prisma.OrganizationGetPayload<{
     include: { organizationProjects: true };
   }>;
   errors?: string;
 };
 
+// type formProps = {
+//   Form: {
+//     name: (org && org.name) ?? '',
+//     contactName: (org && org.contactName) ?? '',
+//     contactEmail: (org && org.contactEmail) ?? '',
+//     contactPhone: (org && org.contactPhone) ?? '',
+//   };
+// };
+
 const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
   const [tabState, setTabState] = useState<0 | 1 | 2>(0);
-  const [editState, setEditState] = useState<0 | 1>(0);
+  const [editState, setEditState] = useState<0 | 1>(0); // 0 == read, 1 == edit
   // const [selectedOrg, setSelectedOrg] = useState<PublicOrganization | null>(null);
   const [errorBanner, setErrorBanner] = useState('');
 
@@ -34,9 +40,30 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
     );
   });
 
+  const projectsListEditable = org?.organizationProjects?.map((project) => {
+    return (
+      // <Project name={project.title} description={project.description ?? ''} />
+      <div>
+        <TextField
+          className={styles.projTitle}
+          value={project.title}
+          name="projTitle"
+          variant="outlined"
+        />
+        <TextField
+          className={styles.projDesc}
+          value={project.description ?? ''}
+          name="projDescription"
+          variant="outlined"
+          multiline
+        />
+      </div>
+    );
+  });
+
   // FIXME: body of request
   const handleSubmit = async (
-    values: Props
+    values: EditForm
     // actions: FormikHelpers<Props>
   ): Promise<void> => {
     try {
@@ -45,11 +72,40 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ values }),
       });
+      setEditState(0);
     } catch (ex) {
       setErrorBanner('Did not save.');
     }
     // router.replace(router.asPath);
   };
+
+  const initVals: EditForm = {
+    name: (org && org.name) ?? '',
+    contactName: (org && org.contactName) ?? '',
+    contactEmail: (org && org.contactEmail) ?? '',
+    contactPhone: (org && org.contactPhone) ?? '',
+    organizationType: (org && org.organizationType) ?? null,
+    workType: (org && org.workType) ?? null,
+    address: (org && org.address) ?? '',
+    missionStatement: (org && org.missionStatement) ?? '',
+    shortHistory: (org && org.shortHistory) ?? '',
+    lgbtqDemographic: org ? org.lgbtqDemographic : [],
+    raceDemographic: org ? org.raceDemographic : [],
+    ageDemographic: org ? org.ageDemographic : [],
+    capacity: (org && org.capacity) ?? null,
+    ein: (org && org.ein) ?? '',
+    foundingDate: (org && org.foundingDate) ?? null,
+    is501c3: Boolean(org && org.is501c3),
+    website: (org && org.website) ?? '',
+    organizationProjects: org ? org.organizationProjects : [],
+  };
+
+  const formik = useFormik({
+    initialValues: initVals,
+    // validate: handleValidate(false),
+    // validateOnChange: false,
+    onSubmit: handleSubmit,
+  });
 
   const demographics = (category: string, groups: string[]): JSX.Element => {
     return (
@@ -68,6 +124,79 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
     );
   };
 
+  const editableLeft = (): JSX.Element => {
+    return (
+      <div>
+        {editState === 0 ? (
+          <div className={styles.rightContent}>
+            <h3 className={styles.audienceHeader}>Audience Demographics</h3>
+            <div className={styles.demographicSection}>
+              {demographics('Orientation', org.lgbtqDemographic)}
+              {demographics('Background', org.raceDemographic)}
+              {demographics('Age Range', org.ageDemographic)}
+            </div>
+            <h3 className={styles.audienceHeader}>Our Mission</h3>
+            {org.missionStatement && (
+              <p className={styles.infoContent}>{org.missionStatement}</p>
+            )}
+            <h3 className={styles.audienceHeader}>Our History</h3>
+            {org.shortHistory && (
+              <p className={styles.infoContent}>{org.shortHistory}</p>
+            )}
+          </div>
+        ) : (
+          // editable, map contents to TextFields
+          <div className={styles.rightContent}>
+            <h3 className={styles.audienceHeader}>Audience Demographics</h3>
+            <div className={styles.demographicSection}>
+              {demographics('Orientation', org.lgbtqDemographic)}
+              {demographics('Background', org.raceDemographic)}
+              {demographics('Age Range', org.ageDemographic)}
+            </div>
+            <h3 className={styles.audienceHeader}>Our Mission</h3>
+            <TextField
+              // className={styles.projDesc}
+              value={
+                org.missionStatement && (
+                  <p className={styles.infoContent}>{org.missionStatement}</p>
+                )
+              }
+              name="shortHistory"
+              variant="outlined"
+              onChange={formik.handleChange}
+              multiline
+            />
+            <h3 className={styles.audienceHeader}>Our History</h3>
+            <TextField
+              // className={styles.projDesc}
+              value={
+                org.shortHistory && (
+                  <p className={styles.infoContent}>{org.shortHistory}</p>
+                )
+              }
+              name="shortHistory"
+              variant="outlined"
+              multiline
+            />
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const editableRight = (): JSX.Element => {
+    return (
+      <div>
+        {editState === 0 ? (
+          <div className={styles.projects}>{projectsList}</div>
+        ) : (
+          // editable
+          <div className={styles.projects}>{projectsListEditable}</div>
+        )}
+      </div>
+    );
+  };
+
   if (errors) {
     return (
       <Layout title="Error | NBJC">
@@ -77,41 +206,6 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
       </Layout>
     );
   }
-
-  // const initialValues: Form = {
-  //   name: (org && org.name) ?? '',
-  //   contactName: (org && org.contactName) ?? '',
-  //   contactEmail: (org && org.contactEmail) ?? '',
-  //   contactPhone: (org && org.contactPhone) ?? '',
-  //   organizationType: (org && org.organizationType) ?? '',
-  //   workType: (org && org.workType) ?? '',
-  //   address: (org && org.address) ?? '',
-  //   missionStatement: (org && org.missionStatement) ?? '',
-  //   shortHistory: (org && org.shortHistory) ?? '',
-  //   lgbtqDemographic: org ? org.lgbtqDemographic : [],
-  //   raceDemographic: org ? org.raceDemographic : [],
-  //   ageDemographic: org ? org.ageDemographic : [],
-  //   // capacity: undefined,
-  //   ein: (org && org.ein) ?? '',
-  //   // foundingDate: undefined,
-  //   is501c3: Boolean(org && org.is501c3),
-  //   website: (org && org.website) ?? '',
-  //   proj1: '',
-  //   proj2: '',
-  //   proj3: '',
-  //   qnr:
-  //     appQnR?.map((q) => ({
-  //       questionId: q.id,
-  //       response: q.applicationResponses[0]?.answer ?? '',
-  //     })) ?? [],
-  // };
-
-  const formik = useFormik({
-    // initialValues,
-    // validate: handleValidate(false),
-    // validateOnChange: false,
-    onSubmit: handleSubmit(),
-  });
 
   return (
     <Layout title={`${org.name} Profile`}>
@@ -127,16 +221,31 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
             <div className={styles.errorBanner}>{errorBanner}</div>
           ) : null}
           <div className={styles.editButton}>
-            <Button
-              variant="contained"
-              className={styles.editButtonStyles}
-              disableElevation
-              onClick={() => {setEditState}} // handleSubmit here??
-              // editState={editState}
-              // setEditState={setEditState}
-            >
-              Edit
-            </Button>
+            {editState === 0 ? (
+              // you are viewing, display EDIT button
+              <Button
+                variant="contained"
+                className={styles.editButton}
+                disableElevation
+                onClick={() => {
+                  setEditState(1);
+                }}
+              >
+                Edit
+              </Button>
+            ) : (
+              // you are editing, display SAVE button
+              <Button
+                variant="contained"
+                className={styles.saveButton}
+                disableElevation
+                onClick={() => {
+                  handleSubmit(org);
+                }}
+              >
+                Save
+              </Button>
+            )}
           </div>
           <div className={styles.titleColumns}>
             <div className={styles.leftColumn}>
@@ -190,57 +299,10 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
                   setTabState={setTabState}
                 />
               </div>
-      
-              {editState === 0 ? (
-                // editable page, make into material UI text boxes
-                <div> stuff </div>
-                {tabState === 0 ? (
-                  <div className={styles.rightContent}>
-                    <h3 className={styles.audienceHeader}>
-                      Audience Demographics
-                    </h3>
-                    <div className={styles.demographicSection}>
-                      {demographics('Orientation', org.lgbtqDemographic)}
-                      {demographics('Background', org.raceDemographic)}
-                      {demographics('Age Range', org.ageDemographic)}
-                    </div>
-                    <h3 className={styles.audienceHeader}>Our Mission</h3>
-                    {org.missionStatement && (
-                      <p className={styles.infoContent}>{org.missionStatement}</p>
-                    )}
-                    <h3 className={styles.audienceHeader}>Our History</h3>
-                    {org.shortHistory && (
-                      <p className={styles.infoContent}>{org.shortHistory}</p>
-                    )}
-                  </div>
-                ) : (
-                  <div className={styles.projects}>{projectsList}</div>
-                )}
+              {tabState === 0 ? (
+                <div>{editableLeft()}</div>
               ) : (
-                // non-editable
-                <div> non editable stuff </div>
-                {tabState === 0 ? (
-                  <div className={styles.rightContent}>
-                    <h3 className={styles.audienceHeader}>
-                      Audience Demographics
-                    </h3>
-                    <div className={styles.demographicSection}>
-                      {demographics('Orientation', org.lgbtqDemographic)}
-                      {demographics('Background', org.raceDemographic)}
-                      {demographics('Age Range', org.ageDemographic)}
-                    </div>
-                    <h3 className={styles.audienceHeader}>Our Mission</h3>
-                    {org.missionStatement && (
-                      <p className={styles.infoContent}>{org.missionStatement}</p>
-                    )}
-                    <h3 className={styles.audienceHeader}>Our History</h3>
-                    {org.shortHistory && (
-                      <p className={styles.infoContent}>{org.shortHistory}</p>
-                    )}
-                  </div>
-                ) : (
-                  <div className={styles.projects}>{projectsList}</div>
-                )}
+                <div>{editableRight()}</div>
               )}
             </div>
           </div>
@@ -260,7 +322,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       return { notFound: true };
     }
 
-    const resp = await await prisma.organization.findOne({
+    const resp = await await prisma.organization.findUnique({
       where: { id: Number(id) },
       select: {
         id: true,
@@ -279,6 +341,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         is501c3: true,
         website: true,
         organizationProjects: true,
+        organizationEvents: true,
       },
     });
     const org = JSON.parse(JSON.stringify(resp));
