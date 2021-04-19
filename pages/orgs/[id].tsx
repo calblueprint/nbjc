@@ -90,153 +90,107 @@ const OrgProfile: React.FunctionComponent<Props> = ({
     );
   }
 
-  if (sessionLoading) return <LinearProgress />;
-
-  return (
-    <Layout title={`${org.name} Profile`}>
-      <Dialog
-        onClose={closeModal()}
-        className={styles.newModal}
-        fullWidth
-        open={openModal}
-      >
-        <DialogTitle>Reason For Declining</DialogTitle>
-        <DialogContent>
-          <div className={styles.modContent}>
-            <div className={styles.modTab}>
-              Notes
-              <div>[User's notes on organization here.]</div>
-            </div>
-            <div className={styles.modTab}>
-              <TextField
-                id="outlined-basic"
-                label="Reasons for decline."
-                variant="outlined"
-                multiline
-                rows={13}
-              />
-            </div>
+  if (!sessionLoading)
+    return (
+      <Layout title={`${org.name} Profile`}>
+        <div className={styles.orgMargins}>
+          <div className={styles.orgImages}>
+            <img
+              src="https://1mktxg24rspz19foqjixu9rl-wpengine.netdna-ssl.com/wp-content/uploads/2020/01/eia-berkeley-Cover.png"
+              alt="Organization"
+            />
           </div>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" color="primary" onClick={closeModal()}>
-            Send
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <div className={styles.orgMargins}>
-        <div className={styles.orgImages}>
-          <img
-            src="https://1mktxg24rspz19foqjixu9rl-wpengine.netdna-ssl.com/wp-content/uploads/2020/01/eia-berkeley-Cover.png"
-            alt="Organization"
-          />
-        </div>
-        {orgUser.id === session?.user.id ? (
-          <div className={styles.editButton}>
-            <Button
-              variant="contained"
-              className={styles.editButtonStyles}
-              disableElevation
-            >
-              Edit
-            </Button>
-          </div>
-        ) : null}
-        <div className={styles.titleColumns}>
-          <div className={styles.leftColumn}>
-            <h2 className={styles.Header}>{org.name}</h2>
-            <h3 className={styles.subHeader}>
-              {org.workType}
-              {org.workType && org.organizationType ? ' • ' : null}
-              {org.organizationType}
-            </h3>
-            {/* Location */}
-            <h3 className={styles.infoHeader}>Location</h3>
-            <p className={styles.info}>
-              <b>Type:</b> Headquarters
-            </p>
-            {org.address && <p className={styles.info}>{org.address}</p>}
-            {/* Basics */}
-            {(org.website || org.ein || org.foundingDate) && (
-              <h3 className={styles.infoHeader}>Basics</h3>
-            )}
-            {org.website && (
-              <p className={styles.info}>
-                <b>Site:</b> {org.website}
-              </p>
-            )}
-            {org.ein && (
-              <p className={styles.info}>
-                <b>EIN:</b> {org.ein}
-              </p>
-            )}
-            {org.foundingDate && (
-              <p className={styles.info}>
-                {/* TODO: add hydration to convert dates to date objects beforehand */}
-                <b>Founded:</b> {computeDate(new Date(org.foundingDate), 0)}
-              </p>
-            )}
-            {/* Members */}
-            <h3 className={styles.infoHeader}>Members</h3>
-            <p className={styles.info}>Frederick Kim, Project Leader</p>
-            <p className={styles.info}>Elizabeth Wu, Designer</p>
-            <p className={styles.info}>Cindy Zhang, Developer</p>
-            <p className={styles.info}>Calvin Chen, Developer</p>
-            <p className={styles.info}>Sonja Johanson, Developer</p>
-            <p className={styles.info}>Bryanna Gavino, Developer</p>
-          </div>
-          <div className={styles.rightColumn}>
-            <div className={styles.headerButton}>
-              <Tab
-                tabName1="About"
-                tabName2="Events"
-                tabState={tabState}
-                setTabState={setTabState}
-              />
+          {orgUser.id === session?.user.id ? (
+            <div className={styles.editButton}>
+              <Button
+                variant="contained"
+                className={styles.editButtonStyles}
+                disableElevation
+              >
+                Edit
+              </Button>
             </div>
-            {tabState === 0 ? (
-              <div className={styles.rightContent}>
-                <h3 className={styles.audienceHeader}>Audience Demographics</h3>
-                <div className={styles.demographicSection}>
-                  {demographics('Orientation', org.lgbtqDemographic)}
-                  {demographics('Background', org.raceDemographic)}
-                  {demographics('Age Range', org.ageDemographic)}
-                </div>
-                <h3 className={styles.audienceHeader}>Our Mission</h3>
-                {org.missionStatement && (
-                  <p className={styles.infoContent}>{org.missionStatement}</p>
-                )}
-                <h3 className={styles.audienceHeader}>Our History</h3>
-                {org.shortHistory && (
-                  <p className={styles.infoContent}>{org.shortHistory}</p>
-                )}
+          ) : null}
+          <div className={styles.titleColumns}>
+            <div className={styles.leftColumn}>
+              <h2 className={styles.Header}>{org.name}</h2>
+              <h3 className={styles.subHeader}>
+                {org.workType}
+                {org.workType && org.organizationType ? ' • ' : null}
+                {org.organizationType}
+              </h3>
+              {/* Location */}
+              <h3 className={styles.infoHeader}>Location</h3>
+              <p className={styles.info}>
+                <b>Type:</b> Headquarters
+              </p>
+              {org.address && <p className={styles.info}>{org.address}</p>}
+              {/* Basics */}
+              {(org.website || org.ein || org.foundingDate) && (
+                <h3 className={styles.infoHeader}>Basics</h3>
+              )}
+              {org.website && (
+                <p className={styles.info}>
+                  <b>Site:</b> {org.website}
+                </p>
+              )}
+              {org.ein && (
+                <p className={styles.info}>
+                  <b>EIN:</b> {org.ein}
+                </p>
+              )}
+              {org.foundingDate && (
+                <p className={styles.info}>
+                  {/* TODO: add hydration to convert dates to date objects beforehand */}
+                  <b>Founded:</b> {computeDate(new Date(org.foundingDate), 0)}
+                </p>
+              )}
+              {/* Members */}
+              <h3 className={styles.infoHeader}>Members</h3>
+              <p className={styles.info}>Frederick Kim, Project Leader</p>
+              <p className={styles.info}>Elizabeth Wu, Designer</p>
+              <p className={styles.info}>Cindy Zhang, Developer</p>
+              <p className={styles.info}>Calvin Chen, Developer</p>
+              <p className={styles.info}>Sonja Johanson, Developer</p>
+              <p className={styles.info}>Bryanna Gavino, Developer</p>
+            </div>
+            <div className={styles.rightColumn}>
+              <div className={styles.headerButton}>
+                <Tab
+                  tabName1="About"
+                  tabName2="Events"
+                  tabState={tabState}
+                  setTabState={setTabState}
+                />
               </div>
-            ) : (
-              <div className={styles.projects}>{projectsList}</div>
-            )}
-            <div>
-              <Button
-                variant="contained"
-                className={styles.editButtonStyles}
-                disableElevation
-              >
-                Decline
-              </Button>
-              <Button
-                variant="contained"
-                className={styles.editButtonStyles}
-                disableElevation
-                color="primary"
-                onClick={() => setOpenModal(true)}
-              >
-                Approve
-              </Button>
+              {tabState === 0 ? (
+                <div className={styles.rightContent}>
+                  <h3 className={styles.audienceHeader}>
+                    Audience Demographics
+                  </h3>
+                  <div className={styles.demographicSection}>
+                    {demographics('Orientation', org.lgbtqDemographic)}
+                    {demographics('Background', org.raceDemographic)}
+                    {demographics('Age Range', org.ageDemographic)}
+                  </div>
+                  <h3 className={styles.audienceHeader}>Our Mission</h3>
+                  {org.missionStatement && (
+                    <p className={styles.infoContent}>{org.missionStatement}</p>
+                  )}
+                  <h3 className={styles.audienceHeader}>Our History</h3>
+                  {org.shortHistory && (
+                    <p className={styles.infoContent}>{org.shortHistory}</p>
+                  )}
+                </div>
+              ) : (
+                <div className={styles.projects}>{projectsList}</div>
+              )}
             </div>
           </div>
         </div>
-      </div>
-    </Layout>
-  );
+      </Layout>
+    );
+  return <LinearProgress />;
 };
 
 export default OrgProfile;
@@ -249,9 +203,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       return { notFound: true };
     }
 
-    const resp = await await prisma.organization.findUnique({
+    const resp = await prisma.organization.findUnique({
       where: { id: Number(id) },
       select: {
+        active: true,
         id: true,
         name: true,
         organizationType: true,
@@ -275,7 +230,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       },
     });
     const org = JSON.parse(JSON.stringify(resp));
-    if (!org) {
+    if (!org || !org.active) {
       return {
         notFound: true,
       };
