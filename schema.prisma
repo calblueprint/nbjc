@@ -55,6 +55,7 @@ model Organization {
   user                 User?                 @relation("OrganizationsToUsers", fields: [userId], references: [id])
   applicationNote      ApplicationNote?      @relation("ApplicationNotesToOrganizations")
   applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
+  organizationEvents   OrganizationEvent[]   @relation("OrganizationEventsToOrganizations")
   organizationProjects OrganizationProject[] @relation("OrganizationProjectsToOrganizations")
 
   @@map("organizations")
@@ -149,6 +150,23 @@ model OrganizationProject {
   organization   Organization @relation("OrganizationProjectsToOrganizations", fields: [organizationId], references: [id])
 
   @@map("organization_projects")
+}
+
+model OrganizationEvent {
+  id               Int                @id @default(autoincrement())
+  title            String
+  description      String
+  address          String?            @db.VarChar(255)
+  link             String?            @db.VarChar(255)
+  lgbtqDemographic LgbtqDemographic[] @map("lgbtq_demographic")
+  raceDemographic  RaceDemographic[]  @map("race_demographic")
+  ageDemographic   AgeDemographic[]   @map("age_demographic")
+  organizationId   Int                @map("organization_id")
+  startDatetime    DateTime           @map("start_datetime") @db.Timestamptz(6)
+  endDatetime      DateTime?          @map("end_datetime") @db.Timestamptz(6)
+  organizations    Organization       @relation("OrganizationEventsToOrganizations", fields: [organizationId], references: [id])
+
+  @@map("organization_events")
 }
 
 enum AgeDemographic {
