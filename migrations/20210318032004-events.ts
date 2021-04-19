@@ -21,10 +21,8 @@ export async function up(
         race_demographic             race_demographic[],
         age_demographic              age_demographic[],
         organization_id              INTEGER NOT NULL,
-        start_date                   INTEGER NOT NULL,
-        start_time                   INTEGER NOT NULL,
-        end_date                     INTEGER,
-        end_time                     INTEGER,
+        start_datetime               TIMESTAMPTZ NOT NULL,
+        end_datetime                 TIMESTAMPTZ,
         PRIMARY KEY (id),
         FOREIGN KEY (organization_id)
           REFERENCES organizations(id)

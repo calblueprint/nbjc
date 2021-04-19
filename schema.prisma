@@ -162,10 +162,8 @@ model OrganizationEvent {
   raceDemographic  RaceDemographic[]  @map("race_demographic")
   ageDemographic   AgeDemographic[]   @map("age_demographic")
   organizationId   Int                @map("organization_id")
-  startDate        Int                @map("start_date")
-  startTime        Int                @map("start_time")
-  endDate          Int?               @map("end_date")
-  endTime          Int?               @map("end_time")
+  startDatetime    DateTime           @map("start_datetime") @db.Timestamptz(6)
+  endDatetime      DateTime?          @map("end_datetime") @db.Timestamptz(6)
   organizations    Organization       @relation("OrganizationEventsToOrganizations", fields: [organizationId], references: [id])
 
   @@map("organization_events")

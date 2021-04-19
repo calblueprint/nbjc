@@ -12,6 +12,8 @@ export type Event = Prisma.OrganizationEventGetPayload<{
     raceDemographic: true;
     ageDemographic: true;
     organizationId: true;
+    startDatetime: true;
+    endDatetime: true;
   };
 }>;
 
@@ -47,6 +49,11 @@ const schema = Joi.object({
     .items(Joi.string())
     .when('$strict', { is: true, then: Joi.required() }),
   organizationId: Joi.number(),
+  startDatetime: Joi.date().when('$strict', {
+    is: true,
+    then: Joi.required(),
+  }),
+  endDatetime: Joi.date(),
 
   // leaving in case we want to add this validation in the future:
 
