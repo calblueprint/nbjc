@@ -1,5 +1,11 @@
 import { GetServerSideProps } from 'next';
-import { PrismaClient } from '@prisma/client';
+import {
+  PrismaClient,
+  LgbtqDemographic,
+  RaceDemographic,
+  AgeDemographic,
+} from '@prisma/client';
+import prisma from 'utils/prisma';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { PublicOrganization } from 'interfaces/organization';
@@ -15,6 +21,12 @@ import {
   Typography,
   CardActionArea,
 } from '@material-ui/core';
+import {
+  AgeDemographicLabels,
+  LgbtqDemographicLabels,
+  RaceDemographicLabels,
+} from 'utils/typesLinker';
+
 import SearchIcon from '@material-ui/icons/Search';
 import Layout from 'components/Layout';
 import styles from '../styles/Results.module.css';
@@ -23,13 +35,13 @@ const Map = dynamic(() => import('../components/Map'), {
   ssr: false,
 });
 
-type HomeProps = {
+type ResultsProps = {
   orgs: PublicOrganization[];
 };
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
-const Home: React.FC<HomeProps> = ({ orgs }) => {
+const Results: React.FC<ResultsProps> = ({ orgs }) => {
   const router = useRouter();
 
   // This is to verify whether or not the current user has a proper session configured to see the page.
@@ -92,7 +104,7 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
             </div>
 
             <div className={styles.cards}>
-              {orgs.length !== 0 ? (
+              {orgs && orgs.length !== 0 ? (
                 orgs.map((org) => (
                   <Card className={styles.card} key={org.id}>
                     <CardActionArea
@@ -124,31 +136,51 @@ const Home: React.FC<HomeProps> = ({ orgs }) => {
   );
 };
 
-export default Home;
+export default Results;
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    const resp = await prisma.organization.findMany({
-      where: { active: true },
-      orderBy: {
-        name: 'asc',
-      },
-      select: {
-        id: true,
-        name: true,
-        organizationType: true,
-        workType: true,
-        lat: true,
-        long: true,
+    // Only add filters if they are listed, otherwise use all filters
+    const orientationBody = context.query.orientation
+      ? context.query.orientation
+      : Object.keys(LgbtqDemographicLabels);
+    const ethnicityBody = context.query.ethnicity
+      ? context.query.ethnicity
+      : Object.keys(RaceDemographicLabels);
+    const agesBody = context.query.ages
+      ? context.query.ages
+      : Object.keys(AgeDemographicLabels);
+    const orgs = await prisma.organization.findMany({
+      where: {
+        name: {
+          contains: context.query?.orgName as string,
+          mode: 'insensitive',
+        },
+        lgbtqDemographic: {
+          hasSome: orientationBody as LgbtqDemographic[],
+        },
+        raceDemographic: {
+          hasSome: ethnicityBody as RaceDemographic[],
+        },
+        ageDemographic: {
+          hasSome: agesBody as AgeDemographic[],
+        },
       },
     });
-    const orgs = JSON.parse(JSON.stringify(resp)) as PublicOrganization[];
+    const propOrgs = JSON.parse(JSON.stringify(orgs)) as PublicOrganization[];
     return {
       props: {
-        orgs,
+        orgs: propOrgs,
       },
     };
   } catch (err) {
-    return { props: { errors: err.message } };
+    // Probably do a better error state, toast? Not just redirect and not indicate anything.
+    console.log(err);
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+    };
   }
 };
