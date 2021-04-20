@@ -41,7 +41,7 @@ const ForgotPassword : React.FC = () => {
         return(
         <Toast
             snackbarProps={{
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'center' },
             }}
             type="success"
             showDismissButton

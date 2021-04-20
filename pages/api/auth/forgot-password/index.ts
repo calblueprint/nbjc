@@ -2,7 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient, password_resets } from "@prisma/client";
 import Joi from 'joi';
 import CreateError, { MethodNotAllowed } from 'utils/error';
-import sendEmail from 'utils/sendEmail';
+import EmailNotifier from 'utils/notify';
+import { NotificationType } from 'utils/notify/types';
 
 const prisma = new PrismaClient();
 
@@ -38,9 +39,11 @@ export const forgotPassword = async(
         return null;
     }
     
-    // TO-DO Format Email body, update resetUrl
-    const resetUrl = `http://localhost:3000/users/reset-password/${resetData.id}`;
-    await sendEmail('[NBJC] Password Reset Link', user.email, resetUrl);
+    // Send email with reset code
+    await EmailNotifier.sendNotification(NotificationType.ForgotPassword, {
+        recipient: user.email,
+        resetCode: resetData.id,
+    });
 
     return resetData;
 }

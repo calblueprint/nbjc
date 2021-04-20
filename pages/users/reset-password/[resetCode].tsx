@@ -1,13 +1,13 @@
 import { Button, TextField } from '@material-ui/core';
 import Layout from 'components/Layout';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styles from '../../../styles/users/PasswordChange.module.css';
 import { NewPasswordDTO } from 'pages/api/auth/reset-password';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/client';
 import Toast from 'components/Toast';
 
-const resetPasswordPage : React.FC = () => {
+const ResetPasswordPage : React.FC = () => {
     const router = useRouter();
 
     const [password, setPassword] = useState("");
@@ -40,9 +40,9 @@ const resetPasswordPage : React.FC = () => {
         } else {
           const userInfo = await response.json();
           signIn('credentials', {
-            email: userInfo['email'],
+            email: userInfo.email,
             password: password,
-            callbackUrl: '/',
+            callbackUrl: 'http://localhost:3000/?resetSuccess=true',
           });
         }
       } catch (err) {
@@ -112,4 +112,4 @@ const resetPasswordPage : React.FC = () => {
     )
 }
 
-export default resetPasswordPage;
+export default ResetPasswordPage;
