@@ -10,6 +10,7 @@
     "node_modules"
   ],
   "scripts": {
+    "debug": "NODE_OPTIONS='--inspect' next dev",
     "dev": "next dev",
     "build": "next build",
     "build:scripts": "tsc --project tsconfig.scripts.json",
@@ -58,7 +59,7 @@
     "formik": "^2.2.1",
     "joi": "^17.2.1",
     "next": "10.0.0",
-    "next-auth": "^3.1.0",
+    "next-auth": "^3.14.7",
     "node-fetch": "^2.6.1",
     "ora": "^5.1.0",
     "react": "16.13.1",
@@ -68,7 +69,7 @@
   "devDependencies": {
     "@types/db-migrate-base": "^0.0.8",
     "@types/faker": "^5.1.5",
-    "@types/next-auth": "^3.1.11",
+    "@types/next-auth": "^3.13.0",
     "@types/node": "^14.11.1",
     "@types/node-fetch": "^2.5.7",
     "@types/react": "^16.9.49",
