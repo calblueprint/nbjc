@@ -39,7 +39,7 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
         ? orgs.map((org) => {
             return org.lat && org.long ? (
               <div key={org.id}>
-                <Marker latitude={Number(org.lat)} longitude={Number(org.long)}>
+                <Marker latitude={org.lat} longitude={org.long}>
                   <span
                     onClick={() => setSelectedOrg(org)}
                     role="img"
@@ -52,8 +52,8 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
                   <Popup
                     onClose={() => setSelectedOrg(null)}
                     closeOnClick
-                    latitude={Number(org.lat)}
-                    longitude={Number(org.long)}
+                    latitude={org.lat}
+                    longitude={org.long}
                   >
                     {org.name}
                   </Popup>
