@@ -73,18 +73,18 @@ model Session {
 }
 
 model User {
-  id             Int           @id @default(autoincrement())
+  id             Int              @id @default(autoincrement())
   role           UserRole?
-  email          String        @unique @db.VarChar(255)
-  emailVerified  DateTime?     @map("email_verified") @db.Timestamptz(6)
-  image          String?       @db.VarChar(255)
-  hashedPassword String        @map("hashed_password") @db.VarChar(255)
-  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  organization   Organization? @relation("OrganizationsToUsers")
+  email          String           @unique @db.VarChar(255)
+  emailVerified  DateTime?        @map("email_verified") @db.Timestamptz(6)
+  image          String?          @db.VarChar(255)
+  hashedPassword String           @map("hashed_password") @db.VarChar(255)
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization   Organization?    @relation("OrganizationsToUsers")
+  passwordResets PasswordResets[] @relation("PasswordResetsToUsers")
 
   @@map("users")
-  password_resets password_resets[] @relation("password_resetsTousers")
 }
 
 model VerificationRequest {
@@ -152,12 +152,14 @@ model OrganizationProject {
   @@map("organization_projects")
 }
 
-model password_resets {
-  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  user_id    Int
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  valid      Boolean  @default(true)
-  users      User     @relation("password_resetsTousers", fields: [user_id], references: [id])
+model PasswordResets {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  valid     Boolean  @default(true)
+  users     User     @relation("PasswordResetsToUsers", fields: [userId], references: [id])
+
+  @@map("password_resets")
 }
 
 enum AgeDemographic {
