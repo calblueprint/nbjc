@@ -11,6 +11,23 @@ export type ModeratorInviteDTO = {
     email: string;
 };
 
+export const validateInvite = async (
+    userEmail: string,
+    inviteCode: string
+) : Promise<Boolean> => {
+    const inviteRecord = await prisma.moderatorInvite.findUnique({
+        where: {
+            id: inviteCode,
+        }
+    });
+
+    if (!inviteRecord || inviteRecord.email !== userEmail) {
+        return false;
+    }
+
+    return true;
+}
+
 export const generateInviteCode = async (
     invited : ModeratorInviteDTO
 ) : Promise<ModeratorInvite | null> => {
