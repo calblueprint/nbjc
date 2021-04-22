@@ -12,6 +12,7 @@ import {
 import prisma from 'utils/prisma';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
+import Router from 'next/router';
 import { PublicOrganization } from 'interfaces/organization';
 import {
   TextField,
@@ -60,7 +61,6 @@ const Results: React.FC<ResultsProps> = ({ orgs }) => {
 
   const [demographicFilters, setDemographicFilters] = useState<string[]>([]);
   const [backgroundFilters, setBackgroundFilters] = useState<string[]>([]);
-
   const [audienceFilters, setAudienceFilters] = useState<string[]>([]);
 
   const handleDemographicChange = (
@@ -82,9 +82,40 @@ const Results: React.FC<ResultsProps> = ({ orgs }) => {
   };
 
   // TO-DO fix return type here
-  const outlinedButton = (props: ButtonProps): any => (
+  const outlinedButton = (props: ButtonProps): JSX.Element => (
     <Button variant="outlined" disableRipple {...props} />
   );
+
+  const handleSearch = () => {
+    Router.push({
+      pathname: 'results',
+      query: {
+        // orgName: values.orgName,
+        ages: audienceFilters,
+        ethnicity: backgroundFilters,
+        orientation: demographicFilters,
+      },
+    });
+    // Alternative approach to try and not re-render page.
+
+    // try {
+    //   const res = await fetch('api/search/orgs', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({
+    //       orientation: demographicFilters,
+    //       ethnicity: backgroundFilters,
+    //       ages: audienceFilters,
+    //     }),
+    //   });
+    //   if (res.ok) {
+    //     const contents = await res.json();
+    //     console.log(contents);
+    //   }
+    // } catch (ex) {
+    //   console.log('Search failed.');
+    // }
+  };
 
   return (
     <Layout>
@@ -156,7 +187,7 @@ const Results: React.FC<ResultsProps> = ({ orgs }) => {
                       }}
                       component={outlinedButton}
                       disableRipple
-                      value={LgbtqDemographicLabels[filterOption]}
+                      value={filterOption}
                     >
                       {LgbtqDemographicLabels[filterOption]}
                     </MenuItem>
@@ -210,7 +241,7 @@ const Results: React.FC<ResultsProps> = ({ orgs }) => {
                           : 'transparent',
                       }}
                       disableRipple
-                      value={RaceDemographicLabels[filterOption]}
+                      value={filterOption}
                     >
                       {RaceDemographicLabels[filterOption]}
                     </MenuItem>
@@ -263,13 +294,14 @@ const Results: React.FC<ResultsProps> = ({ orgs }) => {
                           ? '#F8F4FF'
                           : 'transparent',
                       }}
-                      value={AgeDemographicLabels[filterOption]}
+                      value={filterOption}
                     >
                       {AgeDemographicLabels[filterOption]}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
+              <button onClick={handleSearch}>Search</button>
             </div>
 
             <div className={styles.cards}>
@@ -307,29 +339,50 @@ const Results: React.FC<ResultsProps> = ({ orgs }) => {
 
 export default Results;
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    const resp = await prisma.organization.findMany({
-      where: { active: true },
-      orderBy: {
-        name: 'asc',
-      },
-      select: {
-        id: true,
-        name: true,
-        organizationType: true,
-        workType: true,
-        lat: true,
-        long: true,
+    // Only add filters if they are listed, otherwise use all filters
+    const orientationBody = context.query.orientation
+      ? context.query.orientation
+      : Object.keys(LgbtqDemographicLabels);
+    const ethnicityBody = context.query.ethnicity
+      ? context.query.ethnicity
+      : Object.keys(RaceDemographicLabels);
+    const agesBody = context.query.ages
+      ? context.query.ages
+      : Object.keys(AgeDemographicLabels);
+    const orgs = await prisma.organization.findMany({
+      where: {
+        name: {
+          contains: context.query?.orgName as string,
+          mode: 'insensitive',
+        },
+        active: true,
+        lgbtqDemographic: {
+          hasSome: orientationBody as LgbtqDemographic[],
+        },
+        raceDemographic: {
+          hasSome: ethnicityBody as RaceDemographic[],
+        },
+        ageDemographic: {
+          hasSome: agesBody as AgeDemographic[],
+        },
       },
     });
-    const orgs = JSON.parse(JSON.stringify(resp)) as PublicOrganization[];
+    const propOrgs = JSON.parse(JSON.stringify(orgs)) as PublicOrganization[];
     return {
       props: {
-        orgs,
+        orgs: propOrgs,
       },
     };
   } catch (err) {
-    return { props: { errors: err.message } };
+    // Probably do a better error state, toast? Not just redirect and not indicate anything.
+    console.log(err);
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+    };
   }
 };
