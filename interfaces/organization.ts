@@ -34,12 +34,12 @@ export type EditForm = Prisma.OrganizationGetPayload<{
     lgbtqDemographic: true;
     raceDemographic: true;
     ageDemographic: true;
-    capacity: true;
+    // capacity: true;
     ein: true;
-    foundingDate: true;
+    // foundingDate: true;
     is501c3: true;
     website: true;
-    organizationProjects: true;
+    // organizationProjects: true;
   };
 }>;
 
