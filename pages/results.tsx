@@ -10,9 +10,9 @@ import {
   RaceDemographicLabels,
 } from 'utils/typesLinker';
 import prisma from 'utils/prisma';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import Router from 'next/router';
+
 import { PublicOrganization } from 'interfaces/organization';
 import {
   TextField,
@@ -28,7 +28,6 @@ import {
   Button,
   ButtonProps,
 } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
 import Layout from 'components/Layout';
 import { useState } from 'react';
 import styles from '../styles/Results.module.css';
@@ -39,11 +38,12 @@ const Map = dynamic(() => import('../components/Map'), {
 
 type ResultsProps = {
   orgs: PublicOrganization[];
+  searchValProp: string;
 };
 
 // const prisma = new PrismaClient();
 
-const Results: React.FC<ResultsProps> = ({ orgs }) => {
+const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
   const router = useRouter();
 
   // TO-DO optimize theme/color changes with Select, MenuItem, & Button components
@@ -59,6 +59,7 @@ const Results: React.FC<ResultsProps> = ({ orgs }) => {
   // Will be implemented in the next PR.
   // const [session, loading] = useSession();
 
+  const [searchVal, setSearchVal] = useState(searchValProp);
   const [demographicFilters, setDemographicFilters] = useState<string[]>([]);
   const [backgroundFilters, setBackgroundFilters] = useState<string[]>([]);
   const [audienceFilters, setAudienceFilters] = useState<string[]>([]);
@@ -86,11 +87,11 @@ const Results: React.FC<ResultsProps> = ({ orgs }) => {
     <Button variant="outlined" disableRipple {...props} />
   );
 
-  const handleSearch = () => {
+  const handleSearch = (): void => {
     Router.push({
       pathname: 'results',
       query: {
-        // orgName: values.orgName,
+        orgName: searchVal,
         ages: audienceFilters,
         ethnicity: backgroundFilters,
         orientation: demographicFilters,
@@ -118,22 +119,12 @@ const Results: React.FC<ResultsProps> = ({ orgs }) => {
   };
 
   return (
-    <Layout>
+    <Layout
+      handleClickSearch={() => handleSearch()}
+      searchFilters={searchVal}
+      handleSearchChange={(event) => setSearchVal(event.target.value)}
+    >
       <div className={styles.pageFlex}>
-        <TextField
-          id="outlined-size-small"
-          placeholder="Explore Organizations"
-          fullWidth
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-          variant="outlined"
-        />
-
         <div className={styles.pageContent}>
           <div className={styles.leftCol}>
             <div className={styles.filters}>
@@ -301,7 +292,15 @@ const Results: React.FC<ResultsProps> = ({ orgs }) => {
                   ))}
                 </Select>
               </FormControl>
-              <button onClick={handleSearch}>Search</button>
+              <Button
+                variant="contained"
+                color="primary"
+                className={styles.applyButton}
+                onClick={handleSearch}
+                disableElevation
+              >
+                Apply
+              </Button>
             </div>
 
             <div className={styles.cards}>
@@ -373,6 +372,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       props: {
         orgs: propOrgs,
+        searchValProp: context.query?.orgName,
       },
     };
   } catch (err) {

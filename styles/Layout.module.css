@@ -28,3 +28,12 @@
 .footer {
   height: 20px;
 }
+
+.searchbar {
+  width: 60%;
+}
+
+.searchField {
+  border: 1px solid rgb(182, 182, 182);
+  border-radius: 15px;
+}

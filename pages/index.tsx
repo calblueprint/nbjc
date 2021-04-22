@@ -4,7 +4,6 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useFormik } from 'formik';
 import Layout from 'components/Layout';
 import { homepageFields } from 'interfaces';
-import Link from 'next/link';
 import Router from 'next/router';
 import {
   AgeDemographicLabels,
