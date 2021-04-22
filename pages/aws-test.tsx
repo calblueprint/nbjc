@@ -3,6 +3,7 @@
 import { ChangeEvent } from 'react';
 import aws from 'aws-sdk';
 
+// display img START
 function myCtrl($scope, $timeout) {
   aws.config.update({
     accessKeyId: 'AKIAUQ63KKG6P533GHGA',
@@ -10,7 +11,6 @@ function myCtrl($scope, $timeout) {
   });
   aws.config.region = 'us-west-1';
 
-  // display img START
   function encode(data) {
     const str = data.reduce(function (a, b) {
       return a + String.fromCharCode(b);
