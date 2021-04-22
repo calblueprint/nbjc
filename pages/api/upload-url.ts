@@ -1,7 +1,5 @@
-import aws from './aws-sdk';
+import aws from 'aws-sdk';
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export default async function handler(req, res) {
   aws.config.update({
     accessKeyId: process.env.ACCESS_Key,
