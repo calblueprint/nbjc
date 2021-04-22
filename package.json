@@ -6,8 +6,7 @@
   },
   "private": true,
   "cacheDirectories": [
-    ".next/cache",
-    "node_modules"
+    ".next/cache"
   ],
   "scripts": {
     "debug": "NODE_OPTIONS='--inspect' next dev",
