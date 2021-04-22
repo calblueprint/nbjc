@@ -36,51 +36,55 @@ const AdminUsersIndex: React.FunctionComponent<AdminUsersIndexProps> = ({
     setModal(false);
   };
 
+  const inviteModal = () => (
+    <Dialog
+    open={openModal}
+    onClose={handleClickClose}
+    className={styles.newModal}
+    fullWidth
+    >
+      <div className={styles.dialogTitle}> Invite Moderator </div>
+      <div className={styles.modalInput}>
+        <DialogContentText className={styles.modalInputLabel}>
+          Name
+        </DialogContentText>
+        <TextField
+          id="name"
+          variant="outlined"
+          placeholder="FirstName LastName"
+          value={inviteName}
+          onChange={(event) => setInviteName(event.target.value)}
+        />
+      </div>
+      <div className={styles.modalInput}>
+        <DialogContentText className={styles.modalInputLabel}>
+          Email
+        </DialogContentText>
+        <TextField
+          id="email"
+          type="email"
+          variant="outlined"
+          placeholder="email@example.org"
+          value={inviteEmail}
+          onChange={(event) => setInviteEmail(event.target.value)}
+        />
+      </div>
+      <DialogActions>
+        <Button
+          className={styles.inviteButton}
+          onClick={handleClickClose}
+          variant="contained"
+          color="primary"
+        >
+          Invite
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
   return (
     <Layout title="Admin Users">
-      <Dialog
-        open={openModal}
-        onClose={handleClickClose}
-        className={styles.newModal}
-        fullWidth
-      >
-        <div className={styles.dialogTitle}> Invite Moderator </div>
-        <div className={styles.modalInput}>
-          <DialogContentText className={styles.modalInputLabel}>
-            Name
-          </DialogContentText>
-          <TextField
-            id="name"
-            variant="outlined"
-            placeholder="FirstName LastName"
-            value={inviteName}
-            onChange={(event) => setInviteName(event.target.value)}
-          />
-        </div>
-        <div className={styles.modalInput}>
-          <DialogContentText className={styles.modalInputLabel}>
-            Email
-          </DialogContentText>
-          <TextField
-            id="email"
-            type="email"
-            variant="outlined"
-            placeholder="email@example.org"
-            value={inviteEmail}
-            onChange={(event) => setInviteEmail(event.target.value)}
-          />
-        </div>
-        <DialogActions>
-          <Button
-            className={styles.inviteButton}
-            onClick={handleClickClose}
-            variant="contained"
-            color="primary"
-          >
-            Invite
-          </Button>
-        </DialogActions>
-      </Dialog>
+      { inviteModal() }
       <AdminIndex
         page="User"
         search="Look for a User"

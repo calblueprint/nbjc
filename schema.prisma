@@ -162,6 +162,15 @@ model PasswordResets {
   @@map("password_resets")
 }
 
+model ModeratorInvite {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  email     String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  valid     Boolean  @default(true)
+
+  @@map("moderator_invites")
+}
+
 enum AgeDemographic {
   child   @map("Children")
   teen    @map("Teens")
