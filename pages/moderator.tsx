@@ -9,23 +9,24 @@ import clsx from 'clsx';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import SearchIcon from '@material-ui/icons/Search';
+import CloseIcon from '@material-ui/icons/Close';
 import {
   Organization,
   ApplicationNote,
   ApplicationResponse,
 } from '@prisma/client';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-
+import Toast from 'components/Toast';
 import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
   Tabs,
   Tab,
   Button,
   InputAdornment,
   TextField,
   Drawer,
-  Toolbar,
   IconButton,
-  CardActions,
   LinearProgress,
   CircularProgress,
 } from '@material-ui/core';
@@ -44,6 +45,13 @@ type Props = {
 };
 
 const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
+  // put the values of the selected org here!!!
+  // MODAL ADDED
+  const orgName = 'test';
+  const orgShortHistory = 'test';
+  const orgId = 'test';
+  //
+
   const router = useRouter();
   const [session, sessionLoading] = useSession();
 
@@ -190,7 +198,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             orgs.map((org, i) => (
               // TODO: Add accessibility support
               // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-              <div key={org.id} onClick={() => clickCard(i)}>
+              <div key={orgId} onClick={() => clickCard(i)}>
                 <OrgCard org={org} />
               </div>
             ))
@@ -205,6 +213,29 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     }
     return null;
   };
+
+  // MODAL ADDED
+  const [openModal, setOpenModal] = useState(false);
+
+  const closeModal = () => (): void => {
+    setOpenModal(false);
+  };
+
+  const [openApprove, setOpenApprove] = useState(false);
+  const approveToast = openApprove ? (
+    <Toast showDismissButton>{orgName} has been successfully accepted.</Toast>
+  ) : null;
+
+  const [openDecline, setOpenDecline] = useState(false);
+  const declineToast = openDecline ? (
+    <Toast showDismissButton>{orgName} has been declined.</Toast>
+  ) : null;
+
+  const declineOrg = () => (): void => {
+    setOpenModal(false);
+    setOpenDecline(true);
+  };
+  //
 
   const orgApp = (
     app: Organization & {
@@ -317,6 +348,56 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   if (!sessionLoading && session && session.user.role === 'moderator')
     return (
       <Layout title="Moderator Dashboard">
+        {
+          // MODAL ADDED
+        }
+        {approveToast}
+        {declineToast}
+        <Dialog onClose={closeModal()} fullWidth maxWidth="md" open={openModal}>
+          <DialogTitle>
+            <div className={styles.dialogTitle}>
+              Reason For Declining
+              <IconButton aria-label="close" onClick={closeModal()}>
+                <CloseIcon />
+              </IconButton>
+            </div>
+          </DialogTitle>
+          <DialogContent>
+            <div className={styles.modContent}>
+              <div className={styles.modTab}>
+                <div className={styles.declineNotes}>Notes</div>
+                <div className={styles.declineNotesContent}>
+                  {orgShortHistory}
+                </div>
+              </div>
+              <div className={styles.modTab}>
+                <TextField
+                  id="outlined-basic"
+                  label="Reasons for decline."
+                  variant="outlined"
+                  multiline
+                  size="small"
+                  rows={13}
+                  className={styles.declineReason}
+                />
+              </div>
+            </div>
+            <div className={styles.send}>
+              <Button
+                variant="outlined"
+                className={styles.editButtonStyles}
+                disableElevation
+                color="primary"
+                onClick={declineOrg()}
+              >
+                Send
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+        {
+          // MODAL ADDED
+        }
         <div className={styles.root}>
           <IconButton
             color="inherit"
@@ -371,6 +452,35 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             {orgs[index] ? orgApp(orgs[index]) : 'No application selected'}
           </main>
         </div>
+        {
+          // DELETE
+        }
+        <div className={styles.declineButtons}>
+          <div className={styles.customButton}>
+            <Button
+              variant="contained"
+              className={styles.editButtonStyles}
+              disableElevation
+              onClick={() => setOpenModal(true)}
+            >
+              Decline
+            </Button>
+          </div>
+          <div className={styles.customButton}>
+            <Button
+              variant="contained"
+              className={styles.editButtonStyles}
+              disableElevation
+              color="primary"
+              onClick={() => setOpenApprove(true)}
+            >
+              Approve
+            </Button>
+          </div>
+        </div>
+        {
+          //
+        }
       </Layout>
     );
   return <LinearProgress />;
