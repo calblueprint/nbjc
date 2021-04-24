@@ -35,31 +35,33 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
       onViewportChange={(newViewport) => setViewport(newViewport)}
       {...viewport}
     >
-      {orgs.map((org) => {
-        return org.lat && org.long ? (
-          <div key={org.id}>
-            <Marker latitude={Number(org.lat)} longitude={Number(org.long)}>
-              <span
-                onClick={() => setSelectedOrg(org)}
-                role="img"
-                aria-label="push-pin"
-              >
-                📌
-              </span>
-            </Marker>
-            {selectedOrg?.id === org.id ? (
-              <Popup
-                onClose={() => setSelectedOrg(null)}
-                closeOnClick
-                latitude={Number(org.lat)}
-                longitude={Number(org.long)}
-              >
-                {org.name}
-              </Popup>
-            ) : null}
-          </div>
-        ) : null;
-      })}
+      {orgs
+        ? orgs.map((org) => {
+            return org.lat && org.long ? (
+              <div key={org.id}>
+                <Marker latitude={org.lat} longitude={org.long}>
+                  <span
+                    onClick={() => setSelectedOrg(org)}
+                    role="img"
+                    aria-label="push-pin"
+                  >
+                    📌
+                  </span>
+                </Marker>
+                {selectedOrg?.id === org.id ? (
+                  <Popup
+                    onClose={() => setSelectedOrg(null)}
+                    closeOnClick
+                    latitude={org.lat}
+                    longitude={org.long}
+                  >
+                    {org.name}
+                  </Popup>
+                ) : null}
+              </div>
+            ) : null;
+          })
+        : null}
     </ReactMapGL>
   );
 };

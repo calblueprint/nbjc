@@ -14,7 +14,19 @@ import {
   FormikValues,
 } from 'formik';
 import { Form } from 'interfaces/registration';
+import {
+  AgeDemographicLabels,
+  RaceDemographicLabels,
+  LgbtqDemographicLabels,
+  OrganizationTypeLabels,
+  WorkTypeLabels,
+} from 'utils/typesLinker';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import {
+  LgbtqDemographic,
+  RaceDemographic,
+  AgeDemographic,
+} from '@prisma/client';
 import styles from './TabBasics.module.css';
 
 type TabProps = {
@@ -27,35 +39,6 @@ type TabProps = {
   readOnly: boolean;
 };
 
-// TODO: create readable mapping
-const orientation = [
-  'lgbtqAll',
-  'sgl',
-  'transgender',
-  'asexualAromantic',
-  'other',
-];
-const ethnicity = [
-  'pocAll',
-  'black',
-  'asian',
-  'pacificIslander',
-  'latinx',
-  'nativeIndigeneous',
-  'other',
-];
-const ages = ['child', 'teen', 'adult', 'senior'];
-const organizationType = {
-  grassrootsLocal: 'Grassroots/Local',
-  statewide: 'Statewide',
-  national: 'National',
-  other: 'Other',
-};
-const workType = {
-  advocacy: 'Advocacy',
-  directService: 'DirectService',
-  networkingSocial: 'Networking/Social',
-};
 const locationType = {
   headquarters: 'Headquarters',
   branch: 'Branch',
@@ -106,7 +89,7 @@ const TabBasics: React.FC<TabProps> = ({
             <MenuItem key="none" value="" disabled>
               <em>None</em>
             </MenuItem>
-            {Object.entries(workType).map(([key, val]) => (
+            {Object.entries(WorkTypeLabels).map(([key, val]) => (
               <MenuItem key={key} value={key}>
                 {val}
               </MenuItem>
@@ -135,7 +118,7 @@ const TabBasics: React.FC<TabProps> = ({
             <MenuItem key="none" value="" disabled>
               <em>None</em>
             </MenuItem>
-            {Object.entries(organizationType).map(([key, val]) => (
+            {Object.entries(OrganizationTypeLabels).map(([key, val]) => (
               <MenuItem key={key} value={key}>
                 {val}
               </MenuItem>
@@ -293,8 +276,12 @@ const TabBasics: React.FC<TabProps> = ({
             <Autocomplete
               multiple
               id="lgbtqDemographic"
-              options={orientation}
-              getOptionLabel={(option) => option}
+              options={
+                Object.keys(LgbtqDemographicLabels) as LgbtqDemographic[]
+              }
+              getOptionLabel={(option: LgbtqDemographic) =>
+                LgbtqDemographicLabels[option]
+              }
               filterSelectedOptions
               value={values.lgbtqDemographic}
               onChange={(event, newValue) => {
@@ -323,8 +310,10 @@ const TabBasics: React.FC<TabProps> = ({
             <Autocomplete
               multiple
               id="raceDemographic"
-              options={ethnicity}
-              getOptionLabel={(option) => option}
+              options={Object.keys(RaceDemographicLabels) as RaceDemographic[]}
+              getOptionLabel={(option: RaceDemographic) =>
+                RaceDemographicLabels[option]
+              }
               filterSelectedOptions
               value={values.raceDemographic}
               onChange={(event, newValue) => {
@@ -351,8 +340,10 @@ const TabBasics: React.FC<TabProps> = ({
             <Autocomplete
               multiple
               id="ageDemographic"
-              options={ages}
-              getOptionLabel={(option) => option}
+              options={Object.keys(AgeDemographicLabels) as AgeDemographic[]}
+              getOptionLabel={(option: AgeDemographic) =>
+                AgeDemographicLabels[option]
+              }
               filterSelectedOptions
               onChange={(event, newValue) => {
                 setFieldValue('ageDemographic', newValue);

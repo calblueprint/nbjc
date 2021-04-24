@@ -99,7 +99,7 @@ type Props = {
 };
 
 const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
-  const headList = Object.keys(data[0]);
+  const headList = Object.keys(data[0] ?? {});
   const actionButtons = (): React.ReactElement | null => {
     if (pageType === 'applications') {
       return (
