@@ -16,7 +16,7 @@ const validate = async (
     res: NextApiResponse,
 ) : Promise<void> => {
     try {
-        if (req.method !== 'POST') {
+        if (req.method !== 'PATCH') {
             return MethodNotAllowed(req.method, res);
         }
 

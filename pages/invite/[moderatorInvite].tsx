@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { ModeratorInviteInfo } from 'pages/api/invites/moderator/validate';
 import { signIn } from 'next-auth/client';
+import Joi from 'joi';
 
 const ModeratorSignupPage : React.FC = () => {
     const [userEmail, setEmail] = useState('');
@@ -16,12 +17,27 @@ const ModeratorSignupPage : React.FC = () => {
 
     const router = useRouter();
 
+    // TO-DO replace with better password validation
+    const checkPassword = (pass: string) : void => {
+        if (Joi.string().min(6).max(50).required().validate(pass).error) {
+            throw new Error('Password not strong enough. Please make sure it\'s 6 or more characters!');
+        }
+    }
+
     async function onClick() : Promise<void> {
         setSubmissionError(false);
+        setErrorMessage('');
         try {
-            // validate info
+            //Check passwords
+            checkPassword(password);
+
+            if (password !== confirmPassword) {
+                throw new Error('Passwords do not match!');
+            }
+
+            // validate and update info
             const validationRes = await fetch('/api/invites/moderator/validate', {
-                method: "POST",
+                method: "PATCH",
                 headers: { "Content-Type": "application/json"},
                 credentials: "include",
                 body: JSON.stringify({
@@ -30,12 +46,9 @@ const ModeratorSignupPage : React.FC = () => {
                 } as ModeratorInviteInfo),
             });
 
-            if (!validationRes) {
-                throw new Error('Failed to validate invite link');
-            }
-
-            if (password !== confirmPassword) {
-                throw new Error('Passwords do not match!');
+            if (!validationRes.ok) {
+                const validationErr = await validationRes.json();
+                throw validationErr.error;
             }
 
             // POST request
@@ -53,8 +66,8 @@ const ModeratorSignupPage : React.FC = () => {
             });
 
             if (!res.ok) {
-                const { error } = await res.json();
-                throw error;
+                const resError = await res.json();
+                throw resError.error;
             }
 
             // Sign in user
@@ -64,9 +77,8 @@ const ModeratorSignupPage : React.FC = () => {
                 callbackUrl: '/',
             });
         } catch (err) {
-            console.log(err)
             setSubmissionError(true);
-            setErrorMessage(err.error.message);
+            setErrorMessage(err.message);
         }
     }
 

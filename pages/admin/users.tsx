@@ -14,6 +14,8 @@ import {
 } from '@material-ui/core';
 import { useState } from 'react';
 import styles from '../../styles/admin/Users.module.css';
+import { ModeratorInviteDTO } from 'pages/api/invites/moderator';
+import Toast from 'components/Toast';
 
 type AdminUsersIndexProps = {
   users: TableUser[];
@@ -25,18 +27,61 @@ const AdminUsersIndex: React.FunctionComponent<AdminUsersIndexProps> = ({
   const [openModal, setModal] = useState(false);
   const [inviteName, setInviteName] = useState('');
   const [inviteEmail, setInviteEmail] = useState('');
+  const [submissionError, setSubmissionError] = useState(false);
+  const [errorMessage, setErrorMessage ] = useState('');
+
+  const onInvite = async() : Promise<void> => {
+    setSubmissionError(false);
+    try {
+          if (!inviteEmail) {
+            throw new Error('Please input an email!');
+          }
+          const inviteRes = await fetch('/api/invites/moderator', {
+          method: 'POST',
+          headers: { "Content-Type": "application/json"},
+          credentials: "include",
+          body: JSON.stringify({
+              email: inviteEmail
+          } as ModeratorInviteDTO),
+        });
+
+        if (!inviteRes.ok) {
+          const inviteErr = await inviteRes.json();
+          throw inviteErr.error;
+        }
+    } catch (err) {
+      setErrorMessage(err.message);
+      setSubmissionError(true);
+    }
+    setModal(false);
+    setInviteEmail('');
+    setInviteName('');
+  };
 
   const handleClickOpen = (): void => {
     setModal(true);
   };
 
   const handleClickClose = (): void => {
-    console.log(inviteEmail);
-    console.log(inviteName);
     setModal(false);
   };
 
-  const inviteModal = () => (
+  const renderErrorToast = () : JSX.Element => {
+    return(
+        <Toast
+        snackbarProps={{
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        }}
+        type="error"
+        showDismissButton
+        disableClickaway
+        > 
+        {errorMessage}
+        </Toast>
+    );
+  }
+
+  const inviteModal = () : JSX.Element => (
     <Dialog
     open={openModal}
     onClose={handleClickClose}
@@ -72,7 +117,7 @@ const AdminUsersIndex: React.FunctionComponent<AdminUsersIndexProps> = ({
       <DialogActions>
         <Button
           className={styles.inviteButton}
-          onClick={handleClickClose}
+          onClick={onInvite}
           variant="contained"
           color="primary"
         >
@@ -84,6 +129,7 @@ const AdminUsersIndex: React.FunctionComponent<AdminUsersIndexProps> = ({
 
   return (
     <Layout title="Admin Users">
+      { submissionError? renderErrorToast() : null}
       { inviteModal() }
       <AdminIndex
         page="User"
@@ -126,7 +172,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   } catch (err) {
-    console.log(err);
     return {
       redirect: {
         permanent: false,

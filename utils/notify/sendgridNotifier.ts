@@ -10,7 +10,7 @@ export default class SendgridNotifier {
     // TO-DO Create Sengrid templates for all NotificationTypes
     templates: Record<NotificationType, string> = {
         [NotificationType.ForgotPassword] : 'd-01b1f3aef2f24ad79f887faf5266f7d1',
-        [NotificationType.ModeratorInvite] : '',
+        [NotificationType.ModeratorInvite] : 'd-af3b97c7c478424cbdd73a44a4e9b97c',
         [NotificationType.ApplicationStatus] : '',
         [NotificationType.VerificationLink] : '',
     };
