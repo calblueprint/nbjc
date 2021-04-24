@@ -380,7 +380,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
     if (session && session.user.role === 'moderator') {
-      const res = await prisma.organization.findMany({
+      const orgs = await prisma.organization.findMany({
         where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
         include: {
           applicationNote: true,
@@ -394,12 +394,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         },
       });
 
-      const orgs = JSON.parse(JSON.stringify(res)) as (Organization & {
-        applicationNote: ApplicationNote | null;
-        applicationResponses: (ApplicationResponse & {
-          applicationQuestion: { question: string };
-        })[];
-      })[];
       return { props: { orgs } };
     }
     return {

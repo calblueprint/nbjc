@@ -203,7 +203,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       return { notFound: true };
     }
 
-    const resp = await prisma.organization.findUnique({
+    const org = await prisma.organization.findUnique({
       where: { id: Number(id) },
       select: {
         active: true,
@@ -229,7 +229,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         },
       },
     });
-    const org = JSON.parse(JSON.stringify(resp));
+
     if (!org || !org.active) {
       return {
         notFound: true,

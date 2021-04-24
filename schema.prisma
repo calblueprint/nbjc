@@ -29,8 +29,8 @@ model Account {
 model Organization {
   id                   Int                   @id @default(autoincrement())
   name                 String?               @db.VarChar(255)
-  long                 Decimal?              @db.Decimal
-  lat                  Decimal?              @db.Decimal
+  long                 Float?
+  lat                  Float?
   createdAt            DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   applicationStatus    ApplicationStatus     @default(draft) @map("application_status")

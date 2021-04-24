@@ -236,7 +236,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
     if (session && session.user.role === 'admin') {
-      const applicationQuestions = await prisma.applicationQuestion.findMany({
+      const questions = await prisma.applicationQuestion.findMany({
         select: {
           id: true,
           question: true,
@@ -245,7 +245,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           updatedAt: true,
         },
       });
-      const questions = JSON.parse(JSON.stringify(applicationQuestions));
+
       return {
         props: { questions },
       };

@@ -3,6 +3,7 @@ import {
   LgbtqDemographic,
   RaceDemographic,
   AgeDemographic,
+  Organization,
 } from '@prisma/client';
 import {
   AgeDemographicLabels,
@@ -13,7 +14,6 @@ import prisma from 'utils/prisma';
 import Router, { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 
-import { PublicOrganization } from 'interfaces/organization';
 import {
   TextField,
   FormControl,
@@ -37,7 +37,7 @@ const Map = dynamic(() => import('../components/Map'), {
 });
 
 type ResultsProps = {
-  orgs: PublicOrganization[];
+  orgs: Organization[];
   searchValProp: string;
 };
 
@@ -368,10 +368,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         },
       },
     });
-    const propOrgs = JSON.parse(JSON.stringify(orgs)) as PublicOrganization[];
+
     return {
       props: {
-        orgs: propOrgs,
+        orgs,
         searchValProp: context.query?.orgName,
       },
     };
