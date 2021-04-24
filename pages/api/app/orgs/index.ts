@@ -67,11 +67,20 @@ export default async (
   const toCreate = appProjs.filter((i) => !i.id); // projects without id, to be created
   console.log('toupdate', toUpdate);
   console.log('tocreate', toCreate);
+
+  // Get existing projects org has, compare w projects that have an ID that are passed into API, delete them if they're not there.
+  // 1. Separate ones w and w/o ID
+  // 2. Compare which ones to delete
+  // 3. Run upsert to update and delete
+  // 4. Create projects w loop
   let newOrg;
   try {
     newOrg = await prisma.organization.upsert({
       where: {
         userId,
+      },
+      include: {
+        organizationProjects: true,
       },
       create: {
         ...data,
@@ -122,8 +131,6 @@ export default async (
     console.log(err);
     return CreateError(500, 'Failed to create organization', res);
   }
-
-  await prisma.organizationProject.deleteMany;
 
   // FIXME: This is a temporary solution to return all the projects that were created by the Save Changes in registration
   let createdProjs: OrganizationProject[] = [];

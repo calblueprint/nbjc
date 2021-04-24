@@ -123,16 +123,12 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
       const originalIDs = org?.organizationProjects?.map((o) => o.id) ?? [];
       // will hold the IDs of the projects to delete
       const projIDsToDelete = [];
-      let ind = 0;
       for (let i = 0; i < projects.length; i += 1) {
         currStateProjSet.add(projects[i].id);
       }
       for (let i = 0; i < originalIDs.length; i += 1) {
-        console.log('currstate', currStateProjSet);
-        console.log('origIDs', originalIDs);
         if (!currStateProjSet.has(originalIDs[i])) {
-          projIDsToDelete[ind] = originalIDs[i];
-          ind += 1;
+          projIDsToDelete.push(originalIDs[i]);
         }
       }
       try {
@@ -150,23 +146,26 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
         })
           .then((response) => response.json())
           .then((data) => {
-            console.log('newProjs', data);
-            // Replace current formValues projects with created projects from back-end w/ ids.
-            for (let i = 0; i < data.createdProjs.length; i++) {
-              let foundIndex = formik.values.projects.findIndex(
-                (newProj) =>
-                  newProj.description === data.createdProjs[i].description &&
-                  newProj.title === data.createdProjs[i].title
-              );
-              if (foundIndex >= 0) formik.values.projects[foundIndex] = data[i];
-              console.log(formik.values.projects);
-            }
-            setOrg(data.newOrg);
-            // formValues.projects.push.apply(formValues.projects, data);
-            // Temp solution to fix the multiple save changes clicking issue making multiple objects in DB.
+            // formik.values.projects = data.projects;
+            formik.setFieldValue('projects', data.projects);
 
-            // REMOVE WHEN READY TO DEBUG PROPERLY //
-            router.push('/registration');
+            // console.log('newProjs', data);
+            // // Replace current formValues projects with created projects from back-end w/ ids.
+            // for (let i = 0; i < data.createdProjs.length; i++) {
+            //   let foundIndex = formik.values.projects.findIndex(
+            //     (newProj) =>
+            //       newProj.description === data.createdProjs[i].description &&
+            //       newProj.title === data.createdProjs[i].title
+            //   );
+            //   if (foundIndex >= 0) formik.values.projects[foundIndex] = data[i];
+            //   console.log(formik.values.projects);
+            // }
+            // setOrg(data.newOrg);
+            // // formValues.projects.push.apply(formValues.projects, data);
+            // // Temp solution to fix the multiple save changes clicking issue making multiple objects in DB.
+
+            // // REMOVE WHEN READY TO DEBUG PROPERLY //
+            // router.push('/registration');
           })
           .catch((err) => console.log('patch not successful'));
         // if (res.ok && !draft) router.push('/users/profile');
