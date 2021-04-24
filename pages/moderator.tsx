@@ -46,11 +46,6 @@ type Props = {
 
 const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   // put the values of the selected org here!!!
-  // MODAL ADDED
-  const orgName = 'test';
-  const orgShortHistory = 'test';
-  const orgId = 'test';
-  //
 
   const router = useRouter();
   const [session, sessionLoading] = useSession();
@@ -62,6 +57,26 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   const [processingAction, setProcessingAction] = useState(false);
   const [errorBanner, setErrorBanner] = useState('');
   const [successBanner, setSuccessBanner] = useState('');
+
+  // MODAL ADDED
+  const [openModal, setOpenModal] = useState(false);
+
+  const closeModal = () => (): void => {
+    setOpenModal(false);
+  };
+
+  const [openApprove, setOpenApprove] = useState(false);
+  const approveToast = openApprove ? (
+    <Toast showDismissButton>
+      {orgs[index].name} has been successfully accepted.
+    </Toast>
+  ) : null;
+
+  const [openDecline, setOpenDecline] = useState(false);
+  const declineToast = openDecline ? (
+    <Toast showDismissButton>{orgs[index].name} has been declined.</Toast>
+  ) : null;
+  //
 
   const [selected, setSelected] = useState<number>(0);
   const handleChange = (
@@ -132,6 +147,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             method: 'POST',
           });
           if (res.ok) {
+            setOpenApprove(true);
             setSuccessBanner('Successfully approved.');
             // Refresh data without full page reload
             router.replace(router.asPath);
@@ -162,6 +178,14 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     }
     setProcessingAction(false);
   };
+
+  // FOR MODAL
+  const declineOrg = () => (): void => {
+    setOpenModal(false);
+    setOpenDecline(true);
+    approveApp(false);
+  };
+  //
 
   /** For auto-saving a moderator's notes */
   const AUTOSAVE_INTERVAL = 3000;
@@ -198,7 +222,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             orgs.map((org, i) => (
               // TODO: Add accessibility support
               // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-              <div key={orgId} onClick={() => clickCard(i)}>
+              <div key={orgs[index].id} onClick={() => clickCard(i)}>
                 <OrgCard org={org} />
               </div>
             ))
@@ -213,29 +237,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     }
     return null;
   };
-
-  // MODAL ADDED
-  const [openModal, setOpenModal] = useState(false);
-
-  const closeModal = () => (): void => {
-    setOpenModal(false);
-  };
-
-  const [openApprove, setOpenApprove] = useState(false);
-  const approveToast = openApprove ? (
-    <Toast showDismissButton>{orgName} has been successfully accepted.</Toast>
-  ) : null;
-
-  const [openDecline, setOpenDecline] = useState(false);
-  const declineToast = openDecline ? (
-    <Toast showDismissButton>{orgName} has been declined.</Toast>
-  ) : null;
-
-  const declineOrg = () => (): void => {
-    setOpenModal(false);
-    setOpenDecline(true);
-  };
-  //
 
   const orgApp = (
     app: Organization & {
@@ -315,7 +316,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         ) : null}
         <div className={`${styles.submitButton} ${styles.buttonSpace}`}>
           <Button
-            onClick={() => approveApp(false)}
+            onClick={() => setOpenModal(true)}
             variant="outlined"
             color="primary"
             disabled={processingAction}
@@ -367,7 +368,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
               <div className={styles.modTab}>
                 <div className={styles.declineNotes}>Notes</div>
                 <div className={styles.declineNotesContent}>
-                  {orgShortHistory}
+                  {orgs[index].shortHistory}
                 </div>
               </div>
               <div className={styles.modTab}>
@@ -452,35 +453,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             {orgs[index] ? orgApp(orgs[index]) : 'No application selected'}
           </main>
         </div>
-        {
-          // DELETE
-        }
-        <div className={styles.declineButtons}>
-          <div className={styles.customButton}>
-            <Button
-              variant="contained"
-              className={styles.editButtonStyles}
-              disableElevation
-              onClick={() => setOpenModal(true)}
-            >
-              Decline
-            </Button>
-          </div>
-          <div className={styles.customButton}>
-            <Button
-              variant="contained"
-              className={styles.editButtonStyles}
-              disableElevation
-              color="primary"
-              onClick={() => setOpenApprove(true)}
-            >
-              Approve
-            </Button>
-          </div>
-        </div>
-        {
-          //
-        }
       </Layout>
     );
   return <LinearProgress />;
