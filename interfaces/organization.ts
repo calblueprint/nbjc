@@ -39,7 +39,7 @@ export type EditForm = Prisma.OrganizationGetPayload<{
     // foundingDate: true;
     is501c3: true;
     website: true;
-    // organizationProjects: true;
+    organizationProjects: true;
   };
 }>;
 

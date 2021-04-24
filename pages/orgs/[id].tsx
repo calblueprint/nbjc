@@ -1,31 +1,49 @@
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
-import { useFormik, FormikHandlers, FormikHelpers, FormikErrors } from 'formik';
+import { useFormik } from 'formik';
 import prisma from 'utils/prisma';
-import { Organization, PrismaClient, Prisma } from '@prisma/client';
-import { Button, Chip, TextField } from '@material-ui/core';
+import { Prisma } from '@prisma/client';
+import { Button, Chip, TextField, LinearProgress } from '@material-ui/core';
 import Layout from 'components/Layout';
-import { AppQnR, Form } from 'interfaces/registration';
 import { EditForm } from 'interfaces/organization';
 import Project from 'components/organization/Project';
 import Tab from 'components/Tab';
 import computeDate from 'utils/computeDate';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { orange } from '@material-ui/core/colors';
+import useSession from 'utils/useSession';
 import styles from '../../styles/Organization.module.css';
 
 type Props = {
-  org: Prisma.OrganizationGetPayload<{
+  orgProp: Prisma.OrganizationGetPayload<{
     include: { organizationProjects: true };
   }>;
   errors?: string;
 };
 
-const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
+const orientation = [
+  'lgbtqAll',
+  'sgl',
+  'transgender',
+  'asexualAromantic',
+  'other',
+];
+const ethnicity = [
+  'pocAll',
+  'black',
+  'asian',
+  'pacificIslander',
+  'latinx',
+  'nativeIndigeneous',
+  'other',
+];
+const ages = ['child', 'teen', 'adult', 'senior'];
+
+const OrgProfile: React.FunctionComponent<Props> = ({ orgProp, errors }) => {
   const [tabState, setTabState] = useState<0 | 1 | 2>(0);
   const [editState, setEditState] = useState<0 | 1>(0); // 0 == read, 1 == edit
-  // const [selectedOrg, setSelectedOrg] = useState<PublicOrganization | null>(null);
   const [errorBanner, setErrorBanner] = useState('');
+  const [org, setOrg] = useState(orgProp);
+  const [session, sessionLoading] = useSession();
 
   const cleanVals = (o: EditForm): EditForm => ({
     name: (o && o.name) ?? '',
@@ -45,104 +63,67 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
     // foundingDate: (o && o.foundingDate) ?? null,
     is501c3: Boolean(o && o.is501c3),
     website: (o && o.website) ?? '',
-    // organizationProjects: o ? o.organizationProjects : [],
+    organizationProjects: o ? o.organizationProjects : [],
   });
 
-  // const validate = (values: EditForm): void => {
-  //   console.log('values in validate', values);
-  // };
-
-  // FIXME: body of request
-  const handleSubmit = async (
-    values: EditForm
-    // actions: FormikHelpers<Props>
-  ): Promise<void> => {
-    console.log('values in handlsubmit:', values);
-    // console.log('entered handlesumbit');
-    // console.log('values.ein:', values.ein);
-    // console.log('values.web:', values.website);
-    // cleanVals(values);
-    // console.log('AFTER CLEAN IN HANDLESUB');
-    // console.log('values.ein:', values.ein);
-    // console.log('values.web:', values.website);
+  const handleSubmit = async (values: EditForm): Promise<void> => {
+    // left for testing
+    // console.log('values in handlsubmit UNCLEANED', values);
+    // console.log('values in handlsubmit CLEANVALS:', cleanVals(values));
     try {
       await fetch(`/api/org/${org.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...cleanVals(values) }),
-      });
+      })
+        .then((response) => response.json())
+        .then((data) => setOrg(data));
       setEditState(0);
     } catch (ex) {
       setErrorBanner('Did not save.');
     }
-    // router.replace(router.asPath);
   };
 
-  // const initVals: EditForm = {
-  //   name: (org && org.name) ?? '',
-  //   contactName: (org && org.contactName) ?? '',
-  //   contactEmail: (org && org.contactEmail) ?? '',
-  //   contactPhone: (org && org.contactPhone) ?? '',
-  //   organizationType: (org && org.organizationType) ?? null,
-  //   workType: (org && org.workType) ?? null,
-  //   address: (org && org.address) ?? '',
-  //   missionStatement: (org && org.missionStatement) ?? '',
-  //   shortHistory: (org && org.shortHistory) ?? '',
-  //   lgbtqDemographic: org ? org.lgbtqDemographic : [],
-  //   raceDemographic: org ? org.raceDemographic : [],
-  //   ageDemographic: org ? org.ageDemographic : [],
-  //   capacity: (org && org.capacity) ?? null,
-  //   ein: (org && org.ein) ?? '',
-  //   foundingDate: (org && org.foundingDate) ?? null,
-  //   is501c3: Boolean(org && org.is501c3),
-  //   website: (org && org.website) ?? '',
-  //   organizationProjects: org ? org.organizationProjects : [],
-  // };
-
-  console.log('cleanvals.ein:', typeof cleanVals(org).ein);
-  console.log('cleanvals.web type:', typeof cleanVals(org).website);
-  console.log('cleanvals.web:', cleanVals(org).website);
-
   const formik = useFormik({
-    // initialValues: initVals,
     initialValues: cleanVals(org),
-    // validate,
-    // validateOnChange: false,
     onSubmit: handleSubmit,
   });
 
-  console.log('values:', formik.values);
-
   const projectsList = org?.organizationProjects?.map((project) => {
     return (
-      <Project name={project.title} description={project.description ?? ''} />
+      <Project
+        // key={project}
+        name={project.title}
+        description={project.description ?? ''}
+      />
     );
   });
 
-  const projectsListEditable = org?.organizationProjects?.map((project) => {
-    return (
-      // <Project name={project.title} description={project.description ?? ''} />
-      <div>
-        <TextField
-          id="title"
-          className={styles.projTitle}
-          value={project.title}
-          name="title"
-          variant="outlined"
-          onChange={formik.handleChange}
-        />
-        <TextField
-          id="description"
-          className={styles.projDesc}
-          value={project.description ?? ''}
-          name="description"
-          variant="outlined"
-          multiline
-          onChange={formik.handleChange}
-        />
-      </div>
-    );
-  });
+  const projectsListEditable = formik.values.organizationProjects?.map(
+    (project) => {
+      return (
+        <div>
+          <TextField
+            id="title"
+            className={styles.projTitle}
+            value={project.title}
+            name="title"
+            variant="outlined"
+            onChange={formik.handleChange}
+          />
+          <TextField
+            id="description"
+            className={styles.projDesc}
+            value={project.description ?? ''}
+            name="description"
+            variant="outlined"
+            multiline
+            onChange={formik.handleChange}
+          />
+        </div>
+      );
+    }
+  );
 
   const demographics = (category: string, groups: string[]): JSX.Element => {
     return (
@@ -156,6 +137,119 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
           ) : (
             <Chip label="None" variant="outlined" />
           )}
+        </div>
+      </div>
+    );
+  };
+
+  const demEditOrien = (category: string): JSX.Element => {
+    return (
+      <div className={styles.demographic}>
+        {category}
+        <div className={styles.demographicTags}>
+          <Autocomplete
+            multiple
+            id="lgbtqDemographic"
+            options={orientation}
+            getOptionLabel={(option) => option}
+            filterSelectedOptions
+            value={formik.values.lgbtqDemographic}
+            onChange={(event, newValue) => {
+              formik.setFieldValue('lgbtqDemographic', newValue);
+            }}
+            // onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                error={Boolean(
+                  formik.touched.lgbtqDemographic &&
+                    formik.errors.lgbtqDemographic
+                )}
+                helperText={
+                  formik.touched.lgbtqDemographic
+                    ? formik.errors.lgbtqDemographic
+                    : undefined
+                }
+              />
+            )}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const demEditBack = (category: string): JSX.Element => {
+    return (
+      <div className={styles.demographic}>
+        {category}
+        <div className={styles.demographicTags}>
+          <Autocomplete
+            multiple
+            id="raceDemographic"
+            options={ethnicity}
+            getOptionLabel={(option) => option}
+            filterSelectedOptions
+            value={formik.values.raceDemographic}
+            onChange={(event, newValue) => {
+              formik.setFieldValue('raceDemographic', newValue);
+            }}
+            // onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                error={Boolean(
+                  formik.touched.raceDemographic &&
+                    formik.errors.raceDemographic
+                )}
+                helperText={
+                  formik.touched.raceDemographic
+                    ? formik.errors.raceDemographic
+                    : undefined
+                }
+              />
+            )}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const demEditAge = (category: string): JSX.Element => {
+    return (
+      <div className={styles.demographic}>
+        {category}
+        <div className={styles.demographicTags}>
+          <Autocomplete
+            multiple
+            id="ageDemographic"
+            options={ages}
+            getOptionLabel={(option) => option}
+            filterSelectedOptions
+            value={formik.values.ageDemographic}
+            onChange={(event, newValue) => {
+              formik.setFieldValue('ageDemographic', newValue);
+            }}
+            // onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                error={Boolean(
+                  formik.touched.ageDemographic && formik.errors.ageDemographic
+                )}
+                helperText={
+                  formik.touched.ageDemographic
+                    ? formik.errors.ageDemographic
+                    : undefined
+                }
+              />
+            )}
+          />
         </div>
       </div>
     );
@@ -181,7 +275,10 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
             {org.shortHistory && (
               <p className={styles.infoContent}>{org.shortHistory}</p>
             )}
-            <div className={styles.projects}>{projectsList}</div>
+            <div className={styles.projects}>
+              <h3 className={styles.audienceHeader}>Our Projects</h3>
+              {projectsList}
+            </div>
             Projects should be here. If there arent any, then the database
             doesnt have any.
           </div>
@@ -190,36 +287,9 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
           <div className={styles.rightContent}>
             <h3 className={styles.audienceHeader}>Audience Demographics</h3>
             <div className={styles.demographicSection}>
-              {demographics('Orientation', org.lgbtqDemographic)}
-              {demographics('Background', org.raceDemographic)}
-              {demographics('Age Range', org.ageDemographic)}
-              {/* <Autocomplete
-                multiple
-                id="lgbtqDemographic"
-                options={orientation}
-                getOptionLabel={(option) => option}
-                filterSelectedOptions
-                value={values.lgbtqDemographic}
-                onChange={(event, newValue) => {
-                  setFieldValue('lgbtqDemographic', newValue);
-                }}
-                onBlur={handleBlur}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    error={Boolean(
-                      touched.lgbtqDemographic && errors.lgbtqDemographic
-                    )}
-                    helperText={
-                      touched.lgbtqDemographic
-                        ? errors.lgbtqDemographic
-                        : undefined
-                    }
-                  />
-                )}
-                disabled={readOnly}
-              /> */}
+              {demEditOrien('Orientation')}
+              {demEditBack('Background')}
+              {demEditAge('Age Range')}
             </div>
             <h3 className={styles.audienceHeader}>Our Mission</h3>
             <TextField
@@ -266,9 +336,9 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
       </Layout>
     );
   }
-  console.log('org:', org);
+  if (sessionLoading && !org) return <LinearProgress />;
   return (
-    <Layout title={`${org.name} Profile`}>
+    <Layout title={`${org && org.name} Profile`}>
       <div className={styles.orgMargins}>
         <div className={styles.orgImages}>
           <img
@@ -300,7 +370,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
                 className={styles.saveButton}
                 disableElevation
                 onClick={() => {
-                  handleSubmit(org);
+                  handleSubmit(formik.values);
                 }}
               >
                 Save
@@ -309,7 +379,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({ org, errors }) => {
           </div>
           <div className={styles.titleColumns}>
             <div className={styles.leftColumn}>
-              <h2 className={styles.Header}>{org.name}</h2>
+              <h2 className={styles.Header}>{org && org.name}</h2>
               <h3 className={styles.subHeader}>
                 {org.workType}
                 {org.workType && org.organizationType ? ' • ' : null}
@@ -404,14 +474,14 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         organizationEvents: true,
       },
     });
-    const org = JSON.parse(JSON.stringify(resp));
-    if (!org) {
+    const orgProp = JSON.parse(JSON.stringify(resp));
+    if (!orgProp) {
       return {
         notFound: true,
       };
     }
     return {
-      props: { org },
+      props: { orgProp },
     };
   } catch (err) {
     return { props: { errors: err.message } };
