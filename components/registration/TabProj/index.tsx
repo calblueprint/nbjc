@@ -59,6 +59,7 @@ const TabProj: React.FC<TabProps> = ({
   return (
     <FieldArray
       name="projects"
+      validateOnChange={false}
       render={(arrayHelpers) => {
         return (
           <>

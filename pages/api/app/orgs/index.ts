@@ -1,5 +1,5 @@
 import prisma from 'utils/prisma';
-import { Prisma } from '@prisma/client';
+import { OrganizationProject, Prisma } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import OrganizationSchema from 'interfaces/organization';
@@ -62,8 +62,11 @@ export default async (
 
   const appProjs = projects as Project[];
   const deleteProjs = projIDsToDelete as number[];
-  const toCreate = appProjs.filter(({ id }) => !!id); // projects without id, to be created
-  const toUpdate = appProjs.filter((i) => !i.id); // projects to update
+  console.log('delete ids', deleteProjs);
+  const toUpdate = appProjs.filter(({ id }) => !!id); // projects to update
+  const toCreate = appProjs.filter((i) => !i.id); // projects without id, to be created
+  console.log('toupdate', toUpdate);
+  console.log('tocreate', toCreate);
   let newOrg;
   try {
     newOrg = await prisma.organization.upsert({
@@ -122,6 +125,9 @@ export default async (
 
   await prisma.organizationProject.deleteMany;
 
+  // FIXME: This is a temporary solution to return all the projects that were created by the Save Changes in registration
+  let createdProjs: OrganizationProject[] = [];
+
   // FIXME: This is a temporary (ugly) solution for creating projects
   try {
     for (let i = 0; i < toCreate.length; i += 1) {
@@ -137,10 +143,12 @@ export default async (
           },
         },
       });
+      createdProjs.push(response);
     }
   } catch (err) {
     return CreateError(500, 'Failed to create project', res);
   }
-
-  return res.json(newOrg);
+  // Temp solution to registration multiple save changes issue, return projects only. May be better to put this logic in projects API instead.
+  console.log(createdProjs);
+  return res.json({ newOrg, createdProjs });
 };

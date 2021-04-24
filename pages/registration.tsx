@@ -35,14 +35,14 @@ import prisma from 'utils/prisma';
 import styles from '../styles/Registration.module.css';
 
 type RegistrationProps = {
-  org: Prisma.OrganizationGetPayload<{
+  propOrg: Prisma.OrganizationGetPayload<{
     include: { organizationProjects: true };
   }> | null;
   appQnR: AppQnR;
 };
 
 const Registration: React.FunctionComponent<RegistrationProps> = ({
-  org,
+  propOrg,
   appQnR,
 }) => {
   const router = useRouter();
@@ -53,6 +53,13 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
   const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(
     router.query?.feedback === 'true'
   );
+  const [org, setOrg] = useState(propOrg);
+
+  useEffect(() => {
+    if (!org) {
+      console.log('wait');
+    }
+  }, [org]);
 
   const status = org?.applicationStatus;
   const readOnly = status === 'submitted' || status === 'approved';
@@ -121,6 +128,8 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
         currStateProjSet.add(projects[i].id);
       }
       for (let i = 0; i < originalIDs.length; i += 1) {
+        console.log('currstate', currStateProjSet);
+        console.log('origIDs', originalIDs);
         if (!currStateProjSet.has(originalIDs[i])) {
           projIDsToDelete[ind] = originalIDs[i];
           ind += 1;
@@ -138,12 +147,29 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
             projects,
             projIDsToDelete,
           }),
-        });
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('newProjs', data);
+            // Replace current formValues projects with created projects from back-end w/ ids.
+            for (let i = 0; i < data.createdProjs.length; i++) {
+              let foundIndex = formik.values.projects.findIndex(
+                (newProj) =>
+                  newProj.description === data.createdProjs[i].description &&
+                  newProj.title === data.createdProjs[i].title
+              );
+              if (foundIndex >= 0) formik.values.projects[foundIndex] = data[i];
+              console.log(formik.values.projects);
+            }
+            setOrg(data.newOrg);
+            // formValues.projects.push.apply(formValues.projects, data);
+            // Temp solution to fix the multiple save changes clicking issue making multiple objects in DB.
 
-        if (res.ok && !draft) router.push('/users/profile');
-        if (!res.ok) {
-          console.log('patch not successful');
-        }
+            // REMOVE WHEN READY TO DEBUG PROPERLY //
+            router.push('/registration');
+          })
+          .catch((err) => console.log('patch not successful'));
+        // if (res.ok && !draft) router.push('/users/profile');
       } catch (err) {
         // TODO: Raise an error toast
         console.log(err);
@@ -210,9 +236,12 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     onSubmit: handleSubmit(false),
   });
 
+  console.log('these are formik.values', formik.values);
+  console.log('formik proj values', formik.values.projects);
+
   if (!sessionLoading && (!session || session.user.role !== 'organization'))
     router.push('/');
-  if (!sessionLoading && session && session.user.role === 'organization')
+  if (!sessionLoading && session && session.user.role === 'organization' && org)
     return (
       <Layout title="Register">
         {status === 'rejected' ? (
@@ -300,7 +329,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                   variant="outlined"
                   className={styles.autoField}
                   type="submit"
-                  onClick={() => setSaveDraft(false)}
+                  onClick={() => handleSubmit(true)(formik.values)}
                 >
                   Save Changes
                 </Button>
@@ -366,7 +395,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
       const org = JSON.parse(JSON.stringify(organization));
       return {
-        props: { org, appQnR },
+        props: { propOrg: org, appQnR },
       };
     }
     return {
