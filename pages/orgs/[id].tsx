@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
-import { useFormik } from 'formik';
+import { useFormik, FieldArray, ArrayHelpers, FormikProps } from 'formik';
 import prisma from 'utils/prisma';
 import { Prisma } from '@prisma/client';
 import { Button, Chip, TextField, LinearProgress } from '@material-ui/core';
@@ -63,13 +63,20 @@ const OrgProfile: React.FunctionComponent<Props> = ({ orgProp, errors }) => {
     // foundingDate: (o && o.foundingDate) ?? null,
     is501c3: Boolean(o && o.is501c3),
     website: (o && o.website) ?? '',
-    organizationProjects: o ? o.organizationProjects : [],
+    // organizationProjects: o ? o.organizationProjects : [],
+    organizationProjects:
+      o.organizationProjects?.map((proj) => ({
+        id: proj.id,
+        organizationId: org.id,
+        title: proj.title ?? '',
+        description: proj.description ?? '',
+      })) ?? [],
   });
 
   const handleSubmit = async (values: EditForm): Promise<void> => {
     // left for testing
-    // console.log('values in handlsubmit UNCLEANED', values);
-    // console.log('values in handlsubmit CLEANVALS:', cleanVals(values));
+    console.log('values in handlsubmit UNCLEANED', values);
+    console.log('values in handlsubmit CLEANVALS:', cleanVals(values));
     try {
       await fetch(`/api/org/${org.id}`, {
         method: 'PATCH',
@@ -89,10 +96,10 @@ const OrgProfile: React.FunctionComponent<Props> = ({ orgProp, errors }) => {
     onSubmit: handleSubmit,
   });
 
-  const projectsList = org?.organizationProjects?.map((project) => {
+  const projectsList = formik.values.organizationProjects?.map((project) => {
     return (
       <Project
-        // key={project}
+        key={project.id}
         name={project.title}
         description={project.description ?? ''}
       />
@@ -104,18 +111,18 @@ const OrgProfile: React.FunctionComponent<Props> = ({ orgProp, errors }) => {
       return (
         <div>
           <TextField
-            id="title"
+            id={'title'.concat(`${project.id}`)}
             className={styles.projTitle}
             value={project.title}
-            name="title"
+            name={'title'.concat(`${project.id}`)}
             variant="outlined"
             onChange={formik.handleChange}
           />
           <TextField
-            id="description"
+            id={'description'.concat(`${project.id}`)}
             className={styles.projDesc}
             value={project.description ?? ''}
-            name="description"
+            name={'description'.concat(`${project.id}`)}
             variant="outlined"
             multiline
             onChange={formik.handleChange}
@@ -130,8 +137,8 @@ const OrgProfile: React.FunctionComponent<Props> = ({ orgProp, errors }) => {
       <div className={styles.demographic}>
         {category}
         <div className={styles.demographicTags}>
-          {groups.length !== 0 ? (
-            groups.map((group) => (
+          {groups?.length !== 0 ? (
+            groups?.map((group) => (
               <Chip key={group} label={group} variant="outlined" />
             ))
           ) : (
@@ -142,7 +149,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({ orgProp, errors }) => {
     );
   };
 
-  const demEditOrien = (category: string): JSX.Element => {
+  const demEditOrien = (category: string, groups: string[]): JSX.Element => {
     return (
       <div className={styles.demographic}>
         {category}
@@ -180,7 +187,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({ orgProp, errors }) => {
     );
   };
 
-  const demEditBack = (category: string): JSX.Element => {
+  const demEditBack = (category: string, groups: string[]): JSX.Element => {
     return (
       <div className={styles.demographic}>
         {category}
@@ -218,7 +225,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({ orgProp, errors }) => {
     );
   };
 
-  const demEditAge = (category: string): JSX.Element => {
+  const demEditAge = (category: string, groups: string[]): JSX.Element => {
     return (
       <div className={styles.demographic}>
         {category}
@@ -287,9 +294,9 @@ const OrgProfile: React.FunctionComponent<Props> = ({ orgProp, errors }) => {
           <div className={styles.rightContent}>
             <h3 className={styles.audienceHeader}>Audience Demographics</h3>
             <div className={styles.demographicSection}>
-              {demEditOrien('Orientation')}
-              {demEditBack('Background')}
-              {demEditAge('Age Range')}
+              {demEditOrien('Orientation', org.lgbtqDemographic)}
+              {demEditBack('Background', org.raceDemographic)}
+              {demEditAge('Age Range', org.ageDemographic)}
             </div>
             <h3 className={styles.audienceHeader}>Our Mission</h3>
             <TextField
@@ -315,7 +322,14 @@ const OrgProfile: React.FunctionComponent<Props> = ({ orgProp, errors }) => {
               multiline
               rows={7}
             />
-            <div className={styles.projects}>{projectsListEditable}</div>
+            <div className={styles.projects}>
+              {projectsListEditable}
+              {/* <FieldArray
+                name="organizationProjects"
+                render={projectsListEditable(formik)}
+              />
+              ; */}
+            </div>
             Projects should be here.
           </div>
         )}

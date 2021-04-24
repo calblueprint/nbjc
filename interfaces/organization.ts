@@ -19,7 +19,7 @@ export type PublicOrganization = Prisma.OrganizationGetPayload<{
     long: true;
   };
 }>;
-
+// export type orgProj = { id: number; title: string; description: string };
 export type EditForm = Prisma.OrganizationGetPayload<{
   select: {
     name: true;
@@ -112,6 +112,7 @@ const schema = Joi.object({
     }),
   // foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
+  organizationProjects: Joi.array().unique(),
 }).when('$strict', { is: true, then: Joi.object().and('lat', 'long') });
 
 export default schema;
