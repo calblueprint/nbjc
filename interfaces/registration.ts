@@ -101,14 +101,7 @@ const schema = Joi.object({
     .empty('')
     .when('$strict', { is: true, then: Joi.required() })
     .messages({ 'any.required': 'Type of Work is required' }),
-  website: Joi.string()
-    .empty('')
-    .uri({ domain: { tlds: false } })
-    .messages({
-      'string.uri':
-        'Not a valid URL - remember http or https (https://nbjc.org)',
-      'string.domain': 'Not a valid URL - missing domain (https://nbjc.org)',
-    }),
+  website: Joi.string().domain().empty(''),
   // locationType: Joi.string()
   //   .empty('')
   //   .when('$strict', { is: true, then: Joi.required() })
