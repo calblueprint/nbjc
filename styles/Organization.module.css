@@ -116,3 +116,17 @@
   box-shadow: none;
   padding: 1px;
 }
+
+.newModal {
+}
+
+.modContent {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.modTab {
+  width: 50%;
+  height: 300px;
+}
