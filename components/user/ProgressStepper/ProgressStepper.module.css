@@ -1,7 +1,5 @@
 .content {
   padding-top: 50px;
-  border-top: solid 1px;
-  border-color: silver;
 }
 
 .title {
@@ -13,12 +11,13 @@
 }
 
 .button {
-  display: flex;
-  flex-direction: row-reverse;
-  margin-top: 5px;
+  height: 35px;
 }
 
 .twoButtons {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-top: 5px;
   justify-content: space-between;
 }
 
@@ -59,3 +58,15 @@
   height: 12px;
   border-radius: 36px;
 }
+
+.profileAndLink {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hideStepper {
+  margin-top: 10px
+}
+

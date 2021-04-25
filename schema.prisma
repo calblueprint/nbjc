@@ -52,9 +52,11 @@ model Organization {
   userId               Int?                  @unique @map("user_id")
   contactPhone         String?               @map("contact_phone") @db.VarChar(255)
   website              String?               @db.VarChar(255)
+  approvedSeen         Boolean               @default(false) @map("approved_seen")
   user                 User?                 @relation("OrganizationsToUsers", fields: [userId], references: [id])
   applicationNote      ApplicationNote?      @relation("ApplicationNotesToOrganizations")
   applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
+  OrgTeamMembers       OrgTeamMembers[]      @relation("OrgTeamMembersToOrganizations")
   organizationEvents   OrganizationEvent[]   @relation("OrganizationEventsToOrganizations")
   organizationProjects OrganizationProject[] @relation("OrganizationProjectsToOrganizations")
 
@@ -167,6 +169,16 @@ model OrganizationEvent {
   organizations    Organization       @relation("OrganizationEventsToOrganizations", fields: [organizationId], references: [id])
 
   @@map("organization_events")
+}
+
+model OrgTeamMembers {
+  id             Int          @id @default(autoincrement())
+  name           String       @db.VarChar(255)
+  title          String       @db.VarChar(255)
+  organizationId Int          @map("organization_id")
+  organizations  Organization @relation("OrgTeamMembersToOrganizations", fields: [organizationId], references: [id])
+
+  @@map("org_team_members")
 }
 
 enum AgeDemographic {

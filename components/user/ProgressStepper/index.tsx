@@ -1,5 +1,5 @@
 import MobileStepper from '@material-ui/core/MobileStepper';
-import Button from '@material-ui/core/Button';
+import { Button, Link } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import { ApplicationStatus } from '@prisma/client';
 import styles from './ProgressStepper.module.css';
@@ -106,15 +106,20 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({
             organization’s profile is partly auto-filled with answers from your
             application, but complete your profile with more details!
           </div>
-          <div className={`${styles.button} ${styles.twoButtons}`}>
+          <div className={styles.twoButtons}>
+            <div className={styles.profileAndLink}>
             <Button
+              className={styles.button}
               variant="contained"
               color="primary"
               onClick={() => router.push(`/orgs/${orgId ?? ''}`)}
             >
               View Profile
             </Button>
+            <Link className={styles.hideStepper}>Don't Show Again</Link>
+            </div>
             <Button
+              className={styles.button}
               variant="outlined"
               color="primary"
               onClick={goToRegistration()}

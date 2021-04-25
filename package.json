@@ -46,9 +46,11 @@
     "schema": "./schema.prisma"
   },
   "dependencies": {
+    "@date-io/date-fns": "^2.10.8",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
+    "@material-ui/pickers": "^3.3.10",
     "@prisma/client": "^2.18.0",
     "clsx": "^1.1.1",
     "db-migrate": "^0.11.11",
