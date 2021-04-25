@@ -1,5 +1,5 @@
-import { Organization } from '@prisma/client';
 import prisma from 'utils/prisma';
+import { TableOrganization, tableOrganizationArgs } from 'interfaces/admin';
 import AdminIndex from 'components/admin/AdminIndex';
 import AdminTable from 'components/admin/AdminTable';
 import Layout from 'components/Layout';
@@ -7,7 +7,7 @@ import { GetServerSideProps } from 'next';
 import getSession from 'utils/getSession';
 
 type AdminOrgIndexProps = {
-  orgs: Organization[];
+  orgs: TableOrganization[];
 };
 
 const AdminOrgIndex: React.FunctionComponent<AdminOrgIndexProps> = ({
@@ -36,15 +36,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         where: {
           active: true,
         },
-        select: {
-          id: true,
-          name: true,
-          organizationType: true,
-          workType: true,
-          contactName: true,
-          contactEmail: true,
-          createdAt: true,
-        },
+        select: tableOrganizationArgs.select,
       });
 
       return {

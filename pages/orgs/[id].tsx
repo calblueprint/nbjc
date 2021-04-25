@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import prisma from 'utils/prisma';
-import { Organization } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import { orgProfile } from 'interfaces/organization';
 import { Button, Chip, LinearProgress } from '@material-ui/core';
 import Layout from 'components/Layout';
 import Project from 'components/organization/Project';
@@ -11,24 +12,7 @@ import useSession from 'utils/useSession';
 import styles from '../../styles/Organization.module.css';
 
 type Props = {
-  org: Pick<
-    Organization,
-    | 'id'
-    | 'name'
-    | 'organizationType'
-    | 'workType'
-    | 'address'
-    | 'missionStatement'
-    | 'shortHistory'
-    | 'lgbtqDemographic'
-    | 'raceDemographic'
-    | 'ageDemographic'
-    | 'capacity'
-    | 'ein'
-    | 'foundingDate'
-    | 'is501c3'
-    | 'website'
-  >;
+  org: Prisma.OrganizationGetPayload<typeof orgProfile>;
   orgUser: {
     id: number;
   };
@@ -205,29 +189,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
     const org = await prisma.organization.findUnique({
       where: { id: Number(id) },
-      select: {
-        active: true,
-        id: true,
-        name: true,
-        organizationType: true,
-        workType: true,
-        address: true,
-        missionStatement: true,
-        shortHistory: true,
-        lgbtqDemographic: true,
-        raceDemographic: true,
-        ageDemographic: true,
-        capacity: true,
-        ein: true,
-        foundingDate: true,
-        is501c3: true,
-        website: true,
-        user: {
-          select: {
-            id: true,
-          },
-        },
-      },
+      select: orgProfile.select,
     });
 
     if (!org || !org.active) {
