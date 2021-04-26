@@ -68,13 +68,16 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   const [openApprove, setOpenApprove] = useState(false);
   const approveToast = openApprove ? (
     <Toast showDismissButton>
-      {orgs[index].name} has been successfully accepted.
+      {orgs.length > 0 ? orgs[index].name : 'This org'} has been successfully
+      accepted.
     </Toast>
   ) : null;
 
   const [openDecline, setOpenDecline] = useState(false);
   const declineToast = openDecline ? (
-    <Toast showDismissButton>{orgs[index].name} has been declined.</Toast>
+    <Toast showDismissButton>
+      {orgs.length > 0 ? orgs[index].name : 'This org'} has been declined.
+    </Toast>
   ) : null;
   //
 
@@ -222,7 +225,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             orgs.map((org, i) => (
               // TODO: Add accessibility support
               // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-              <div key={orgs[index].id} onClick={() => clickCard(i)}>
+              <div key={i} onClick={() => clickCard(i)}>
                 <OrgCard org={org} />
               </div>
             ))
@@ -288,7 +291,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           </IconButton>
         </div>
         <div className={styles.textField}>
-          notes for {orgs[index] && orgs[index].name}
+          notes for {orgs.length > 0 ? orgs[index].name : 'this org'}
         </div>
         <div className={styles.row}>
           <p className={styles.descriptor}>Notes</p>
@@ -368,7 +371,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
               <div className={styles.modTab}>
                 <div className={styles.declineNotes}>Notes</div>
                 <div className={styles.declineNotesContent}>
-                  {orgs[index].shortHistory}
+                  {orgs.length > 0 ? orgs[index].shortHistory : 'this org'}
                 </div>
               </div>
               <div className={styles.modTab}>
