@@ -123,7 +123,9 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
         })
           .then((response) => response.json())
           .then((data) => {
-            formik.setFieldValue('projects', data.projects);
+            // Linter ignored because formik is reference before it is defined.
+            // eslint-disable-next-line no-use-before-define
+            formik.setFieldValue('projects', data.newOrg.organizationProjects);
             if (!draft) {
               router.push('/users/profile');
             }
@@ -135,6 +137,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
       }
     }
   };
+
   const formValues: Form = {
     name: (org && org.name) ?? '',
     contactName: (org && org.contactName) ?? '',
