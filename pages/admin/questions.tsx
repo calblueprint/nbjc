@@ -115,7 +115,7 @@ const AdminQuestionsIndex: React.FC<AdminQuestionsIndexProps> = ({
             fullWidth
             open={openModal}
           >
-            <DialogTitle>Add Question Prompt</DialogTitle>
+            <div className={styles.dialogTitle}> Add Question Prompt </div>
             <DialogContent>
               <form onSubmit={handleSubmit}>
                 <div className={`${styles.dialogRow} ${styles.dialogShort}`}>
@@ -129,6 +129,7 @@ const AdminQuestionsIndex: React.FC<AdminQuestionsIndexProps> = ({
                     onChange={handleChange}
                     error={Boolean(errors.question)}
                     helperText={errors.question}
+                    placeholder="The short answer question title"
                   />
                 </div>
                 <div className={`${styles.dialogRow} ${styles.dialogShort}`}>
@@ -142,6 +143,7 @@ const AdminQuestionsIndex: React.FC<AdminQuestionsIndexProps> = ({
                     onChange={handleChange}
                     error={Boolean(errors.hint)}
                     helperText={errors.hint}
+                    placeholder="Any additional information or description about the question"
                   />
                 </div>
                 <div className={`${styles.dialogRow} ${styles.dialogShort}`}>
@@ -155,6 +157,7 @@ const AdminQuestionsIndex: React.FC<AdminQuestionsIndexProps> = ({
                     onChange={handleChange}
                     error={Boolean(errors.placeholder)}
                     helperText={errors.placeholder}
+                    placeholder="Custom placeholder text for the question when the field is empty"
                   />
                 </div>
                 <div className={`${styles.dialogRow} ${styles.dialogField}`}>
@@ -172,7 +175,7 @@ const AdminQuestionsIndex: React.FC<AdminQuestionsIndexProps> = ({
                 </div>
                 <div className={`${styles.dialogRow} ${styles.dialogField}`}>
                   <Typography variant="subtitle1" className={styles.descriptor}>
-                    Word Limit
+                    Word Minimum
                   </Typography>
                   <TextField
                     name="wordLimit"
@@ -233,7 +236,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
     if (session && session.user.role === 'admin') {
-      const applicationQuestions = await prisma.applicationQuestion.findMany({
+      const questions = await prisma.applicationQuestion.findMany({
         select: {
           id: true,
           question: true,
@@ -242,7 +245,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           updatedAt: true,
         },
       });
-      const questions = JSON.parse(JSON.stringify(applicationQuestions));
+
       return {
         props: { questions },
       };

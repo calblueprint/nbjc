@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
     if (session && session.user.role === 'admin') {
-      const approvedOrganizations = await prisma.organization.findMany({
+      const orgs = await prisma.organization.findMany({
         where: {
           active: true,
         },
@@ -46,7 +46,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           createdAt: true,
         },
       });
-      const orgs = JSON.parse(JSON.stringify(approvedOrganizations));
+
       return {
         props: { orgs },
       };

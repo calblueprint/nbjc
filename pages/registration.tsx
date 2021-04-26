@@ -252,6 +252,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                   className={styles.autoField}
                   color="primary"
                   type="submit"
+                  onClick={() => handleSubmit(false)(formik.values)}
                 >
                   Submit
                 </Button>

@@ -29,8 +29,8 @@ model Account {
 model Organization {
   id                   Int                   @id @default(autoincrement())
   name                 String?               @db.VarChar(255)
-  long                 Decimal?              @db.Decimal
-  lat                  Decimal?              @db.Decimal
+  long                 Float?
+  lat                  Float?
   createdAt            DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   applicationStatus    ApplicationStatus     @default(draft) @map("application_status")
@@ -55,6 +55,7 @@ model Organization {
   user                 User?                 @relation("OrganizationsToUsers", fields: [userId], references: [id])
   applicationNote      ApplicationNote?      @relation("ApplicationNotesToOrganizations")
   applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
+  organizationEvents   OrganizationEvent[]   @relation("OrganizationEventsToOrganizations")
   organizationProjects OrganizationProject[] @relation("OrganizationProjectsToOrganizations")
 
   @@map("organizations")
@@ -151,6 +152,23 @@ model OrganizationProject {
   @@map("organization_projects")
 }
 
+model OrganizationEvent {
+  id               Int                @id @default(autoincrement())
+  title            String
+  description      String
+  address          String?            @db.VarChar(255)
+  link             String?            @db.VarChar(255)
+  lgbtqDemographic LgbtqDemographic[] @map("lgbtq_demographic")
+  raceDemographic  RaceDemographic[]  @map("race_demographic")
+  ageDemographic   AgeDemographic[]   @map("age_demographic")
+  organizationId   Int                @map("organization_id")
+  startDatetime    DateTime           @map("start_datetime") @db.Timestamptz(6)
+  endDatetime      DateTime?          @map("end_datetime") @db.Timestamptz(6)
+  organizations    Organization       @relation("OrganizationEventsToOrganizations", fields: [organizationId], references: [id])
+
+  @@map("organization_events")
+}
+
 enum AgeDemographic {
   child   @map("Children")
   teen    @map("Teens")
@@ -170,11 +188,15 @@ enum ApplicationStatus {
 }
 
 enum LgbtqDemographic {
-  lgbtqAll          @map("LGBTQ+ (All)")
-  sgl               @map("SGL")
-  transgender       @map("Transgender")
-  asexualAromantic  @map("Asexual/Aromantic")
-  other             @map("Other")
+  queer                 @map("Queer")
+  asexualAromantic      @map("Asexual/Aromantic")
+  bisexual              @map("Bisexual")
+  pansexual             @map("Pansexual")
+  lesbianSgl            @map("Lesbian/SGL")
+  gaySgl                @map("Gay/SGL")
+  straightHeterosexual  @map("Straight/Heterosexual")
+  lgbtqPlus             @map("LGBTQ+")
+  other                 @map("Other")
 
   @@map("lgbtq_demographic")
 }
@@ -189,13 +211,13 @@ enum OrganizationType {
 }
 
 enum RaceDemographic {
-  pocAll             @map("POC (All)")
-  black              @map("Black")
-  asian              @map("Asian")
-  pacificIslander    @map("Pacific Islander")
-  latinx             @map("Latinx")
-  nativeIndigeneous  @map("Native/Indigeneous")
-  other              @map("Other")
+  black     @map("Black")
+  native    @map("Native")
+  hispanic  @map("Hispanic")
+  asian     @map("Asian")
+  arab      @map("Arab")
+  white     @map("White")
+  other     @map("Other")
 
   @@map("race_demographic")
 }
