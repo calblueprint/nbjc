@@ -34,12 +34,11 @@ const UserSignIn: React.FC = () => {
   ): Promise<void> => {
     try {
       // Sign in with credentials
-      const res = await signIn('credentials', {
+      await signIn('credentials', {
         email: values.email,
         password: values.password,
         redirect: false,
       });
-      setErrorBanner(res.error ?? '');
     } catch (err) {
       console.log(err);
     } finally {
