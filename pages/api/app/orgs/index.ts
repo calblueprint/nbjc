@@ -3,7 +3,7 @@ import { OrganizationProject, Prisma } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import OrganizationSchema from 'interfaces/organization';
-import { Project, QnR } from 'interfaces/registration';
+import { Project, ExistingProject, QnR } from 'interfaces/registration';
 import CreateError, { MethodNotAllowed } from 'utils/error';
 import parseValidationError from 'utils/parseValidationError';
 import Joi from 'joi';
@@ -61,21 +61,42 @@ export default async (
   } as Prisma.OrganizationCreateInput;
 
   const appProjs = projects as Project[];
-  const deleteProjs = projIDsToDelete as number[];
-  console.log('delete ids', deleteProjs);
-  const toUpdate = appProjs.filter(({ id }) => !!id); // projects to update
-  const toCreate = appProjs.filter((i) => !i.id); // projects without id, to be created
-  console.log('toupdate', toUpdate);
-  console.log('tocreate', toCreate);
 
-  // Get existing projects org has, compare w projects that have an ID that are passed into API, delete them if they're not there.
-  // 1. Separate ones w and w/o ID
-  // 2. Compare which ones to delete
-  // 3. Run upsert to update and delete
-  // 4. Create projects w loop
-  let newOrg;
+  //*** Splitting appProjs into create, update, and delete ***//
+
+  // New projects are the ones without IDs yet.
+  const toCreate = appProjs.filter((i) => !i.id);
+
+  // Deleted projects are the projects in the DB that aren't passed into the API req.
+  const currOrg = await prisma.organization.findUnique({
+    where: { userId },
+    include: { organizationProjects: true },
+  });
+  let toDelete: number[] = [];
+  if (currOrg) {
+    const currProjIds = new Set(
+      appProjs.filter(({ id }) => !!id).map((p) => p.id)
+    );
+    const DBProjs = currOrg.organizationProjects;
+    // By filtering the DB projects for projects that aren't in the current projects ids passed into the API,
+    // we know that it was deleted in the registration form.
+    toDelete = DBProjs.filter((p) => !currProjIds.has(p.id)).map((p) => p.id);
+  }
+
+  // Updated projects are the remaining projects. There aren't necessarily changed,
+  // but making the PATCH request for projects that aren't modified won't change anything.
+  const currProjs = appProjs.filter(({ id }) => !!id) as ExistingProject[];
+  let toUpdate;
+  if (currOrg) {
+    toUpdate = currProjs.filter((p) => !new Set(toDelete).has(p.id));
+  }
+
+  // ***
+  // CREATING THE REQUEST FOR ORG, PROJECTS, AND QnRs.
+  // ***
+  let newChanges;
   try {
-    newOrg = await prisma.organization.upsert({
+    newChanges = await prisma.organization.upsert({
       where: {
         userId,
       },
@@ -104,7 +125,7 @@ export default async (
       update: {
         ...data,
         organizationProjects: {
-          updateMany: toUpdate.map(({ id, title, description }) => ({
+          updateMany: toUpdate?.map(({ id, title, description }) => ({
             where: {
               id,
             },
@@ -113,7 +134,7 @@ export default async (
               description,
             },
           })),
-          deleteMany: deleteProjs.map((id) => ({ id })),
+          deleteMany: toDelete.map((id) => ({ id })),
         },
         applicationResponses: {
           updateMany: appRes.map(({ questionId, response: answer }) => ({
@@ -132,9 +153,6 @@ export default async (
     return CreateError(500, 'Failed to create organization', res);
   }
 
-  // FIXME: This is a temporary solution to return all the projects that were created by the Save Changes in registration
-  let createdProjs: OrganizationProject[] = [];
-
   // FIXME: This is a temporary (ugly) solution for creating projects
   try {
     for (let i = 0; i < toCreate.length; i += 1) {
@@ -145,17 +163,57 @@ export default async (
           description: toCreate[i].description,
           organization: {
             connect: {
-              id: newOrg.id,
+              id: newChanges.id,
             },
           },
         },
       });
-      createdProjs.push(response);
     }
   } catch (err) {
     return CreateError(500, 'Failed to create project', res);
   }
-  // Temp solution to registration multiple save changes issue, return projects only. May be better to put this logic in projects API instead.
-  console.log(createdProjs);
-  return res.json({ newOrg, createdProjs });
+
+  // Getting all the projects in the DB now and sending it to front-end for projects attribute to become server-dependent.
+  const newOrg = await prisma.organization.findUnique({
+    where: {
+      userId,
+    },
+    include: {
+      organizationProjects: true,
+    },
+  });
+
+  return res.json({ newOrg });
 };
+// // set to hold all current projects in front-end
+// const currStateProjSet = new Set();
+// // IDs of projects from original serverSideProps get request
+// const originalIDs = org?.organizationProjects?.map((o) => o.id) ?? [];
+// // will hold the IDs of the projects to delete
+// const projIDsToDelete = [];
+// for (let i = 0; i < projects.length; i += 1) {
+//   currStateProjSet.add(projects[i].id);
+// }
+// for (let i = 0; i < originalIDs.length; i += 1) {
+//   if (!currStateProjSet.has(originalIDs[i])) {
+//     projIDsToDelete.push(originalIDs[i]);
+//   }
+// }
+
+// console.log('newProjs', data);
+// // Replace current formValues projects with created projects from back-end w/ ids.
+// for (let i = 0; i < data.createdProjs.length; i++) {
+//   let foundIndex = formik.values.projects.findIndex(
+//     (newProj) =>
+//       newProj.description === data.createdProjs[i].description &&
+//       newProj.title === data.createdProjs[i].title
+//   );
+//   if (foundIndex >= 0) formik.values.projects[foundIndex] = data[i];
+//   console.log(formik.values.projects);
+// }
+// setOrg(data.newOrg);
+// // formValues.projects.push.apply(formValues.projects, data);
+// // Temp solution to fix the multiple save changes clicking issue making multiple objects in DB.
+
+// // REMOVE WHEN READY TO DEBUG PROPERLY //
+// router.push('/registration');

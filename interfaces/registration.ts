@@ -7,6 +7,12 @@ export type Project = {
   description: string;
 };
 
+export type ExistingProject = {
+  id: number;
+  title: string;
+  description: string;
+};
+
 export type Response = {
   id: number[];
   response: string[];
