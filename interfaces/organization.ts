@@ -87,7 +87,7 @@ const schema = Joi.object({
       is: true,
       then: Joi.string().pattern(/^[0-9]\d?-?\d{7}$/),
     }),
-  // foundingDate: Joi.date(),
+  foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
 }).when('$strict', { is: true, then: Joi.object().and('lat', 'long') });
 
