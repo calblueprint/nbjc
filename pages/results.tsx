@@ -15,12 +15,10 @@ import Router, { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 
 import {
-  TextField,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  InputAdornment,
   Card,
   CardContent,
   Typography,
@@ -41,8 +39,6 @@ type ResultsProps = {
   searchValProp: string;
 };
 
-// const prisma = new PrismaClient();
-
 const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
   const router = useRouter();
 
@@ -54,10 +50,6 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
     RaceDemographicLabels
   ) as RaceDemographic[];
   const audienceTypes = Object.keys(AgeDemographicLabels) as AgeDemographic[];
-
-  // This is to verify whether or not the current user has a proper session configured to see the page.
-  // Will be implemented in the next PR.
-  // const [session, loading] = useSession();
 
   const [searchVal, setSearchVal] = useState(searchValProp);
   const [demographicFilters, setDemographicFilters] = useState<string[]>([]);
