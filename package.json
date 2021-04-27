@@ -27,7 +27,8 @@
     "db:update": "yarn db:migrate up && yarn prisma:update",
     "db:migrate": "ts-node -O '{ \"module\": \"commonjs\" }' $(yarn bin db-migrate)",
     "db:migrate:create": "ts-node -O '{ \"module\": \"commonjs\" }' bin/create-migration.ts",
-    "db:seed": "ts-node -O '{ \"module\": \"commonjs\" }' bin/seed-database.ts"
+    "db:seed": "ts-node -O '{ \"module\": \"commonjs\" }' bin/seed-database.ts",
+    "restart": "yarn && yarn db:reset && yarn dev"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx,json}": [
