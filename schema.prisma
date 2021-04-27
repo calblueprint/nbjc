@@ -164,7 +164,7 @@ model OrganizationEvent {
   organizationId   Int                @map("organization_id")
   startDatetime    DateTime           @map("start_datetime") @db.Timestamptz(6)
   endDatetime      DateTime?          @map("end_datetime") @db.Timestamptz(6)
-  organizations    Organization       @relation("OrganizationEventsToOrganizations", fields: [organizationId], references: [id])
+  organization     Organization       @relation("OrganizationEventsToOrganizations", fields: [organizationId], references: [id])
 
   @@map("organization_events")
 }

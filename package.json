@@ -65,7 +65,7 @@
     "next-auth": "^3.14.7",
     "node-fetch": "^2.6.1",
     "ora": "^5.1.0",
-    "prisma": "^2.20.1",
+    "prisma": "^2.18.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-map-gl": "^5.2.9",
