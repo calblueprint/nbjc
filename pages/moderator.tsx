@@ -49,6 +49,7 @@ type Props = {
 };
 
 const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
+  console.log(orgs);
   // put the values of the selected org here!!!
 
   const router = useRouter();
@@ -174,6 +175,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           setErrorBanner('Failed to process approval');
         }
       } else {
+        // CALVIN: get the body of the rejection content and put it in the post request.
         try {
           const res = await fetch(`/api/app/orgs/${orgs[index].id}/reject`, {
             method: 'POST',
@@ -271,6 +273,9 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     return null;
   };
 
+  // Make this look nice
+  const makeReview = (review: string): JSX.Element => <p>{review}</p>;
+
   const orgApp = (
     app: Organization & {
       applicationResponses: (ApplicationResponse & {
@@ -319,25 +324,38 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           paper: styles.drawerPaperRight,
         }}
       >
-        <div>
-          <IconButton onClick={handleDrawerCloseRight}>
-            <ChevronRightIcon />
-          </IconButton>
-        </div>
-        <div className={styles.textField}>
-          notes for {orgs.length > 0 ? orgs[index].name : 'this org'}
-        </div>
-        <div className={styles.row}>
-          <p className={styles.descriptor}>Notes</p>
-          <TextField
-            className={styles.textField}
-            onChange={(e) => setText(e.target.value)}
-            value={text}
-            name="orgName"
-            variant="outlined"
-            multiline
-          />
-        </div>
+        {/* HERE CALVIN HERE */}
+        {openNote ? (
+          <div>
+            <div className={styles.textField}>
+              notes for {orgs[index] && orgs[index].name}
+            </div>
+            <div className={styles.row}>
+              <p className={styles.descriptor}>Notes</p>
+              <TextField
+                className={styles.textField}
+                onChange={(e) => setText(e.target.value)}
+                value={text}
+                name="orgName"
+                variant="outlined"
+                multiline
+              />
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div className={styles.textField}>
+              reviews for {orgs[index] && orgs[index].name}
+            </div>
+            <div className={styles.row}>
+              <p className={styles.descriptor}>Reviews</p>
+              {orgs[index].organizationApplicationReviews?.map((r) => {
+                // There is not necessarily a reason because sometimes you just want to reject someone and not give them a reason.
+                if (r.reason) return makeReview(r.reason);
+              })}
+            </div>
+          </div>
+        )}
       </Drawer>
       {/* </ClickAwayListener> */}
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
@@ -408,13 +426,15 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
               <div className={styles.modTab}>
                 <div className={styles.declineNotes}>Notes</div>
                 <div className={styles.declineNotesContent}>
-                  {orgs.length > 0 ? orgs[index].shortHistory : 'this org'}
+                  {orgs.length > 0
+                    ? orgs[index].applicationNote?.note
+                    : 'this org'}
                 </div>
               </div>
               <div className={styles.modTab}>
                 <TextField
                   id="outlined-basic"
-                  label="Reasons for decline."
+                  label="Reasons for declining."
                   variant="outlined"
                   multiline
                   size="small"
@@ -486,7 +506,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       session &&
       (session.user.role === 'moderator' || session.user.role === 'admin')
     ) {
-      const res = await prisma.organization.findMany({
+      const orgs = await prisma.organization.findMany({
         where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
         include: {
           applicationNote: true,
@@ -500,14 +520,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           },
         },
       });
-
-      const orgs = JSON.parse(JSON.stringify(res)) as (Organization & {
-        applicationNote: ApplicationNote | null;
-        organizationApplicationReviews: OrganizationApplicationReviews[] | null;
-        applicationResponses: (ApplicationResponse & {
-          applicationQuestion: { question: string };
-        })[];
-      })[];
       return { props: { orgs } };
     }
     return {
