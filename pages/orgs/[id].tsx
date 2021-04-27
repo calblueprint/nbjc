@@ -18,6 +18,7 @@ type Props = {
     include: { organizationProjects: true };
   }>;
   errors?: string;
+  userId?: number;
 };
 
 const orientation = [
@@ -38,7 +39,11 @@ const ethnicity = [
 ];
 const ages = ['child', 'teen', 'adult', 'senior'];
 
-const OrgProfile: React.FunctionComponent<Props> = ({ orgProp, errors }) => {
+const OrgProfile: React.FunctionComponent<Props> = ({
+  orgProp,
+  userId,
+  errors,
+}) => {
   const [tabState, setTabState] = useState<0 | 1 | 2>(0);
   const [editState, setEditState] = useState<0 | 1>(0); // 0 == read, 1 == edit
   const [errorBanner, setErrorBanner] = useState('');
@@ -395,7 +400,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({ orgProp, errors }) => {
             <div className={styles.errorBanner}>{errorBanner}</div>
           ) : null}
           {/* Only render edit and save buttons if the user logged in is the owner of the org. */}
-          {org.userId === session?.user.id ? editAndSave() : null}
+          {userId && userId === session?.user.id ? editAndSave() : null}
           <div className={styles.titleColumns}>
             <div className={styles.leftColumn}>
               <h2 className={styles.Header}>{org && org.name}</h2>
@@ -506,7 +511,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       };
     }
     return {
-      props: { orgProp },
+      props: { orgProp, userId: orgProp.user?.id },
     };
   } catch (err) {
     return { props: { errors: err.message } };
