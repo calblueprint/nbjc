@@ -1,75 +1,144 @@
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
+import { useFormik, FieldArray, ArrayHelpers, FormikProps } from 'formik';
 import prisma from 'utils/prisma';
-import { Organization } from '@prisma/client';
-import { Button, Chip, LinearProgress } from '@material-ui/core';
+import { Organization, Prisma } from '@prisma/client';
+import { Button, Chip, TextField, LinearProgress } from '@material-ui/core';
 import Layout from 'components/Layout';
+import { EditForm } from 'interfaces/organization';
 import Project from 'components/organization/Project';
 import Tab from 'components/Tab';
 import computeDate from 'utils/computeDate';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import useSession from 'utils/useSession';
 import styles from '../../styles/Organization.module.css';
 
 type Props = {
-  org: Pick<
-    Organization,
-    | 'id'
-    | 'name'
-    | 'organizationType'
-    | 'workType'
-    | 'address'
-    | 'missionStatement'
-    | 'shortHistory'
-    | 'lgbtqDemographic'
-    | 'raceDemographic'
-    | 'ageDemographic'
-    | 'capacity'
-    | 'ein'
-    | 'foundingDate'
-    | 'is501c3'
-    | 'website'
-  >;
-  orgUser: {
-    id: number;
-  };
+  orgProp: Prisma.OrganizationGetPayload<{
+    include: { organizationProjects: true };
+  }>;
   errors?: string;
 };
 
-const projects = [
-  {
-    name: 'Project 1 Name',
-    description:
-      'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
-  },
-  {
-    name: 'Project 2 Name',
-    description:
-      'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
-  },
-  {
-    name: 'Annual Event 1 Name',
-    description:
-      'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
-  },
+const orientation = [
+  'lgbtqAll',
+  'sgl',
+  'transgender',
+  'asexualAromantic',
+  'other',
 ];
-const projectsList = projects.map((project) => {
-  return <Project name={project.name} description={project.description} />;
-});
+const ethnicity = [
+  'pocAll',
+  'black',
+  'asian',
+  'pacificIslander',
+  'latinx',
+  'nativeIndigeneous',
+  'other',
+];
+const ages = ['child', 'teen', 'adult', 'senior'];
 
-const OrgProfile: React.FunctionComponent<Props> = ({
-  org,
-  orgUser,
-  errors,
-}) => {
+const OrgProfile: React.FunctionComponent<Props> = ({ orgProp, errors }) => {
   const [tabState, setTabState] = useState<0 | 1 | 2>(0);
+  const [editState, setEditState] = useState<0 | 1>(0); // 0 == read, 1 == edit
+  const [errorBanner, setErrorBanner] = useState('');
+  const [org, setOrg] = useState(orgProp);
   const [session, sessionLoading] = useSession();
+
+  const cleanVals = (o: EditForm): EditForm => ({
+    name: (o && o.name) ?? '',
+    contactName: (o && o.contactName) ?? '',
+    contactEmail: (o && o.contactEmail) ?? '',
+    contactPhone: (o && o.contactPhone) ?? '',
+    organizationType: (o && o.organizationType) ?? null,
+    workType: (o && o.workType) ?? null,
+    address: (o && o.address) ?? '',
+    missionStatement: (o && o.missionStatement) ?? '',
+    shortHistory: (o && o.shortHistory) ?? '',
+    lgbtqDemographic: o ? o.lgbtqDemographic : [],
+    raceDemographic: o ? o.raceDemographic : [],
+    ageDemographic: o ? o.ageDemographic : [],
+    // capacity: (o && o.capacity) ?? null,
+    ein: (o && o.ein) ?? '',
+    // foundingDate: (o && o.foundingDate) ?? null,
+    is501c3: Boolean(o && o.is501c3),
+    website: (o && o.website) ?? '',
+    // organizationProjects: o ? o.organizationProjects : [],
+    organizationProjects:
+      o.organizationProjects?.map((proj) => ({
+        id: proj.id,
+        organizationId: org.id,
+        title: proj.title ?? '',
+        description: proj.description ?? '',
+      })) ?? [],
+  });
+
+  const handleSubmit = async (values: EditForm): Promise<void> => {
+    // left for testing
+    console.log('values in handlsubmit UNCLEANED', values);
+    console.log('values in handlsubmit CLEANVALS:', cleanVals(values));
+    try {
+      await fetch(`/api/org/${org.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...cleanVals(values) }),
+      })
+        .then((response) => response.json())
+        .then((data) => setOrg(data));
+      setEditState(0);
+    } catch (ex) {
+      setErrorBanner('Did not save.');
+    }
+  };
+
+  const formik = useFormik({
+    initialValues: cleanVals(org),
+    onSubmit: handleSubmit,
+  });
+
+  const projectsList = formik.values.organizationProjects?.map((project) => {
+    return (
+      <Project
+        key={project.id}
+        name={project.title}
+        description={project.description ?? ''}
+      />
+    );
+  });
+
+  const projectsListEditable = formik.values.organizationProjects?.map(
+    (project) => {
+      return (
+        <div>
+          <TextField
+            id={'title'.concat(`${project.id}`)}
+            className={styles.projTitle}
+            value={project.title}
+            name={'title'.concat(`${project.id}`)}
+            variant="outlined"
+            onChange={formik.handleChange}
+          />
+          <TextField
+            id={'description'.concat(`${project.id}`)}
+            className={styles.projDesc}
+            value={project.description ?? ''}
+            name={'description'.concat(`${project.id}`)}
+            variant="outlined"
+            multiline
+            onChange={formik.handleChange}
+          />
+        </div>
+      );
+    }
+  );
+
   const demographics = (category: string, groups: string[]): JSX.Element => {
     return (
       <div className={styles.demographic}>
         {category}
         <div className={styles.demographicTags}>
-          {groups.length !== 0 ? (
-            groups.map((group) => (
+          {groups?.length !== 0 ? (
+            groups?.map((group) => (
               <Chip key={group} label={group} variant="outlined" />
             ))
           ) : (
@@ -80,6 +149,228 @@ const OrgProfile: React.FunctionComponent<Props> = ({
     );
   };
 
+  const demEditOrien = (category: string, groups: string[]): JSX.Element => {
+    return (
+      <div className={styles.demographic}>
+        {category}
+        <div className={styles.demographicTags}>
+          <Autocomplete
+            multiple
+            id="lgbtqDemographic"
+            options={orientation}
+            getOptionLabel={(option) => option}
+            filterSelectedOptions
+            value={formik.values.lgbtqDemographic}
+            onChange={(event, newValue) => {
+              formik.setFieldValue('lgbtqDemographic', newValue);
+            }}
+            // onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                error={Boolean(
+                  formik.touched.lgbtqDemographic &&
+                    formik.errors.lgbtqDemographic
+                )}
+                helperText={
+                  formik.touched.lgbtqDemographic
+                    ? formik.errors.lgbtqDemographic
+                    : undefined
+                }
+              />
+            )}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const demEditBack = (category: string, groups: string[]): JSX.Element => {
+    return (
+      <div className={styles.demographic}>
+        {category}
+        <div className={styles.demographicTags}>
+          <Autocomplete
+            multiple
+            id="raceDemographic"
+            options={ethnicity}
+            getOptionLabel={(option) => option}
+            filterSelectedOptions
+            value={formik.values.raceDemographic}
+            onChange={(event, newValue) => {
+              formik.setFieldValue('raceDemographic', newValue);
+            }}
+            // onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                error={Boolean(
+                  formik.touched.raceDemographic &&
+                    formik.errors.raceDemographic
+                )}
+                helperText={
+                  formik.touched.raceDemographic
+                    ? formik.errors.raceDemographic
+                    : undefined
+                }
+              />
+            )}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const demEditAge = (category: string, groups: string[]): JSX.Element => {
+    return (
+      <div className={styles.demographic}>
+        {category}
+        <div className={styles.demographicTags}>
+          <Autocomplete
+            multiple
+            id="ageDemographic"
+            options={ages}
+            getOptionLabel={(option) => option}
+            filterSelectedOptions
+            value={formik.values.ageDemographic}
+            onChange={(event, newValue) => {
+              formik.setFieldValue('ageDemographic', newValue);
+            }}
+            // onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                error={Boolean(
+                  formik.touched.ageDemographic && formik.errors.ageDemographic
+                )}
+                helperText={
+                  formik.touched.ageDemographic
+                    ? formik.errors.ageDemographic
+                    : undefined
+                }
+              />
+            )}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const editableLeft = (): JSX.Element => {
+    return (
+      <div>
+        {editState === 0 ? (
+          // not editable, just viewing
+          <div className={styles.rightContent}>
+            <h3 className={styles.audienceHeader}>Audience Demographics</h3>
+            <div className={styles.demographicSection}>
+              {demographics('Orientation', org.lgbtqDemographic)}
+              {demographics('Background', org.raceDemographic)}
+              {demographics('Age Range', org.ageDemographic)}
+            </div>
+            <h3 className={styles.audienceHeader}>Our Mission</h3>
+            {org.missionStatement && (
+              <p className={styles.infoContent}>{org.missionStatement}</p>
+            )}
+            <h3 className={styles.audienceHeader}>Our History</h3>
+            {org.shortHistory && (
+              <p className={styles.infoContent}>{org.shortHistory}</p>
+            )}
+            <div className={styles.projects}>
+              <h3 className={styles.audienceHeader}>Our Projects</h3>
+              {projectsList}
+            </div>
+            Projects should be here. If there arent any, then the database
+            doesnt have any.
+          </div>
+        ) : (
+          // editable, map contents to TextFields
+          <div className={styles.rightContent}>
+            <h3 className={styles.audienceHeader}>Audience Demographics</h3>
+            <div className={styles.demographicSection}>
+              {demEditOrien('Orientation', org.lgbtqDemographic)}
+              {demEditBack('Background', org.raceDemographic)}
+              {demEditAge('Age Range', org.ageDemographic)}
+            </div>
+            <h3 className={styles.audienceHeader}>Our Mission</h3>
+            <TextField
+              // className={styles.projDesc}
+              id="missionStatement"
+              value={formik.values.missionStatement}
+              name="missionStatement"
+              type="text"
+              variant="outlined"
+              onChange={formik.handleChange}
+              multiline
+              rows={7}
+            />
+            <h3>Our History</h3>
+            <TextField
+              // className={styles.projDesc}
+              id="shortHistory"
+              value={formik.values.shortHistory}
+              name="shortHistory"
+              type="text"
+              variant="outlined"
+              onChange={formik.handleChange}
+              multiline
+              rows={7}
+            />
+            <div className={styles.projects}>
+              {projectsListEditable}
+              {/* <FieldArray
+                name="organizationProjects"
+                render={projectsListEditable(formik)}
+              />
+              ; */}
+            </div>
+            Projects should be here.
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const editableRight = (): JSX.Element => {
+    return <div>hey! Events here.</div>;
+  };
+
+  const editAndSave = (): JSX.Element => (
+    <div className={styles.editButton}>
+      {editState === 0 ? (
+        // you are viewing, display EDIT button
+        <Button
+          variant="contained"
+          className={styles.editButton}
+          disableElevation
+          onClick={() => {
+            setEditState(1);
+          }}
+        >
+          Edit
+        </Button>
+      ) : (
+        // you are editing, display SAVE button
+        <Button
+          variant="contained"
+          className={styles.saveButton}
+          disableElevation
+          onClick={() => {
+            handleSubmit(formik.values);
+          }}
+        >
+          Save
+        </Button>
+      )}
+    </div>
+  );
+
   if (errors) {
     return (
       <Layout title="Error | NBJC">
@@ -89,31 +380,25 @@ const OrgProfile: React.FunctionComponent<Props> = ({
       </Layout>
     );
   }
-
-  if (!sessionLoading)
-    return (
-      <Layout title={`${org.name} Profile`}>
-        <div className={styles.orgMargins}>
-          <div className={styles.orgImages}>
-            <img
-              src="https://1mktxg24rspz19foqjixu9rl-wpengine.netdna-ssl.com/wp-content/uploads/2020/01/eia-berkeley-Cover.png"
-              alt="Organization"
-            />
-          </div>
-          {orgUser.id === session?.user.id ? (
-            <div className={styles.editButton}>
-              <Button
-                variant="contained"
-                className={styles.editButtonStyles}
-                disableElevation
-              >
-                Edit
-              </Button>
-            </div>
+  if (sessionLoading && !org) return <LinearProgress />;
+  return (
+    <Layout title={`${org && org.name} Profile`}>
+      <div className={styles.orgMargins}>
+        <div className={styles.orgImages}>
+          <img
+            src="https://1mktxg24rspz19foqjixu9rl-wpengine.netdna-ssl.com/wp-content/uploads/2020/01/eia-berkeley-Cover.png"
+            alt="Organization"
+          />
+        </div>
+        <form onSubmit={formik.handleSubmit}>
+          {errorBanner ? (
+            <div className={styles.errorBanner}>{errorBanner}</div>
           ) : null}
+          {/* Only render edit and save buttons if the user logged in is the owner of the org. */}
+          {org.userId === session?.user.id ? editAndSave() : null}
           <div className={styles.titleColumns}>
             <div className={styles.leftColumn}>
-              <h2 className={styles.Header}>{org.name}</h2>
+              <h2 className={styles.Header}>{org && org.name}</h2>
               <h3 className={styles.subHeader}>
                 {org.workType}
                 {org.workType && org.organizationType ? ' • ' : null}
@@ -164,33 +449,16 @@ const OrgProfile: React.FunctionComponent<Props> = ({
                 />
               </div>
               {tabState === 0 ? (
-                <div className={styles.rightContent}>
-                  <h3 className={styles.audienceHeader}>
-                    Audience Demographics
-                  </h3>
-                  <div className={styles.demographicSection}>
-                    {demographics('Orientation', org.lgbtqDemographic)}
-                    {demographics('Background', org.raceDemographic)}
-                    {demographics('Age Range', org.ageDemographic)}
-                  </div>
-                  <h3 className={styles.audienceHeader}>Our Mission</h3>
-                  {org.missionStatement && (
-                    <p className={styles.infoContent}>{org.missionStatement}</p>
-                  )}
-                  <h3 className={styles.audienceHeader}>Our History</h3>
-                  {org.shortHistory && (
-                    <p className={styles.infoContent}>{org.shortHistory}</p>
-                  )}
-                </div>
+                <div>{editableLeft()}</div>
               ) : (
-                <div className={styles.projects}>{projectsList}</div>
+                <div>{editableRight()}</div>
               )}
             </div>
           </div>
-        </div>
-      </Layout>
-    );
-  return <LinearProgress />;
+        </form>
+      </div>
+    </Layout>
+  );
 };
 
 export default OrgProfile;
@@ -203,7 +471,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       return { notFound: true };
     }
 
-    const org = await prisma.organization.findUnique({
+    const orgProp = await prisma.organization.findUnique({
       where: { id: Number(id) },
       select: {
         active: true,
@@ -227,16 +495,18 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
             id: true,
           },
         },
+        organizationProjects: true,
+        organizationEvents: true,
       },
     });
 
-    if (!org || !org.active) {
+    if (!orgProp || !orgProp.active) {
       return {
         notFound: true,
       };
     }
     return {
-      props: { org, orgUser: org.user },
+      props: { orgProp },
     };
   } catch (err) {
     return { props: { errors: err.message } };

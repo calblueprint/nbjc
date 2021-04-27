@@ -1,6 +1,6 @@
 import prisma from 'utils/prisma';
-import { Organization } from '@prisma/client';
-import Joi, { ValidationError } from 'joi';
+import { Organization, OrganizationProject } from '@prisma/client';
+import Joi, { ValidationError, x } from 'joi';
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import OrganizationSchema from 'interfaces/organization';
@@ -33,11 +33,26 @@ export const updateOrganization = async (
     throw error;
   }
 
-  const data = value as Organization;
+  const { organizationProjects, ...data } = value;
+  const dataTyped = data as Organization;
+  const orgProjects = organizationProjects as OrganizationProject[];
 
   const updatedOrg = await prisma.organization.update({
     where: { id: Number(id) },
-    data,
+    data: {
+      ...dataTyped,
+      organizationProjects: {
+        updateMany: orgProjects.map(({ id: projId, title, description }) => ({
+          where: {
+            id: projId,
+          },
+          data: {
+            title,
+            description,
+          },
+        })),
+      },
+    },
   });
   return updatedOrg;
 };
@@ -62,7 +77,7 @@ export default async (
   const orgId = req.query.id as string;
 
   if (Joi.number().validate(orgId).error) {
-    return CreateError(400, `ID ${orgId} is not a number`, res);
+    return CreateError(400, `ID ${orgId} is not a number!!`, res);
   }
 
   if (req.method === 'GET') {

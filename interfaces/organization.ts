@@ -19,6 +19,29 @@ export type PublicOrganization = Prisma.OrganizationGetPayload<{
     long: true;
   };
 }>;
+// export type orgProj = { id: number; title: string; description: string };
+export type EditForm = Prisma.OrganizationGetPayload<{
+  select: {
+    name: true;
+    contactName: true;
+    contactEmail: true;
+    contactPhone: true;
+    organizationType: true;
+    workType: true;
+    address: true;
+    missionStatement: true;
+    shortHistory: true;
+    lgbtqDemographic: true;
+    raceDemographic: true;
+    ageDemographic: true;
+    // capacity: true;
+    ein: true;
+    // foundingDate: true;
+    is501c3: true;
+    website: true;
+    organizationProjects: true;
+  };
+}>;
 
 const schema = Joi.object({
   name: Joi.string()
@@ -89,6 +112,7 @@ const schema = Joi.object({
     }),
   foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
+  organizationProjects: Joi.array().unique(),
 }).when('$strict', { is: true, then: Joi.object().and('lat', 'long') });
 
 export default schema;
