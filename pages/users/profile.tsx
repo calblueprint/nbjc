@@ -13,14 +13,18 @@ import useSession from 'utils/useSession';
 import ProgressStepper from 'components/user/ProgressStepper/index';
 import { GetServerSideProps } from 'next';
 import getSession from 'utils/getSession';
-import { ApplicationStatus } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import styles from '../../styles/users/Profile.module.css';
 
+const orgArgs = Prisma.validator<Prisma.OrganizationArgs>()({
+  select: {
+    id: true,
+    applicationStatus: true,
+  },
+});
+
 type UserProfileProps = {
-  org: {
-    id: number;
-    applicationStatus: ApplicationStatus;
-  } | null;
+  org: Prisma.OrganizationGetPayload<typeof orgArgs> | null;
 };
 
 const UserProfile: React.FC<UserProfileProps> = ({ org }) => {
@@ -169,14 +173,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
     if (session) {
-      const org = await prisma.organization.findOne({
+      const org = await prisma.organization.findUnique({
         where: {
           userId: session.user.id,
         },
-        select: {
-          id: true,
-          applicationStatus: true,
-        },
+        select: orgArgs.select,
       });
       return {
         props: { org },

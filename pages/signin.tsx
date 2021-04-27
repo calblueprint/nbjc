@@ -1,4 +1,6 @@
-import { signIn, useSession } from 'next-auth/client';
+import { useState } from 'react';
+import { signIn } from 'next-auth/client';
+import useSession from 'utils/useSession';
 import Link from 'next/link';
 import {
   TextField,
@@ -11,6 +13,7 @@ import { useFormik, FormikHandlers, FormikHelpers, FormikErrors } from 'formik';
 import { signinSchema } from 'interfaces/auth';
 import Layout from 'components/Layout';
 import { useRouter } from 'next/router';
+import signInRedirect from 'utils/signInRedirect';
 import styles from '../styles/Auth.module.css';
 
 type FormValues = {
@@ -23,7 +26,7 @@ const UserSignIn: React.FC = () => {
   // Get URL params for error callbacks.
   const router = useRouter();
   const [session, sessionLoading] = useSession();
-  const errorBanner = router.query.error;
+  const [errorBanner, setErrorBanner] = useState('');
 
   const handleSubmit = async (
     values: FormValues,
@@ -31,13 +34,10 @@ const UserSignIn: React.FC = () => {
   ): Promise<void> => {
     try {
       // Sign in with credentials
-
-      // NOTE: If the below method fails because of 'Invalid password' or 'Unknown email', the error will be passed
-      // into the URL params.
-      signIn('credentials', {
+      await signIn('credentials', {
         email: values.email,
         password: values.password,
-        callbackUrl: '/',
+        redirect: false,
       });
     } catch (err) {
       console.log(err);
@@ -76,6 +76,7 @@ const UserSignIn: React.FC = () => {
       </div>
       <TextField
         className={styles.textField}
+        autoFocus={varName === 'email'}
         size="small"
         error={Boolean(error)}
         name={varName}
@@ -102,7 +103,7 @@ const UserSignIn: React.FC = () => {
     onSubmit: handleSubmit,
   });
 
-  if (!sessionLoading && session) router.push('/');
+  if (!sessionLoading && session) signInRedirect(router, session);
   if (!sessionLoading && !session)
     return (
       <Layout title="Sign In">

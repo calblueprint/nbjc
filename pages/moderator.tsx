@@ -13,6 +13,7 @@ import {
   Organization,
   ApplicationNote,
   ApplicationResponse,
+  Prisma,
 } from '@prisma/client';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
@@ -34,13 +35,21 @@ import useSession from 'utils/useSession';
 import getSession from 'utils/getSession';
 import styles from '../styles/Moderator.module.css';
 
+const orgArgs = Prisma.validator<Prisma.OrganizationArgs>()({
+  include: {
+    applicationNote: true,
+    applicationResponses: {
+      include: {
+        applicationQuestion: {
+          select: { question: true },
+        },
+      },
+    },
+  },
+});
+
 type Props = {
-  orgs: (Organization & {
-    applicationNote: ApplicationNote | null;
-    applicationResponses: (ApplicationResponse & {
-      applicationQuestion: { question: string };
-    })[];
-  })[];
+  orgs: Prisma.OrganizationGetPayload<typeof orgArgs>[];
 };
 
 const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
@@ -380,26 +389,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
     if (session && session.user.role === 'moderator') {
-      const res = await prisma.organization.findMany({
+      const orgs = await prisma.organization.findMany({
         where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
-        include: {
-          applicationNote: true,
-          applicationResponses: {
-            include: {
-              applicationQuestion: {
-                select: { question: true },
-              },
-            },
-          },
-        },
+        include: orgArgs.include,
       });
 
-      const orgs = JSON.parse(JSON.stringify(res)) as (Organization & {
-        applicationNote: ApplicationNote | null;
-        applicationResponses: (ApplicationResponse & {
-          applicationQuestion: { question: string };
-        })[];
-      })[];
       return { props: { orgs } };
     }
     return {

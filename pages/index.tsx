@@ -1,151 +1,156 @@
-import { GetServerSideProps } from 'next';
-import prisma from 'utils/prisma';
-import { useRouter } from 'next/router';
-import dynamic from 'next/dynamic';
-import { PublicOrganization } from 'interfaces/organization';
-import {
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  InputAdornment,
-  Card,
-  CardContent,
-  Typography,
-  CardActionArea,
-} from '@material-ui/core';
+import { TextField, InputAdornment, Card, Button } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { useFormik } from 'formik';
 import Layout from 'components/Layout';
-import styles from '../styles/Home.module.css';
+import { homepageFields } from 'interfaces';
+import Router from 'next/router';
+import {
+  AgeDemographicLabels,
+  RaceDemographicLabels,
+  LgbtqDemographicLabels,
+} from 'utils/typesLinker';
+import styles from 'styles/Home.module.css';
+import {
+  LgbtqDemographic,
+  RaceDemographic,
+  AgeDemographic,
+} from '@prisma/client';
 
-const Map = dynamic(() => import('../components/Map'), {
-  ssr: false,
-});
+const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
 
-type HomeProps = {
-  orgs: PublicOrganization[];
+const initialValues: homepageFields = {
+  ages: [],
+  orientation: [],
+  ethnicity: [],
+  orgName: '',
 };
 
-const Home: React.FC<HomeProps> = ({ orgs }) => {
-  const router = useRouter();
+/* TODO: add onClick={goToMap} to submit button */
 
-  // This is to verify whether or not the current user has a proper session configured to see the page.
-  // Will be implemented in the next PR.
-  // const [session, loading] = useSession();
-
+const Home: React.FC = () => {
+  const formik = useFormik({
+    initialValues,
+    onSubmit: async (values): Promise<void> => {
+      Router.push({
+        pathname: 'results',
+        query: {
+          orgName: values.orgName,
+          ages: values.ages,
+          ethnicity: values.ethnicity,
+          orientation: values.orientation,
+        },
+      });
+    },
+  });
   return (
-    <Layout>
-      <div className={styles.pageFlex}>
-        <TextField
-          id="outlined-size-small"
-          placeholder="Explore Organizations"
-          fullWidth
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-          variant="outlined"
-        />
-
-        <div className={styles.pageContent}>
-          <div className={styles.leftCol}>
-            <div className={styles.filters}>
-              <FormControl className={styles.filter} variant="outlined">
-                <InputLabel>Keyword</InputLabel>
-                <Select label="Keyword">
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={1}>One</MenuItem>
-                  <MenuItem value={2}>Two</MenuItem>
-                  <MenuItem value={3}>Three</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl className={styles.filter} variant="outlined">
-                <InputLabel>Keyword</InputLabel>
-                <Select label="Keyword">
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={1}>One</MenuItem>
-                  <MenuItem value={2}>Two</MenuItem>
-                  <MenuItem value={3}>Three</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl className={styles.filter} variant="outlined">
-                <InputLabel>More</InputLabel>
-                <Select label="More">
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={1}>One</MenuItem>
-                  <MenuItem value={2}>Two</MenuItem>
-                  <MenuItem value={3}>Three</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-
-            <div className={styles.cards}>
-              {orgs.length !== 0 ? (
-                orgs.map((org) => (
-                  <Card className={styles.card} key={org.id}>
-                    <CardActionArea
-                      onClick={() => router.push(`/orgs/${org.id}`)}
-                    >
-                      <CardContent>
-                        <Typography variant="h5">{org.name}</Typography>
-                        <Typography variant="body2">
-                          {org.organizationType}
-                          {org.organizationType && org.workType ? ' • ' : null}
-                          {org.workType}
-                        </Typography>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
-                ))
-              ) : (
-                <Typography>No Organizations</Typography>
-              )}
-            </div>
-          </div>
+    <Layout title="Home">
+      <form onSubmit={formik.handleSubmit}>
+        <div className={styles.root}>
+          <div className={styles.leftCol}>{slogan}</div>
           <div className={styles.rightCol}>
-            <Map orgs={orgs} width="100%" height="100%" />
+            <Card className={styles.searchCard}>
+              <div className={styles.big}>Explore Organizations</div>
+              <div className={styles.auto}>
+                <Autocomplete
+                  multiple
+                  id="tags-outlined"
+                  options={
+                    Object.keys(LgbtqDemographicLabels) as LgbtqDemographic[]
+                  }
+                  getOptionLabel={(option: LgbtqDemographic) =>
+                    LgbtqDemographicLabels[option]
+                  }
+                  filterSelectedOptions
+                  onChange={(event, newValue) => {
+                    formik.setFieldValue('orientation', newValue);
+                  }}
+                  className={styles.autoField}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      placeholder="By Identities"
+                    />
+                  )}
+                />
+                <Autocomplete
+                  multiple
+                  id="tags-outlined"
+                  options={
+                    Object.keys(RaceDemographicLabels) as RaceDemographic[]
+                  }
+                  getOptionLabel={(option: RaceDemographic) =>
+                    RaceDemographicLabels[option]
+                  }
+                  filterSelectedOptions
+                  onChange={(event, newValue) => {
+                    formik.setFieldValue('ethnicity', newValue);
+                  }}
+                  className={styles.autoField}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      placeholder="By Background"
+                    />
+                  )}
+                />
+                <Autocomplete
+                  multiple
+                  id="tags-outlined"
+                  options={
+                    Object.keys(AgeDemographicLabels) as AgeDemographic[]
+                  }
+                  getOptionLabel={(option: AgeDemographic) =>
+                    AgeDemographicLabels[option]
+                  }
+                  filterSelectedOptions
+                  onChange={(event, newValue) => {
+                    formik.setFieldValue('ages', newValue);
+                  }}
+                  className={styles.autoField}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      placeholder="By Audiences"
+                    />
+                  )}
+                />
+              </div>
+              <div className={styles.row}>
+                <TextField
+                  id="outlined-size-small"
+                  placeholder="By Name"
+                  fullWidth
+                  className={styles.textField}
+                  onChange={formik.handleChange}
+                  name="orgName"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                  variant="outlined"
+                />
+                <Button
+                  variant="contained"
+                  className={styles.button}
+                  color="primary"
+                  type="submit"
+                >
+                  Search
+                </Button>
+              </div>
+            </Card>
           </div>
         </div>
-      </div>
+      </form>
     </Layout>
   );
 };
 
 export default Home;
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  try {
-    const resp = await prisma.organization.findMany({
-      where: { active: true },
-      orderBy: {
-        name: 'asc',
-      },
-      select: {
-        id: true,
-        name: true,
-        organizationType: true,
-        workType: true,
-        lat: true,
-        long: true,
-      },
-    });
-    const orgs = JSON.parse(JSON.stringify(resp)) as PublicOrganization[];
-    return {
-      props: {
-        orgs,
-      },
-    };
-  } catch (err) {
-    return { props: { errors: err.message } };
-  }
-};
