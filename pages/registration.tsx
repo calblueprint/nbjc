@@ -136,7 +136,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     ageDemographic: org ? org.ageDemographic : [],
     // capacity: undefined,
     ein: (org && org.ein) ?? '',
-    // foundingDate: undefined,
+    foundingDate: undefined,
     is501c3: Boolean(org && org.is501c3),
     website: (org && org.website) ?? '',
     proj1: '',
@@ -252,6 +252,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                   className={styles.autoField}
                   color="primary"
                   type="submit"
+                  onClick={() => handleSubmit(false)(formik.values)}
                 >
                   Submit
                 </Button>

@@ -6,10 +6,10 @@
   },
   "private": true,
   "cacheDirectories": [
-    ".next/cache",
-    "node_modules"
+    ".next/cache"
   ],
   "scripts": {
+    "debug": "NODE_OPTIONS='--inspect' next dev",
     "dev": "next dev",
     "build": "next build",
     "build:scripts": "tsc --project tsconfig.scripts.json",
@@ -46,11 +46,15 @@
     "schema": "./schema.prisma"
   },
   "dependencies": {
+    "@date-io/date-fns": "1.x",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
+    "@material-ui/pickers": "^3.3.10",
     "@prisma/client": "^2.18.0",
+    "@types/react-text-mask": "^5.4.7",
     "clsx": "^1.1.1",
+    "date-fns": "^2.20.1",
     "db-migrate": "^0.11.11",
     "db-migrate-base": "^2.3.0",
     "db-migrate-pg": "^1.2.2",
@@ -58,17 +62,19 @@
     "formik": "^2.2.1",
     "joi": "^17.2.1",
     "next": "10.0.0",
-    "next-auth": "^3.1.0",
+    "next-auth": "^3.14.7",
     "node-fetch": "^2.6.1",
     "ora": "^5.1.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "react-map-gl": "^5.2.9"
+    "react-map-gl": "^5.2.9",
+    "react-text-mask": "^5.4.3",
+    "superjson": "^1.7.4"
   },
   "devDependencies": {
     "@types/db-migrate-base": "^0.0.8",
     "@types/faker": "^5.1.5",
-    "@types/next-auth": "^3.1.11",
+    "@types/next-auth": "^3.13.0",
     "@types/node": "^14.11.1",
     "@types/node-fetch": "^2.5.7",
     "@types/react": "^16.9.49",
@@ -76,6 +82,7 @@
     "@types/react-map-gl": "^5.2.7",
     "@typescript-eslint/eslint-plugin": "^4.1.1",
     "@typescript-eslint/parser": "^4.1.1",
+    "babel-plugin-superjson-next": "^0.2.3",
     "commitizen": "^4.2.1",
     "cz-conventional-changelog": "3.3.0",
     "db-migrate-plugin-typescript": "ethanlee16/plugin-typescript",

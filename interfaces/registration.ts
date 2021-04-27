@@ -49,7 +49,7 @@ export type Form = Pick<
   proj2: string;
   proj3: string;
   // capacity: number | undefined;
-  // foundingDate: Date | undefined;
+  foundingDate: Date | undefined;
 };
 
 const schema = Joi.object({
@@ -156,7 +156,7 @@ const schema = Joi.object({
     .empty('')
     .pattern(/^[0-9]\d?-?\d{7}$/)
     .messages({ 'string.pattern.base': 'Not a valid EIN' }),
-  // foundingDate: Joi.date(),
+  foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
   proj1: Joi.string()
     .empty('')

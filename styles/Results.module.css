@@ -123,6 +123,7 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  align-items: baseline;
 }
 
 .filter {
@@ -151,12 +152,12 @@
 .leftCol {
   display: flex;
   flex-direction: column;
-  width: 33%;
+  width: 35%;
 }
 
 .rightCol {
   display: flex;
-  width: 66%;
+  width: 65%;
   border-width: 1px;
   border-style: solid;
   border-radius: 5px;
@@ -173,4 +174,72 @@
   margin: 8px;
   flex-basis: 45%;
   text-align: left;
+}
+
+.filter {
+  min-width: 130px;
+  margin: 8px;
+}
+
+.filterDropDown {
+  border-radius: 35px;
+  width: 120px;
+  height: 25px;
+  margin-top: 13px;
+}
+
+.filterDropDownActive {
+  border-radius: 35px;
+  width: 120px;
+  height: 25px;
+  margin-top: 13px;
+  background-color: #f8f4ff;
+  border-color: #d23245;
+}
+
+.filterOption {
+  font-style: normal;
+  font-size: 13px;
+  color: #908d93;
+  border-radius: 18px;
+  border: 1px solid #908d93;
+  margin: 10px;
+  justify-content: center;
+  text-transform: none;
+  height: 25px;
+}
+
+.filterLabel {
+  font-style: normal;
+  font-size: 13px;
+}
+
+.selectedLabel {
+  font-style: normal;
+  font-size: 13px;
+  margin-top: 4px;
+  color: #423e45;
+}
+
+.selectedFilter {
+  font-style: normal;
+  font-size: 13px;
+  color: #423e45;
+  border-radius: 18px;
+  border: 1px solid #423e45;
+  margin: 10px;
+  justify-content: center;
+  text-transform: none;
+  background: #f8f4ff;
+}
+
+.applyButton {
+  font-style: normal;
+  font-size: 13px;
+  border-radius: 18px;
+  border: 1px solid #908d93;
+  margin: 10px;
+  justify-content: bottom;
+  text-transform: none;
+  height: 25px;
 }
