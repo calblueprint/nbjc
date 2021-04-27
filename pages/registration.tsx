@@ -227,7 +227,6 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
           </Dialog>
         ) : null}
         <div className={styles.header}>
-          <Typography variant="h4">Registration Form</Typography>
           <h1 className={styles.header}>Registration Form</h1>
           {status === 'rejected' ? (
             <Button
