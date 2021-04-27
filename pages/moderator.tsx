@@ -14,6 +14,7 @@ import {
   Organization,
   ApplicationNote,
   ApplicationResponse,
+  OrganizationApplicationReviews,
 } from '@prisma/client';
 import Toast from 'components/Toast';
 import {
@@ -29,6 +30,8 @@ import {
   IconButton,
   LinearProgress,
   CircularProgress,
+  Typography,
+  ClickAwayListener,
 } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
@@ -37,6 +40,7 @@ import styles from '../styles/Moderator.module.css';
 
 type Props = {
   orgs: (Organization & {
+    organizationApplicationReviews: OrganizationApplicationReviews[] | null;
     applicationNote: ApplicationNote | null;
     applicationResponses: (ApplicationResponse & {
       applicationQuestion: { question: string };
@@ -99,12 +103,20 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     setOpenLeft(false);
   };
 
-  const [openRight, setOpenRight] = useState<boolean>(false);
+  const [openNote, setOpenNote] = useState<boolean>(false);
+  const [openReview, setOpenReview] = useState<boolean>(false);
 
-  const handleDrawerOpenRight = (note: ApplicationNote | null): void => {
-    setText(note && note.note ? note.note : '');
-    setLastText(note && note.note ? note.note : '');
-    setOpenRight(true);
+  const handleDrawerOpenRight = (
+    isNote: boolean,
+    note?: ApplicationNote | null
+  ): void => {
+    if (isNote) {
+      setText(note && note.note ? note.note : '');
+      setLastText(note && note.note ? note.note : '');
+      setOpenNote(true);
+    } else {
+      setOpenReview(true);
+    }
   };
 
   const handleDrawerCloseRight = async (): Promise<void> => {
@@ -120,7 +132,8 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     router.replace(router.asPath);
     setText('');
     setLastText('');
-    setOpenRight(false);
+    setOpenNote(false);
+    setOpenReview(false);
   };
 
   const clickCard = (newIndex: number): void => {
@@ -166,7 +179,9 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             method: 'POST',
           });
           if (res.ok) {
-            setSuccessBanner('Successfully rejected.');
+            setSuccessBanner(
+              `${orgs[index].name} has been successfully rejected.`
+            );
             // Refresh data without full page reload
             router.replace(router.asPath);
           } else {
@@ -174,6 +189,21 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           }
         } catch (err) {
           setErrorBanner('Failed to process rejection');
+        }
+
+        // Add to rejection history
+        try {
+          const res = await fetch('/api/app/question/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            // body: JSON.stringify({
+            //   review,
+            // }),
+          });
+        } catch (err) {
+          setErrorBanner('Failed to add rejection history');
         }
       }
     } else {
@@ -262,6 +292,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           <Button
             variant="outlined"
             color="primary"
+            onClick={() => handleDrawerOpenRight(false)}
             className={styles.buttonSpace}
           >
             Rejection history
@@ -269,18 +300,21 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => handleDrawerOpenRight(orgs[index].applicationNote)}
+            onClick={() =>
+              handleDrawerOpenRight(true, orgs[index].applicationNote)
+            }
             className={styles.buttonSpace}
           >
             Notepad
           </Button>
         </div>
       </div>
+      {/* <ClickAwayListener onClickAway={handleDrawerCloseRight}> */}
       <Drawer
         className={styles.drawer}
         variant="persistent"
         anchor="right"
-        open={openRight}
+        open={openNote || openReview}
         classes={{
           paper: styles.drawerPaperRight,
         }}
@@ -305,17 +339,16 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           />
         </div>
       </Drawer>
+      {/* </ClickAwayListener> */}
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
       <div className={styles.content} onClick={handleDrawerCloseRight}>
+        {/* </div> onClick={handleDrawerCloseRight}> */}
         <OrgDetail org={app} />
       </div>
       <div className={styles.footer}>
-        {/* TODO: Replace with toasts */}
-        {errorBanner ? (
-          <div className={styles.banner}>{errorBanner}</div>
-        ) : null}
+        {errorBanner ? <Toast showDismissButton>{errorBanner}</Toast> : null}
         {successBanner ? (
-          <div className={styles.banner}>{successBanner}</div>
+          <Toast showDismissButton>{successBanner}</Toast>
         ) : null}
         <div className={`${styles.submitButton} ${styles.buttonSpace}`}>
           <Button
@@ -347,9 +380,13 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     </div>
   );
 
-  if (!sessionLoading && (!session || session.user.role !== 'moderator'))
-    router.push('/');
-  if (!sessionLoading && session && session.user.role === 'moderator')
+  // Is it ok to comment this out?
+  // if (!session || session.user.role === 'organization') router.push('/');
+  if (
+    !sessionLoading &&
+    session &&
+    (session.user.role === 'moderator' || session.user.role === 'admin')
+  )
     return (
       <Layout title="Moderator Dashboard">
         {
@@ -422,29 +459,10 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             }}
           >
             <div className={styles.tabs}>
-              <Tabs value={selected} onChange={handleChange}>
-                <Tab label="Orgs" />
-                <Tab label="Events" />
-              </Tabs>
+              <Typography className={styles.appTitle}>Applications</Typography>
               <IconButton onClick={handleDrawerCloseLeft}>
                 <ChevronLeftIcon />
               </IconButton>
-            </div>
-            <div className={styles.textField}>
-              <TextField
-                fullWidth
-                id="search"
-                type="search"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                variant="outlined"
-                size="small"
-              />
             </div>
             {tab()}
           </Drawer>
@@ -464,11 +482,15 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
-    if (session && session.user.role === 'moderator') {
+    if (
+      session &&
+      (session.user.role === 'moderator' || session.user.role === 'admin')
+    ) {
       const res = await prisma.organization.findMany({
         where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
         include: {
           applicationNote: true,
+          organizationApplicationReviews: true,
           applicationResponses: {
             include: {
               applicationQuestion: {
@@ -481,6 +503,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
       const orgs = JSON.parse(JSON.stringify(res)) as (Organization & {
         applicationNote: ApplicationNote | null;
+        organizationApplicationReviews: OrganizationApplicationReviews[] | null;
         applicationResponses: (ApplicationResponse & {
           applicationQuestion: { question: string };
         })[];

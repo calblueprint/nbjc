@@ -10,6 +10,7 @@ import {
   User,
   UserRole,
   WorkType,
+  // OrganizationApplicationReviews,
 } from '@prisma/client';
 import Faker from 'faker';
 import Ora from 'ora';
@@ -36,6 +37,17 @@ const SAMPLE_QUESTIONS = [
     required: false,
   },
 ];
+
+// const SAMPLE_REVIEWS = [
+//   {
+//     reason: "Why",
+//     organizationId: 1,
+//   },
+//   {
+//     reason: "Where",
+//     organizationId: 2
+//   }
+// ]
 
 if (
   Object.values(NUMBER_ORGS).reduce((acc, curr) => acc + curr) > NUMBER_USERS
@@ -110,6 +122,14 @@ export default async function seedDatabase(): Promise<void> {
         },
       },
     });
+
+    // await prisma.organizationApplicationReviews.deleteMany({
+    //   where: {
+    //     reason: {
+    //       in: SAMPLE_REVIEWS.map((r) => r.reason),
+    //     },
+    //   },
+    // });
 
     clearAllMessage.text = 'Cleaned up previous seeded information';
     clearAllMessage.succeed();
@@ -196,6 +216,13 @@ export default async function seedDatabase(): Promise<void> {
                   ageDemographic: Faker.random.arrayElements<AgeDemographic>(
                     Object.values(AgeDemographic)
                   ),
+                  // organizationApplicationReviews: new Array(
+                  //   Faker.random.number(3)
+                  // )
+                  //   .fill(null)
+                  //   .map((i) => ({
+                  //     reason: Faker.lorem.lines(10),
+                  //   })),
                   applicationResponses: {
                     create: appQuestions.map((q) => ({
                       answer: Faker.lorem.lines(10),

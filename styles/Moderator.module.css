@@ -102,9 +102,6 @@
   margin-left: 10px;
 }
 
-.newModal {
-}
-
 .modContent {
   display: flex;
   justify-content: space-evenly;
@@ -163,4 +160,13 @@
 
 .customButton {
   margin-left: 40px;
+}
+
+.appTitle {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  /* Change the below two with better styling in the future */
+  font-weight: bold;
+  font-size: x-large;
 }
