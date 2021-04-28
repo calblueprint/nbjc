@@ -26,22 +26,28 @@ type Props = {
 };
 
 const orientation = [
-  'lgbtqAll',
-  'sgl',
-  'transgender',
-  'asexualAromantic',
-  'other',
+  'Queer',
+  'Asexual/Aromantic',
+  'Bisexual',
+  'Pansexual',
+  'Lesbian/SGL',
+  'Gay/SGL',
+  'Straight/Heterosexual',
+  'LGBTQ+',
+  'Other',
 ];
+
 const ethnicity = [
-  'pocAll',
-  'black',
-  'asian',
-  'pacificIslander',
-  'latinx',
-  'nativeIndigeneous',
-  'other',
+  'Native',
+  'Black',
+  'Asian',
+  'Hispanic',
+  'Arab',
+  'White',
+  'Other',
 ];
-const ages = ['child', 'teen', 'adult', 'senior'];
+
+const ages = ['Children', 'Teens', 'Adults', 'Seniors'];
 
 const OrgProfile: React.FunctionComponent<Props> = ({
   orgProp,
@@ -74,12 +80,14 @@ const OrgProfile: React.FunctionComponent<Props> = ({
     website: (o && o.website) ?? '',
     // organizationProjects: o ? o.organizationProjects : [],
     organizationProjects:
-      o.organizationProjects?.map((proj) => ({
-        id: proj.id,
-        organizationId: org.id,
-        title: proj.title ?? '',
-        description: proj.description ?? '',
-      })) ?? [],
+      (o &&
+        o.organizationProjects?.map((proj) => ({
+          id: proj.id,
+          organizationId: org.id,
+          title: proj.title ?? '',
+          description: proj.description ?? '',
+        }))) ??
+      [],
   });
 
   const handleSubmit = async (values: EditForm): Promise<void> => {
@@ -479,34 +487,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     if (!id) {
       return { notFound: true };
     }
-    // replace select with: orgProfile.select,
     const orgProp = await prisma.organization.findUnique({
       where: { id: Number(id) },
-      select: {
-        active: true,
-        id: true,
-        name: true,
-        organizationType: true,
-        workType: true,
-        address: true,
-        missionStatement: true,
-        shortHistory: true,
-        lgbtqDemographic: true,
-        raceDemographic: true,
-        ageDemographic: true,
-        capacity: true,
-        ein: true,
-        foundingDate: true,
-        is501c3: true,
-        website: true,
-        user: {
-          select: {
-            id: true,
-          },
-        },
-        organizationProjects: true,
-        organizationEvents: true,
-      },
+      select: orgProfile.select,
     });
 
     if (!orgProp || !orgProp.active) {
