@@ -71,9 +71,6 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
         strict: !draft,
       },
     });
-    // console.log('validate');
-    // console.log(parseValidationError(error));
-
     // Validate custom short response questions
     let qnrValidateEmpty = true;
     const qnrValidate: string[] = qnr.map(({ response: value }, i) => {
@@ -197,9 +194,6 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     validateOnChange: false,
     onSubmit: handleSubmit(false),
   });
-
-  // console.log('these are formik.values', formik.values);
-  // console.log('formik proj values', formik.values.projects);
 
   if (!sessionLoading && (!session || session.user.role !== 'organization'))
     router.push('/');

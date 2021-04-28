@@ -46,11 +46,15 @@ export default async (
   const active = isSubmit ? false : undefined;
 
   // Constructing lat long coordinates from inputted address
-  const address = encodeURI(value.address);
-  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_API_KEY}`;
-  const json = await (await fetch(url)).json();
-  // Best guess for location is first result, but perhaps it is also not correct.
-  const [long, lat] = json.features[0].geometry.coordinates;
+  let lat;
+  let long;
+  if (value.address) {
+    const address = encodeURI(value.address);
+    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_API_KEY}`;
+    const json = await (await fetch(url)).json();
+    // Best guess for location is first result, but perhaps it is also not correct.
+    [long, lat] = json.features[0].geometry.coordinates;
+  }
 
   const data = {
     lat,
@@ -62,7 +66,7 @@ export default async (
 
   const appProjs = projects as Project[];
 
-  //*** Splitting appProjs into create, update, and delete ***//
+  //* ** Splitting appProjs into create, update, and delete ***//
 
   // New projects are the ones without IDs yet.
   const toCreate = appProjs.filter((i) => !i.id);
