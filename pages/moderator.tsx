@@ -14,7 +14,7 @@ import {
   Organization,
   ApplicationNote,
   ApplicationResponse,
-  OrganizationApplicationReviews,
+  OrganizationApplicationReview,
 } from '@prisma/client';
 import Toast from 'components/Toast';
 import {
@@ -40,7 +40,7 @@ import styles from '../styles/Moderator.module.css';
 
 type Props = {
   orgs: (Organization & {
-    organizationApplicationReviews: OrganizationApplicationReviews[] | null;
+    organizationApplicationReviews: OrganizationApplicationReview[] | null;
     applicationNote: ApplicationNote | null;
     applicationResponses: (ApplicationResponse & {
       applicationQuestion: { question: string };
@@ -49,14 +49,12 @@ type Props = {
 };
 
 const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
-  console.log(orgs);
-  // put the values of the selected org here!!!
-
   const router = useRouter();
   const [session, sessionLoading] = useSession();
 
   const [lastText, setLastText] = useState('');
   const [text, setText] = useState('');
+  const [declineText, setDeclineText] = useState('');
 
   const [index, setIndex] = useState<number>(0);
   const [processingAction, setProcessingAction] = useState(false);
@@ -72,19 +70,13 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
 
   const [openApprove, setOpenApprove] = useState(false);
   const approveToast = openApprove ? (
-    <Toast showDismissButton>
-      {orgs.length > 0 ? orgs[index].name : 'This org'} has been successfully
-      accepted.
-    </Toast>
+    <Toast showDismissButton>Organization successfully accepted.</Toast>
   ) : null;
 
   const [openDecline, setOpenDecline] = useState(false);
   const declineToast = openDecline ? (
-    <Toast showDismissButton>
-      {orgs.length > 0 ? orgs[index].name : 'This org'} has been declined.
-    </Toast>
+    <Toast showDismissButton>Organization successfully declined.</Toast>
   ) : null;
-  //
 
   const [selected, setSelected] = useState<number>(0);
   const handleChange = (
@@ -175,10 +167,11 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           setErrorBanner('Failed to process approval');
         }
       } else {
-        // CALVIN: get the body of the rejection content and put it in the post request.
         try {
           const res = await fetch(`/api/app/orgs/${orgs[index].id}/reject`, {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reason: declineText }),
           });
           if (res.ok) {
             setSuccessBanner(
@@ -191,21 +184,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           }
         } catch (err) {
           setErrorBanner('Failed to process rejection');
-        }
-
-        // Add to rejection history
-        try {
-          const res = await fetch('/api/app/question/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            // body: JSON.stringify({
-            //   review,
-            // }),
-          });
-        } catch (err) {
-          setErrorBanner('Failed to add rejection history');
         }
       }
     } else {
@@ -257,7 +235,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             orgs.map((org, i) => (
               // TODO: Add accessibility support
               // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-              <div key={i} onClick={() => clickCard(i)}>
+              <div key={org.id} onClick={() => clickCard(i)}>
                 <OrgCard org={org} />
               </div>
             ))
@@ -274,7 +252,18 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   };
 
   // Make this look nice
-  const makeReview = (review: string): JSX.Element => <p>{review}</p>;
+  const makeReview = (r: OrganizationApplicationReview): JSX.Element => {
+    const date = new Date(r.createdAt);
+    const month = date.toLocaleString('default', { month: 'short' });
+    const day = date.getDay();
+    const year = date.getFullYear();
+    return (
+      <>
+        <p>{`${month} ${day} ${year}`}</p>
+        <p>{r.reason}</p>
+      </>
+    );
+  };
 
   const orgApp = (
     app: Organization & {
@@ -324,7 +313,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           paper: styles.drawerPaperRight,
         }}
       >
-        {/* HERE CALVIN HERE */}
         {openNote ? (
           <div>
             <div className={styles.textField}>
@@ -349,10 +337,10 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             </div>
             <div className={styles.row}>
               <p className={styles.descriptor}>Reviews</p>
-              {orgs[index].organizationApplicationReviews?.map((r) => {
+              {orgs[index].organizationApplicationReviews?.map((r) =>
                 // There is not necessarily a reason because sometimes you just want to reject someone and not give them a reason.
-                if (r.reason) return makeReview(r.reason);
-              })}
+                r.reason ? makeReview(r) : null
+              )}
             </div>
           </div>
         )}
@@ -398,6 +386,8 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     </div>
   );
 
+  const noteExists = orgs.length > 0 && orgs[index]?.applicationNote?.note;
+
   // Is it ok to comment this out?
   // if (!session || session.user.role === 'organization') router.push('/');
   if (
@@ -412,7 +402,12 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         }
         {approveToast}
         {declineToast}
-        <Dialog onClose={closeModal()} fullWidth maxWidth="md" open={openModal}>
+        <Dialog
+          onClose={closeModal()}
+          fullWidth
+          maxWidth={noteExists ? 'md' : 'sm'}
+          open={openModal}
+        >
           <DialogTitle>
             <div className={styles.dialogTitle}>
               Reason For Declining
@@ -423,15 +418,20 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           </DialogTitle>
           <DialogContent>
             <div className={styles.modContent}>
-              <div className={styles.modTab}>
-                <div className={styles.declineNotes}>Notes</div>
-                <div className={styles.declineNotesContent}>
-                  {orgs.length > 0
-                    ? orgs[index].applicationNote?.note
-                    : 'this org'}
+              {noteExists ? (
+                <div className={styles.modTab}>
+                  <div className={styles.declineNotes}>Notes</div>
+                  <div className={styles.declineNotesContent}>
+                    {orgs[index]?.applicationNote?.note}
+                  </div>
                 </div>
-              </div>
-              <div className={styles.modTab}>
+              ) : null}
+              {/* <div className={styles.declineNotesContent}>
+                  {orgs.length > 0
+                    ? orgs[index]?.applicationNote?.note
+                    : 'this org'}
+                </div> */}
+              <div className={styles.declineBox}>
                 <TextField
                   id="outlined-basic"
                   label="Reasons for declining."
@@ -439,6 +439,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
                   multiline
                   size="small"
                   rows={13}
+                  onChange={(e) => setDeclineText(e.target.value)}
                   className={styles.declineReason}
                 />
               </div>

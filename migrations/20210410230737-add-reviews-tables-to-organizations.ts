@@ -14,6 +14,7 @@ export async function up(
       (
         id                           SERIAL,
         reason                       TEXT,
+        created_at                   TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
         organization_id              INTEGER NOT NULL,
         PRIMARY KEY (id),
         FOREIGN KEY (organization_id)
