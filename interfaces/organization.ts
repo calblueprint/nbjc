@@ -32,6 +32,7 @@ export const orgProfile = Prisma.validator<Prisma.OrganizationArgs>()({
         id: true,
       },
     },
+    organizationProjects: true,
   },
 });
 const schema = Joi.object({

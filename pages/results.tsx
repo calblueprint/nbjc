@@ -89,25 +89,6 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
         orientation: demographicFilters,
       },
     });
-    // Alternative approach to try and not re-render page.
-
-    // try {
-    //   const res = await fetch('api/search/orgs', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({
-    //       orientation: demographicFilters,
-    //       ethnicity: backgroundFilters,
-    //       ages: audienceFilters,
-    //     }),
-    //   });
-    //   if (res.ok) {
-    //     const contents = await res.json();
-    //     console.log(contents);
-    //   }
-    // } catch (ex) {
-    //   console.log('Search failed.');
-    // }
   };
 
   return (
