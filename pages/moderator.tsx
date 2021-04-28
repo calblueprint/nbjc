@@ -9,26 +9,30 @@ import clsx from 'clsx';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import SearchIcon from '@material-ui/icons/Search';
+import CloseIcon from '@material-ui/icons/Close';
 import {
   Organization,
   ApplicationNote,
   ApplicationResponse,
+  OrganizationApplicationReview,
   Prisma,
 } from '@prisma/client';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-
+import Toast from 'components/Toast';
 import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
   Tabs,
   Tab,
   Button,
   InputAdornment,
   TextField,
   Drawer,
-  Toolbar,
   IconButton,
-  CardActions,
   LinearProgress,
   CircularProgress,
+  Typography,
+  ClickAwayListener,
 } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
@@ -45,6 +49,7 @@ const orgArgs = Prisma.validator<Prisma.OrganizationArgs>()({
         },
       },
     },
+    organizationApplicationReviews: true,
   },
 });
 
@@ -58,11 +63,29 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
 
   const [lastText, setLastText] = useState('');
   const [text, setText] = useState('');
+  const [declineText, setDeclineText] = useState('');
 
   const [index, setIndex] = useState<number>(0);
   const [processingAction, setProcessingAction] = useState(false);
   const [errorBanner, setErrorBanner] = useState('');
   const [successBanner, setSuccessBanner] = useState('');
+
+  // MODAL ADDED
+  const [openModal, setOpenModal] = useState(false);
+
+  const closeModal = () => (): void => {
+    setOpenModal(false);
+  };
+
+  const [openApprove, setOpenApprove] = useState(false);
+  const approveToast = openApprove ? (
+    <Toast showDismissButton>Organization successfully accepted.</Toast>
+  ) : null;
+
+  const [openDecline, setOpenDecline] = useState(false);
+  const declineToast = openDecline ? (
+    <Toast showDismissButton>Organization successfully declined.</Toast>
+  ) : null;
 
   const [selected, setSelected] = useState<number>(0);
   const handleChange = (
@@ -82,12 +105,20 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     setOpenLeft(false);
   };
 
-  const [openRight, setOpenRight] = useState<boolean>(false);
+  const [openNote, setOpenNote] = useState<boolean>(false);
+  const [openReview, setOpenReview] = useState<boolean>(false);
 
-  const handleDrawerOpenRight = (note: ApplicationNote | null): void => {
-    setText(note && note.note ? note.note : '');
-    setLastText(note && note.note ? note.note : '');
-    setOpenRight(true);
+  const handleDrawerOpenRight = (
+    isNote: boolean,
+    note?: ApplicationNote | null
+  ): void => {
+    if (isNote) {
+      setText(note && note.note ? note.note : '');
+      setLastText(note && note.note ? note.note : '');
+      setOpenNote(true);
+    } else {
+      setOpenReview(true);
+    }
   };
 
   const handleDrawerCloseRight = async (): Promise<void> => {
@@ -103,7 +134,8 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     router.replace(router.asPath);
     setText('');
     setLastText('');
-    setOpenRight(false);
+    setOpenNote(false);
+    setOpenReview(false);
   };
 
   const clickCard = (newIndex: number): void => {
@@ -133,6 +165,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             method: 'POST',
           });
           if (res.ok) {
+            setOpenApprove(true);
             setSuccessBanner('Successfully approved.');
             // Refresh data without full page reload
             router.replace(router.asPath);
@@ -146,9 +179,13 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         try {
           const res = await fetch(`/api/app/orgs/${orgs[index].id}/reject`, {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reason: declineText }),
           });
           if (res.ok) {
-            setSuccessBanner('Successfully rejected.');
+            setSuccessBanner(
+              `${orgs[index].name} has been successfully rejected.`
+            );
             // Refresh data without full page reload
             router.replace(router.asPath);
           } else {
@@ -163,6 +200,14 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     }
     setProcessingAction(false);
   };
+
+  // FOR MODAL
+  const declineOrg = () => (): void => {
+    setOpenModal(false);
+    setOpenDecline(true);
+    approveApp(false);
+  };
+  //
 
   /** For auto-saving a moderator's notes */
   const AUTOSAVE_INTERVAL = 3000;
@@ -215,6 +260,20 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     return null;
   };
 
+  // Make this look nice
+  const makeReview = (r: OrganizationApplicationReview): JSX.Element => {
+    const date = new Date(r.createdAt);
+    const month = date.toLocaleString('default', { month: 'short' });
+    const day = date.getDay();
+    const year = date.getFullYear();
+    return (
+      <>
+        <p>{`${month} ${day} ${year}`}</p>
+        <p>{r.reason}</p>
+      </>
+    );
+  };
+
   const orgApp = (
     app: Organization & {
       applicationResponses: (ApplicationResponse & {
@@ -236,6 +295,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           <Button
             variant="outlined"
             color="primary"
+            onClick={() => handleDrawerOpenRight(false)}
             className={styles.buttonSpace}
           >
             Rejection history
@@ -243,57 +303,71 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => handleDrawerOpenRight(orgs[index].applicationNote)}
+            onClick={() =>
+              handleDrawerOpenRight(true, orgs[index].applicationNote)
+            }
             className={styles.buttonSpace}
           >
             Notepad
           </Button>
         </div>
       </div>
+      {/* <ClickAwayListener onClickAway={handleDrawerCloseRight}> */}
       <Drawer
         className={styles.drawer}
         variant="persistent"
         anchor="right"
-        open={openRight}
+        open={openNote || openReview}
         classes={{
           paper: styles.drawerPaperRight,
         }}
       >
-        <div>
-          <IconButton onClick={handleDrawerCloseRight}>
-            <ChevronRightIcon />
-          </IconButton>
-        </div>
-        <div className={styles.textField}>
-          notes for {orgs[index] && orgs[index].name}
-        </div>
-        <div className={styles.row}>
-          <p className={styles.descriptor}>Notes</p>
-          <TextField
-            className={styles.textField}
-            onChange={(e) => setText(e.target.value)}
-            value={text}
-            name="orgName"
-            variant="outlined"
-            multiline
-          />
-        </div>
+        {openNote ? (
+          <div>
+            <div className={styles.textField}>
+              notes for {orgs[index] && orgs[index].name}
+            </div>
+            <div className={styles.row}>
+              <p className={styles.descriptor}>Notes</p>
+              <TextField
+                className={styles.textField}
+                onChange={(e) => setText(e.target.value)}
+                value={text}
+                name="orgName"
+                variant="outlined"
+                multiline
+              />
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div className={styles.textField}>
+              reviews for {orgs[index] && orgs[index].name}
+            </div>
+            <div className={styles.row}>
+              <p className={styles.descriptor}>Reviews</p>
+              {orgs[index].organizationApplicationReviews?.map((r) =>
+                // There is not necessarily a reason because sometimes you just want to reject someone and not give them a reason.
+                r.reason ? makeReview(r) : null
+              )}
+            </div>
+          </div>
+        )}
       </Drawer>
+      {/* </ClickAwayListener> */}
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
       <div className={styles.content} onClick={handleDrawerCloseRight}>
+        {/* </div> onClick={handleDrawerCloseRight}> */}
         <OrgDetail org={app} />
       </div>
       <div className={styles.footer}>
-        {/* TODO: Replace with toasts */}
-        {errorBanner ? (
-          <div className={styles.banner}>{errorBanner}</div>
-        ) : null}
+        {errorBanner ? <Toast showDismissButton>{errorBanner}</Toast> : null}
         {successBanner ? (
-          <div className={styles.banner}>{successBanner}</div>
+          <Toast showDismissButton>{successBanner}</Toast>
         ) : null}
         <div className={`${styles.submitButton} ${styles.buttonSpace}`}>
           <Button
-            onClick={() => approveApp(false)}
+            onClick={() => setOpenModal(true)}
             variant="outlined"
             color="primary"
             disabled={processingAction}
@@ -321,11 +395,73 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     </div>
   );
 
-  if (!sessionLoading && (!session || session.user.role !== 'moderator'))
-    router.push('/');
-  if (!sessionLoading && session && session.user.role === 'moderator')
+  const noteExists = orgs.length > 0 && orgs[index]?.applicationNote?.note;
+
+  if (
+    !sessionLoading &&
+    session &&
+    (session.user.role === 'moderator' || session.user.role === 'admin')
+  )
     return (
       <Layout title="Moderator Dashboard">
+        {
+          // MODAL ADDED
+        }
+        {approveToast}
+        {declineToast}
+        <Dialog
+          onClose={closeModal()}
+          fullWidth
+          maxWidth={noteExists ? 'md' : 'sm'}
+          open={openModal}
+        >
+          <DialogTitle>
+            <div className={styles.dialogTitle}>
+              Reason For Declining
+              <IconButton aria-label="close" onClick={closeModal()}>
+                <CloseIcon />
+              </IconButton>
+            </div>
+          </DialogTitle>
+          <DialogContent>
+            <div className={styles.modContent}>
+              {noteExists ? (
+                <div className={styles.modTab}>
+                  <div className={styles.declineNotes}>Notes</div>
+                  <div className={styles.declineNotesContent}>
+                    {orgs[index]?.applicationNote?.note}
+                  </div>
+                </div>
+              ) : null}
+              <div className={styles.declineBox}>
+                <TextField
+                  id="outlined-basic"
+                  label="Reasons for declining."
+                  variant="outlined"
+                  multiline
+                  size="small"
+                  rows={13}
+                  onChange={(e) => setDeclineText(e.target.value)}
+                  className={styles.declineReason}
+                />
+              </div>
+            </div>
+            <div className={styles.send}>
+              <Button
+                variant="outlined"
+                className={styles.editButtonStyles}
+                disableElevation
+                color="primary"
+                onClick={declineOrg()}
+              >
+                Send
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+        {
+          // MODAL ADDED
+        }
         <div className={styles.root}>
           <IconButton
             color="inherit"
@@ -346,29 +482,10 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
             }}
           >
             <div className={styles.tabs}>
-              <Tabs value={selected} onChange={handleChange}>
-                <Tab label="Orgs" />
-                <Tab label="Events" />
-              </Tabs>
+              <Typography className={styles.appTitle}>Applications</Typography>
               <IconButton onClick={handleDrawerCloseLeft}>
                 <ChevronLeftIcon />
               </IconButton>
-            </div>
-            <div className={styles.textField}>
-              <TextField
-                fullWidth
-                id="search"
-                type="search"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                variant="outlined"
-                size="small"
-              />
             </div>
             {tab()}
           </Drawer>
@@ -388,12 +505,14 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
-    if (session && session.user.role === 'moderator') {
+    if (
+      session &&
+      (session.user.role === 'moderator' || session.user.role === 'admin')
+    ) {
       const orgs = await prisma.organization.findMany({
         where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
         include: orgArgs.include,
       });
-
       return { props: { orgs } };
     }
     return {
