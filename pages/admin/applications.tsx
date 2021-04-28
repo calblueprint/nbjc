@@ -2,7 +2,7 @@ import prisma from 'utils/prisma';
 import AdminIndex from 'components/admin/AdminIndex';
 import AdminTable from 'components/admin/AdminTable';
 import Layout from 'components/Layout';
-import { TableOrgApplication } from 'interfaces/admin';
+import { TableOrgApplication, tableOrgApplicationArgs } from 'interfaces/admin';
 import { GetServerSideProps } from 'next';
 import getSession from 'utils/getSession';
 
@@ -32,21 +32,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
     if (session && session.user.role === 'admin') {
-      const orgApps = await prisma.organization.findMany({
+      const orgs = await prisma.organization.findMany({
         where: {
           active: false,
         },
-        select: {
-          id: true,
-          name: true,
-          applicationStatus: true,
-          contactName: true,
-          contactEmail: true,
-          contactPhone: true,
-          createdAt: true,
-        },
+        select: tableOrgApplicationArgs.select,
       });
-      const orgs = JSON.parse(JSON.stringify(orgApps));
       return {
         props: { orgs },
       };

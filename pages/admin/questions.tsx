@@ -1,12 +1,16 @@
 import { useState } from 'react';
+import { GetServerSideProps } from 'next';
 import prisma from 'utils/prisma';
-import { ApplicationQuestion } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import {
+  TableApplicationQuestion,
+  tableApplicationQuestionArgs,
+} from 'interfaces/admin';
 import AdminIndex from 'components/admin/AdminIndex';
 import AdminTable from 'components/admin/AdminTable';
 import {
   Button,
   Dialog,
-  DialogTitle,
   DialogContent,
   TextField,
   Checkbox,
@@ -15,19 +19,22 @@ import {
   DialogActions,
 } from '@material-ui/core';
 import Layout from 'components/Layout';
-import { GetServerSideProps } from 'next';
 import { Formik, FormikErrors, FormikHelpers } from 'formik';
 import { AppQuestionSchema } from 'interfaces/appQuestion';
 import parseValidationError from 'utils/parseValidationError';
 import { useRouter } from 'next/router';
-import { TableApplicationQuestion } from 'interfaces/admin';
 import getSession from 'utils/getSession';
 import styles from '../../styles/admin/Questions.module.css';
 
-type FormValues = Pick<
-  ApplicationQuestion,
-  'question' | 'hint' | 'placeholder' | 'required' | 'wordLimit'
->;
+type FormValues = Prisma.ApplicationQuestionGetPayload<{
+  select: {
+    question: true;
+    hint: true;
+    placeholder: true;
+    required: true;
+    wordLimit: true;
+  };
+}>;
 
 type AdminQuestionsIndexProps = {
   questions: TableApplicationQuestion[];
@@ -115,7 +122,7 @@ const AdminQuestionsIndex: React.FC<AdminQuestionsIndexProps> = ({
             fullWidth
             open={openModal}
           >
-            <DialogTitle>Add Question Prompt</DialogTitle>
+            <div className={styles.dialogTitle}> Add Question Prompt </div>
             <DialogContent>
               <form onSubmit={handleSubmit}>
                 <div className={`${styles.dialogRow} ${styles.dialogShort}`}>
@@ -129,6 +136,7 @@ const AdminQuestionsIndex: React.FC<AdminQuestionsIndexProps> = ({
                     onChange={handleChange}
                     error={Boolean(errors.question)}
                     helperText={errors.question}
+                    placeholder="The short answer question title"
                   />
                 </div>
                 <div className={`${styles.dialogRow} ${styles.dialogShort}`}>
@@ -142,6 +150,7 @@ const AdminQuestionsIndex: React.FC<AdminQuestionsIndexProps> = ({
                     onChange={handleChange}
                     error={Boolean(errors.hint)}
                     helperText={errors.hint}
+                    placeholder="Any additional information or description about the question"
                   />
                 </div>
                 <div className={`${styles.dialogRow} ${styles.dialogShort}`}>
@@ -155,6 +164,7 @@ const AdminQuestionsIndex: React.FC<AdminQuestionsIndexProps> = ({
                     onChange={handleChange}
                     error={Boolean(errors.placeholder)}
                     helperText={errors.placeholder}
+                    placeholder="Custom placeholder text for the question when the field is empty"
                   />
                 </div>
                 <div className={`${styles.dialogRow} ${styles.dialogField}`}>
@@ -172,7 +182,7 @@ const AdminQuestionsIndex: React.FC<AdminQuestionsIndexProps> = ({
                 </div>
                 <div className={`${styles.dialogRow} ${styles.dialogField}`}>
                   <Typography variant="subtitle1" className={styles.descriptor}>
-                    Word Limit
+                    Word Minimum
                   </Typography>
                   <TextField
                     name="wordLimit"
@@ -233,16 +243,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
     if (session && session.user.role === 'admin') {
-      const applicationQuestions = await prisma.applicationQuestion.findMany({
-        select: {
-          id: true,
-          question: true,
-          required: true,
-          createdAt: true,
-          updatedAt: true,
-        },
+      const questions = await prisma.applicationQuestion.findMany({
+        select: tableApplicationQuestionArgs.select,
       });
-      const questions = JSON.parse(JSON.stringify(applicationQuestions));
+
       return {
         props: { questions },
       };

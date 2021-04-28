@@ -10,7 +10,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
     if (session && session.user.role === 'organization') {
-      const org = await prisma.organization.findOne({
+      const org = await prisma.organization.findUnique({
         where: {
           userId: session.user.id,
         },
@@ -29,7 +29,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
       }
       return {
-        notFound: true,
+        redirect: {
+          permanent: false,
+          destination: `/users/profile`,
+        },
       };
     }
     return {

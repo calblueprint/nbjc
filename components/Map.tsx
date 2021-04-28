@@ -2,10 +2,10 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react';
 import ReactMapGL, { Marker, Popup, ViewportProps } from 'react-map-gl';
-import { PublicOrganization } from 'interfaces/organization';
+import { Organization } from '.prisma/client';
 
 type MapProps = {
-  orgs: PublicOrganization[];
+  orgs: Organization[];
 };
 
 type ViewportStateProps = {
@@ -18,9 +18,7 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
   width,
   height,
 }) => {
-  const [selectedOrg, setSelectedOrg] = useState<PublicOrganization | null>(
-    null
-  );
+  const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [viewport, setViewport] = useState<ViewportStateProps | ViewportProps>({
     width,
     height,
@@ -35,31 +33,33 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
       onViewportChange={(newViewport) => setViewport(newViewport)}
       {...viewport}
     >
-      {orgs.map((org) => {
-        return org.lat && org.long ? (
-          <div key={org.id}>
-            <Marker latitude={org.lat} longitude={org.long}>
-              <span
-                onClick={() => setSelectedOrg(org)}
-                role="img"
-                aria-label="push-pin"
-              >
-                📌
-              </span>
-            </Marker>
-            {selectedOrg?.id === org.id ? (
-              <Popup
-                onClose={() => setSelectedOrg(null)}
-                closeOnClick
-                latitude={org.lat}
-                longitude={org.long}
-              >
-                {org.name}
-              </Popup>
-            ) : null}
-          </div>
-        ) : null;
-      })}
+      {orgs
+        ? orgs.map((org) => {
+            return org.lat && org.long ? (
+              <div key={org.id}>
+                <Marker latitude={org.lat} longitude={org.long}>
+                  <span
+                    onClick={() => setSelectedOrg(org)}
+                    role="img"
+                    aria-label="push-pin"
+                  >
+                    📌
+                  </span>
+                </Marker>
+                {selectedOrg?.id === org.id ? (
+                  <Popup
+                    onClose={() => setSelectedOrg(null)}
+                    closeOnClick
+                    latitude={org.lat}
+                    longitude={org.long}
+                  >
+                    {org.name}
+                  </Popup>
+                ) : null}
+              </div>
+            ) : null;
+          })
+        : null}
     </ReactMapGL>
   );
 };

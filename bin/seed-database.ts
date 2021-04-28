@@ -1,16 +1,16 @@
 /* eslint-disable no-console */
 import {
+  Prisma,
   AgeDemographic,
-  ApplicationQuestionCreateArgs,
   ApplicationStatus,
   LgbtqDemographic,
   OrganizationType,
   PrismaClient,
   RaceDemographic,
   User,
-  UserCreateArgs,
   UserRole,
   WorkType,
+  // OrganizationApplicationReviews,
 } from '@prisma/client';
 import Faker from 'faker';
 import Ora from 'ora';
@@ -111,7 +111,6 @@ export default async function seedDatabase(): Promise<void> {
         },
       },
     });
-
     clearAllMessage.text = 'Cleaned up previous seeded information';
     clearAllMessage.succeed();
   } catch (err) {
@@ -125,7 +124,7 @@ export default async function seedDatabase(): Promise<void> {
   const appQuestionsCreateMessage = Ora(
     `Creating custom application questions`
   ).start();
-  const mockAppQuestions: ApplicationQuestionCreateArgs[] = SAMPLE_QUESTIONS.map(
+  const mockAppQuestions: Prisma.ApplicationQuestionCreateArgs[] = SAMPLE_QUESTIONS.map(
     (q) => ({
       data: q,
     })
@@ -160,7 +159,7 @@ export default async function seedDatabase(): Promise<void> {
   const orgUsersCreateMessage = Ora(
     `Creating ${NUMBER_USERS} org users`
   ).start();
-  const mockOrgUsers: UserCreateArgs[] = Array(NUMBER_USERS)
+  const mockOrgUsers: Prisma.UserCreateArgs[] = Array(NUMBER_USERS)
     .fill(null)
     .map((_value: null, index: number) => {
       return {
@@ -197,6 +196,13 @@ export default async function seedDatabase(): Promise<void> {
                   ageDemographic: Faker.random.arrayElements<AgeDemographic>(
                     Object.values(AgeDemographic)
                   ),
+                  // organizationApplicationReviews: new Array(
+                  //   Faker.random.number(3)
+                  // )
+                  //   .fill(null)
+                  //   .map((i) => ({
+                  //     reason: Faker.lorem.lines(10),
+                  //   })),
                   applicationResponses: {
                     create: appQuestions.map((q) => ({
                       answer: Faker.lorem.lines(10),
@@ -220,7 +226,7 @@ export default async function seedDatabase(): Promise<void> {
   const modUsersCreateMessage = Ora(
     `Creating ${NUMBER_USERS} org users`
   ).start();
-  const mockModUsers: UserCreateArgs[] = Array(NUMBER_USERS)
+  const mockModUsers: Prisma.UserCreateArgs[] = Array(NUMBER_USERS)
     .fill(null)
     .map((_value: null, index: number) => {
       return {
