@@ -28,12 +28,6 @@ type TabProps = {
   readOnly: boolean;
 };
 
-// Replace later
-type Project = {
-  title: string;
-  description: string;
-};
-
 type ProjectTouched = {
   title: boolean;
   description: boolean;
