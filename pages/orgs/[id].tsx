@@ -317,7 +317,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({
             </div>
             <h3 className={styles.audienceHeader}>Our Mission</h3>
             <TextField
-              // className={styles.projDesc}
+              className={styles.missionAndProj}
               id="missionStatement"
               value={formik.values.missionStatement}
               name="missionStatement"
@@ -329,7 +329,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({
             />
             <h3>Our History</h3>
             <TextField
-              // className={styles.projDesc}
+              className={styles.missionAndProj}
               id="shortHistory"
               value={formik.values.shortHistory}
               name="shortHistory"
@@ -376,7 +376,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({
         // you are editing, display SAVE button
         <Button
           variant="contained"
-          className={styles.saveButton}
+          className={styles.editButton}
           disableElevation
           onClick={() => {
             handleSubmit(formik.values);
@@ -447,7 +447,6 @@ const OrgProfile: React.FunctionComponent<Props> = ({
                   <b>Founded:</b> {computeDate(new Date(org.foundingDate), 0)}
                 </p>
               )}
-              {/* Members */}
               <h3 className={styles.infoHeader}>Members</h3>
               <p className={styles.info}>Frederick Kim, Project Leader</p>
               <p className={styles.info}>Elizabeth Wu, Designer</p>
