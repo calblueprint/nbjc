@@ -15,6 +15,7 @@ import {
   ApplicationNote,
   ApplicationResponse,
   OrganizationApplicationReview,
+  Prisma,
 } from '@prisma/client';
 import Toast from 'components/Toast';
 import {
@@ -38,14 +39,22 @@ import useSession from 'utils/useSession';
 import getSession from 'utils/getSession';
 import styles from '../styles/Moderator.module.css';
 
+const orgArgs = Prisma.validator<Prisma.OrganizationArgs>()({
+  include: {
+    applicationNote: true,
+    applicationResponses: {
+      include: {
+        applicationQuestion: {
+          select: { question: true },
+        },
+      },
+    },
+    organizationApplicationReviews: true,
+  },
+});
+
 type Props = {
-  orgs: (Organization & {
-    organizationApplicationReviews: OrganizationApplicationReview[] | null;
-    applicationNote: ApplicationNote | null;
-    applicationResponses: (ApplicationResponse & {
-      applicationQuestion: { question: string };
-    })[];
-  })[];
+  orgs: Prisma.OrganizationGetPayload<typeof orgArgs>[];
 };
 
 const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
@@ -502,17 +511,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     ) {
       const orgs = await prisma.organization.findMany({
         where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
-        include: {
-          applicationNote: true,
-          organizationApplicationReviews: true,
-          applicationResponses: {
-            include: {
-              applicationQuestion: {
-                select: { question: true },
-              },
-            },
-          },
-        },
+        include: orgArgs.include,
       });
       return { props: { orgs } };
     }

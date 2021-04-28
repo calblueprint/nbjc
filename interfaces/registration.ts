@@ -1,4 +1,4 @@
-import { Prisma, Organization } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import Joi from 'joi';
 
 export type Response = {
@@ -6,42 +6,52 @@ export type Response = {
   response: string[];
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-function-return-type
+export const appQnRArgs = (id: number | undefined) =>
+  Prisma.validator<Prisma.ApplicationQuestionArgs>()({
+    select: {
+      id: true,
+      placeholder: true,
+      question: true,
+      hint: true,
+      required: true,
+      wordLimit: true,
+      applicationResponses: {
+        where: {
+          organizationId: id ?? -1,
+        },
+        select: {
+          answer: true,
+        },
+      },
+    },
+  });
+
 export type AppQnR =
-  | Prisma.ApplicationQuestionGetPayload<{
-      select: {
-        id: true;
-        placeholder: true;
-        question: true;
-        hint: true;
-        required: true;
-        wordLimit: true;
-        applicationResponses: {
-          select: {
-            answer: true;
-          };
-        };
-      };
-    }>[]
+  | Prisma.ApplicationQuestionGetPayload<ReturnType<typeof appQnRArgs>>[]
   | null;
 
 export type QnR = { questionId: number; response: string };
 
-export type Form = Pick<
-  Organization,
-  | 'name'
-  | 'contactName'
-  | 'contactEmail'
-  | 'contactPhone'
-  | 'website'
-  | 'address'
-  | 'missionStatement'
-  | 'shortHistory'
-  | 'lgbtqDemographic'
-  | 'raceDemographic'
-  | 'ageDemographic'
-  | 'ein'
-  | 'is501c3'
-> & {
+const form = Prisma.validator<Prisma.OrganizationArgs>()({
+  select: {
+    name: true,
+    contactName: true,
+    contactEmail: true,
+    contactPhone: true,
+    website: true,
+    address: true,
+    missionStatement: true,
+    shortHistory: true,
+    lgbtqDemographic: true,
+    raceDemographic: true,
+    ageDemographic: true,
+    ein: true,
+    is501c3: true,
+  },
+});
+
+export type Form = Prisma.OrganizationGetPayload<typeof form> & {
   organizationType: string;
   workType: string;
   qnr: QnR[];
