@@ -388,8 +388,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
 
   const noteExists = orgs.length > 0 && orgs[index]?.applicationNote?.note;
 
-  // Is it ok to comment this out?
-  // if (!session || session.user.role === 'organization') router.push('/');
   if (
     !sessionLoading &&
     session &&

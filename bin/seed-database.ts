@@ -38,17 +38,6 @@ const SAMPLE_QUESTIONS = [
   },
 ];
 
-// const SAMPLE_REVIEWS = [
-//   {
-//     reason: "Why",
-//     organizationId: 1,
-//   },
-//   {
-//     reason: "Where",
-//     organizationId: 2
-//   }
-// ]
-
 if (
   Object.values(NUMBER_ORGS).reduce((acc, curr) => acc + curr) > NUMBER_USERS
 ) {
@@ -122,15 +111,6 @@ export default async function seedDatabase(): Promise<void> {
         },
       },
     });
-
-    // await prisma.organizationApplicationReviews.deleteMany({
-    //   where: {
-    //     reason: {
-    //       in: SAMPLE_REVIEWS.map((r) => r.reason),
-    //     },
-    //   },
-    // });
-
     clearAllMessage.text = 'Cleaned up previous seeded information';
     clearAllMessage.succeed();
   } catch (err) {
