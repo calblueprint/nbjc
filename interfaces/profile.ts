@@ -9,6 +9,19 @@ export type BasicInfoForm = Pick<Organization,
 | 'contactEmail'
 >;
 
+export type OperationsForm = {
+  memberName1: string,
+  memberTitle1: string,
+  memberName2: string,
+  memberTitle2: string,
+  memberName3: string,
+  memberTitle3: string,
+  memberName4: string,
+  memberTitle4: string,
+  memberName5: string,
+  memberTitle5: string,
+};
+
 export const BasicInfoSchema = Joi.object({
     address: Joi.string()
     .empty('')
@@ -39,4 +52,37 @@ export const BasicInfoSchema = Joi.object({
     .messages({
       'any.required': 'Contact Email is required',
     }),
-})
+});
+
+export const OperationsInfoSchema = Joi.object({
+    memberName1: Joi.string().required().messages({
+      'any.required': 'Member name is required',
+    }),
+    memberTitle1: Joi.string().required().messages({
+      'any.required': 'Member title is required'
+    }),
+    memberName2: Joi.string().required().messages({
+      'any.required': 'Member name is required',
+    }),
+    memberTitle2: Joi.string().required().messages({
+      'any.required': 'Member title is required'
+    }),
+    memberName3: Joi.string().required().messages({
+      'any.required': 'Member name is required',
+    }),
+    memberTitle3: Joi.string().required().messages({
+      'any.required': 'Member title is required'
+    }),
+    memberName4: Joi.string().required().messages({
+      'any.required': 'Member name is required',
+    }),
+    memberTitle4: Joi.string().required().messages({
+      'any.required': 'Member title is required'
+    }),
+    memberName5: Joi.string().required().messages({
+      'any.required': 'Member name is required',
+    }),
+    memberTitle5: Joi.string().required().messages({
+      'any.required': 'Member title is required'
+    }),
+});

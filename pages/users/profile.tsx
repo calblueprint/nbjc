@@ -8,29 +8,31 @@ import {
   Link,
   LinearProgress,
   CircularProgress,
-  IconButton,
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import useSession from 'utils/useSession';
 import ProgressStepper from 'components/user/ProgressStepper/index';
 import { GetServerSideProps } from 'next';
 import getSession from 'utils/getSession';
-import { ApplicationStatus } from '@prisma/client';
+import { ApplicationStatus, OrgTeamMembers, Organization } from '@prisma/client';
 import { FormikErrors, useFormik } from 'formik';
 import styles from '../../styles/users/Profile.module.css';
-import { Organization } from '@prisma/client';
 import {
   BasicInfoForm,
-  BasicInfoSchema
+  BasicInfoSchema,
+  OperationsForm,
+  OperationsInfoSchema
 } from 'interfaces/profile';
 import parseValidationError from 'utils/parseValidationError';
 import ProfileBasics from 'components/profile/ProfileBasics';
+import ProfileOperations from 'components/profile/ProfileOperations';
 
 type UserProfileProps = {
   org: Organization | null;
+  team: OrgTeamMembers[]
 };
 
-const UserProfile: React.FC<UserProfileProps> = ({ org }) => {
+const UserProfile: React.FC<UserProfileProps> = ({ org, team }) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
   const [setting, setSetting] = useState(0);
@@ -159,6 +161,10 @@ const UserProfile: React.FC<UserProfileProps> = ({ org }) => {
     return {... parseValidationError(error)};
   };
 
+  /* 
+  TODO - Update this handle submit to update organization info on backend
+  TODO - There is already a migration for team members, and a "seen" attribute for orgs
+  */
   const handleSubmit = async(
     values: BasicInfoForm
   ) : Promise<void> => {
@@ -169,7 +175,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ org }) => {
     initialValues,
     validate: handleValidate,
     validateOnChange: false,
-    onSubmit: () => {},
+    onSubmit: handleSubmit,
   });
 
   const infoSection = () : JSX.Element => {
@@ -214,23 +220,49 @@ const UserProfile: React.FC<UserProfileProps> = ({ org }) => {
     )
   };
 
+  const initialMembers : OperationsForm = {
+    memberName1: team.length >= 1 ? team[0].name : '',
+    memberTitle1: team.length >= 1 ? team[0].title : '',
+    memberName2: team.length >= 2 ? team[1].name : '',
+    memberTitle2: team.length >= 2 ? team[1].title : '',
+    memberName3: team.length >= 3 ? team[2].name : '',
+    memberTitle3: team.length >= 3 ? team[2].title : '',
+    memberName4: team.length >= 4 ? team[3].name : '',
+    memberTitle4: team.length >= 4 ? team[3].title : '',
+    memberName5: team.length === 5 ? team[4].name : '',
+    memberTitle5: team.length === 5 ? team[4].title : '',   
+  };
+
+  const handleOpValidate = (values: OperationsForm) : FormikErrors<OperationsForm> => {
+    const { error } =  OperationsInfoSchema.validate(values, {
+        abortEarly: false,   
+    });
+    return {... parseValidationError(error)};
+  };
+
+  const handleOpSubmit = async(
+    values: BasicInfoForm
+  ) : Promise<void> => {
+    
+  }
+
+  // formikOp to be used with fields relating to organization members
+  const formikOp = useFormik({
+    initialValues: initialMembers,
+    validateOnChange: false,
+    onSubmit: () => {},
+  })
+
+  // TODO update onClick functions to handle submissions, make updates on the backend
   const operationsSection = () : JSX.Element => {
     return(
-    <div className={styles.accountSection}>
-      <div className={styles.subTitle}>Operations</div>
-      {
-        operationsSetting ?
-        <div>
-          <Button
-            variant="outlined"
-            color="primary"
-            disableElevation
-            disableRipple
-            className={styles.fieldButton}
-            >
-            <AddIcon/>
-          </Button>
-          <Button
+    <div>
+      <div className={styles.accountSection}>
+        <div className={styles.subTitle}>Operations</div>
+        {
+          operationsSetting ?
+          <div>
+            <Button
             variant="contained"
             color="primary"
             onClick={() => setOperationsSetting(!operationsSetting)}
@@ -240,18 +272,28 @@ const UserProfile: React.FC<UserProfileProps> = ({ org }) => {
             >
             Save
             </Button>
-        </div> :
-          <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => setOperationsSetting(!operationsSetting)}
-          disableElevation
-          disableRipple
-          className={styles.fieldButton}
-          >
-          Edit
-          </Button>
-      }
+          </div>:
+            <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => setOperationsSetting(!operationsSetting)}
+            disableElevation
+            disableRipple
+            className={styles.fieldButton}
+            >
+            Edit
+            </Button>
+        }
+      </div>
+      <ProfileOperations
+        handleChange={formikOp.handleChange}
+        handleBlur={formikOp.handleBlur}
+        values={formikOp.values}
+        setFieldValue={formikOp.setFieldValue}
+        touched={formikOp.touched}
+        errors={formikOp.errors}
+        editing={operationsSetting}
+      />
     </div>)
   };
 
@@ -310,8 +352,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           userId: session.user.id,
         },
       });
+
+      const team = await prisma.orgTeamMembers.findMany({
+        where: {
+          organizationId: org?.id,
+        },
+      });
+
       return {
-        props: { org },
+        props: { org, team },
       };
     }
     return {
