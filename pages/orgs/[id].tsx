@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { useFormik, FieldArray, ArrayHelpers, FormikProps } from 'formik';
 import prisma from 'utils/prisma';
-import { Organization, Prisma } from '@prisma/client';
+import { orgProfile, EditForm } from 'interfaces/organization';
 import { Button, Chip, TextField, LinearProgress } from '@material-ui/core';
+import { Organization, Prisma } from '@prisma/client';
 import Layout from 'components/Layout';
-import { EditForm } from 'interfaces/organization';
 import Project from 'components/organization/Project';
 import Tab from 'components/Tab';
 import computeDate from 'utils/computeDate';
@@ -17,6 +17,10 @@ type Props = {
   orgProp: Prisma.OrganizationGetPayload<{
     include: { organizationProjects: true };
   }>;
+  // org: Prisma.OrganizationGetPayload<typeof orgProfile>;
+  orgUser: {
+    id: number;
+  };
   errors?: string;
   userId?: number;
 };
@@ -475,7 +479,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     if (!id) {
       return { notFound: true };
     }
-
+    // replace select with: orgProfile.select,
     const orgProp = await prisma.organization.findUnique({
       where: { id: Number(id) },
       select: {

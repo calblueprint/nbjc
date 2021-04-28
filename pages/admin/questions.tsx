@@ -1,12 +1,16 @@
 import { useState } from 'react';
+import { GetServerSideProps } from 'next';
 import prisma from 'utils/prisma';
-import { ApplicationQuestion } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import {
+  TableApplicationQuestion,
+  tableApplicationQuestionArgs,
+} from 'interfaces/admin';
 import AdminIndex from 'components/admin/AdminIndex';
 import AdminTable from 'components/admin/AdminTable';
 import {
   Button,
   Dialog,
-  DialogTitle,
   DialogContent,
   TextField,
   Checkbox,
@@ -15,19 +19,22 @@ import {
   DialogActions,
 } from '@material-ui/core';
 import Layout from 'components/Layout';
-import { GetServerSideProps } from 'next';
 import { Formik, FormikErrors, FormikHelpers } from 'formik';
 import { AppQuestionSchema } from 'interfaces/appQuestion';
 import parseValidationError from 'utils/parseValidationError';
 import { useRouter } from 'next/router';
-import { TableApplicationQuestion } from 'interfaces/admin';
 import getSession from 'utils/getSession';
 import styles from '../../styles/admin/Questions.module.css';
 
-type FormValues = Pick<
-  ApplicationQuestion,
-  'question' | 'hint' | 'placeholder' | 'required' | 'wordLimit'
->;
+type FormValues = Prisma.ApplicationQuestionGetPayload<{
+  select: {
+    question: true;
+    hint: true;
+    placeholder: true;
+    required: true;
+    wordLimit: true;
+  };
+}>;
 
 type AdminQuestionsIndexProps = {
   questions: TableApplicationQuestion[];
@@ -237,13 +244,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const session = await getSession(context);
     if (session && session.user.role === 'admin') {
       const questions = await prisma.applicationQuestion.findMany({
-        select: {
-          id: true,
-          question: true,
-          required: true,
-          createdAt: true,
-          updatedAt: true,
-        },
+        select: tableApplicationQuestionArgs.select,
       });
 
       return {
