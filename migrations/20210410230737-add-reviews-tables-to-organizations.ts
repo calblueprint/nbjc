@@ -10,15 +10,15 @@ export async function up(
 ): Promise<void> {
   db.runSql(
     `
-    CREATE TABLE organizations
+    CREATE TABLE organization_application_reviews
       (
-        id         SERIAL,
-        name       VARCHAR(255) NOT NULL,
-        long       DOUBLE PRECISION,
-        lat        DOUBLE PRECISION,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (id)
+        id                           SERIAL,
+        reason                       TEXT,
+        created_at                   TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        organization_id              INTEGER NOT NULL,
+        PRIMARY KEY (id),
+        FOREIGN KEY (organization_id)
+          REFERENCES organizations(id)
       );
   `,
     callback
@@ -34,7 +34,7 @@ export async function down(
 ): Promise<void> {
   const dropTable = promisify<string>(db.dropTable.bind(db));
   try {
-    await dropTable('organizations');
+    await dropTable('organization_application_reviews');
   } catch (err) {
     callback(err, null);
   }

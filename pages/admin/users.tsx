@@ -1,8 +1,8 @@
 import prisma from 'utils/prisma';
+import { TableUser, tableUserArgs } from 'interfaces/admin';
 import AdminIndex from 'components/admin/AdminIndex';
 import AdminTable from 'components/admin/AdminTable';
 import Layout from 'components/Layout';
-import { TableUser } from 'interfaces/admin';
 import { GetServerSideProps } from 'next';
 import getSession from 'utils/getSession';
 import {
@@ -149,18 +149,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const session = await getSession(context);
     if (session && session.user.role === 'admin') {
-      const allUsers = await prisma.user.findMany({
-        select: {
-          id: true,
-          role: true,
-          email: true,
-          emailVerified: true,
-          createdAt: true,
-          updatedAt: true,
-        },
+      const users = await prisma.user.findMany({
+        select: tableUserArgs.select,
       });
 
-      const users = JSON.parse(JSON.stringify(allUsers));
       return {
         props: { users },
       };
