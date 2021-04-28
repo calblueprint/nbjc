@@ -103,12 +103,20 @@
   flex-wrap: wrap;
 }
 
-.demographic {
+.demographicEdit {
   display: flex;
   flex-direction: column;
   margin-right: 8px;
   margin-bottom: 8px;
   width: 30%;
+}
+
+.demographic {
+  display: flex;
+  flex-direction: column;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  width: 20%;
 }
 
 .missionAndProj {

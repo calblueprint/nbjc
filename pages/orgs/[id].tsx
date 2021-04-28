@@ -4,12 +4,25 @@ import { useFormik, FieldArray, ArrayHelpers, FormikProps } from 'formik';
 import prisma from 'utils/prisma';
 import { orgProfile, EditForm } from 'interfaces/organization';
 import { Button, Chip, TextField, LinearProgress } from '@material-ui/core';
-import { Organization, Prisma } from '@prisma/client';
+import {
+  LgbtqDemographic,
+  RaceDemographic,
+  AgeDemographic,
+  Organization,
+  Prisma,
+} from '@prisma/client';
 import Layout from 'components/Layout';
 import Project from 'components/organization/Project';
 import Tab from 'components/Tab';
 import computeDate from 'utils/computeDate';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import {
+  AgeDemographicLabels,
+  RaceDemographicLabels,
+  LgbtqDemographicLabels,
+  OrganizationTypeLabels,
+  WorkTypeLabels,
+} from 'utils/typesLinker';
 import useSession from 'utils/useSession';
 import styles from '../../styles/Organization.module.css';
 
@@ -168,20 +181,21 @@ const OrgProfile: React.FunctionComponent<Props> = ({
 
   const demEditOrien = (category: string, groups: string[]): JSX.Element => {
     return (
-      <div className={styles.demographic}>
+      <div className={styles.demographicEdit}>
         {category}
         <div className={styles.demographicTags}>
           <Autocomplete
             multiple
             id="lgbtqDemographic"
-            options={orientation}
-            getOptionLabel={(option) => option}
+            options={Object.keys(LgbtqDemographicLabels) as LgbtqDemographic[]}
+            getOptionLabel={(option: LgbtqDemographic) =>
+              LgbtqDemographicLabels[option]
+            }
             filterSelectedOptions
             value={formik.values.lgbtqDemographic}
             onChange={(event, newValue) => {
               formik.setFieldValue('lgbtqDemographic', newValue);
             }}
-            // onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             renderInput={(params) => (
               <TextField
@@ -206,14 +220,16 @@ const OrgProfile: React.FunctionComponent<Props> = ({
 
   const demEditBack = (category: string, groups: string[]): JSX.Element => {
     return (
-      <div className={styles.demographic}>
+      <div className={styles.demographicEdit}>
         {category}
         <div className={styles.demographicTags}>
           <Autocomplete
             multiple
             id="raceDemographic"
-            options={ethnicity}
-            getOptionLabel={(option) => option}
+            options={Object.keys(RaceDemographicLabels) as RaceDemographic[]}
+            getOptionLabel={(option: RaceDemographic) =>
+              RaceDemographicLabels[option]
+            }
             filterSelectedOptions
             value={formik.values.raceDemographic}
             onChange={(event, newValue) => {
@@ -244,14 +260,16 @@ const OrgProfile: React.FunctionComponent<Props> = ({
 
   const demEditAge = (category: string, groups: string[]): JSX.Element => {
     return (
-      <div className={styles.demographic}>
+      <div className={styles.demographicEdit}>
         {category}
         <div className={styles.demographicTags}>
           <Autocomplete
             multiple
             id="ageDemographic"
-            options={ages}
-            getOptionLabel={(option) => option}
+            options={Object.keys(AgeDemographicLabels) as AgeDemographic[]}
+            getOptionLabel={(option: AgeDemographic) =>
+              AgeDemographicLabels[option]
+            }
             filterSelectedOptions
             value={formik.values.ageDemographic}
             onChange={(event, newValue) => {
