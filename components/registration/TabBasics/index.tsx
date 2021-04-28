@@ -11,6 +11,7 @@ import {
   FormikHandlers,
   FormikHelpers,
   FormikTouched,
+  FormikValues,
 } from 'formik';
 import { Form } from 'interfaces/registration';
 import {
@@ -21,6 +22,14 @@ import {
   WorkTypeLabels,
 } from 'utils/typesLinker';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
+import MaskedInput from 'react-text-mask';
+import { useImperativeHandle, useState } from 'react';
 import {
   LgbtqDemographic,
   RaceDemographic,
@@ -52,6 +61,60 @@ const TabBasics: React.FC<TabProps> = ({
   setFieldValue,
   readOnly,
 }) => {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const handleDateChange = (date: Date | null): void => {
+    setSelectedDate(date);
+  };
+
+  // number mask
+  interface NumberMaskProps {
+    inputRef: (ref: HTMLInputElement | null) => void;
+  }
+  function NumberMask(props: NumberMaskProps): React.ReactElement {
+    const { inputRef, ...other } = props;
+
+    return (
+      <MaskedInput
+        {...other}
+        ref={(ref: any) => {
+          inputRef(ref ? ref.inputElement : null);
+        }}
+        mask={[
+          '(',
+          /[1-9]/,
+          /\d/,
+          /\d/,
+          ')',
+          ' ',
+          /\d/,
+          /\d/,
+          /\d/,
+          '-',
+          /\d/,
+          /\d/,
+          /\d/,
+          /\d/,
+        ]}
+        placeholderChar={'\u2000'}
+        showMask
+      />
+    );
+  }
+  interface State {
+    textmask: string;
+  }
+  const [numbers, setNumbers] = useState<State>({
+    textmask: '(  )    -    ',
+  });
+  const handleNumberChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    setNumbers({
+      ...numbers,
+      [event.target.name]: event.target.value,
+    });
+  };
+
   return (
     <>
       <div className={styles.row}>
@@ -172,7 +235,7 @@ const TabBasics: React.FC<TabProps> = ({
       </div>
       <div className={styles.row}>
         <p className={styles.descriptor}>Contact Person Phone</p>
-        <TextField
+        {/* <TextField
           className={styles.textField}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -182,7 +245,25 @@ const TabBasics: React.FC<TabProps> = ({
           error={Boolean(touched.contactPhone && errors.contactPhone)}
           helperText={touched.contactPhone ? errors.contactPhone : undefined}
           disabled={readOnly}
-        />
+        /> */}
+        <FormControl
+          className={styles.textField}
+          variant="outlined"
+          error={Boolean(touched.contactPhone && errors.contactPhone)}
+        >
+          <TextField
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={numbers.textmask}
+            name="contactPhone" // contactphone
+            id="contactphone"
+            InputProps={{ inputComponent: NumberMask as any }}
+            variant="outlined"
+            error={Boolean(touched.contactPhone && errors.contactPhone)}
+            helperText={touched.contactPhone ? errors.contactPhone : undefined}
+            disabled={readOnly}
+          />
+        </FormControl>
       </div>
       <div className={styles.row}>
         <p className={styles.descriptor}>Current Website</p>
@@ -254,19 +335,27 @@ const TabBasics: React.FC<TabProps> = ({
           disabled={readOnly}
         />
       </div>
-      {/* <div className={styles.row}>
+      <div className={styles.row}>
         <p className={styles.descriptor}>Date of Founding</p>
-        <TextField
-          className={styles.textField}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.foundingDate ? values.foundingDate : ''}
-          name="foundingDate"
-          variant="outlined"
-          error={Boolean(touched.foundingDate && errors.foundingDate)}
-          helperText={touched.foundingDate ? errors.foundingDate : undefined}
-        />
-      </div> */}
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <KeyboardDatePicker
+            className={styles.textField}
+            onBlur={handleBlur}
+            value={
+              selectedDate === new Date() ? values.foundingDate : selectedDate
+            }
+            name="foundingDate"
+            format="MM/dd/yyyy"
+            margin="normal"
+            id="date-picker-inline"
+            onChange={handleDateChange}
+            inputVariant="outlined"
+            KeyboardButtonProps={{
+              'aria-label': 'change date',
+            }}
+          />
+        </MuiPickersUtilsProvider>
+      </div>
       <div className={styles.short}>
         <p>Audience Demographics</p>
         <div className={styles.auto}>

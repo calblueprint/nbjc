@@ -16,6 +16,7 @@ import { GetServerSideProps } from 'next';
 import getSession from 'utils/getSession';
 import { ApplicationStatus, OrgTeamMembers, Organization } from '@prisma/client';
 import { FormikErrors, useFormik } from 'formik';
+import { Prisma } from '@prisma/client';
 import styles from '../../styles/users/Profile.module.css';
 import {
   BasicInfoForm,
@@ -26,6 +27,13 @@ import {
 import parseValidationError from 'utils/parseValidationError';
 import ProfileBasics from 'components/profile/ProfileBasics';
 import ProfileOperations from 'components/profile/ProfileOperations';
+
+const orgArgs = Prisma.validator<Prisma.OrganizationArgs>()({
+  select: {
+    id: true,
+    applicationStatus: true,
+  },
+});
 
 type UserProfileProps = {
   org: Organization | null;
@@ -352,13 +360,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           userId: session.user.id,
         },
       });
-
       const team = await prisma.orgTeamMembers.findMany({
         where: {
           organizationId: org?.id,
         },
       });
-
       return {
         props: { org, team },
       };

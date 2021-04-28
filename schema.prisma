@@ -59,7 +59,6 @@ model Organization {
   OrgTeamMembers       OrgTeamMembers[]      @relation("OrgTeamMembersToOrganizations")
   organizationEvents   OrganizationEvent[]   @relation("OrganizationEventsToOrganizations")
   organizationProjects OrganizationProject[] @relation("OrganizationProjectsToOrganizations")
-
   @@map("organizations")
 }
 
@@ -154,6 +153,16 @@ model OrganizationProject {
   @@map("organization_projects")
 }
 
+model OrganizationApplicationReview {
+  id             Int          @id @default(autoincrement())
+  reason         String?
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  organizationId Int          @map("organization_id")
+  organization   Organization @relation("OrganizationApplicationReviewsToOrganizations", fields: [organizationId], references: [id])
+
+  @@map("organization_application_reviews")
+}
+
 model OrganizationEvent {
   id               Int                @id @default(autoincrement())
   title            String
@@ -166,7 +175,7 @@ model OrganizationEvent {
   organizationId   Int                @map("organization_id")
   startDatetime    DateTime           @map("start_datetime") @db.Timestamptz(6)
   endDatetime      DateTime?          @map("end_datetime") @db.Timestamptz(6)
-  organizations    Organization       @relation("OrganizationEventsToOrganizations", fields: [organizationId], references: [id])
+  organization     Organization       @relation("OrganizationEventsToOrganizations", fields: [organizationId], references: [id])
 
   @@map("organization_events")
 }

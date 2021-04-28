@@ -10,6 +10,7 @@ import {
   User,
   UserRole,
   WorkType,
+  // OrganizationApplicationReviews,
 } from '@prisma/client';
 import Faker from 'faker';
 import Ora from 'ora';
@@ -110,7 +111,6 @@ export default async function seedDatabase(): Promise<void> {
         },
       },
     });
-
     clearAllMessage.text = 'Cleaned up previous seeded information';
     clearAllMessage.succeed();
   } catch (err) {
@@ -196,6 +196,13 @@ export default async function seedDatabase(): Promise<void> {
                   ageDemographic: Faker.random.arrayElements<AgeDemographic>(
                     Object.values(AgeDemographic)
                   ),
+                  // organizationApplicationReviews: new Array(
+                  //   Faker.random.number(3)
+                  // )
+                  //   .fill(null)
+                  //   .map((i) => ({
+                  //     reason: Faker.lorem.lines(10),
+                  //   })),
                   applicationResponses: {
                     create: appQuestions.map((q) => ({
                       answer: Faker.lorem.lines(10),
