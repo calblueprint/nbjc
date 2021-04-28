@@ -107,6 +107,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
       if (draft && Object.keys(handleValidate(true)(values)).length !== 0)
         return;
       const { short1, short2, short3, projects, ...tempValues } = values;
+      console.log(values);
       try {
         const res = await fetch(`/api/app/orgs?submitting=${!draft}`, {
           method: 'POST',
@@ -298,6 +299,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                   className={styles.autoField}
                   color="primary"
                   type="submit"
+                  onClick={() => handleSubmit(false)(formik.values)}
                 >
                   Submit
                 </Button>
