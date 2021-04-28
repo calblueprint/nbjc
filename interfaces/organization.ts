@@ -9,17 +9,31 @@ import {
   AgeDemographic,
 } from '@prisma/client';
 
-export type PublicOrganization = Prisma.OrganizationGetPayload<{
+export const orgProfile = Prisma.validator<Prisma.OrganizationArgs>()({
   select: {
-    id: true;
-    name: true;
-    organizationType: true;
-    workType: true;
-    lat: true;
-    long: true;
-  };
-}>;
-
+    active: true,
+    id: true,
+    name: true,
+    organizationType: true,
+    workType: true,
+    address: true,
+    missionStatement: true,
+    shortHistory: true,
+    lgbtqDemographic: true,
+    raceDemographic: true,
+    ageDemographic: true,
+    capacity: true,
+    ein: true,
+    foundingDate: true,
+    is501c3: true,
+    website: true,
+    user: {
+      select: {
+        id: true,
+      },
+    },
+  },
+});
 const schema = Joi.object({
   name: Joi.string()
     .empty('')
@@ -87,7 +101,7 @@ const schema = Joi.object({
       is: true,
       then: Joi.string().pattern(/^[0-9]\d?-?\d{7}$/),
     }),
-  // foundingDate: Joi.date(),
+  foundingDate: Joi.date(),
   is501c3: Joi.boolean(),
 }).when('$strict', { is: true, then: Joi.object().and('lat', 'long') });
 

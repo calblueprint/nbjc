@@ -25,7 +25,7 @@ import Layout from 'components/Layout';
 import TabShortResponse from 'components/registration/TabShortResponse';
 import TabBasics from 'components/registration/TabBasics';
 import TabProj from 'components/registration/TabProj';
-import schema, { AppQnR, Form } from 'interfaces/registration';
+import schema, { AppQnR, appQnRArgs, Form } from 'interfaces/registration';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import parseValidationError from 'utils/parseValidationError';
@@ -153,7 +153,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     ageDemographic: org ? org.ageDemographic : [],
     // capacity: undefined,
     ein: (org && org.ein) ?? '',
-    // foundingDate: undefined,
+    foundingDate: undefined,
     is501c3: Boolean(org && org.is501c3),
     website: (org && org.website) ?? '',
     short1: '',
@@ -337,22 +337,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       });
       // getting app questions
       const appQnR = await prisma.applicationQuestion.findMany({
-        select: {
-          id: true,
-          placeholder: true,
-          question: true,
-          hint: true,
-          required: true,
-          wordLimit: true,
-          applicationResponses: {
-            where: {
-              organizationId: organization?.id ?? -1,
-            },
-            select: {
-              answer: true,
-            },
-          },
-        },
+        select: appQnRArgs(organization?.id).select,
       });
 
       const org = JSON.parse(JSON.stringify(organization));
