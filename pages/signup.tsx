@@ -10,8 +10,10 @@ import {
 import { useFormik, FormikHandlers, FormikHelpers, FormikErrors } from 'formik';
 import { signupSchema } from 'interfaces/auth';
 import Layout from 'components/Layout';
-import { signIn, useSession } from 'next-auth/client';
+import { signIn } from 'next-auth/client';
+import useSession from 'utils/useSession';
 import { useRouter } from 'next/router';
+import signInRedirect from 'utils/signInRedirect';
 import styles from '../styles/Auth.module.css';
 
 type FormValues = {
@@ -51,10 +53,10 @@ const UserSignUp: React.FC = () => {
       }
 
       // Sign in user
-      signIn('credentials', {
+      await signIn('credentials', {
         email: values.email,
         password: values.password,
-        callbackUrl: '/',
+        redirect: false,
       });
     } catch (err) {
       if (err.errorCode === 'DUP_EMAIL') {
@@ -135,7 +137,7 @@ const UserSignUp: React.FC = () => {
     onSubmit: handleSubmit,
   });
 
-  if (!sessionLoading && session) router.push('/');
+  if (!sessionLoading && session) signInRedirect(router, session);
   if (!sessionLoading && !session)
     return (
       <Layout title="Sign Up">
