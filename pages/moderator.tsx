@@ -424,11 +424,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
                   </div>
                 </div>
               ) : null}
-              {/* <div className={styles.declineNotesContent}>
-                  {orgs.length > 0
-                    ? orgs[index]?.applicationNote?.note
-                    : 'this org'}
-                </div> */}
               <div className={styles.declineBox}>
                 <TextField
                   id="outlined-basic"
