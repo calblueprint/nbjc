@@ -164,15 +164,15 @@
   flex-wrap: wrap;
 }
 
+.cards {
+  /* display: flex;
+    flex-direction: column; */
+}
+
 .card {
   margin: 8px;
   flex-basis: 45%;
   text-align: left;
-}
-
-.event_cards {
-  /* width: 30% !important; */
-  width: 100px;
 }
 
 .event_card {

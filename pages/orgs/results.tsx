@@ -28,9 +28,9 @@ import {
 } from '@material-ui/core';
 import Layout from 'components/Layout';
 import { useState } from 'react';
-import styles from '../styles/Results.module.css';
+import styles from '../../styles/Results.module.css';
 
-const Map = dynamic(() => import('../components/Map'), {
+const Map = dynamic(() => import('../../components/Map'), {
   ssr: false,
 });
 

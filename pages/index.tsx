@@ -33,7 +33,7 @@ const Home: React.FC = () => {
     initialValues,
     onSubmit: async (values): Promise<void> => {
       Router.push({
-        pathname: 'results',
+        pathname: '/orgs/results',
         query: {
           orgName: values.orgName,
           ages: values.ages,
