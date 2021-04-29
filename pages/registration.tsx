@@ -109,7 +109,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     if (session && session.user.role === 'organization') {
       if (draft && Object.keys(handleValidate(true)(values)).length !== 0)
         return;
-      const { short1, short2, short3, projects, ...tempValues } = values;
+      const { projects, ...tempValues } = values;
       try {
         const res = await fetch(`/api/app/orgs?submitting=${!draft}`, {
           method: 'POST',
@@ -157,9 +157,6 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     foundingDate: undefined,
     is501c3: Boolean(org && org.is501c3),
     website: (org && org.website) ?? '',
-    short1: '',
-    short2: '',
-    short3: '',
     projects:
       org?.organizationProjects?.map((o) => ({
         id: o.id ?? null,
@@ -216,7 +213,6 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
             showDismissButton
             snackbarProps={toastProps}
             clickAwayListener={() => {
-              console.log('clicked');
               setShowErrorToast(false);
             }}
             type="error"
@@ -322,7 +318,10 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                   color="primary"
                   type="submit"
                   onClick={() => {
-                    if (formik.errors) {
+                    if (
+                      formik.errors &&
+                      Object.keys(formik.errors).length !== 0
+                    ) {
                       setShowErrorToast(true);
                     }
                     handleSubmit(false)(formik.values);

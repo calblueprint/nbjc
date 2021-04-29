@@ -66,9 +66,9 @@ const form = Prisma.validator<Prisma.OrganizationArgs>()({
 export type Form = Prisma.OrganizationGetPayload<typeof form> & {
   organizationType: string;
   workType: string;
-  short1: string;
-  short2: string;
-  short3: string;
+  // short1: string;
+  // short2: string;
+  // short3: string;
   projects: Project[];
   qnr: QnR[];
   // proj1: string;
@@ -140,21 +140,21 @@ const schema = Joi.object({
     .messages({
       'any.required': 'project is required',
     }),
-  short1: Joi.string()
-    .empty('')
-    .when('$strict', {
-      is: true,
-      then: Joi.required(),
-    })
-    .messages({
-      'any.required': 'short1 is required',
-    }),
-  short2: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
-  short3: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
+  // short1: Joi.string()
+  //   .empty('')
+  //   .when('$strict', {
+  //     is: true,
+  //     then: Joi.required(),
+  //   })
+  //   .messages({
+  //     'any.required': 'short1 is required',
+  //   }),
+  // short2: Joi.string()
+  //   .empty('')
+  //   .when('$strict', { is: true, then: Joi.required() }),
+  // short3: Joi.string()
+  //   .empty('')
+  //   .when('$strict', { is: true, then: Joi.required() }),
 });
 
 export default schema;
