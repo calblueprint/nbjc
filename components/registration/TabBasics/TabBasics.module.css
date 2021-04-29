@@ -32,6 +32,9 @@
   display: flex;
   align-self: center;
   width: 75%;
+  /* border-radius: 25px;
+  border: 1px solid #ccc; */
+  height: 50px;
 }
 
 .selectField {

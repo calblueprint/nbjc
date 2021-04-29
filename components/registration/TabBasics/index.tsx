@@ -128,6 +128,7 @@ const TabBasics: React.FC<TabProps> = ({
           value={values.name}
           name="name"
           variant="outlined"
+          size="small"
           error={Boolean(touched.name && errors.name)}
           helperText={touched.name ? errors.name : undefined}
           disabled={readOnly}

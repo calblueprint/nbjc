@@ -24,7 +24,6 @@
 .tabinfo {
   margin-left: 7%;
   margin-right: 7%;
-  /* overflow: scroll; */
   height: 500px;
   overflow-y: scroll;
 }
@@ -36,7 +35,6 @@
   margin-bottom: 20px;
   margin-right: 20%;
   margin-left: 20%;
-
 }
 
 .autoField {
