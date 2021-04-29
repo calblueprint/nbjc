@@ -215,9 +215,67 @@ export default async function seedDatabase(): Promise<void> {
         },
       };
     });
+
+  // Creating seeding data for demos
+  const demoOrg: Prisma.UserCreateArgs = {
+    data: {
+      email: `demo@nbjc.dev`,
+      hashedPassword: hashPassword('password'),
+      role: UserRole.organization,
+      organization: {
+        create: {
+          applicationStatus: 'approved',
+          active: true,
+          name: 'Blueprint',
+          lat: 40,
+          long: 40,
+          address: '1760 Spruce Street, Berkeley CA, 94709',
+          contactName: 'Frederick Kim',
+          contactPhone: '(123) 456-7890',
+          missionStatement:
+            "We love Fred! Frederick Kim is an amazing man and he will be Blueprint's next President! He is an NBJC icon and we're to see what he has in plan for Blueprint next semester. \
+            Without him, our codebase would of course be emptier and messier, just like our hearts would be. The most supportive man will have the most support from the rest of us on NBJC and at Blueprint, \
+            and being able to work with him as a developer and become his successor as a PL has been such an incredible honor.",
+          shortHistory:
+            'Additionally, we will have a lot of NBJC members going to be a part of E-Team next semester! Sonja, as the VP of Technology, Elizabeth, as the VP of Design-- two people I have had the privilege with working so extently this past year. \
+            Elizabeth has consistently and always delivered the highest quality design work for the team, even when we cannot do her designs full justice, and I know it as a fact that she will be an incredible mentor and the back-bone of design at Blueprint. \
+            She is the most inspiring human being that has pushed me to become a better PL, and supporter.',
+          is501c3: true,
+          website: 'https://www.nbjc.org',
+          organizationType: 'national',
+          workType: 'advocacy',
+          lgbtqDemographic: [
+            'asexualAromantic',
+            'lesbianSgl',
+            'straightHeterosexual',
+          ],
+          raceDemographic: ['arab', 'black', 'native'],
+          ageDemographic: ['adult', 'child'],
+          applicationResponses: {
+            create: [
+              {
+                answer: 'Sami',
+                applicationQuestion: { connect: { id: appQuestions[0].id } },
+              },
+              {
+                answer: 'Bry',
+                applicationQuestion: { connect: { id: appQuestions[1].id } },
+              },
+              {
+                answer: 'Gabe',
+                applicationQuestion: { connect: { id: appQuestions[0].id } },
+              },
+            ],
+          },
+        },
+      },
+    },
+  };
+
   try {
     await Promise.all(mockOrgUsers.map(prisma.user.create));
-    orgUsersCreateMessage.text = `Created ${NUMBER_USERS} org users.`;
+    await prisma.user.create(demoOrg);
+    orgUsersCreateMessage.text = `Created ${NUMBER_USERS} org users and created demo org.`;
     orgUsersCreateMessage.succeed();
   } catch (err) {
     orgUsersCreateMessage.fail(`Creating org users failed\n\n${err.message}`);
