@@ -107,86 +107,29 @@ const schema = Joi.object({
     .messages({
       'any.required': 'Contact Email is required',
     }),
-  contactPhone: Joi.string()
-    .empty('')
-    .when('$strict', {
-      is: true,
-      then: Joi.required(),
-    })
-    .messages({
-      'any.required': 'Contact Phone is required',
-    }),
-  organizationType: Joi.string()
-    .empty('')
-    .when('$strict', {
-      is: true,
-      then: Joi.required(),
-    })
-    .messages({ 'any.required': 'Type of Organization is required' }),
-  workType: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() })
-    .messages({ 'any.required': 'Type of Work is required' }),
-  website: Joi.string()
-    .empty('')
-    .uri({ domain: { tlds: false }, allowRelative: true })
-    .messages({
-      'string.uri':
-        'Not a valid URL - remember http or https (https://nbjc.org)',
-      'string.domain': 'Not a valid URL - missing domain (https://nbjc.org)',
-    }),
-  // locationType: Joi.string()
-  //   .empty('')
-  //   .when('$strict', { is: true, then: Joi.required() })
-  //   .messages({ 'any.required': 'Location Type is required' }),
+  contactPhone: Joi.string().empty(''),
+  organizationType: Joi.string().empty(''),
+  workType: Joi.string().empty(''),
+  website: Joi.string().empty(''),
+  // .domain()
+  locationType: Joi.string().empty(''),
   address: Joi.string()
     .empty('')
     .when('$strict', { is: true, then: Joi.required() })
     .messages({
       'any.required': 'Address is required',
     }),
-  missionStatement: Joi.string()
-    .empty('')
-    .when('$strict', {
-      is: true,
-      then: Joi.required(),
-    })
-    .messages({
-      'any.required': 'Description and Mission is required',
-    }),
-  shortHistory: Joi.string()
-    .empty('')
-    .when('$strict', {
-      is: true,
-      then: Joi.required(),
-    })
-    .messages({
-      'any.required': 'History is required',
-    }),
-  lgbtqDemographic: Joi.array()
-    .unique()
-    .items(Joi.string())
-    .when('$strict', { is: true, then: Joi.required() }),
-  raceDemographic: Joi.array()
-    .unique()
-    .items(Joi.string())
-    .when('$strict', { is: true, then: Joi.required() }),
-  ageDemographic: Joi.array()
-    .unique()
-    .items(Joi.string())
-    .when('$strict', { is: true, then: Joi.required() }),
+  missionStatement: Joi.string().empty(''),
+  shortHistory: Joi.string().empty(''),
+  lgbtqDemographic: Joi.array().unique().items(Joi.string()),
+  raceDemographic: Joi.array().unique().items(Joi.string()),
+  ageDemographic: Joi.array().unique().items(Joi.string()),
   // capacity: Joi.string()
   //   .empty('')
   //   .when('$strict', { is: true, then: Joi.required() }),
-  ein: Joi.string()
-    .empty('')
-    .pattern(/^[0-9]\d?-?\d{7}$/)
-    .when('$strict', {
-      is: true,
-      then: Joi.required(),
-    })
-    .messages({ 'string.pattern.base': 'Not a valid EIN' }),
+  ein: Joi.string().empty(''),
   foundingDate: Joi.date(),
+  // FIXME, is501c3 not turning red
   is501c3: Joi.boolean(),
   projects: Joi.array()
     .empty('')
