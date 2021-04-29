@@ -1,55 +1,81 @@
-import { Prisma, Organization } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import Joi from 'joi';
+
+export type Project = {
+  id?: number;
+  title: string;
+  description: string;
+};
+
+export type ExistingProject = {
+  id: number;
+  title: string;
+  description: string;
+};
 
 export type Response = {
   id: number[];
   response: string[];
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-function-return-type
+export const appQnRArgs = (id: number | undefined) =>
+  Prisma.validator<Prisma.ApplicationQuestionArgs>()({
+    select: {
+      id: true,
+      placeholder: true,
+      question: true,
+      hint: true,
+      required: true,
+      wordLimit: true,
+      applicationResponses: {
+        where: {
+          organizationId: id ?? -1,
+        },
+        select: {
+          answer: true,
+        },
+      },
+    },
+  });
+
 export type AppQnR =
-  | Prisma.ApplicationQuestionGetPayload<{
-      select: {
-        id: true;
-        placeholder: true;
-        question: true;
-        hint: true;
-        required: true;
-        wordLimit: true;
-        applicationResponses: {
-          select: {
-            answer: true;
-          };
-        };
-      };
-    }>[]
+  | Prisma.ApplicationQuestionGetPayload<ReturnType<typeof appQnRArgs>>[]
   | null;
 
 export type QnR = { questionId: number; response: string };
 
-export type Form = Pick<
-  Organization,
-  | 'name'
-  | 'contactName'
-  | 'contactEmail'
-  | 'contactPhone'
-  | 'website'
-  | 'address'
-  | 'missionStatement'
-  | 'shortHistory'
-  | 'lgbtqDemographic'
-  | 'raceDemographic'
-  | 'ageDemographic'
-  | 'ein'
-  | 'is501c3'
-> & {
+const form = Prisma.validator<Prisma.OrganizationArgs>()({
+  select: {
+    name: true,
+    contactName: true,
+    contactEmail: true,
+    contactPhone: true,
+    website: true,
+    address: true,
+    missionStatement: true,
+    shortHistory: true,
+    lgbtqDemographic: true,
+    raceDemographic: true,
+    ageDemographic: true,
+    ein: true,
+    is501c3: true,
+  },
+});
+
+export type Form = Prisma.OrganizationGetPayload<typeof form> & {
   organizationType: string;
   workType: string;
+  short1: string;
+  short2: string;
+  short3: string;
+  projects: Project[];
   qnr: QnR[];
-  proj1: string;
-  proj2: string;
-  proj3: string;
+  // proj1: string;
+  // proj2: string;
+  // proj3: string;
   // capacity: number | undefined;
-  // foundingDate: Date | undefined;
+  foundingDate: Date | undefined;
 };
 
 const schema = Joi.object({
@@ -102,18 +128,33 @@ const schema = Joi.object({
   //   .empty('')
   //   .when('$strict', { is: true, then: Joi.required() }),
   ein: Joi.string().empty(''),
-  // foundingDate: Joi.date(),
+  foundingDate: Joi.date(),
   // FIXME, is501c3 not turning red
-  is501c3: Joi.boolean()
-    .empty(false)
-    .when('$strict', { is: true, then: Joi.required() })
+  is501c3: Joi.boolean(),
+  projects: Joi.array()
+    .empty('')
+    .when('$strict', {
+      is: true,
+      then: Joi.required(),
+    })
     .messages({
-      'any.required': 'This is required',
+      'any.required': 'project is required',
     }),
-  proj1: Joi.string().empty(''),
-  proj2: Joi.string().empty(''),
-  proj3: Joi.string().empty(''),
-  // TODO: add short required validation
+  short1: Joi.string()
+    .empty('')
+    .when('$strict', {
+      is: true,
+      then: Joi.required(),
+    })
+    .messages({
+      'any.required': 'short1 is required',
+    }),
+  short2: Joi.string()
+    .empty('')
+    .when('$strict', { is: true, then: Joi.required() }),
+  short3: Joi.string()
+    .empty('')
+    .when('$strict', { is: true, then: Joi.required() }),
 });
 
 export default schema;

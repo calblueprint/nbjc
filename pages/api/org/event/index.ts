@@ -39,7 +39,7 @@ export default async (
         raceDemographic: data.raceDemographic,
         link: data.link,
         address: data.address,
-        organizations: {
+        organization: {
           connect: { id: data.organizationId },
         },
         startDatetime: data.startDatetime,

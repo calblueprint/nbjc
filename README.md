@@ -3,7 +3,7 @@
 ## Technologies
 
 - [Next.js](https://nextjs.org/)
-  - NodeJS 12.16.0
+  - NodeJS 12.18.4
   - Yarn 1.22.5
 - Typescript
 
