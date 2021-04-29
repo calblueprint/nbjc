@@ -23,6 +23,7 @@ import {
   OrganizationTypeLabels,
   WorkTypeLabels,
 } from 'utils/typesLinker';
+import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import styles from '../../styles/Organization.module.css';
 
@@ -67,6 +68,8 @@ const OrgProfile: React.FunctionComponent<Props> = ({
   userId,
   errors,
 }) => {
+  const router = useRouter();
+  const { isEvent } = router.query;
   const [tabState, setTabState] = useState<0 | 1 | 2>(0);
   const [editState, setEditState] = useState<0 | 1>(0); // 0 == read, 1 == edit
   const [errorBanner, setErrorBanner] = useState('');

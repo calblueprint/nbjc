@@ -9,9 +9,6 @@ import {
 } from 'formik';
 import { useState, useEffect, ChangeEvent } from 'react';
 import {
-  Tabs,
-  Tab,
-  AppBar,
   Button,
   Dialog,
   DialogTitle,
@@ -19,6 +16,7 @@ import {
   LinearProgress,
   Typography,
   IconButton,
+  SnackbarProps,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import Layout from 'components/Layout';
@@ -32,6 +30,8 @@ import parseValidationError from 'utils/parseValidationError';
 import getSession from 'utils/getSession';
 import Joi from 'joi';
 import prisma from 'utils/prisma';
+import Tab from 'components/Tab';
+import Toast from 'components/Toast';
 import styles from '../styles/Registration.module.css';
 
 type RegistrationProps = {
@@ -50,9 +50,13 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
   const [selected, setSelected] = useState(0);
   const [exitDialogOpen, setExitDialogOpen] = useState(false);
   const [saveDraft, setSaveDraft] = useState(false);
+  const [showErrorToast, setShowErrorToast] = useState(false);
   const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(
     router.query?.feedback === 'true'
   );
+
+  const [tabState, setTabState] = useState<0 | 1 | 2>(0);
+
   const status = org?.applicationStatus;
   const readOnly = status === 'submitted' || status === 'approved';
 
@@ -105,7 +109,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     if (session && session.user.role === 'organization') {
       if (draft && Object.keys(handleValidate(true)(values)).length !== 0)
         return;
-      const { short1, short2, short3, projects, ...tempValues } = values;
+      const { projects, ...tempValues } = values;
       try {
         const res = await fetch(`/api/app/orgs?submitting=${!draft}`, {
           method: 'POST',
@@ -153,9 +157,6 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     foundingDate: undefined,
     is501c3: Boolean(org && org.is501c3),
     website: (org && org.website) ?? '',
-    short1: '',
-    short2: '',
-    short3: '',
     projects:
       org?.organizationProjects?.map((o) => ({
         id: o.id ?? null,
@@ -195,11 +196,30 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     onSubmit: handleSubmit(false),
   });
 
+  const toastProps: SnackbarProps = {
+    anchorOrigin: {
+      vertical: 'top',
+      horizontal: 'center',
+    },
+  };
+
   if (!sessionLoading && (!session || session.user.role !== 'organization'))
     router.push('/');
   if (!sessionLoading && session && session.user.role === 'organization')
     return (
       <Layout title="Register">
+        {showErrorToast ? (
+          <Toast
+            showDismissButton
+            snackbarProps={toastProps}
+            clickAwayListener={() => {
+              setShowErrorToast(false);
+            }}
+            type="error"
+          >
+            Fill out all required fields before submitting.
+          </Toast>
+        ) : null}
         {status === 'rejected' ? (
           <Dialog
             open={feedbackDialogOpen}
@@ -221,7 +241,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
           </Dialog>
         ) : null}
         <div className={styles.header}>
-          <h1 className={styles.header}>Registration Form</h1>
+          <Typography variant="h4">Application</Typography>
           {status === 'rejected' ? (
             <Button
               variant="outlined"
@@ -232,80 +252,86 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
           ) : null}
         </div>
         <form onSubmit={formik.handleSubmit}>
-          <div className={styles.root}>
-            <AppBar position="static" color="default" className={styles.appBar}>
-              <Tabs value={selected} onChange={tabChange}>
-                <Tab label="Basics" />
-                <Tab label="Projects and Events" />
-                <Tab label="Short Response" />
-              </Tabs>
-            </AppBar>
-            {selected === 0 && (
-              <TabBasics
-                handleChange={formik.handleChange}
-                handleBlur={formik.handleBlur}
-                values={formik.values}
-                setFieldValue={formik.setFieldValue}
-                touched={formik.touched}
-                errors={formik.errors}
-                readOnly={readOnly}
-              />
-            )}
-            {selected === 1 && (
-              <TabProj
-                handleChange={formik.handleChange}
-                handleBlur={formik.handleBlur}
-                values={formik.values}
-                setFieldValue={formik.setFieldValue}
-                touched={formik.touched}
-                errors={formik.errors}
-                addNewProj={addNewProj}
-                deleteProj={deleteProj}
-                readOnly={readOnly}
-              />
-            )}
-            {selected === 2 && (
-              <TabShortResponse
-                handleChange={formik.handleChange}
-                handleBlur={formik.handleBlur}
-                values={formik.values}
-                setFieldValue={formik.setFieldValue}
-                touched={formik.touched}
-                errors={formik.errors}
-                appQnR={appQnR}
-                readOnly={readOnly}
-              />
-            )}
-          </div>
-          <div className={styles.bottomButtons}>
-            {!readOnly ? (
-              <div>
+          <div className={styles.info}>
+            <div className={styles.root}>
+              <div className={styles.headerButton}>
+                <Tab
+                  tabName1="Basics"
+                  tabName2="Project and Events"
+                  tabName3="Short Response"
+                  tabState={tabState}
+                  setTabState={setTabState}
+                />
+              </div>
+              <div className={styles.tabinfo}>
+                {tabState === 0 && (
+                  <TabBasics
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                    values={formik.values}
+                    setFieldValue={formik.setFieldValue}
+                    touched={formik.touched}
+                    errors={formik.errors}
+                    readOnly={readOnly}
+                  />
+                )}
+                {tabState === 1 && (
+                  <TabProj
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                    values={formik.values}
+                    setFieldValue={formik.setFieldValue}
+                    touched={formik.touched}
+                    errors={formik.errors}
+                    readOnly={readOnly}
+                    addNewProj={addNewProj}
+                    deleteProj={deleteProj}
+                  />
+                )}
+                {tabState === 2 && (
+                  <TabShortResponse
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                    values={formik.values}
+                    setFieldValue={formik.setFieldValue}
+                    touched={formik.touched}
+                    errors={formik.errors}
+                    appQnR={appQnR}
+                    readOnly={readOnly}
+                  />
+                )}
+              </div>
+            </div>
+            <div className={styles.bottomButtons}>
+              {!readOnly ? (
+                <div>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    className={styles.autoField}
+                    onClick={() => handleSubmit(true)(formik.values)}
+                  >
+                    Save Changes
+                  </Button>
+                  <Button
+                    variant="contained"
+                    className={styles.autoField}
+                    color="primary"
+                    type="submit"
+                  >
+                    Submit
+                  </Button>
+                </div>
+              ) : null}
+              <div className={styles.exitButton}>
                 <Button
-                  variant="outlined"
-                  className={styles.autoField}
-                  type="submit"
-                  onClick={() => handleSubmit(true)(formik.values)}
+                  variant={readOnly ? 'contained' : 'outlined'}
+                  color="secondary"
+                  onClick={() => router.push('/users/profile')}
                 >
-                  Save Changes
-                </Button>
-                <Button
-                  variant="contained"
-                  className={styles.autoField}
-                  color="primary"
-                  type="submit"
-                  onClick={() => handleSubmit(false)(formik.values)}
-                >
-                  Submit
+                  Exit
                 </Button>
               </div>
-            ) : null}
-            <div>
-              <Button
-                variant={readOnly ? 'contained' : 'outlined'}
-                onClick={() => exiting()}
-              >
-                Exit
-              </Button>
             </div>
           </div>
         </form>

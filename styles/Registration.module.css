@@ -1,6 +1,4 @@
 .root {
-  border-color: black;
-  border: 2px solid black;
   margin: 30px;
 }
 
@@ -8,11 +6,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0px 15px;
+  margin-left: 21%;
+  font-size: 10px;
 }
 
-.tab {
-  font-weight: bold;
+.header-Typography {
+  font-weight: bolder;
+}
+
+.tabinfo {
+  /* BUG: Change the below height attribute to be % so it can adjust for multiple screens, but currently switching does not work. */
+  height: 450px;
+  overflow-y: scroll;
+  border-bottom: 1px solid #bbb9bd;
 }
 
 .bottomButtons {
@@ -20,16 +26,17 @@
   flex-direction: row-reverse;
   justify-content: space-between;
   margin-bottom: 20px;
-  margin-left: 25px;
-  margin-right: 25px;
 }
 
 .autoField {
   margin-right: 20px;
 }
 
-.feedbackHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.info {
+  margin-left: 20%;
+  margin-right: 20%;
+}
+
+.exitButton {
+  margin-left: 3%;
 }

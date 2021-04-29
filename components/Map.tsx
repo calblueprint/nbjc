@@ -2,7 +2,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react';
 import ReactMapGL, { Marker, Popup, ViewportProps } from 'react-map-gl';
-import { Organization } from '.prisma/client';
+import { Prisma, Organization } from '@prisma/client';
+import { orgProfile } from 'interfaces/organization';
 
 type MapProps = {
   orgs: Organization[];
