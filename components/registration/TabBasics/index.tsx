@@ -143,6 +143,7 @@ const TabBasics: React.FC<TabProps> = ({
           error={Boolean(touched.workType && errors.workType)}
           disabled={readOnly}
           placeholder="hello"
+          size="small"
         >
           <Select
             id="workType"
@@ -172,6 +173,7 @@ const TabBasics: React.FC<TabProps> = ({
           variant="outlined"
           error={Boolean(touched.organizationType && errors.organizationType)}
           disabled={readOnly}
+          size="small"
         >
           <Select
             id="organizationType"
@@ -221,6 +223,7 @@ const TabBasics: React.FC<TabProps> = ({
           helperText={touched.contactName ? errors.contactName : undefined}
           disabled={readOnly}
           placeholder="First Last"
+          size="small"
         />
       </div>
       <div className={styles.row}>
@@ -236,6 +239,7 @@ const TabBasics: React.FC<TabProps> = ({
           helperText={touched.contactEmail ? errors.contactEmail : undefined}
           disabled={readOnly}
           placeholder="email@example.org"
+          size="small"
         />
       </div>
       <div className={styles.row}>
@@ -251,6 +255,7 @@ const TabBasics: React.FC<TabProps> = ({
           helperText={touched.contactPhone ? errors.contactPhone : undefined}
           disabled={readOnly}
           placeholder="(000)000-0000"
+          size="small"
         />
       </div>
       <div className={styles.row}>
@@ -266,6 +271,7 @@ const TabBasics: React.FC<TabProps> = ({
           helperText={touched.website ? errors.website : undefined}
           disabled={readOnly}
           placeholder="ourwebsite.org"
+          size="small"
         />
       </div>
       {/* <div className={styles.row}>
@@ -309,6 +315,7 @@ const TabBasics: React.FC<TabProps> = ({
           helperText={touched.address ? errors.address : undefined}
           disabled={readOnly}
           placeholder="Your Organization's Address"
+          size="small"
         />
       </div>
       <div className={styles.row}>
@@ -324,6 +331,7 @@ const TabBasics: React.FC<TabProps> = ({
           helperText={touched.ein ? errors.ein : undefined}
           disabled={readOnly}
           placeholder="12345678900"
+          size="small"
         />
       </div>
       <div className={styles.row}>
@@ -338,6 +346,7 @@ const TabBasics: React.FC<TabProps> = ({
             name="foundingDate"
             format="MM/dd/yyyy"
             margin="normal"
+            size="small"
             id="date-picker-inline"
             onChange={handleDateChange}
             inputVariant="outlined"

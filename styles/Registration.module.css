@@ -1,6 +1,4 @@
 .root {
-  /* border-color: black;
-  border: 2px solid black; */
   margin: 30px;
 }
 
@@ -16,16 +14,10 @@
   font-weight: bolder;
 }
 
-.headerButton {
-  margin-left: 20%;
-  margin-right: 20%;
-}
-
 .tabinfo {
-  margin-left: 7%;
-  margin-right: 7%;
   height: 500px;
   overflow-y: scroll;
+  border-bottom: 1px solid #bbb9bd;
 }
 
 .bottomButtons {
@@ -33,10 +25,17 @@
   flex-direction: row-reverse;
   justify-content: space-between;
   margin-bottom: 20px;
-  margin-right: 20%;
-  margin-left: 20%;
 }
 
 .autoField {
   margin-right: 20px;
+}
+
+.info {
+  margin-left: 20%;
+  margin-right: 20%;
+}
+
+.exitButton {
+  margin-left: 3%;
 }
