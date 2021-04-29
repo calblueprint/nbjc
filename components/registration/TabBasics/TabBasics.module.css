@@ -14,11 +14,31 @@
   font-size: 20px;
 }
 
+.innerRow {
+}
+
+.innerLeftCol {
+  width: 30%;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.innerRightCol {
+  width: 70%;
+}
+
+.sidenote {
+  font-weight: 200;
+  font-size: 14px;
+  font-style: italic;
+  width: 80%;
+}
+
 .descriptor {
   display: flex;
+  flex-direction: column;
   width: 25%;
   align-self: left;
-  margin-right: 15px;
 }
 
 .addressDescriptor {
@@ -31,7 +51,7 @@
 .textField {
   display: flex;
   align-self: center;
-  width: 75%;
+  width: 100%;
 }
 
 .selectField {

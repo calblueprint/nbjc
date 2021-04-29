@@ -81,85 +81,39 @@ const schema = Joi.object({
     .messages({
       'any.required': 'Contact Email is required',
     }),
-  contactPhone: Joi.string()
-    .empty('')
-    .when('$strict', {
-      is: true,
-      then: Joi.required(),
-    })
-    .messages({
-      'any.required': 'Contact Phone is required',
-    }),
-  organizationType: Joi.string()
-    .empty('')
-    .when('$strict', {
-      is: true,
-      then: Joi.required(),
-    })
-    .messages({ 'any.required': 'Type of Organization is required' }),
-  workType: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() })
-    .messages({ 'any.required': 'Type of Work is required' }),
-  website: Joi.string().domain().empty(''),
-  // locationType: Joi.string()
-  //   .empty('')
-  //   .when('$strict', { is: true, then: Joi.required() })
-  //   .messages({ 'any.required': 'Location Type is required' }),
+  contactPhone: Joi.string().empty(''),
+  organizationType: Joi.string().empty(''),
+  workType: Joi.string().empty(''),
+  website: Joi.string().empty(''),
+  // .domain()
+  locationType: Joi.string().empty(''),
   address: Joi.string()
     .empty('')
     .when('$strict', { is: true, then: Joi.required() })
     .messages({
       'any.required': 'Address is required',
     }),
-  missionStatement: Joi.string()
-    .empty('')
-    .when('$strict', {
-      is: true,
-      then: Joi.required(),
-    })
-    .messages({
-      'any.required': 'Description and Mission is required',
-    }),
-  shortHistory: Joi.string()
-    .empty('')
-    .when('$strict', {
-      is: true,
-      then: Joi.required(),
-    })
-    .messages({
-      'any.required': 'History is required',
-    }),
-  lgbtqDemographic: Joi.array()
-    .unique()
-    .items(Joi.string())
-    .when('$strict', { is: true, then: Joi.required() }),
-  raceDemographic: Joi.array()
-    .unique()
-    .items(Joi.string())
-    .when('$strict', { is: true, then: Joi.required() }),
-  ageDemographic: Joi.array()
-    .unique()
-    .items(Joi.string())
-    .when('$strict', { is: true, then: Joi.required() }),
+  missionStatement: Joi.string().empty(''),
+  shortHistory: Joi.string().empty(''),
+  lgbtqDemographic: Joi.array().unique().items(Joi.string()),
+  raceDemographic: Joi.array().unique().items(Joi.string()),
+  ageDemographic: Joi.array().unique().items(Joi.string()),
   // capacity: Joi.string()
   //   .empty('')
   //   .when('$strict', { is: true, then: Joi.required() }),
-  ein: Joi.string()
-    .empty('')
-    .pattern(/^[0-9]\d?-?\d{7}$/)
-    .messages({ 'string.pattern.base': 'Not a valid EIN' }),
+  ein: Joi.string().empty(''),
   // foundingDate: Joi.date(),
-  is501c3: Joi.boolean(),
-  proj1: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
-  proj2: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
-  proj3: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
+  // FIXME, is501c3 not turning red
+  is501c3: Joi.boolean()
+    .empty(false)
+    .when('$strict', { is: true, then: Joi.required() })
+    .messages({
+      'any.required': 'This is required',
+    }),
+  proj1: Joi.string().empty(''),
+  proj2: Joi.string().empty(''),
+  proj3: Joi.string().empty(''),
+  // TODO: add short required validation
 });
 
 export default schema;
