@@ -94,6 +94,7 @@ const Home: React.FC<EventsProps> = ({ orgs }) => {
             <div className={styles.event_cards}>
               <Card className={styles.event_card}>
                 <CardActionArea
+                  // This will return a 404 Error if the ID 4 org is not active. Make sure it is active in Prisma Studio first. Will be fixed in a separate PR.
                   onClick={() => router.push(`/orgs/4?isEvent=${true}`)}
                 >
                   <CardContent className={styles.event_card}>
