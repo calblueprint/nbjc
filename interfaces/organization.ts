@@ -52,48 +52,40 @@ const schema = Joi.object({
     .empty('')
     .default(null)
     .when('$strict', { is: true, then: Joi.string().email().required() }),
-  contactPhone: Joi.string()
-    .empty('')
-    .default(null)
-    .when('$strict', { is: true, then: Joi.required() }),
-  website: Joi.string()
-    .empty('')
-    .default(null)
-    .when('$strict', { is: true, then: Joi.string().uri({ domain: {} }) }),
+  contactPhone: Joi.string().empty('').default(null),
+  // .when('$strict', { is: true, then: Joi.required() }),
+  website: Joi.string().empty('').default(null),
+  // .when('$strict', { is: true, then: Joi.string().uri({ domain: {} }) }),
   organizationType: Joi.string()
     .empty('')
     .default(null)
-    .valid(...Object.values(OrganizationType))
-    .when('$strict', { is: true, then: Joi.required() }),
+    .valid(...Object.values(OrganizationType)),
+  // .when('$strict', { is: true, then: Joi.required() }),
   workType: Joi.string()
     .empty('')
     .default(null)
-    .valid(...Object.values(WorkType))
-    .when('$strict', { is: true, then: Joi.required() }),
+    .valid(...Object.values(WorkType)),
+  // .when('$strict', { is: true, then: Joi.required() }),
   address: Joi.string()
     .empty('')
     .default(null)
     .when('$strict', { is: true, then: Joi.required() }),
-  missionStatement: Joi.string()
-    .empty('')
-    .default(null)
-    .when('$strict', { is: true, then: Joi.required() }),
-  shortHistory: Joi.string()
-    .empty('')
-    .default(null)
-    .when('$strict', { is: true, then: Joi.required() }),
+  missionStatement: Joi.string().empty('').default(null),
+  // .when('$strict', { is: true, then: Joi.required() }),
+  shortHistory: Joi.string().empty('').default(null),
+  // .when('$strict', { is: true, then: Joi.required() }),
   lgbtqDemographic: Joi.array()
     .unique()
-    .items(Joi.string().valid(...Object.values(LgbtqDemographic)))
-    .when('$strict', { is: true, then: Joi.array().min(1).required() }),
+    .items(Joi.string().valid(...Object.values(LgbtqDemographic))),
+  // .when('$strict', { is: true, then: Joi.array().min(1).required() }),
   raceDemographic: Joi.array()
     .unique()
-    .items(Joi.string().valid(...Object.values(RaceDemographic)))
-    .when('$strict', { is: true, then: Joi.array().min(1).required() }),
+    .items(Joi.string().valid(...Object.values(RaceDemographic))),
+  // .when('$strict', { is: true, then: Joi.array().min(1).required() }),
   ageDemographic: Joi.array()
     .unique()
-    .items(Joi.string().valid(...Object.values(AgeDemographic)))
-    .when('$strict', { is: true, then: Joi.array().min(1).required() }),
+    .items(Joi.string().valid(...Object.values(AgeDemographic))),
+  // .when('$strict', { is: true, then: Joi.array().min(1).required() }),
   // capacity: Joi.number(),
   ein: Joi.string()
     .empty('')
