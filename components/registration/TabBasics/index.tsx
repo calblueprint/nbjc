@@ -215,16 +215,27 @@ const TabBasics: React.FC<TabProps> = ({
         <div className={styles.innerRightCol}>
           <div className={styles.textField}>
             {/* TODO: change to drop down, yes/no */}
-            <Checkbox
-              checked={values.is501c3}
-              onChange={handleChange}
-              name="is501c3"
-              color="primary"
+            <FormControl
+              className={styles.textField}
+              variant="outlined"
+              error={Boolean(touched.is501c3 && errors.is501c3)}
               disabled={readOnly}
-            />
-            <FormHelperText>
-              {touched.is501c3 ? errors.is501c3 : undefined}
-            </FormHelperText>
+            >
+              <Select
+                id="is501c3"
+                name="is501c3"
+                value={values.is501c3}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              >
+                <MenuItem key="none" value="" disabled />
+                <MenuItem value="true">True</MenuItem>
+                <MenuItem value="false">False</MenuItem>
+              </Select>
+              <FormHelperText>
+                {touched.is501c3 ? errors.is501c3 : undefined}
+              </FormHelperText>
+            </FormControl>
           </div>
         </div>
       </div>
