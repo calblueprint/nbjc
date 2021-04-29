@@ -1,5 +1,6 @@
 import { GetServerSideProps } from 'next';
 import prisma from 'utils/prisma';
+import { Prisma, Organization } from '@prisma/client';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { orgProfile } from 'interfaces/organization';
@@ -24,7 +25,11 @@ const Map = dynamic(() => import('../../components/Map'), {
   ssr: false,
 });
 
-const Home: React.FC<HomeProps> = ({ orgs }) => {
+type EventsProps = {
+  orgs: Organization[];
+};
+
+const Home: React.FC<EventsProps> = ({ orgs }) => {
   const router = useRouter();
 
   // This is to verify whether or not the current user has a proper session configured to see the page.
@@ -150,7 +155,7 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    const resp = await prisma.organization.findMany({
+    const orgs = await prisma.organization.findMany({
       where: { active: true },
       orderBy: {
         name: 'asc',
@@ -164,7 +169,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
         long: true,
       },
     });
-    const orgs = JSON.parse(JSON.stringify(resp)) as orgProfile[];
     return {
       props: {
         orgs,
