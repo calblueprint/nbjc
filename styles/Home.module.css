@@ -71,6 +71,11 @@
   padding: 10px;
 }
 
+.cards {
+  /* display: flex;
+  flex-direction: column; */
+}
+
 .autoField {
   width: 100%;
   margin: 3px;
