@@ -131,6 +131,7 @@ const TabBasics: React.FC<TabProps> = ({
           error={Boolean(touched.name && errors.name)}
           helperText={touched.name ? errors.name : undefined}
           disabled={readOnly}
+          placeholder="Your Organization Name"
         />
       </div>
       <div className={styles.row}>
@@ -140,6 +141,7 @@ const TabBasics: React.FC<TabProps> = ({
           variant="outlined"
           error={Boolean(touched.workType && errors.workType)}
           disabled={readOnly}
+          placeholder="hello"
         >
           <Select
             id="workType"
@@ -217,6 +219,7 @@ const TabBasics: React.FC<TabProps> = ({
           error={Boolean(touched.contactName && errors.contactName)}
           helperText={touched.contactName ? errors.contactName : undefined}
           disabled={readOnly}
+          placeholder="First Last"
         />
       </div>
       <div className={styles.row}>
@@ -231,11 +234,12 @@ const TabBasics: React.FC<TabProps> = ({
           error={Boolean(touched.contactEmail && errors.contactEmail)}
           helperText={touched.contactEmail ? errors.contactEmail : undefined}
           disabled={readOnly}
+          placeholder="email@example.org"
         />
       </div>
       <div className={styles.row}>
         <p className={styles.descriptor}>Contact Person Phone</p>
-        {/* <TextField
+        <TextField
           className={styles.textField}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -245,25 +249,8 @@ const TabBasics: React.FC<TabProps> = ({
           error={Boolean(touched.contactPhone && errors.contactPhone)}
           helperText={touched.contactPhone ? errors.contactPhone : undefined}
           disabled={readOnly}
-        /> */}
-        <FormControl
-          className={styles.textField}
-          variant="outlined"
-          error={Boolean(touched.contactPhone && errors.contactPhone)}
-        >
-          <TextField
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={numbers.textmask}
-            name="contactPhone" // contactphone
-            id="contactphone"
-            InputProps={{ inputComponent: NumberMask as any }}
-            variant="outlined"
-            error={Boolean(touched.contactPhone && errors.contactPhone)}
-            helperText={touched.contactPhone ? errors.contactPhone : undefined}
-            disabled={readOnly}
-          />
-        </FormControl>
+          placeholder="(000)000-0000"
+        />
       </div>
       <div className={styles.row}>
         <p className={styles.descriptor}>Current Website</p>
@@ -277,6 +264,7 @@ const TabBasics: React.FC<TabProps> = ({
           error={Boolean(touched.website && errors.website)}
           helperText={touched.website ? errors.website : undefined}
           disabled={readOnly}
+          placeholder="ourwebsite.org"
         />
       </div>
       {/* <div className={styles.row}>
@@ -319,6 +307,7 @@ const TabBasics: React.FC<TabProps> = ({
           error={Boolean(touched.address && errors.address)}
           helperText={touched.address ? errors.address : undefined}
           disabled={readOnly}
+          placeholder="Your Organization's Address"
         />
       </div>
       <div className={styles.row}>
@@ -333,6 +322,7 @@ const TabBasics: React.FC<TabProps> = ({
           error={Boolean(touched.ein && errors.ein)}
           helperText={touched.ein ? errors.ein : undefined}
           disabled={readOnly}
+          placeholder="12345678900"
         />
       </div>
       <div className={styles.row}>
