@@ -107,7 +107,7 @@ const Layout: React.FunctionComponent<Props> = ({
                     <Typography variant="h5">Organizations</Typography>
                   </a>
                 </Link>
-                <Link href="/">
+                <Link href="/events">
                   <a className={styles.link}>
                     <Typography variant="h5">Events</Typography>
                   </a>

@@ -3,6 +3,7 @@ import styles from './Project.module.css';
 type ProjectProps = {
   name: string;
   description: string;
+  image?: string;
 };
 
 const Project: React.FC<ProjectProps> = ({ name, description }) => {
