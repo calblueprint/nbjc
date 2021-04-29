@@ -252,93 +252,86 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
           ) : null}
         </div>
         <form onSubmit={formik.handleSubmit}>
-          <div className={styles.root}>
-            <div className={styles.headerButton}>
-              <Tab
-                tabName1="Basics"
-                tabName2="Project and Events"
-                tabName3="Short Response"
-                tabState={tabState}
-                setTabState={setTabState}
-              />
+          <div className={styles.info}>
+            <div className={styles.root}>
+              <div className={styles.headerButton}>
+                <Tab
+                  tabName1="Basics"
+                  tabName2="Project and Events"
+                  tabName3="Short Response"
+                  tabState={tabState}
+                  setTabState={setTabState}
+                />
+              </div>
+              <div className={styles.tabinfo}>
+                {tabState === 0 && (
+                  <TabBasics
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                    values={formik.values}
+                    setFieldValue={formik.setFieldValue}
+                    touched={formik.touched}
+                    errors={formik.errors}
+                    readOnly={readOnly}
+                  />
+                )}
+                {tabState === 1 && (
+                  <TabProj
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                    values={formik.values}
+                    setFieldValue={formik.setFieldValue}
+                    touched={formik.touched}
+                    errors={formik.errors}
+                    readOnly={readOnly}
+                    addNewProj={addNewProj}
+                    deleteProj={deleteProj}
+                  />
+                )}
+                {tabState === 2 && (
+                  <TabShortResponse
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                    values={formik.values}
+                    setFieldValue={formik.setFieldValue}
+                    touched={formik.touched}
+                    errors={formik.errors}
+                    appQnR={appQnR}
+                    readOnly={readOnly}
+                  />
+                )}
+              </div>
             </div>
-            <div className={styles.tabinfo}>
-              {tabState === 0 && (
-                <TabBasics
-                  handleChange={formik.handleChange}
-                  handleBlur={formik.handleBlur}
-                  values={formik.values}
-                  setFieldValue={formik.setFieldValue}
-                  touched={formik.touched}
-                  errors={formik.errors}
-                  readOnly={readOnly}
-                />
-              )}
-              {tabState === 1 && (
-                <TabProj
-                  handleChange={formik.handleChange}
-                  handleBlur={formik.handleBlur}
-                  values={formik.values}
-                  setFieldValue={formik.setFieldValue}
-                  touched={formik.touched}
-                  errors={formik.errors}
-                  readOnly={readOnly}
-                  addNewProj={addNewProj}
-                  deleteProj={deleteProj}
-                />
-              )}
-              {tabState === 2 && (
-                <TabShortResponse
-                  handleChange={formik.handleChange}
-                  handleBlur={formik.handleBlur}
-                  values={formik.values}
-                  setFieldValue={formik.setFieldValue}
-                  touched={formik.touched}
-                  errors={formik.errors}
-                  appQnR={appQnR}
-                  readOnly={readOnly}
-                />
-              )}
-            </div>
-          </div>
-          <div className={styles.bottomButtons}>
-            {!readOnly ? (
-              <div>
+            <div className={styles.bottomButtons}>
+              {!readOnly ? (
+                <div>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    className={styles.autoField}
+                    onClick={() => handleSubmit(true)(formik.values)}
+                  >
+                    Save Changes
+                  </Button>
+                  <Button
+                    variant="contained"
+                    className={styles.autoField}
+                    color="primary"
+                    type="submit"
+                  >
+                    Submit
+                  </Button>
+                </div>
+              ) : null}
+              <div className={styles.exitButton}>
                 <Button
-                  variant="outlined"
-                  color="primary"
-                  className={styles.autoField}
-                  onClick={() => handleSubmit(true)(formik.values)}
+                  variant={readOnly ? 'contained' : 'outlined'}
+                  color="secondary"
+                  onClick={() => router.push('/users/profile')}
                 >
-                  Save Changes
-                </Button>
-                <Button
-                  variant="contained"
-                  className={styles.autoField}
-                  color="primary"
-                  type="submit"
-                  onClick={() => {
-                    if (
-                      formik.errors &&
-                      Object.keys(formik.errors).length !== 0
-                    ) {
-                      setShowErrorToast(true);
-                    }
-                    handleSubmit(false)(formik.values);
-                  }}
-                >
-                  Submit
+                  Exit
                 </Button>
               </div>
-            ) : null}
-            <div>
-              <Button
-                variant={readOnly ? 'contained' : 'outlined'}
-                color="primary"
-                onClick={() => router.push('/users/profile')}
-              >
-                Exit
-              </Button>
             </div>
           </div>
         </form>

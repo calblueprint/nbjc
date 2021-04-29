@@ -7,8 +7,6 @@
 .row {
   display: flex;
   justify-content: center;
-  margin-right: 15%;
-  margin-left: 15%;
   margin-top: 20px;
   font-size: 15px;
   font-weight: bold;
@@ -51,7 +49,9 @@
 .textField {
   display: flex;
   align-self: center;
-  width: 100%;
+  width: 75%;
+  border-radius: 25px;
+  height: 50px;
 }
 
 .selectField {
@@ -93,8 +93,6 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  margin-right: 15%;
-  margin-left: 15%;
   margin-bottom: 50px;
   margin-top: 50px;
   font-weight: bold;
