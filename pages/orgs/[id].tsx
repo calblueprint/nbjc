@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import prisma from 'utils/prisma';
-import { Prisma } from '@prisma/client';
 import { orgProfile } from 'interfaces/organization';
 import { Button, Chip, LinearProgress } from '@material-ui/core';
+import { Prisma } from '@prisma/client';
 import Layout from 'components/Layout';
 import Project from 'components/organization/Project';
 import Tab from 'components/Tab';
@@ -52,9 +52,6 @@ const projects = [
       'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
   },
 ];
-const projectsList = projects.map((project) => {
-  return <Project name={project.name} description={project.description} />;
-});
 
 const OrgProfile: React.FunctionComponent<Props> = ({
   org,
@@ -63,7 +60,12 @@ const OrgProfile: React.FunctionComponent<Props> = ({
 }) => {
   const router = useRouter();
   const { isEvent } = router.query;
-  const [tabState, setTabState] = useState<0 | 1 | 2>(isEvent ? 1 : 0);
+  const [tabState, setTabState] = useState<0 | 1 | 2>(0);
+  const projectsList = org?.organizationProjects?.map((project) => {
+    return (
+      <Project name={project.title} description={project.description ?? ''} />
+    );
+  });
   const [session, sessionLoading] = useSession();
   const demographics = (category: string, groups: string[]): JSX.Element => {
     return (

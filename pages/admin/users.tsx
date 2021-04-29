@@ -31,8 +31,6 @@ const AdminUsersIndex: React.FunctionComponent<AdminUsersIndexProps> = ({
   };
 
   const handleClickClose = (): void => {
-    console.log(inviteEmail);
-    console.log(inviteName);
     setModal(false);
   };
 
