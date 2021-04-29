@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import prisma from 'utils/prisma';
-import { Organization } from '@prisma/client';
+import { orgProfile } from 'interfaces/organization';
 import { Button, Chip, LinearProgress } from '@material-ui/core';
+import { Prisma } from '@prisma/client';
 import Layout from 'components/Layout';
 import Project from 'components/organization/Project';
 import Tab from 'components/Tab';
@@ -11,50 +12,12 @@ import useSession from 'utils/useSession';
 import styles from '../../styles/Organization.module.css';
 
 type Props = {
-  org: Pick<
-    Organization,
-    | 'id'
-    | 'name'
-    | 'organizationType'
-    | 'workType'
-    | 'address'
-    | 'missionStatement'
-    | 'shortHistory'
-    | 'lgbtqDemographic'
-    | 'raceDemographic'
-    | 'ageDemographic'
-    | 'capacity'
-    | 'ein'
-    | 'foundingDate'
-    | 'is501c3'
-    | 'website'
-  >;
+  org: Prisma.OrganizationGetPayload<typeof orgProfile>;
   orgUser: {
     id: number;
   };
   errors?: string;
 };
-
-const projects = [
-  {
-    name: 'Project 1 Name',
-    description:
-      'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
-  },
-  {
-    name: 'Project 2 Name',
-    description:
-      'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
-  },
-  {
-    name: 'Annual Event 1 Name',
-    description:
-      'Long description about this project or initiative. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut porttitor leo a diam sollicitudin tempor id. Sem nulla pharetra diam sit amet nisl. Neque aliquam vestibulum morbi blandit cursus risus at. Luctus accumsan tortor posuere ac ut consequat. Turpis tincidunt id aliquet risus feugiat in ante metus dictum. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Vitae congue mauris rhoncus aenean vel elit scelerisque. Ullamcorper velit sed ullamcorper morbi. Quam viverra orci sagittis eu volutpat odio. Elementum nisi quis eleifend quam. Sed vulputate odio ut enim blandit volutpat maecenas volutpat. Justo laoreet sit amet cursus sit amet. ',
-  },
-];
-const projectsList = projects.map((project) => {
-  return <Project name={project.name} description={project.description} />;
-});
 
 const OrgProfile: React.FunctionComponent<Props> = ({
   org,
@@ -62,6 +25,11 @@ const OrgProfile: React.FunctionComponent<Props> = ({
   errors,
 }) => {
   const [tabState, setTabState] = useState<0 | 1 | 2>(0);
+  const projectsList = org?.organizationProjects?.map((project) => {
+    return (
+      <Project name={project.title} description={project.description ?? ''} />
+    );
+  });
   const [session, sessionLoading] = useSession();
   const demographics = (category: string, groups: string[]): JSX.Element => {
     return (
@@ -203,33 +171,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       return { notFound: true };
     }
 
-    const resp = await prisma.organization.findUnique({
+    const org = await prisma.organization.findUnique({
       where: { id: Number(id) },
-      select: {
-        active: true,
-        id: true,
-        name: true,
-        organizationType: true,
-        workType: true,
-        address: true,
-        missionStatement: true,
-        shortHistory: true,
-        lgbtqDemographic: true,
-        raceDemographic: true,
-        ageDemographic: true,
-        capacity: true,
-        ein: true,
-        foundingDate: true,
-        is501c3: true,
-        website: true,
-        user: {
-          select: {
-            id: true,
-          },
-        },
-      },
+      select: orgProfile.select,
     });
-    const org = JSON.parse(JSON.stringify(resp));
+
     if (!org || !org.active) {
       return {
         notFound: true,

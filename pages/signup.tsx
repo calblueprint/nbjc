@@ -53,12 +53,11 @@ const UserSignUp: React.FC = () => {
       }
 
       // Sign in user
-      const signInRes = await signIn('credentials', {
+      await signIn('credentials', {
         email: values.email,
         password: values.password,
         redirect: false,
       });
-      setErrorBanner(signInRes.error ?? '');
     } catch (err) {
       if (err.errorCode === 'DUP_EMAIL') {
         setErrorBanner(
