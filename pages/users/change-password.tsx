@@ -18,7 +18,7 @@ const ChangePassword: React.FC = () => {
               <TextField
                 size="small"
                 id="email"
-                label={email}
+                label="******"
                 variant="outlined"
               />
             </div>

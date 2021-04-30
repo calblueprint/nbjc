@@ -27,38 +27,40 @@ model Account {
 }
 
 model Organization {
-  id                   Int                   @id @default(autoincrement())
-  name                 String?               @db.VarChar(255)
-  long                 Float?
-  lat                  Float?
-  createdAt            DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  applicationStatus    ApplicationStatus     @default(draft) @map("application_status")
-  active               Boolean               @default(false)
-  contactName          String?               @map("contact_name") @db.VarChar(255)
-  contactEmail         String?               @map("contact_email") @db.VarChar(255)
-  organizationType     OrganizationType?     @map("organization_type")
-  workType             WorkType?             @map("work_type")
-  address              String?               @db.VarChar(255)
-  missionStatement     String?               @map("mission_statement")
-  shortHistory         String?               @map("short_history")
-  lgbtqDemographic     LgbtqDemographic[]    @map("lgbtq_demographic")
-  raceDemographic      RaceDemographic[]     @map("race_demographic")
-  ageDemographic       AgeDemographic[]      @map("age_demographic")
-  capacity             Int?
-  ein                  String?               @db.VarChar(255)
-  foundingDate         DateTime?             @map("founding_date") @db.Date
-  is501c3              Boolean               @default(false) @map("is_501c3")
-  userId               Int?                  @unique @map("user_id")
-  contactPhone         String?               @map("contact_phone") @db.VarChar(255)
-  website              String?               @db.VarChar(255)
-  approvedSeen         Boolean               @default(false) @map("approved_seen")
-  user                 User?                 @relation("OrganizationsToUsers", fields: [userId], references: [id])
-  applicationNote      ApplicationNote?      @relation("ApplicationNotesToOrganizations")
-  applicationResponses ApplicationResponse[] @relation("ApplicationResponsesToOrganizations")
-  OrgTeamMembers       OrgTeamMembers[]      @relation("OrgTeamMembersToOrganizations")
-  organizationEvents   OrganizationEvent[]   @relation("OrganizationEventsToOrganizations")
-  organizationProjects OrganizationProject[] @relation("OrganizationProjectsToOrganizations")
+  id                             Int                             @id @default(autoincrement())
+  name                           String?                         @db.VarChar(255)
+  long                           Float?
+  lat                            Float?
+  createdAt                      DateTime                        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                      DateTime                        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  applicationStatus              ApplicationStatus               @default(draft) @map("application_status")
+  active                         Boolean                         @default(false)
+  contactName                    String?                         @map("contact_name") @db.VarChar(255)
+  contactEmail                   String?                         @map("contact_email") @db.VarChar(255)
+  organizationType               OrganizationType?               @map("organization_type")
+  workType                       WorkType?                       @map("work_type")
+  address                        String?                         @db.VarChar(255)
+  missionStatement               String?                         @map("mission_statement")
+  shortHistory                   String?                         @map("short_history")
+  lgbtqDemographic               LgbtqDemographic[]              @map("lgbtq_demographic")
+  raceDemographic                RaceDemographic[]               @map("race_demographic")
+  ageDemographic                 AgeDemographic[]                @map("age_demographic")
+  capacity                       Int?
+  ein                            String?                         @db.VarChar(255)
+  foundingDate                   DateTime?                       @map("founding_date") @db.Date
+  is501c3                        Boolean                         @default(false) @map("is_501c3")
+  userId                         Int?                            @unique @map("user_id")
+  contactPhone                   String?                         @map("contact_phone") @db.VarChar(255)
+  website                        String?                         @db.VarChar(255)
+  approvedSeen                   Boolean                         @default(false) @map("approved_seen")
+  user                           User?                           @relation("OrganizationsToUsers", fields: [userId], references: [id])
+  applicationNote                ApplicationNote?                @relation("ApplicationNotesToOrganizations")
+  applicationResponses           ApplicationResponse[]           @relation("ApplicationResponsesToOrganizations")
+  orgTeamMembers                 OrgTeamMember[]                 @relation("OrgTeamMembersToOrganizations")
+  organizationApplicationReviews OrganizationApplicationReview[] @relation("OrganizationApplicationReviewsToOrganizations")
+  organizationEvents             OrganizationEvent[]             @relation("OrganizationEventsToOrganizations")
+  organizationProjects           OrganizationProject[]           @relation("OrganizationProjectsToOrganizations")
+
   @@map("organizations")
 }
 
@@ -180,7 +182,7 @@ model OrganizationEvent {
   @@map("organization_events")
 }
 
-model OrgTeamMembers {
+model OrgTeamMember {
   id             Int          @id @default(autoincrement())
   name           String       @db.VarChar(255)
   title          String       @db.VarChar(255)
