@@ -27,8 +27,27 @@
   display: flex;
 }
 
+.subTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.accountSection {
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  display: flex;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  height: 40px;
+}
+
 .top {
   margin-bottom: 20px;
+  margin-top: 35px;
+  border-top: solid 1px;
+  border-color: silver;
+  padding-top: 30px;
 }
 
 .settings {
@@ -63,6 +82,7 @@
   font-size: 1rem;
   align-items: center;
   height: 40px;
+  margin-top: 15px;
 }
 
 .fieldRight {
