@@ -10,13 +10,14 @@ import {
   RaceDemographicLabels,
   LgbtqDemographicLabels,
 } from 'utils/typesLinker';
-import styles from 'styles/Home.module.css';
+import styles from 'styles/Events.module.css';
 import {
   LgbtqDemographic,
   RaceDemographic,
   AgeDemographic,
 } from '@prisma/client';
 import EventCard from 'components/event/EventCard';
+import { func } from 'joi';
 
 const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
 
@@ -72,6 +73,7 @@ const Home: React.FC = () => {
                       {...params}
                       variant="outlined"
                       placeholder="By Identities"
+                      size="small"
                     />
                   )}
                 />
@@ -94,6 +96,7 @@ const Home: React.FC = () => {
                       {...params}
                       variant="outlined"
                       placeholder="By Background"
+                      size="small"
                     />
                   )}
                 />
@@ -116,6 +119,7 @@ const Home: React.FC = () => {
                       {...params}
                       variant="outlined"
                       placeholder="By Audiences"
+                      size="small"
                     />
                   )}
                 />
@@ -136,11 +140,11 @@ const Home: React.FC = () => {
                     ),
                   }}
                   variant="outlined"
+                  size="small"
                 />
                 <Button
                   variant="contained"
                   className={styles.button}
-                  color="primary"
                   type="submit"
                 >
                   Search
@@ -149,8 +153,22 @@ const Home: React.FC = () => {
             </Card>
           </div>
         </div>
-        <div>Trending Events</div>
-        <EventCard event={1} />
+        <div className={styles.trending}>Trending Events</div>
+        <div className={styles.trendingEvents}>
+          <EventCard event={1} />
+          <EventCard event={1} />
+          <EventCard event={1} />
+          <EventCard event={1} />
+          <EventCard event={1} />
+        </div>
+        <div className={styles.trending}>Popular Near You</div>
+        <div className={styles.trendingEvents}>
+          <EventCard event={1} />
+          <EventCard event={1} />
+          <EventCard event={1} />
+          <EventCard event={1} />
+          <EventCard event={1} />
+        </div>
       </form>
     </Layout>
   );
