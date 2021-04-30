@@ -229,17 +229,12 @@ export default async function seedDatabase(): Promise<void> {
           name: 'Blueprint',
           lat: 40,
           long: 40,
-          address: '1760 Spruce Street, Berkeley CA, 94709',
-          contactName: 'Frederick Kim',
+          address: '1234 Fake Street, Berkeley CA, 94709',
+          contactName: 'Frederick Chen',
           contactPhone: '(123) 456-7890',
-          missionStatement:
-            "We love Fred! Frederick Kim is an amazing man and he will be Blueprint's next President! He is an NBJC icon and we're to see what he has in plan for Blueprint next semester. \
-            Without him, our codebase would of course be emptier and messier, just like our hearts would be. The most supportive man will have the most support from the rest of us on NBJC and at Blueprint, \
-            and being able to work with him as a developer and become his successor as a PL has been such an incredible honor.",
-          shortHistory:
-            'Additionally, we will have a lot of NBJC members going to be a part of E-Team next semester! Sonja, as the VP of Technology, Elizabeth, as the VP of Design-- two people I have had the privilege with working so extently this past year. \
-            Elizabeth has consistently and always delivered the highest quality design work for the team, even when we cannot do her designs full justice, and I know it as a fact that she will be an incredible mentor and the back-bone of design at Blueprint. \
-            She is the most inspiring human being that has pushed me to become a better PL, and supporter.',
+          contactEmail: 'blue@print.com',
+          missionStatement: Faker.lorem.lines(10),
+          shortHistory: Faker.lorem.lines(10),
           is501c3: true,
           website: 'https://www.nbjc.org',
           organizationType: 'national',
@@ -254,15 +249,15 @@ export default async function seedDatabase(): Promise<void> {
           applicationResponses: {
             create: [
               {
-                answer: 'Sami',
+                answer: Faker.lorem.lines(5),
                 applicationQuestion: { connect: { id: appQuestions[0].id } },
               },
               {
-                answer: 'Bry',
+                answer: Faker.lorem.lines(5),
                 applicationQuestion: { connect: { id: appQuestions[1].id } },
               },
               {
-                answer: 'Gabe',
+                answer: Faker.lorem.lines(5),
                 applicationQuestion: { connect: { id: appQuestions[0].id } },
               },
             ],
