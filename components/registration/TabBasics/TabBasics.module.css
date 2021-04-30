@@ -49,7 +49,7 @@
 .textField {
   display: flex;
   align-self: center;
-  width: 75%;
+  /* width: 75%; */
   border-radius: 25px;
   height: 50px;
 }
