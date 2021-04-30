@@ -215,9 +215,62 @@ export default async function seedDatabase(): Promise<void> {
         },
       };
     });
+
+  // Creating seeding data for demos
+  const demoOrg: Prisma.UserCreateArgs = {
+    data: {
+      email: `demo@nbjc.dev`,
+      hashedPassword: hashPassword('password'),
+      role: UserRole.organization,
+      organization: {
+        create: {
+          applicationStatus: 'approved',
+          active: true,
+          name: 'Blueprint',
+          lat: 40,
+          long: 40,
+          address: '1234 Fake Street, Berkeley CA, 94709',
+          contactName: 'Frederick Chen',
+          contactPhone: '(123) 456-7890',
+          contactEmail: 'blue@print.com',
+          missionStatement: Faker.lorem.lines(10),
+          shortHistory: Faker.lorem.lines(10),
+          is501c3: true,
+          website: 'https://www.nbjc.org',
+          organizationType: 'national',
+          workType: 'advocacy',
+          lgbtqDemographic: [
+            'asexualAromantic',
+            'lesbianSgl',
+            'straightHeterosexual',
+          ],
+          raceDemographic: ['arab', 'black', 'native'],
+          ageDemographic: ['adult', 'child'],
+          applicationResponses: {
+            create: [
+              {
+                answer: Faker.lorem.lines(5),
+                applicationQuestion: { connect: { id: appQuestions[0].id } },
+              },
+              {
+                answer: Faker.lorem.lines(5),
+                applicationQuestion: { connect: { id: appQuestions[1].id } },
+              },
+              {
+                answer: Faker.lorem.lines(5),
+                applicationQuestion: { connect: { id: appQuestions[0].id } },
+              },
+            ],
+          },
+        },
+      },
+    },
+  };
+
   try {
     await Promise.all(mockOrgUsers.map(prisma.user.create));
-    orgUsersCreateMessage.text = `Created ${NUMBER_USERS} org users.`;
+    await prisma.user.create(demoOrg);
+    orgUsersCreateMessage.text = `Created ${NUMBER_USERS} org users and created demo org.`;
     orgUsersCreateMessage.succeed();
   } catch (err) {
     orgUsersCreateMessage.fail(`Creating org users failed\n\n${err.message}`);
