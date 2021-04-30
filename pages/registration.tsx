@@ -318,6 +318,16 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                     className={styles.autoField}
                     color="primary"
                     type="submit"
+                    onClick={() => {
+                      if (
+                        formik.errors &&
+                        Object.keys(formik.errors).length !== 0
+                      ) {
+                        setShowErrorToast(true);
+                      } else {
+                        handleSubmit(false)(formik.values);
+                      }
+                    }}
                   >
                     Submit
                   </Button>

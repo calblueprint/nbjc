@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
-import { useFormik, FieldArray, ArrayHelpers, FormikProps } from 'formik';
+import {
+  useFormik,
+  FieldArray,
+  ArrayHelpers,
+  FormikProps,
+  FormikHelpers,
+} from 'formik';
 import prisma from 'utils/prisma';
 import { orgProfile, EditForm } from 'interfaces/organization';
 import { Button, Chip, TextField, LinearProgress } from '@material-ui/core';
@@ -25,6 +31,7 @@ import {
 } from 'utils/typesLinker';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
+import Toast from 'components/Toast';
 import styles from '../../styles/Organization.module.css';
 
 type Props = {
@@ -38,30 +45,6 @@ type Props = {
   errors?: string;
   userId?: number;
 };
-
-const orientation = [
-  'Queer',
-  'Asexual/Aromantic',
-  'Bisexual',
-  'Pansexual',
-  'Lesbian/SGL',
-  'Gay/SGL',
-  'Straight/Heterosexual',
-  'LGBTQ+',
-  'Other',
-];
-
-const ethnicity = [
-  'Native',
-  'Black',
-  'Asian',
-  'Hispanic',
-  'Arab',
-  'White',
-  'Other',
-];
-
-const ages = ['Children', 'Teens', 'Adults', 'Seniors'];
 
 const OrgProfile: React.FunctionComponent<Props> = ({
   orgProp,
@@ -81,8 +64,8 @@ const OrgProfile: React.FunctionComponent<Props> = ({
     contactName: (o && o.contactName) ?? '',
     contactEmail: (o && o.contactEmail) ?? '',
     contactPhone: (o && o.contactPhone) ?? '',
-    organizationType: (o && o.organizationType) ?? null,
-    workType: (o && o.workType) ?? null,
+    organizationType: (o && o.organizationType) ?? '',
+    workType: (o && o.workType) ?? '',
     address: (o && o.address) ?? '',
     missionStatement: (o && o.missionStatement) ?? '',
     shortHistory: (o && o.shortHistory) ?? '',
@@ -98,8 +81,8 @@ const OrgProfile: React.FunctionComponent<Props> = ({
     organizationProjects:
       (o &&
         o.organizationProjects?.map((proj) => ({
-          id: proj.id,
-          organizationId: org.id,
+          id: proj.id ?? undefined,
+          organizationId: org.id ?? undefined,
           title: proj.title ?? '',
           description: proj.description ?? '',
         }))) ??
@@ -107,9 +90,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({
   });
 
   const handleSubmit = async (values: EditForm): Promise<void> => {
-    // left for testing
-    console.log('values in handlsubmit UNCLEANED', values);
-    console.log('values in handlsubmit CLEANVALS:', cleanVals(values));
+    console.log(values);
     try {
       await fetch(`/api/org/${org.id}`, {
         method: 'PATCH',
@@ -117,45 +98,62 @@ const OrgProfile: React.FunctionComponent<Props> = ({
         body: JSON.stringify({ ...cleanVals(values) }),
       })
         .then((response) => response.json())
-        .then((data) => setOrg(data));
-      setEditState(0);
+        .then((data) => {
+          if (data.error) {
+            setErrorBanner('.');
+          } else {
+            setOrg(data);
+          }
+          setEditState(0);
+        });
     } catch (ex) {
       setErrorBanner('Did not save.');
     }
   };
 
   const formik = useFormik({
-    initialValues: cleanVals(org),
+    // This conversion of org -> EditForm is not completely right.
+    // Org type has more attributes than EditForm does, which is because org's attributes (capacity, foundingDate) are used in this file beyond EditForm.
+    initialValues: cleanVals(org as EditForm),
     onSubmit: handleSubmit,
   });
 
-  const projectsList = formik.values.organizationProjects?.map((project) => {
-    return (
-      <Project
-        key={project.id}
-        name={project.title}
-        description={project.description ?? ''}
-      />
-    );
-  });
+  const projectsList = formik.values.organizationProjects?.map(
+    (project, index) => {
+      return (
+        <Project
+          key={project.id}
+          name={project.title}
+          description={project.description ?? ''}
+        />
+      );
+    }
+  );
 
   const projectsListEditable = formik.values.organizationProjects?.map(
-    (project) => {
+    (project, index) => {
       return (
         <div>
+          <Button
+            className={styles.deleteButton}
+            color="secondary"
+            onClick={() =>
+              deleteProj(formik.values, formik.setFieldValue, index)
+            }
+          >
+            Delete
+          </Button>
           <TextField
-            id={'title'.concat(`${project.id}`)}
             className={styles.projTitle}
             value={project.title}
-            name={'title'.concat(`${project.id}`)}
+            name={`organizationProjects.${index}.title`}
             variant="outlined"
             onChange={formik.handleChange}
           />
           <TextField
-            id={'description'.concat(`${project.id}`)}
             className={styles.projDesc}
             value={project.description ?? ''}
-            name={'description'.concat(`${project.id}`)}
+            name={`organizationProjects.${index}.description`}
             variant="outlined"
             multiline
             onChange={formik.handleChange}
@@ -165,15 +163,41 @@ const OrgProfile: React.FunctionComponent<Props> = ({
     }
   );
 
+  const addNewProj = (
+    values: EditForm,
+    setFieldValue: FormikHelpers<string>['setFieldValue']
+  ): void => {
+    const currProjs = values.organizationProjects;
+    currProjs.push({ title: '', description: '' });
+    setFieldValue('organizationProjects', currProjs);
+  };
+
+  const deleteProj = (
+    values: EditForm,
+    setFieldValue: FormikHelpers<string>['setFieldValue'],
+    index: number
+  ): void => {
+    const currProjs = values.organizationProjects;
+    currProjs.splice(index, 1);
+    setFieldValue('organizationProjects', currProjs);
+  };
+
   const demographics = (category: string, groups: string[]): JSX.Element => {
     return (
       <div className={styles.demographic}>
         {category}
         <div className={styles.demographicTags}>
           {groups?.length !== 0 ? (
-            groups?.map((group) => (
-              <Chip key={group} label={group} variant="outlined" />
-            ))
+            groups?.map((group) => {
+              let label;
+              if (category === 'Orientation')
+                label = LgbtqDemographicLabels[group as LgbtqDemographic];
+              else if (category === 'Background')
+                label = RaceDemographicLabels[group as RaceDemographic];
+              else if (category === 'Age Range')
+                label = AgeDemographicLabels[group as AgeDemographic];
+              return <Chip key={group} label={label} variant="outlined" />;
+            })
           ) : (
             <Chip label="None" variant="outlined" />
           )}
@@ -321,11 +345,13 @@ const OrgProfile: React.FunctionComponent<Props> = ({
               <p className={styles.infoContent}>{org.shortHistory}</p>
             )}
             <div className={styles.projects}>
-              <h3 className={styles.audienceHeader}>Our Projects</h3>
+              {org.organizationProjects ? (
+                <h3 className={styles.audienceHeader}>
+                  Our Projects and Resources
+                </h3>
+              ) : null}
               {projectsList}
             </div>
-            Projects should be here. If there arent any, then the database
-            doesnt have any.
           </div>
         ) : (
           // editable, map contents to TextFields
@@ -368,7 +394,11 @@ const OrgProfile: React.FunctionComponent<Props> = ({
               />
               ; */}
             </div>
-            Projects should be here.
+            <Button
+              onClick={() => addNewProj(formik.values, formik.setFieldValue)}
+            >
+              Add New Project
+            </Button>
           </div>
         )}
       </div>
@@ -430,7 +460,9 @@ const OrgProfile: React.FunctionComponent<Props> = ({
         </div>
         <form onSubmit={formik.handleSubmit}>
           {errorBanner ? (
-            <div className={styles.errorBanner}>{errorBanner}</div>
+            <Toast type="error" clickAwayListener={() => setErrorBanner('')}>
+              {errorBanner}
+            </Toast>
           ) : null}
           {/* Only render edit and save buttons if the user logged in is the owner of the org. */}
           {userId && userId === session?.user.id ? editAndSave() : null}
@@ -503,7 +535,6 @@ export default OrgProfile;
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {
     const id = params?.id as string | undefined;
-
     if (!id) {
       return { notFound: true };
     }

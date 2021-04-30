@@ -3,7 +3,10 @@ import { Organization, OrganizationProject } from '@prisma/client';
 import Joi, { ValidationError, x } from 'joi';
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import OrganizationSchema from 'interfaces/organization';
+import OrganizationSchema, {
+  Project,
+  ExistingProject,
+} from 'interfaces/organization';
 import CreateError, { MethodNotAllowed } from 'utils/error';
 
 /**
@@ -30,31 +33,107 @@ export const updateOrganization = async (
 ): Promise<Organization | null> => {
   const { error, value } = OrganizationSchema.validate(body);
   if (error) {
+    console.log('errr', error);
     throw error;
   }
 
   const { organizationProjects, ...data } = value;
   const dataTyped = data as Organization;
-  const orgProjects = organizationProjects as OrganizationProject[];
+  const orgProjects = organizationProjects as Project[];
 
-  const updatedOrg = await prisma.organization.update({
+  // same logic as registration, generalize logic later.
+  //* ** Splitting appProjs into create, update, and delete ***//
+
+  // New projects are the ones without IDs yet.
+  const toCreate = orgProjects.filter((i) => !i.id);
+
+  // Deleted projects are the projects in the DB that aren't passed into the API req.
+  const currOrg = await prisma.organization.findUnique({
     where: { id: Number(id) },
-    data: {
-      ...dataTyped,
-      organizationProjects: {
-        updateMany: orgProjects.map(({ id: projId, title, description }) => ({
-          where: {
-            id: projId,
-          },
-          data: {
-            title,
-            description,
-          },
-        })),
+    include: { organizationProjects: true },
+  });
+  let toDelete: number[] = [];
+  if (currOrg) {
+    const currProjIds = new Set(
+      orgProjects.filter(({ id }) => !!id).map((p) => p.id)
+    );
+    const DBProjs = currOrg.organizationProjects;
+    // By filtering the DB projects for projects that aren't in the current projects ids passed into the API,
+    // we know that it was deleted in the registration form.
+    toDelete = DBProjs.filter((p) => !currProjIds.has(p.id)).map((p) => p.id);
+  }
+
+  // Updated projects are the remaining projects. There aren't necessarily changed,
+  // but making the PATCH request for projects that aren't modified won't change anything.
+  const currProjs = orgProjects.filter(({ id }) => !!id) as ExistingProject[];
+  let toUpdate;
+  if (currOrg) {
+    toUpdate = currProjs.filter((p) => !new Set(toDelete).has(p.id));
+  }
+
+  console.log(toCreate);
+  let newChanges;
+  try {
+    newChanges = await prisma.organization.upsert({
+      where: { id: Number(id) },
+      update: {
+        ...dataTyped,
+        organizationProjects: {
+          updateMany: toUpdate?.map(({ id: projId, title, description }) => ({
+            where: {
+              id: projId,
+            },
+            data: {
+              title,
+              description,
+            },
+          })),
+          deleteMany: toDelete.map((id) => ({ id })),
+        },
       },
+      create: {
+        ...dataTyped,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    // return CreateError(500, 'Failed to organization', res);
+  }
+
+  // Looping and creating-- fixed with createMany functionality in 2.20
+  // FIXME: This is a temporary (ugly) solution for creating projects
+  if (newChanges) {
+    try {
+      for (let i = 0; i < toCreate.length; i += 1) {
+        // eslint-disable-next-line no-await-in-loop
+        const response = await prisma.organizationProject.create({
+          data: {
+            title: toCreate[i].title,
+            description: toCreate[i].description,
+            organization: {
+              connect: {
+                id: newChanges.id,
+              },
+            },
+          },
+        });
+      }
+    } catch (err) {
+      console.log('hi');
+      // return CreateError(500, 'Failed to create project', res);
+    }
+  }
+
+  // Getting all the projects in the DB now and sending it to front-end for projects attribute to become server-dependent.
+  const newOrg = await prisma.organization.findUnique({
+    where: {
+      id: Number(id),
+    },
+    include: {
+      organizationProjects: true,
     },
   });
-  return updatedOrg;
+  return newOrg;
 };
 
 /**

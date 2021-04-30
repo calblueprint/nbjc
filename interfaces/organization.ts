@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import Joi, { string } from 'joi';
 import {
   Prisma,
   ApplicationStatus,
@@ -8,6 +8,20 @@ import {
   RaceDemographic,
   AgeDemographic,
 } from '@prisma/client';
+
+export type Project = {
+  id?: number;
+  organizationId?: number;
+  title: string;
+  description: string;
+};
+
+export type ExistingProject = {
+  id: number;
+  organizationId: number;
+  title: string;
+  description: string;
+};
 
 export const orgProfile = Prisma.validator<Prisma.OrganizationArgs>()({
   select: {
@@ -37,28 +51,33 @@ export const orgProfile = Prisma.validator<Prisma.OrganizationArgs>()({
 });
 
 // export type orgProj = { id: number; title: string; description: string };
-export type EditForm = Prisma.OrganizationGetPayload<{
+const form = Prisma.validator<Prisma.OrganizationArgs>()({
   select: {
-    name: true;
-    contactName: true;
-    contactEmail: true;
-    contactPhone: true;
-    organizationType: true;
-    workType: true;
-    address: true;
-    missionStatement: true;
-    shortHistory: true;
-    lgbtqDemographic: true;
-    raceDemographic: true;
-    ageDemographic: true;
+    name: true,
+    contactName: true,
+    contactEmail: true,
+    contactPhone: true,
+    // organizationType: true;
+    // workType: true;
+    address: true,
+    missionStatement: true,
+    shortHistory: true,
+    lgbtqDemographic: true,
+    raceDemographic: true,
+    ageDemographic: true,
     // capacity: true;
-    ein: true;
+    ein: true,
     // foundingDate: true;
-    is501c3: true;
-    website: true;
-    organizationProjects: true;
-  };
-}>;
+    is501c3: true,
+    website: true,
+  },
+});
+
+export type EditForm = Prisma.OrganizationGetPayload<typeof form> & {
+  organizationType: string;
+  workType: string;
+  organizationProjects: Project[];
+};
 
 const schema = Joi.object({
   name: Joi.string()
