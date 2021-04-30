@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { signIn } from 'next-auth/client';
 import useSession from 'utils/useSession';
 import Link from 'next/link';
