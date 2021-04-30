@@ -59,7 +59,9 @@ model Organization {
   OrgTeamMembers       OrgTeamMembers[]      @relation("OrgTeamMembersToOrganizations")
   organizationEvents   OrganizationEvent[]   @relation("OrganizationEventsToOrganizations")
   organizationProjects OrganizationProject[] @relation("OrganizationProjectsToOrganizations")
+
   @@map("organizations")
+  OrganizationApplicationReview OrganizationApplicationReview[] @relation("OrganizationApplicationReviewsToOrganizations")
 }
 
 model Session {

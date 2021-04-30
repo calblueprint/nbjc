@@ -118,7 +118,7 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({
             >
               View Profile
             </Button>
-            <Link className={styles.hideStepper}>Don\'t Show Again</Link>
+            <Link className={styles.hideStepper}>Don't Show Again</Link>
             </div>
             <Button
               className={styles.button}
