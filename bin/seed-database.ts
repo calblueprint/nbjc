@@ -226,7 +226,7 @@ export default async function seedDatabase(): Promise<void> {
         create: {
           applicationStatus: 'approved',
           active: true,
-          name: 'Blueprint',
+          name: 'Redprint',
           lat: 40,
           long: 40,
           address: '1234 Fake Street, Berkeley CA, 94709',
@@ -256,7 +256,7 @@ export default async function seedDatabase(): Promise<void> {
               {
                 title: 'Our First Resource!',
                 description:
-                  'This is a descriptoin of what our first resource is.',
+                  'This is a description of what our first resource is. This is different.',
               },
             ],
           },
