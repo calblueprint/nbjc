@@ -12,7 +12,7 @@ import {
   WorkType,
   // OrganizationApplicationReviews,
 } from '@prisma/client';
-import Faker from 'faker';
+import Faker, { lorem } from 'faker';
 import Ora from 'ora';
 import hashPassword from '../utils/hashPassword';
 
@@ -246,19 +246,33 @@ export default async function seedDatabase(): Promise<void> {
           ],
           raceDemographic: ['arab', 'black', 'native'],
           ageDemographic: ['adult', 'child'],
+          organizationProjects: {
+            create: [
+              {
+                title: 'Our First Project!',
+                description:
+                  'This is a description of what our first project is.',
+              },
+              {
+                title: 'Our First Resource!',
+                description:
+                  'This is a descriptoin of what our first resource is.',
+              },
+            ],
+          },
           applicationResponses: {
             create: [
               {
-                answer: Faker.lorem.lines(5),
+                answer: 'Response 1',
                 applicationQuestion: { connect: { id: appQuestions[0].id } },
               },
               {
-                answer: Faker.lorem.lines(5),
+                answer: 'Response 2',
                 applicationQuestion: { connect: { id: appQuestions[1].id } },
               },
               {
-                answer: Faker.lorem.lines(5),
-                applicationQuestion: { connect: { id: appQuestions[0].id } },
+                answer: 'Response 3',
+                applicationQuestion: { connect: { id: appQuestions[2].id } },
               },
             ],
           },
