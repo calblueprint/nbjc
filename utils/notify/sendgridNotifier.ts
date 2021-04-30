@@ -12,7 +12,7 @@ export default class SendgridNotifier {
         [NotificationType.ForgotPassword] : 'd-01b1f3aef2f24ad79f887faf5266f7d1',
         [NotificationType.ModeratorInvite] : '',
         [NotificationType.ApplicationStatus] : '',
-        [NotificationType.VerificationLink] : '',
+        [NotificationType.VerificationLink] : 'd-73e65be7f45242df847aee5df577ab6e',
     };
 
     async setup(): Promise<void> {

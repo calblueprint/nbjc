@@ -12,18 +12,47 @@ import { signinSchema } from 'interfaces/auth';
 import Layout from 'components/Layout';
 import { useRouter } from 'next/router';
 import styles from '../styles/Auth.module.css';
+import { useEffect, useState } from 'react';
+import Toast from 'components/Toast';
 
 type FormValues = {
   email: string;
   password: string;
 };
 
+
 // UserSignIn page. Will need additional email verification to be able to create organizations.
 const UserSignIn: React.FC = () => {
   // Get URL params for error callbacks.
   const router = useRouter();
   const [session, sessionLoading] = useSession();
+  const [toastMessage, setToast] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
   const errorBanner = router.query.error;
+
+
+  useEffect(() => {
+    const validateCode = async() => {
+      if (router.query.verificationCode) {
+        const res = await fetch('/api/emailVerification/verify', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            verificationCode: router.query.verificationCode
+          }),
+        });
+        const resJson = await res.json();
+        if (resJson.error) {
+          setToastType('error');
+          setToast(resJson.error.message);
+        } else {
+          setToastType('success');
+          setToast('Email successfully verified! Please sign in to use your account');
+        }
+      }
+    }
+    validateCode();
+  }, [router.query]);
 
   const handleSubmit = async (
     values: FormValues,
@@ -102,10 +131,26 @@ const UserSignIn: React.FC = () => {
     onSubmit: handleSubmit,
   });
 
+  const renderToast = () : JSX.Element => {
+    return(
+      <Toast
+          snackbarProps={{
+              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          }}
+          type={toastType}
+          showDismissButton
+          >
+          <div>
+              {toastMessage}
+          </div>
+      </Toast>);
+  }
+
   if (!sessionLoading && session) router.push('/');
   if (!sessionLoading && !session)
     return (
       <Layout title="Sign In">
+        {toastMessage.length > 0 ? renderToast() : null}
         <div className={styles.root}>
           <div className={styles.content}>
             <div className={styles.titles}>

@@ -24,7 +24,7 @@ const validateCode = async (
         throw new Error('Invalid Email Verification Code');
     }
 
-    if (!verificationRecord) {
+    if (!verificationRecord.valid) {
         throw new Error('Email Verification Link has expired or been used');
     }
 
@@ -40,7 +40,7 @@ const validateCode = async (
 
     // update user
     const updatedUserRecord = await prisma.user.update({
-        data: { emailVerified: String(Date.now())},
+        data: { emailVerified: new Date()},
         where: { id: updatedVerificationRecord.userId}
     });
 
@@ -56,6 +56,10 @@ const handler = async(
     res: NextApiResponse,
 ) : Promise<void> => {
     try {
+        if (req.method !== 'PATCH') {
+            return MethodNotAllowed(req.method, res);
+        }
+
         const expectedBody = Joi.object({
             verificationCode: Joi.string().required()
         });

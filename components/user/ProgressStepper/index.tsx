@@ -3,6 +3,8 @@ import Button from '@material-ui/core/Button';
 import { useRouter } from 'next/router';
 import { ApplicationStatus } from '@prisma/client';
 import styles from './ProgressStepper.module.css';
+import { useEffect, useState } from 'react';
+import useSession from 'utils/useSession';
 
 type ProgressStepperProps = {
   applicationStatus?: ApplicationStatus;
@@ -14,6 +16,8 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({
   orgId,
 }) => {
   const router = useRouter();
+  const [emailVerified, setVerified] = useState(false);
+  const [session, sessionLoading] = useSession();
   let status: number;
   switch (applicationStatus) {
     case 'approved': {
@@ -38,9 +42,24 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({
     }
   }
 
+
   const goToRegistration = (feedback?: boolean) => (): void => {
     router.push(`/registration${feedback ? '?feedback=true' : ''}`);
   };
+
+
+  useEffect(() : void => {
+    const checkVerification = async() => {
+      const res = await fetch(`/api/users/${session?.user.id}`, {
+        method: "GET"
+      });
+      if (res.ok) {
+        const user = await res.json();
+        setVerified(Boolean(user.emailVerified));
+      }
+    }
+    checkVerification();
+  }, [session]);
 
   const appAction = (): JSX.Element | null => {
     if (applicationStatus === 'draft') {
@@ -128,13 +147,14 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({
     return (
       <>
         <div className={`${styles.wording} ${styles.verifyMessage}`}>
-          Verify email address to begin application.
+          {emailVerified? '' : 'Verify email address to begin application.'}
         </div>
         <div className={styles.button}>
           <Button
             variant="contained"
             color="primary"
             onClick={goToRegistration()}
+            disabled={!emailVerified}
           >
             Begin Application
           </Button>
