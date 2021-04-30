@@ -42,12 +42,13 @@
 }
 
 .complete {
-  color: rgb(183, 146, 241);
+  color: #694f95;
 }
 
 .current {
-  color: rgb(144, 86, 239);
-  font-weight: 800;
+  color: #694f95;
+  font-weight: bolder;
+  text-decoration: underline;
 }
 
 .untouched {
@@ -58,4 +59,10 @@
   width: 100%;
   height: 12px;
   border-radius: 36px;
+  margin-top: 10px;
+}
+
+.helper {
+  margin-top: 5px;
+  margin-bottom: 15px;
 }

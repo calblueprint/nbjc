@@ -197,6 +197,13 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     onSubmit: handleSubmit(false),
   });
 
+  function helperText(): React.ReactElement {
+    return <Typography>last saved at</Typography>;
+    const timer = setTimeout(() => {
+      return <Typography />;
+    }, 5000);
+  }
+
   if (!sessionLoading && (!session || session.user.role !== 'organization'))
     router.push('/');
   if (!sessionLoading && session && session.user.role === 'organization')
@@ -286,12 +293,14 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
             </div>
             <div className={styles.bottomButtons}>
               {!readOnly ? (
-                <div>
+                <div className={styles.rightBottom}>
+                  {/* <Typography className={styles.popup}>saved changes at</Typography> */}
                   <Button
                     variant="outlined"
                     color="secondary"
                     className={styles.autoField}
                     onClick={() => handleSubmit(true)(formik.values)}
+                    // onclick={helperText()}
                   >
                     Save Changes
                   </Button>
