@@ -1,12 +1,14 @@
 import { GetServerSideProps } from 'next';
-import prisma from 'utils/prisma';
-import { Organization } from '@prisma/client';
-import { FormikErrors, useFormik } from 'formik';
-import { useState, ChangeEvent } from 'react';
+import { Organization, PrismaClient, Prisma } from '@prisma/client';
 import {
-  Tabs,
-  Tab,
-  AppBar,
+  Formik,
+  FormikErrors,
+  useFormik,
+  FormikValues,
+  FormikHelpers,
+} from 'formik';
+import { useState, useEffect, ChangeEvent } from 'react';
+import {
   Button,
   Dialog,
   DialogTitle,
@@ -14,22 +16,28 @@ import {
   LinearProgress,
   Typography,
   IconButton,
+  SnackbarProps,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import Layout from 'components/Layout';
 import TabShortResponse from 'components/registration/TabShortResponse';
 import TabBasics from 'components/registration/TabBasics';
 import TabProj from 'components/registration/TabProj';
-import schema, { AppQnR, Form } from 'interfaces/registration';
+import schema, { AppQnR, appQnRArgs, Form } from 'interfaces/registration';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import parseValidationError from 'utils/parseValidationError';
 import getSession from 'utils/getSession';
 import Joi from 'joi';
+import prisma from 'utils/prisma';
+import Tab from 'components/Tab';
+import Toast from 'components/Toast';
 import styles from '../styles/Registration.module.css';
 
 type RegistrationProps = {
-  org: Organization | null;
+  org: Prisma.OrganizationGetPayload<{
+    include: { organizationProjects: true };
+  }> | null;
   appQnR: AppQnR;
 };
 
@@ -40,24 +48,33 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
   const router = useRouter();
   const [session, sessionLoading] = useSession();
   const [selected, setSelected] = useState(0);
+  const [exitDialogOpen, setExitDialogOpen] = useState(false);
+  const [saveDraft, setSaveDraft] = useState(false);
+  const [showErrorToast, setShowErrorToast] = useState(false);
   const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(
     router.query?.feedback === 'true'
   );
 
+  const [tabState, setTabState] = useState<0 | 1 | 2>(0);
+
   const status = org?.applicationStatus;
   const readOnly = status === 'submitted' || status === 'approved';
 
+  const exiting = (): void => {
+    setExitDialogOpen(true);
+    router.push('/users/profile');
+  };
+
   const handleValidate = (draft: boolean) => (
-    values: Form
+    values: FormikValues
   ): FormikErrors<Form> => {
-    const { qnr, ...rest } = values;
+    const { qnr, ...rest } = values as Form;
     const { error } = schema.validate(rest, {
       abortEarly: false,
       context: {
         strict: !draft,
       },
     });
-
     // Validate custom short response questions
     let qnrValidateEmpty = true;
     const qnrValidate: string[] = qnr.map(({ response: value }, i) => {
@@ -82,10 +99,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     return { ...parseValidationError(error) };
   };
 
-  const handleChange = (
-    _event: ChangeEvent<unknown>,
-    newValue: number
-  ): void => {
+  const tabChange = (_event: ChangeEvent<unknown>, newValue: number): void => {
     setSelected(newValue);
   };
 
@@ -95,9 +109,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     if (session && session.user.role === 'organization') {
       if (draft && Object.keys(handleValidate(true)(values)).length !== 0)
         return;
-      console.log('submitting', values);
-      const { proj1, proj2, proj3, ...tempValues } = values;
-
+      const { projects, ...tempValues } = values;
       try {
         const res = await fetch(`/api/app/orgs?submitting=${!draft}`, {
           method: 'POST',
@@ -107,13 +119,19 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
           body: JSON.stringify({
             userId: session.user.id,
             ...tempValues,
+            projects,
           }),
-        });
-
-        if (res.ok && !draft) router.push('/users/profile');
-        if (!res.ok) {
-          console.log('patch not successful');
-        }
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Linter ignored because formik is reference before it is defined.
+            // eslint-disable-next-line no-use-before-define
+            formik.setFieldValue('projects', data.newOrg.organizationProjects);
+            if (!draft) {
+              router.push('/users/profile');
+            }
+          })
+          .catch((err) => console.log('patch not successful'));
       } catch (err) {
         // TODO: Raise an error toast
         console.log(err);
@@ -121,7 +139,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     }
   };
 
-  const initialValues: Form = {
+  const formValues: Form = {
     name: (org && org.name) ?? '',
     contactName: (org && org.contactName) ?? '',
     contactEmail: (org && org.contactEmail) ?? '',
@@ -136,12 +154,15 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     ageDemographic: org ? org.ageDemographic : [],
     // capacity: undefined,
     ein: (org && org.ein) ?? '',
-    // foundingDate: undefined,
+    foundingDate: undefined,
     is501c3: Boolean(org && org.is501c3),
     website: (org && org.website) ?? '',
-    proj1: '',
-    proj2: '',
-    proj3: '',
+    projects:
+      org?.organizationProjects?.map((o) => ({
+        id: o.id ?? null,
+        title: o.title,
+        description: o.description ?? '',
+      })) ?? [],
     qnr:
       appQnR?.map((q) => ({
         questionId: q.id,
@@ -149,18 +170,56 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
       })) ?? [],
   };
 
+  const addNewProj = (
+    values: Form,
+    setFieldValue: FormikHelpers<string>['setFieldValue']
+  ): void => {
+    const currProjs = values.projects;
+    currProjs.push({ title: '', description: '' });
+    setFieldValue('projects', currProjs);
+  };
+
+  const deleteProj = (
+    values: Form,
+    setFieldValue: FormikHelpers<string>['setFieldValue'],
+    index: number
+  ): void => {
+    const currProjs = values.projects;
+    currProjs.splice(index, 1);
+    setFieldValue('projects', currProjs);
+  };
+
   const formik = useFormik({
-    initialValues,
+    initialValues: formValues,
     validate: handleValidate(false),
     validateOnChange: false,
     onSubmit: handleSubmit(false),
   });
+
+  const toastProps: SnackbarProps = {
+    anchorOrigin: {
+      vertical: 'top',
+      horizontal: 'center',
+    },
+  };
 
   if (!sessionLoading && (!session || session.user.role !== 'organization'))
     router.push('/');
   if (!sessionLoading && session && session.user.role === 'organization')
     return (
       <Layout title="Register">
+        {showErrorToast ? (
+          <Toast
+            showDismissButton
+            snackbarProps={toastProps}
+            clickAwayListener={() => {
+              setShowErrorToast(false);
+            }}
+            type="error"
+          >
+            Fill out all required fields before submitting.
+          </Toast>
+        ) : null}
         {status === 'rejected' ? (
           <Dialog
             open={feedbackDialogOpen}
@@ -182,7 +241,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
           </Dialog>
         ) : null}
         <div className={styles.header}>
-          <Typography variant="h4">Registration Form</Typography>
+          <Typography variant="h4">Application</Typography>
           {status === 'rejected' ? (
             <Button
               variant="outlined"
@@ -193,79 +252,86 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
           ) : null}
         </div>
         <form onSubmit={formik.handleSubmit}>
-          <div className={styles.root}>
-            <AppBar position="static" color="default" className={styles.appBar}>
-              <Tabs value={selected} onChange={handleChange}>
-                <Tab label="Basics" />
-                <Tab label="Projects and Events" />
-                <Tab label="Short Response" />
-              </Tabs>
-            </AppBar>
-            {selected === 0 && (
-              <TabBasics
-                handleChange={formik.handleChange}
-                handleBlur={formik.handleBlur}
-                values={formik.values}
-                setFieldValue={formik.setFieldValue}
-                touched={formik.touched}
-                errors={formik.errors}
-                readOnly={readOnly}
-              />
-            )}
-            {selected === 1 && (
-              <TabProj
-                handleChange={formik.handleChange}
-                handleBlur={formik.handleBlur}
-                values={formik.values}
-                setFieldValue={formik.setFieldValue}
-                touched={formik.touched}
-                errors={formik.errors}
-                readOnly={readOnly}
-              />
-            )}
-            {selected === 2 && (
-              <TabShortResponse
-                handleChange={formik.handleChange}
-                handleBlur={formik.handleBlur}
-                values={formik.values}
-                setFieldValue={formik.setFieldValue}
-                touched={formik.touched}
-                errors={formik.errors}
-                appQnR={appQnR}
-                readOnly={readOnly}
-              />
-            )}
-          </div>
-          <div className={styles.bottomButtons}>
-            {!readOnly ? (
-              <div>
+          <div className={styles.info}>
+            <div className={styles.root}>
+              <div className={styles.headerButton}>
+                <Tab
+                  tabName1="Basics"
+                  tabName2="Project and Events"
+                  tabName3="Short Response"
+                  tabState={tabState}
+                  setTabState={setTabState}
+                />
+              </div>
+              <div className={styles.tabinfo}>
+                {tabState === 0 && (
+                  <TabBasics
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                    values={formik.values}
+                    setFieldValue={formik.setFieldValue}
+                    touched={formik.touched}
+                    errors={formik.errors}
+                    readOnly={readOnly}
+                  />
+                )}
+                {tabState === 1 && (
+                  <TabProj
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                    values={formik.values}
+                    setFieldValue={formik.setFieldValue}
+                    touched={formik.touched}
+                    errors={formik.errors}
+                    readOnly={readOnly}
+                    addNewProj={addNewProj}
+                    deleteProj={deleteProj}
+                  />
+                )}
+                {tabState === 2 && (
+                  <TabShortResponse
+                    handleChange={formik.handleChange}
+                    handleBlur={formik.handleBlur}
+                    values={formik.values}
+                    setFieldValue={formik.setFieldValue}
+                    touched={formik.touched}
+                    errors={formik.errors}
+                    appQnR={appQnR}
+                    readOnly={readOnly}
+                  />
+                )}
+              </div>
+            </div>
+            <div className={styles.bottomButtons}>
+              {!readOnly ? (
+                <div>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    className={styles.autoField}
+                    onClick={() => handleSubmit(true)(formik.values)}
+                  >
+                    Save Changes
+                  </Button>
+                  <Button
+                    variant="contained"
+                    className={styles.autoField}
+                    color="primary"
+                    type="submit"
+                  >
+                    Submit
+                  </Button>
+                </div>
+              ) : null}
+              <div className={styles.exitButton}>
                 <Button
-                  variant="outlined"
-                  color="primary"
-                  className={styles.autoField}
-                  onClick={() => handleSubmit(true)(formik.values)}
+                  variant={readOnly ? 'contained' : 'outlined'}
+                  color="secondary"
+                  onClick={() => router.push('/users/profile')}
                 >
-                  Save Changes
-                </Button>
-                <Button
-                  variant="contained"
-                  className={styles.autoField}
-                  color="primary"
-                  type="submit"
-                  onClick={() => handleSubmit(false)(formik.values)}
-                >
-                  Submit
+                  Exit
                 </Button>
               </div>
-            ) : null}
-            <div>
-              <Button
-                variant={readOnly ? 'contained' : 'outlined'}
-                color="primary"
-                onClick={() => router.push('/users/profile')}
-              >
-                Exit
-              </Button>
             </div>
           </div>
         </form>
@@ -284,25 +350,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         where: {
           userId: session.user.id,
         },
+        include: {
+          organizationProjects: true,
+        },
       });
       // getting app questions
       const appQnR = await prisma.applicationQuestion.findMany({
-        select: {
-          id: true,
-          placeholder: true,
-          question: true,
-          hint: true,
-          required: true,
-          wordLimit: true,
-          applicationResponses: {
-            where: {
-              organizationId: organization?.id ?? -1,
-            },
-            select: {
-              answer: true,
-            },
-          },
-        },
+        select: appQnRArgs(organization?.id).select,
       });
 
       const org = JSON.parse(JSON.stringify(organization));

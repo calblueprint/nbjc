@@ -4,12 +4,12 @@ export default createMuiTheme({
   palette: {
     primary: {
       light: '#F8F4FF',
-      main: '#9056EF',
+      main: '#9276B5',
       dark: '#71579C',
     },
     secondary: {
       light: '#EB6658',
-      main: '#EB6658',
+      main: '#908D93',
       dark: '#EB6658',
     },
     test: {
@@ -17,7 +17,7 @@ export default createMuiTheme({
     },
   },
   typography: {
-    fontFamily: "'Montserrat', 'Helvetica', 'Arial', sans-serif",
+    fontFamily: "'Epilogue', sans-serif",
     fontSize: 14,
     h1: {
       fontSize: '2.815rem',
@@ -49,6 +49,13 @@ export default createMuiTheme({
     body2: {
       fontSize: '0.813rem',
       fontWeight: 400,
+    },
+  },
+  overrides: {
+    MuiOutlinedInput: {
+      root: {
+        borderRadius: '10px',
+      },
     },
   },
 });

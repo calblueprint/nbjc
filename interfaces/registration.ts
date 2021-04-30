@@ -1,55 +1,81 @@
-import { Prisma, Organization } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import Joi from 'joi';
+
+export type Project = {
+  id?: number;
+  title: string;
+  description: string;
+};
+
+export type ExistingProject = {
+  id: number;
+  title: string;
+  description: string;
+};
 
 export type Response = {
   id: number[];
   response: string[];
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-function-return-type
+export const appQnRArgs = (id: number | undefined) =>
+  Prisma.validator<Prisma.ApplicationQuestionArgs>()({
+    select: {
+      id: true,
+      placeholder: true,
+      question: true,
+      hint: true,
+      required: true,
+      wordLimit: true,
+      applicationResponses: {
+        where: {
+          organizationId: id ?? -1,
+        },
+        select: {
+          answer: true,
+        },
+      },
+    },
+  });
+
 export type AppQnR =
-  | Prisma.ApplicationQuestionGetPayload<{
-      select: {
-        id: true;
-        placeholder: true;
-        question: true;
-        hint: true;
-        required: true;
-        wordLimit: true;
-        applicationResponses: {
-          select: {
-            answer: true;
-          };
-        };
-      };
-    }>[]
+  | Prisma.ApplicationQuestionGetPayload<ReturnType<typeof appQnRArgs>>[]
   | null;
 
 export type QnR = { questionId: number; response: string };
 
-export type Form = Pick<
-  Organization,
-  | 'name'
-  | 'contactName'
-  | 'contactEmail'
-  | 'contactPhone'
-  | 'website'
-  | 'address'
-  | 'missionStatement'
-  | 'shortHistory'
-  | 'lgbtqDemographic'
-  | 'raceDemographic'
-  | 'ageDemographic'
-  | 'ein'
-  | 'is501c3'
-> & {
+const form = Prisma.validator<Prisma.OrganizationArgs>()({
+  select: {
+    name: true,
+    contactName: true,
+    contactEmail: true,
+    contactPhone: true,
+    website: true,
+    address: true,
+    missionStatement: true,
+    shortHistory: true,
+    lgbtqDemographic: true,
+    raceDemographic: true,
+    ageDemographic: true,
+    ein: true,
+    is501c3: true,
+  },
+});
+
+export type Form = Prisma.OrganizationGetPayload<typeof form> & {
   organizationType: string;
   workType: string;
+  // short1: string;
+  // short2: string;
+  // short3: string;
+  projects: Project[];
   qnr: QnR[];
-  proj1: string;
-  proj2: string;
-  proj3: string;
+  // proj1: string;
+  // proj2: string;
+  // proj3: string;
   // capacity: number | undefined;
-  // foundingDate: Date | undefined;
+  foundingDate: Date | undefined;
 };
 
 const schema = Joi.object({
@@ -81,92 +107,54 @@ const schema = Joi.object({
     .messages({
       'any.required': 'Contact Email is required',
     }),
-  contactPhone: Joi.string()
-    .empty('')
-    .when('$strict', {
-      is: true,
-      then: Joi.required(),
-    })
-    .messages({
-      'any.required': 'Contact Phone is required',
-    }),
-  organizationType: Joi.string()
-    .empty('')
-    .when('$strict', {
-      is: true,
-      then: Joi.required(),
-    })
-    .messages({ 'any.required': 'Type of Organization is required' }),
-  workType: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() })
-    .messages({ 'any.required': 'Type of Work is required' }),
-  website: Joi.string()
-    .empty('')
-    .uri({ domain: { tlds: false } })
-    .messages({
-      'string.uri':
-        'Not a valid URL - remember http or https (https://nbjc.org)',
-      'string.domain': 'Not a valid URL - missing domain (https://nbjc.org)',
-    }),
-  // locationType: Joi.string()
-  //   .empty('')
-  //   .when('$strict', { is: true, then: Joi.required() })
-  //   .messages({ 'any.required': 'Location Type is required' }),
+  contactPhone: Joi.string().empty(''),
+  organizationType: Joi.string().empty(''),
+  workType: Joi.string().empty(''),
+  website: Joi.string().empty(''),
+  // .domain()
+  locationType: Joi.string().empty(''),
   address: Joi.string()
     .empty('')
     .when('$strict', { is: true, then: Joi.required() })
     .messages({
       'any.required': 'Address is required',
     }),
-  missionStatement: Joi.string()
-    .empty('')
-    .when('$strict', {
-      is: true,
-      then: Joi.required(),
-    })
-    .messages({
-      'any.required': 'Description and Mission is required',
-    }),
-  shortHistory: Joi.string()
-    .empty('')
-    .when('$strict', {
-      is: true,
-      then: Joi.required(),
-    })
-    .messages({
-      'any.required': 'History is required',
-    }),
-  lgbtqDemographic: Joi.array()
-    .unique()
-    .items(Joi.string())
-    .when('$strict', { is: true, then: Joi.required() }),
-  raceDemographic: Joi.array()
-    .unique()
-    .items(Joi.string())
-    .when('$strict', { is: true, then: Joi.required() }),
-  ageDemographic: Joi.array()
-    .unique()
-    .items(Joi.string())
-    .when('$strict', { is: true, then: Joi.required() }),
+  missionStatement: Joi.string().empty(''),
+  shortHistory: Joi.string().empty(''),
+  lgbtqDemographic: Joi.array().unique().items(Joi.string()),
+  raceDemographic: Joi.array().unique().items(Joi.string()),
+  ageDemographic: Joi.array().unique().items(Joi.string()),
   // capacity: Joi.string()
   //   .empty('')
   //   .when('$strict', { is: true, then: Joi.required() }),
-  ein: Joi.string()
-    .empty('')
-    .pattern(/^[0-9]\d?-?\d{7}$/)
-    .messages({ 'string.pattern.base': 'Not a valid EIN' }),
-  // foundingDate: Joi.date(),
+  ein: Joi.string().empty(''),
+  foundingDate: Joi.date(),
+  // FIXME, is501c3 not turning red
   is501c3: Joi.boolean(),
-  proj1: Joi.string()
+  projects: Joi.array()
     .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
-  proj2: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
-  proj3: Joi.string()
-    .empty('')
-    .when('$strict', { is: true, then: Joi.required() }),
+    .when('$strict', {
+      is: true,
+      then: Joi.required(),
+    })
+    .messages({
+      'any.required': 'project is required',
+    }),
+  // short1: Joi.string()
+  //   .empty('')
+  //   .when('$strict', {
+  //     is: true,
+  //     then: Joi.required(),
+  //   })
+  //   .messages({
+  //     'any.required': 'short1 is required',
+  //   }),
+  // short2: Joi.string()
+  //   .empty('')
+  //   .when('$strict', { is: true, then: Joi.required() }),
+  // short3: Joi.string()
+  //   .empty('')
+  //   .when('$strict', { is: true, then: Joi.required() }),
 });
 
 export default schema;

@@ -2,10 +2,11 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react';
 import ReactMapGL, { Marker, Popup, ViewportProps } from 'react-map-gl';
-import { PublicOrganization } from 'interfaces/organization';
+import { Prisma, Organization } from '@prisma/client';
+import { orgProfile } from 'interfaces/organization';
 
 type MapProps = {
-  orgs: PublicOrganization[];
+  orgs: Organization[];
 };
 
 type ViewportStateProps = {
@@ -18,9 +19,7 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
   width,
   height,
 }) => {
-  const [selectedOrg, setSelectedOrg] = useState<PublicOrganization | null>(
-    null
-  );
+  const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [viewport, setViewport] = useState<ViewportStateProps | ViewportProps>({
     width,
     height,
@@ -39,7 +38,7 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
         ? orgs.map((org) => {
             return org.lat && org.long ? (
               <div key={org.id}>
-                <Marker latitude={Number(org.lat)} longitude={Number(org.long)}>
+                <Marker latitude={org.lat} longitude={org.long}>
                   <span
                     onClick={() => setSelectedOrg(org)}
                     role="img"
@@ -52,8 +51,8 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
                   <Popup
                     onClose={() => setSelectedOrg(null)}
                     closeOnClick
-                    latitude={Number(org.lat)}
-                    longitude={Number(org.long)}
+                    latitude={org.lat}
+                    longitude={org.long}
                   >
                     {org.name}
                   </Popup>
