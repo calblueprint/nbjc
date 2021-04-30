@@ -1,4 +1,4 @@
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button, Box } from '@material-ui/core';
 import {
   FieldArray,
   FormikErrors,
@@ -59,8 +59,8 @@ const TabProj: React.FC<TabProps> = ({
           <>
             <Button
               className={styles.addButton}
-              variant="contained"
-              color="primary"
+              variant="outlined"
+              color="secondary"
               // Below logic would have been ideal, but not working for some reason.
               // onClick={() => arrayHelpers.push({ title: '', description: '' })}
               onClick={() => addNewProj(values, setFieldValue)}
@@ -77,8 +77,7 @@ const TabProj: React.FC<TabProps> = ({
                         {/* <Button onClick={() => arrayHelpers.remove(index)}> */}
                         <Button
                           className={styles.deleteButton}
-                          variant="contained"
-                          color="primary"
+                          color="secondary"
                           onClick={() =>
                             deleteProj(values, setFieldValue, index)
                           }
@@ -92,8 +91,6 @@ const TabProj: React.FC<TabProps> = ({
                         value={project.title}
                         name={`projects.${index}.title`}
                         variant="outlined"
-                        multiline
-                        rows={6}
                         placeholder="i.e. Annual Gala Three!"
                         error={Boolean(
                           touchedProjs &&
