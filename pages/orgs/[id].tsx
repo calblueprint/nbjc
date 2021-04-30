@@ -8,6 +8,7 @@ import Layout from 'components/Layout';
 import Project from 'components/organization/Project';
 import Tab from 'components/Tab';
 import computeDate from 'utils/computeDate';
+import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import styles from '../../styles/Organization.module.css';
 
@@ -24,6 +25,8 @@ const OrgProfile: React.FunctionComponent<Props> = ({
   orgUser,
   errors,
 }) => {
+  const router = useRouter();
+  const { isEvent } = router.query;
   const [tabState, setTabState] = useState<0 | 1 | 2>(0);
   const projectsList = org?.organizationProjects?.map((project) => {
     return (

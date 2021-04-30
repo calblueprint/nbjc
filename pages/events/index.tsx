@@ -16,6 +16,7 @@ import {
   RaceDemographic,
   AgeDemographic,
 } from '@prisma/client';
+import EventCard from 'components/event/EventCard';
 
 const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
 
@@ -33,7 +34,7 @@ const Home: React.FC = () => {
     initialValues,
     onSubmit: async (values): Promise<void> => {
       Router.push({
-        pathname: '/orgs/results',
+        pathname: '/events/results',
         query: {
           orgName: values.orgName,
           ages: values.ages,
@@ -50,7 +51,7 @@ const Home: React.FC = () => {
           <div className={styles.leftCol}>{slogan}</div>
           <div className={styles.rightCol}>
             <Card className={styles.searchCard}>
-              <div className={styles.big}>Explore Organizations</div>
+              <div className={styles.big}>Explore Events</div>
               <div className={styles.auto}>
                 <Autocomplete
                   multiple
@@ -148,6 +149,8 @@ const Home: React.FC = () => {
             </Card>
           </div>
         </div>
+        <div>Trending Events</div>
+        <EventCard event={1} />
       </form>
     </Layout>
   );
