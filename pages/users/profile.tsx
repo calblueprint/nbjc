@@ -8,17 +8,14 @@ import {
   Link,
   LinearProgress,
   CircularProgress,
+  Divider,
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import useSession from 'utils/useSession';
 import ProgressStepper from 'components/user/ProgressStepper/index';
 import { GetServerSideProps } from 'next';
 import getSession from 'utils/getSession';
-import {
-  ApplicationStatus,
-  OrgTeamMembers,
-  Organization,
-} from '@prisma/client';
+import { ApplicationStatus, Organization } from '@prisma/client';
 import { FormikErrors, useFormik } from 'formik';
 import { Prisma } from '@prisma/client';
 import styles from '../../styles/users/Profile.module.css';
@@ -27,6 +24,7 @@ import {
   BasicInfoSchema,
   OperationsForm,
   OperationsInfoSchema,
+  GeneralTeamMember,
 } from 'interfaces/profile';
 import parseValidationError from 'utils/parseValidationError';
 import ProfileBasics from 'components/profile/ProfileBasics';
@@ -41,7 +39,7 @@ const orgArgs = Prisma.validator<Prisma.OrganizationArgs>()({
 
 type UserProfileProps = {
   org: Organization | null;
-  team: OrgTeamMembers[];
+  team: GeneralTeamMember[];
 };
 
 const UserProfile: React.FC<UserProfileProps> = ({ org, team }) => {
@@ -53,6 +51,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ org, team }) => {
   const [infoSetting, setInfoSetting] = useState(false);
   const [operationsSetting, setOperationsSetting] = useState(false);
   const hiddenPassword = '******';
+  // This is hardcoded for now, we believe that 7 team members is good enough for an org for now.
+  const TEAM_MEMBERS_NUMBER = 7;
 
   useEffect(() => {
     if (session) {
@@ -178,6 +178,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ org, team }) => {
   /* 
   TODO - Update this handle submit to update organization info on backend
   TODO - There is already a migration for team members, and a "seen" attribute for orgs
+  CALVIN LOOK HERE
   */
   const handleSubmit = async (values: BasicInfoForm): Promise<void> => {};
 
@@ -230,17 +231,19 @@ const UserProfile: React.FC<UserProfileProps> = ({ org, team }) => {
     );
   };
 
+  const fillMembers = (team: GeneralTeamMember[]) => {
+    const pad = TEAM_MEMBERS_NUMBER - team.length;
+    for (let i = 0; i < pad; i++) {
+      team.push({
+        name: '',
+        title: '',
+      });
+    }
+    return team;
+  };
+
   const initialMembers: OperationsForm = {
-    memberName1: team.length >= 1 ? team[0].name : '',
-    memberTitle1: team.length >= 1 ? team[0].title : '',
-    memberName2: team.length >= 2 ? team[1].name : '',
-    memberTitle2: team.length >= 2 ? team[1].title : '',
-    memberName3: team.length >= 3 ? team[2].name : '',
-    memberTitle3: team.length >= 3 ? team[2].title : '',
-    memberName4: team.length >= 4 ? team[3].name : '',
-    memberTitle4: team.length >= 4 ? team[3].title : '',
-    memberName5: team.length === 5 ? team[4].name : '',
-    memberTitle5: team.length === 5 ? team[4].title : '',
+    teamMembers: fillMembers(team),
   };
 
   const handleOpValidate = (
@@ -252,13 +255,29 @@ const UserProfile: React.FC<UserProfileProps> = ({ org, team }) => {
     return { ...parseValidationError(error) };
   };
 
-  const handleOpSubmit = async (values: BasicInfoForm): Promise<void> => {};
+  const handleOpSubmit = async (values: OperationsForm): Promise<void> => {
+    console.log('mem values', values);
+    try {
+      await fetch('api/orgs/members', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          teamMembers: values,
+          orgId: org?.id,
+        }),
+      });
+    } catch (ex) {
+      console.log('error');
+    }
+  };
 
   // formikOp to be used with fields relating to organization members
   const formikOp = useFormik({
     initialValues: initialMembers,
     validateOnChange: false,
-    onSubmit: () => {},
+    onSubmit: handleOpSubmit,
   });
 
   // TODO update onClick functions to handle submissions, make updates on the backend
@@ -272,7 +291,10 @@ const UserProfile: React.FC<UserProfileProps> = ({ org, team }) => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => setOperationsSetting(!operationsSetting)}
+                onClick={() => {
+                  handleOpSubmit(formikOp.values);
+                  setOperationsSetting(!operationsSetting);
+                }}
                 disableElevation
                 disableRipple
                 className={styles.fieldButton}
@@ -306,38 +328,54 @@ const UserProfile: React.FC<UserProfileProps> = ({ org, team }) => {
     );
   };
 
+  const accountSettings = () => (
+    <div className={styles.top}>
+      <div className={styles.title}>
+        <div className={styles.caps}>{session?.user.role} Settings</div>
+      </div>
+      <div className={styles.accountSection}>
+        <div className={styles.subTitle}>Account</div>
+      </div>
+      {emailButton()}
+      {passwordButton}
+
+      <div className={styles.delete}>
+        <Link>Delete User Account</Link>
+      </div>
+    </div>
+  );
+
   if (!sessionLoading && !session) router.push('/');
   if (!sessionLoading && session)
     return (
       <Layout title="User Profile Settings">
         <div className={styles.content}>
           <div className={styles.box}>
-            {session.user.role === 'organization' && (
-              <ProgressStepper
-                applicationStatus={org?.applicationStatus}
-                orgId={org?.id}
-              />
-            )}
-            <div className={styles.top}>
-              <div className={styles.title}>
-                <div className={styles.caps}>{session.user.role} Settings</div>
-              </div>
-              <div className={styles.accountSection}>
-                <div className={styles.subTitle}>Account</div>
-              </div>
-              {emailButton()}
-              {passwordButton}
-
-              <div className={styles.delete}>
-                <Link>Delete User Account</Link>
-              </div>
-            </div>
-
-            {session.user.role === 'organization' && (
-              <div>
-                <div className={styles.top}>{infoSection()}</div>
-                <div className={styles.top}>{operationsSection()}</div>
-              </div>
+            {/* Removed check if the session user role was an org or not, does this break? */}
+            {org?.applicationStatus === 'approved' ? (
+              <>
+                <ProgressStepper
+                  applicationStatus={org?.applicationStatus}
+                  orgId={org?.id}
+                />
+                <Divider style={{ marginTop: '20px' }} />
+                {accountSettings()}
+                <div>
+                  <Divider />
+                  <div className={styles.top}>{infoSection()}</div>
+                  <Divider />
+                  <div className={styles.top}>{operationsSection()}</div>
+                </div>
+              </>
+            ) : (
+              <>
+                {accountSettings()}
+                <Divider />
+                <ProgressStepper
+                  applicationStatus={org?.applicationStatus}
+                  orgId={org?.id}
+                />
+              </>
             )}
           </div>
         </div>

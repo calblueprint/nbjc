@@ -45,28 +45,42 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({
   const appAction = (): JSX.Element | null => {
     if (applicationStatus === 'draft') {
       return (
-        <div className={styles.button}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={goToRegistration()}
-          >
-            Edit Application
-          </Button>
-        </div>
+        <>
+          <div className={styles.wording}>
+            To complete the registration process and become a listed
+            organization on [NETWORK NAME], please submit the application form
+            and wait to be notified for the results.
+          </div>
+          <div className={styles.button}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={goToRegistration()}
+            >
+              Edit Application
+            </Button>
+          </div>
+        </>
       );
     }
     if (applicationStatus === 'submitted') {
       return (
-        <div className={styles.button}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={goToRegistration()}
-          >
-            View Application
-          </Button>
-        </div>
+        <>
+          <div className={styles.wording}>
+            Your application has been submitted! You will receive an email
+            notification when the result has been decided, and you can also come
+            back here to check the status of your application.
+          </div>
+          <div className={styles.button}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={goToRegistration()}
+            >
+              View Application
+            </Button>
+          </div>
+        </>
       );
     }
     if (applicationStatus === 'rejected') {
@@ -110,15 +124,15 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({
           </div>
           <div className={styles.twoButtons}>
             <div className={styles.profileAndLink}>
-            <Button
-              className={styles.button}
-              variant="contained"
-              color="primary"
-              onClick={() => router.push(`/orgs/${orgId ?? ''}`)}
-            >
-              View Profile
-            </Button>
-            <Link className={styles.hideStepper}>Don't Show Again</Link>
+              <Button
+                className={styles.button}
+                variant="contained"
+                color="primary"
+                onClick={() => router.push(`/orgs/${orgId ?? ''}`)}
+              >
+                View Profile
+              </Button>
+              <Link className={styles.hideStepper}>Don't Show Again</Link>
             </div>
             <Button
               className={styles.button}
