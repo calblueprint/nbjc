@@ -118,6 +118,25 @@ const OrgProfile: React.FunctionComponent<Props> = ({
     onSubmit: handleSubmit,
   });
 
+  const addNewProj = (
+    values: EditForm,
+    setFieldValue: FormikHelpers<string>['setFieldValue']
+  ): void => {
+    const currProjs = values.organizationProjects;
+    currProjs.push({ title: '', description: '' });
+    setFieldValue('organizationProjects', currProjs);
+  };
+
+  const deleteProj = (
+    values: EditForm,
+    setFieldValue: FormikHelpers<string>['setFieldValue'],
+    index: number
+  ): void => {
+    const currProjs = values.organizationProjects;
+    currProjs.splice(index, 1);
+    setFieldValue('organizationProjects', currProjs);
+  };
+
   const projectsList = formik.values.organizationProjects?.map(
     (project, index) => {
       return (
@@ -162,25 +181,6 @@ const OrgProfile: React.FunctionComponent<Props> = ({
       );
     }
   );
-
-  const addNewProj = (
-    values: EditForm,
-    setFieldValue: FormikHelpers<string>['setFieldValue']
-  ): void => {
-    const currProjs = values.organizationProjects;
-    currProjs.push({ title: '', description: '' });
-    setFieldValue('organizationProjects', currProjs);
-  };
-
-  const deleteProj = (
-    values: EditForm,
-    setFieldValue: FormikHelpers<string>['setFieldValue'],
-    index: number
-  ): void => {
-    const currProjs = values.organizationProjects;
-    currProjs.splice(index, 1);
-    setFieldValue('organizationProjects', currProjs);
-  };
 
   const demographics = (category: string, groups: string[]): JSX.Element => {
     return (
