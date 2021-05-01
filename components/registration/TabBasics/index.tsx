@@ -155,6 +155,7 @@ const TabBasics: React.FC<TabProps> = ({
             variant="outlined"
             error={Boolean(touched.workType && errors.workType)}
             disabled={readOnly}
+            size="small"
           >
             <Select
               id="workType"
@@ -186,6 +187,7 @@ const TabBasics: React.FC<TabProps> = ({
             variant="outlined"
             error={Boolean(touched.organizationType && errors.organizationType)}
             disabled={readOnly}
+            size="small"
           >
             <Select
               id="organizationType"
@@ -222,6 +224,7 @@ const TabBasics: React.FC<TabProps> = ({
               variant="outlined"
               error={Boolean(touched.is501c3 && errors.is501c3)}
               disabled={readOnly}
+              size="small"
             >
               <Select
                 id="is501c3"
@@ -261,6 +264,7 @@ const TabBasics: React.FC<TabProps> = ({
             error={Boolean(touched.contactName && errors.contactName)}
             helperText={touched.contactName ? errors.contactName : undefined}
             disabled={readOnly}
+            size="small"
           />
         </div>
       </div>
@@ -317,6 +321,7 @@ const TabBasics: React.FC<TabProps> = ({
             helperText={touched.website ? errors.website : undefined}
             disabled={readOnly}
             placeholder="ourwebsite.org"
+            size="small"
           />
         </div>
       </div>
@@ -375,6 +380,7 @@ const TabBasics: React.FC<TabProps> = ({
               id="date-picker-inline"
               onChange={handleDateChange}
               inputVariant="outlined"
+              size="small"
               KeyboardButtonProps={{
                 'aria-label': 'change date',
               }}
@@ -393,6 +399,7 @@ const TabBasics: React.FC<TabProps> = ({
             <Autocomplete
               multiple
               id="lgbtqDemographic"
+              size="small"
               options={
                 Object.keys(LgbtqDemographicLabels) as LgbtqDemographic[]
               }
@@ -427,6 +434,7 @@ const TabBasics: React.FC<TabProps> = ({
             <Autocomplete
               multiple
               id="raceDemographic"
+              size="small"
               options={Object.keys(RaceDemographicLabels) as RaceDemographic[]}
               getOptionLabel={(option: RaceDemographic) =>
                 RaceDemographicLabels[option]
@@ -457,6 +465,7 @@ const TabBasics: React.FC<TabProps> = ({
             <Autocomplete
               multiple
               id="ageDemographic"
+              size="small"
               options={Object.keys(AgeDemographicLabels) as AgeDemographic[]}
               getOptionLabel={(option: AgeDemographic) =>
                 AgeDemographicLabels[option]
