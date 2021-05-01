@@ -22,7 +22,7 @@ import {
   RaceDemographic,
   AgeDemographic,
 } from '@prisma/client';
-import EventCard from 'components/event/EventCard';
+import HorizEventCard from 'components/event/EventCard/horizEventCard';
 import { func } from 'joi';
 
 const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
@@ -166,11 +166,11 @@ const Home: React.FC = () => {
           </Button>
         </div>
         <div className={styles.trendingEvents}>
-          <EventCard event={1} />
-          <EventCard event={1} />
-          <EventCard event={1} />
-          <EventCard event={1} />
-          <EventCard event={1} />
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
         </div>
         <div className={styles.explore}>
           <Typography className={styles.trending}>Popular Near You</Typography>
@@ -179,11 +179,11 @@ const Home: React.FC = () => {
           </Button>
         </div>
         <div className={styles.trendingEvents}>
-          <EventCard event={1} />
-          <EventCard event={1} />
-          <EventCard event={1} />
-          <EventCard event={1} />
-          <EventCard event={1} />
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
         </div>
       </form>
     </Layout>

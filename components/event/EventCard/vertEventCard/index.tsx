@@ -1,25 +1,20 @@
-import { OrganizationEvent } from '@prisma/client';
 import Image from 'next/image';
 import {
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  InputAdornment,
   Card,
   CardContent,
   Typography,
   CardActionArea,
 } from '@material-ui/core';
 import { useRouter } from 'next/router';
-import styles from './EventCard.module.css';
+import styles from './VertEventCard.module.css';
 
-type EventCardProps = {
+type VertEventCardProps = {
   event: number;
 };
 
-const EventCard: React.FunctionComponent<EventCardProps> = ({ event }) => {
+const VertEventCard: React.FunctionComponent<VertEventCardProps> = ({
+  event,
+}) => {
   const router = useRouter();
   return (
     <div className={styles.event_cards}>
@@ -50,4 +45,4 @@ const EventCard: React.FunctionComponent<EventCardProps> = ({ event }) => {
   );
 };
 
-export default EventCard;
+export default VertEventCard;

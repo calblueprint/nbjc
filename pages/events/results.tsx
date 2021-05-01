@@ -19,7 +19,7 @@ import {
 import SearchIcon from '@material-ui/icons/Search';
 import Layout from 'components/Layout';
 import Image from 'next/image';
-import EventCard from 'components/event/EventCard';
+import HorizEventCard from 'components/event/EventCard/horizEventCard';
 import styles from '../../styles/Events.module.css';
 
 const Map = dynamic(() => import('../../components/Map'), {
@@ -93,7 +93,7 @@ const Home: React.FC<EventsProps> = ({ orgs }) => {
             </div>
 
             <div className={styles.event_cards}>
-              <EventCard event={1} />
+              <HorizEventCard event={1} />
             </div>
           </div>
           <div className={styles.rightCol}>
