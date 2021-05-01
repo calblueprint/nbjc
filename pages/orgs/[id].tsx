@@ -5,11 +5,11 @@ import { orgProfile } from 'interfaces/organization';
 import { Button, Chip, LinearProgress } from '@material-ui/core';
 import { Prisma } from '@prisma/client';
 import Layout from 'components/Layout';
-import Project from 'components/organization/Project';
 import Tab from 'components/Tab';
 import computeDate from 'utils/computeDate';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
+import EventCard from 'components/organization/EventCard';
 import styles from '../../styles/Organization.module.css';
 
 type Props = {
@@ -30,7 +30,9 @@ const OrgProfile: React.FunctionComponent<Props> = ({
   const [tabState, setTabState] = useState<0 | 1 | 2>(0);
   const projectsList = org?.organizationProjects?.map((project) => {
     return (
-      <Project name={project.title} description={project.description ?? ''} />
+      <div className={styles.event}>
+        <EventCard event={project} />
+      </div>
     );
   });
   const [session, sessionLoading] = useSession();
@@ -154,7 +156,9 @@ const OrgProfile: React.FunctionComponent<Props> = ({
                   )}
                 </div>
               ) : (
+                // EVENT CARDS START
                 <div className={styles.projects}>{projectsList}</div>
+                // EVENT CARDS END
               )}
             </div>
           </div>

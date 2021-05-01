@@ -1,4 +1,4 @@
-import EventCard from 'components/moderator/EventCard';
+import EventCard from 'components/organization/EventCard';
 
 const CardTest: React.FC = () => {
   return (

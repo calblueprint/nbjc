@@ -3,52 +3,33 @@ import {
   CardContent,
   CardActionArea,
   Typography,
-  Button,
-  CardMedia,
-  CardActions,
   Link,
   Chip,
 } from '@material-ui/core';
-import { Organization } from '@prisma/client';
+import { Organization, OrganizationProject } from '@prisma/client';
 import styles from './EventCard.module.css';
 
 type CardProps = {
   // delete '?' when backend implemeneted
-  org?: Organization;
+  event: OrganizationProject;
 };
 
-const EventCard: React.FunctionComponent<CardProps> = ({ org }) => {
+const EventCard: React.FunctionComponent<CardProps> = ({ event }) => {
   // dummy data START
   //    needs to be filled w correct backend
-  const img = './public/sampleCover.png';
-  const date = '[TEST] Monday, Feb 29, 10AM PST';
-  const location = '[TEST] Location';
-  const name = 'Event Name';
-  const link = '[TEST] link.to.external';
+  const img = './public/sampleCover.png'; // SAMPLE DATA
+  const date = '[TEST] Monday, Feb 29, 10AM PST'; // SAMPLE DATA
+  const location = '[TEST] Location'; // SAMPLE DATA
+  const name = event.title;
+  const link = '[TEST] link.to.external'; // SAMPLE DATA
   const description = (
     <div>
-      <p>
-        {' '}
-        [TEST]Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-        eiusmod tempor incididunt ut labore et dolore magna aliqua. Odio
-        pellentesque diam volutpat commodo sed egestas egestas. Egestas erat
-        imperdiet sed euismod nisi porta lorem mollis aliquam.
-      </p>
-      <p>
-        {' '}
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Odio pellentesque
-        diam volutpat commodo sed egestas egestas. Egestas erat imperdiet sed
-        euismod nisi porta lorem mollis aliquam. Congue nisi vitae suscipit
-        tellus mauris a diam maecenas. Pulvinar pellentesque habitant morbi
-        tristique senectus. Et odio pellentesque diam volutpat commodo sed.
-        Justo laoreet sit amet cursus sit amet dictum sit.{' '}
-      </p>
+      <p>{event.description}</p>
     </div>
   );
-  const identities = ['LGBTQ+', 'SQL'];
-  const background = ['POC', 'Black', 'Asian'];
-  const ages = ['Adult', 'Teen', 'Child', 'Senior'];
+  const identities = ['LGBTQ+', 'SQL']; // SAMPLE DATA
+  const background = ['POC', 'Black', 'Asian']; // SAMPLE DATA
+  const ages = ['Adult', 'Teen', 'Child', 'Senior']; // SAMPLE DATA
   // dummy data END
   const demographics = (category: string, groups: string[]): JSX.Element => {
     return (
