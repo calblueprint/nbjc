@@ -29,8 +29,8 @@ model Account {
 model Organization {
   id                             Int                             @id @default(autoincrement())
   name                           String?                         @db.VarChar(255)
-  long                           Float?
-  lat                            Float?
+  long                           Decimal?                        @db.Decimal
+  lat                            Decimal?                        @db.Decimal
   createdAt                      DateTime                        @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                      DateTime                        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   applicationStatus              ApplicationStatus               @default(draft) @map("application_status")
@@ -199,15 +199,11 @@ enum ApplicationStatus {
 }
 
 enum LgbtqDemographic {
-  queer                 @map("Queer")
-  asexualAromantic      @map("Asexual/Aromantic")
-  bisexual              @map("Bisexual")
-  pansexual             @map("Pansexual")
-  lesbianSgl            @map("Lesbian/SGL")
-  gaySgl                @map("Gay/SGL")
-  straightHeterosexual  @map("Straight/Heterosexual")
-  lgbtqPlus             @map("LGBTQ+")
-  other                 @map("Other")
+  LGBTQ___All_      @map("LGBTQ+ (All)")
+  SGL
+  Transgender
+  asexualAromantic  @map("Asexual/Aromantic")
+  other             @map("Other")
 
   @@map("lgbtq_demographic")
 }
@@ -222,13 +218,13 @@ enum OrganizationType {
 }
 
 enum RaceDemographic {
-  black     @map("Black")
-  native    @map("Native")
-  hispanic  @map("Hispanic")
-  asian     @map("Asian")
-  arab      @map("Arab")
-  white     @map("White")
-  other     @map("Other")
+  POC__All_           @map("POC (All)")
+  black               @map("Black")
+  asian               @map("Asian")
+  Pacific_Islander    @map("Pacific Islander")
+  Latinx
+  Native_Indigeneous  @map("Native/Indigeneous")
+  other               @map("Other")
 
   @@map("race_demographic")
 }
