@@ -16,6 +16,7 @@ import {
   LinearProgress,
   Typography,
   IconButton,
+  SnackbarProps,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import Layout from 'components/Layout';
@@ -30,6 +31,7 @@ import getSession from 'utils/getSession';
 import Joi from 'joi';
 import prisma from 'utils/prisma';
 import Tab from 'components/Tab';
+import Toast from 'components/Toast';
 import styles from '../styles/Registration.module.css';
 
 type RegistrationProps = {
@@ -49,6 +51,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
   const [exitDialogOpen, setExitDialogOpen] = useState(false);
   const [saveDraft, setSaveDraft] = useState(false);
   const [saveTime, setSaveTime] = useState('');
+  const [showErrorToast, setShowErrorToast] = useState(false);
   const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(
     router.query?.feedback === 'true'
   );
@@ -107,8 +110,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     if (session && session.user.role === 'organization') {
       if (draft && Object.keys(handleValidate(true)(values)).length !== 0)
         return;
-      const { short1, short2, short3, projects, ...tempValues } = values;
-      console.log(values);
+      const { projects, ...tempValues } = values;
       try {
         const res = await fetch(`/api/app/orgs?submitting=${!draft}`, {
           method: 'POST',
@@ -157,9 +159,6 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     foundingDate: undefined,
     is501c3: Boolean(org && org.is501c3),
     website: (org && org.website) ?? '',
-    short1: '',
-    short2: '',
-    short3: '',
     projects:
       org?.organizationProjects?.map((o) => ({
         id: o.id ?? null,
@@ -199,11 +198,30 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     onSubmit: handleSubmit(false),
   });
 
+  const toastProps: SnackbarProps = {
+    anchorOrigin: {
+      vertical: 'top',
+      horizontal: 'center',
+    },
+  };
+
   if (!sessionLoading && (!session || session.user.role !== 'organization'))
     router.push('/');
   if (!sessionLoading && session && session.user.role === 'organization')
     return (
       <Layout title="Register">
+        {showErrorToast ? (
+          <Toast
+            showDismissButton
+            snackbarProps={toastProps}
+            clickAwayListener={() => {
+              setShowErrorToast(false);
+            }}
+            type="error"
+          >
+            Fill out all required fields before submitting.
+          </Toast>
+        ) : null}
         {status === 'rejected' ? (
           <Dialog
             open={feedbackDialogOpen}
@@ -295,7 +313,6 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                     color="secondary"
                     className={styles.autoField}
                     onClick={() => handleSubmit(true)(formik.values)}
-                    // onclick={helperText()}
                   >
                     Save Changes
                   </Button>
