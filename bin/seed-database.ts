@@ -12,7 +12,7 @@ import {
   WorkType,
   // OrganizationApplicationReviews,
 } from '@prisma/client';
-import Faker from 'faker';
+import Faker, { lorem } from 'faker';
 import Ora from 'ora';
 import hashPassword from '../utils/hashPassword';
 
@@ -215,9 +215,76 @@ export default async function seedDatabase(): Promise<void> {
         },
       };
     });
+
+  // Creating seeding data for demos
+  const demoOrg: Prisma.UserCreateArgs = {
+    data: {
+      email: `demo@nbjc.dev`,
+      hashedPassword: hashPassword('password'),
+      role: UserRole.organization,
+      organization: {
+        create: {
+          applicationStatus: 'approved',
+          active: true,
+          name: 'Redprint',
+          lat: 40,
+          long: 40,
+          address: '1234 Fake Street, Berkeley CA, 94709',
+          contactName: 'Frederick Chen',
+          contactPhone: '(123) 456-7890',
+          contactEmail: 'blue@print.com',
+          missionStatement: Faker.lorem.lines(10),
+          shortHistory: Faker.lorem.lines(10),
+          is501c3: true,
+          website: 'https://www.nbjc.org',
+          organizationType: 'national',
+          workType: 'advocacy',
+          lgbtqDemographic: [
+            'asexualAromantic',
+            'lesbianSgl',
+            'straightHeterosexual',
+          ],
+          raceDemographic: ['arab', 'black', 'native'],
+          ageDemographic: ['adult', 'child'],
+          organizationProjects: {
+            create: [
+              {
+                title: 'Our First Project!',
+                description:
+                  'This is a description of what our first project is.',
+              },
+              {
+                title: 'Our First Resource!',
+                description:
+                  'This is a description of what our first resource is. This is different.',
+              },
+            ],
+          },
+          applicationResponses: {
+            create: [
+              {
+                answer: 'Response 1',
+                applicationQuestion: { connect: { id: appQuestions[0].id } },
+              },
+              {
+                answer: 'Response 2',
+                applicationQuestion: { connect: { id: appQuestions[1].id } },
+              },
+              {
+                answer: 'Response 3',
+                applicationQuestion: { connect: { id: appQuestions[2].id } },
+              },
+            ],
+          },
+        },
+      },
+    },
+  };
+
   try {
     await Promise.all(mockOrgUsers.map(prisma.user.create));
-    orgUsersCreateMessage.text = `Created ${NUMBER_USERS} org users.`;
+    await prisma.user.create(demoOrg);
+    orgUsersCreateMessage.text = `Created ${NUMBER_USERS} org users and created demo org.`;
     orgUsersCreateMessage.succeed();
   } catch (err) {
     orgUsersCreateMessage.fail(`Creating org users failed\n\n${err.message}`);

@@ -1,4 +1,4 @@
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import prisma from 'utils/prisma';
 
@@ -8,7 +8,6 @@ import OrgDetail from 'components/moderator/OrgDetail';
 import clsx from 'clsx';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import SearchIcon from '@material-ui/icons/Search';
 import CloseIcon from '@material-ui/icons/Close';
 import {
   Organization,
@@ -22,17 +21,13 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  Tabs,
-  Tab,
   Button,
-  InputAdornment,
   TextField,
   Drawer,
   IconButton,
   LinearProgress,
   CircularProgress,
   Typography,
-  ClickAwayListener,
 } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
@@ -87,13 +82,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     <Toast showDismissButton>Organization successfully declined.</Toast>
   ) : null;
 
-  const [selected, setSelected] = useState<number>(0);
-  const handleChange = (
-    _event: ChangeEvent<unknown>,
-    newValue: number
-  ): void => {
-    setSelected(newValue);
-  };
+  const [selected] = useState<number>(0);
 
   const [openLeft, setOpenLeft] = useState<boolean>(true);
 

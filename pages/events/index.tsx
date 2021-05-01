@@ -4,7 +4,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useFormik } from 'formik';
 import Layout from 'components/Layout';
 import { homepageFields } from 'interfaces';
-import Router, { useRouter } from 'next/router';
+import Router from 'next/router';
 import {
   AgeDemographicLabels,
   RaceDemographicLabels,
@@ -16,7 +16,7 @@ import {
   RaceDemographic,
   AgeDemographic,
 } from '@prisma/client';
-import Toast from 'components/Toast';
+import EventCard from 'components/event/EventCard';
 
 const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
 
@@ -34,7 +34,7 @@ const Home: React.FC = () => {
     initialValues,
     onSubmit: async (values): Promise<void> => {
       Router.push({
-        pathname: '/orgs/results',
+        pathname: '/events/results',
         query: {
           orgName: values.orgName,
           ages: values.ages,
@@ -44,34 +44,14 @@ const Home: React.FC = () => {
       });
     },
   });
-
-  const renderSuccessToast = () => {
-      return(
-      <Toast
-          snackbarProps={{
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
-          }}
-          type="success"
-          showDismissButton
-          >
-          <div>
-              Password has been successfully reset!
-          </div>
-      </Toast>
-  )};
-
-  const router = useRouter();
-  const resetSuccess = router.query.resetSuccess;
-
   return (
     <Layout title="Home">
-      {resetSuccess ? renderSuccessToast() : null}
       <form onSubmit={formik.handleSubmit}>
         <div className={styles.root}>
           <div className={styles.leftCol}>{slogan}</div>
           <div className={styles.rightCol}>
             <Card className={styles.searchCard}>
-              <div className={styles.big}>Explore Organizations</div>
+              <div className={styles.big}>Explore Events</div>
               <div className={styles.auto}>
                 <Autocomplete
                   multiple
@@ -169,6 +149,8 @@ const Home: React.FC = () => {
             </Card>
           </div>
         </div>
+        <div>Trending Events</div>
+        <EventCard event={1} />
       </form>
     </Layout>
   );

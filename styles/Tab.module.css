@@ -4,11 +4,16 @@
 
 .buttonInd {
   width: 50%;
-  background-color: #f8f4ff;
-  color: #71579c;
+  background-color: #eceaee;
+  color: #9276b5;
 }
 
 .buttonIndSelected {
   width: 50%;
-  background-color: #a793c8;
+  background-color: #9276b5;
+}
+
+.buttonInd:hover {
+  color: #694f95;
+  background-color: #eceaee;
 }
