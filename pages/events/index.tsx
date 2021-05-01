@@ -1,4 +1,10 @@
-import { TextField, InputAdornment, Card, Button } from '@material-ui/core';
+import {
+  TextField,
+  InputAdornment,
+  Card,
+  Button,
+  Typography,
+} from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useFormik } from 'formik';
@@ -49,8 +55,8 @@ const Home: React.FC = () => {
     <Layout title="Home">
       <form onSubmit={formik.handleSubmit}>
         <div className={styles.root}>
-          <div className={styles.leftCol}>{slogan}</div>
-          <div className={styles.rightCol}>
+          <div className={styles.topCol}>{slogan}</div>
+          <div className={styles.bottomCol}>
             <Card className={styles.searchCard}>
               <div className={styles.big}>Explore Events</div>
               <div className={styles.auto}>
@@ -153,7 +159,12 @@ const Home: React.FC = () => {
             </Card>
           </div>
         </div>
-        <div className={styles.trending}>Trending Events</div>
+        <div className={styles.explore}>
+          <Typography className={styles.trending}>Trending Events</Typography>
+          <Button className={styles.seeMore} type="submit">
+            See More {'>'}
+          </Button>
+        </div>
         <div className={styles.trendingEvents}>
           <EventCard event={1} />
           <EventCard event={1} />
@@ -161,7 +172,12 @@ const Home: React.FC = () => {
           <EventCard event={1} />
           <EventCard event={1} />
         </div>
-        <div className={styles.trending}>Popular Near You</div>
+        <div className={styles.explore}>
+          <Typography className={styles.trending}>Popular Near You</Typography>
+          <Button className={styles.seeMore} type="submit">
+            See More {'>'}
+          </Button>
+        </div>
         <div className={styles.trendingEvents}>
           <EventCard event={1} />
           <EventCard event={1} />

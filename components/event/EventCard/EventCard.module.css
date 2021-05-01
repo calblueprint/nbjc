@@ -5,42 +5,6 @@
   }
 }
 
-.pageFlex {
-  margin: 25px;
-  margin-top: 5px;
-  flex-direction: column;
-  flex-wrap: wrap;
-  height: 80vh;
-}
-
-.component {
-  display: flex;
-  margin: 15px;
-  width: 100%;
-  border-radius: 15px;
-}
-
-.leftCol {
-  display: flex;
-  flex-direction: column;
-  width: 33%;
-}
-
-.rightCol {
-  display: flex;
-  width: 66%;
-  border-width: 1px;
-  border-style: solid;
-  border-radius: 5px;
-  border-color: rgba(187, 186, 186, 0.856);
-  flex-wrap: wrap;
-}
-
-.cards {
-  /* display: flex;
-    flex-direction: column; */
-}
-
 .card {
   margin: 8px;
   flex-basis: 45%;
@@ -51,11 +15,6 @@
   margin: 8px;
   flex-basis: 45%;
   text-align: left;
-  /* width: 33%; */
-}
-
-.event_cards {
-  width: 33%;
 }
 
 .event_date {

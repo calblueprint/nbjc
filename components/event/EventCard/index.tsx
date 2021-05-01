@@ -30,7 +30,7 @@ const EventCard: React.FunctionComponent<EventCardProps> = ({ event }) => {
               <Image
                 src="/gradient.png"
                 alt="event image"
-                width={400}
+                width={380}
                 height={100}
               />
             </div>

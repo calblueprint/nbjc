@@ -22,7 +22,7 @@
   background-size: cover;
 }
 
-.leftCol {
+.topCol {
   font-family: Epilogue, sans-serif;
   font-style: normal;
   font-weight: 1000;
@@ -33,7 +33,7 @@
   color: #423e45;
   word-spacing: 15px;
 }
-.rightCol {
+.bottomCol {
   width: 55%;
 }
 
@@ -223,12 +223,47 @@
   border-radius: 15px;
 }
 
+.leftCol {
+  display: flex;
+  flex-direction: column;
+  width: 33%;
+}
+
+.rightCol {
+  display: flex;
+  width: 66%;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 5px;
+  border-color: rgba(187, 186, 186, 0.856);
+  flex-wrap: wrap;
+}
+
+.card {
+  margin: 8px;
+  flex-basis: 45%;
+  text-align: left;
+}
+
+.explore {
+  display: flex;
+  justify-content: space-between;
+}
+
 .trending {
   font-weight: bolder;
   margin-left: 5%;
   font-size: 20px;
   margin-top: 2%;
   margin-bottom: 1%;
+  color: #423e45;
+}
+
+.seeMore {
+  margin-top: 2%;
+  margin-right: 3%;
+  font-weight: bolder;
+  color: #423e45;
 }
 
 .trendingEvents {
@@ -236,4 +271,9 @@
   flex-direction: row;
   margin-left: 5%;
   overflow: auto;
+}
+
+.trendingEvents-EventCard {
+  width: 32%;
+  background-color: burlywood;
 }
