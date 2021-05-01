@@ -260,6 +260,24 @@ export default async function seedDatabase(): Promise<void> {
               },
             ],
           },
+          organizationEvents: {
+            create: [
+              {
+                title: 'Annual anti-bug bug bash!',
+                description: Faker.lorem.lines(10),
+                address: '1234 Fake Street, Berkeley CA, 94709',
+                link: 'https://www.nbjc.org',
+                lgbtqDemographic: [
+                  'asexualAromantic',
+                  'lesbianSgl',
+                  'straightHeterosexual',
+                ],
+                startDatetime: new Date('4/20/21 2:40'),
+                raceDemographic: ['arab', 'black', 'native'],
+                ageDemographic: ['adult', 'child'],
+              },
+            ],
+          },
           applicationResponses: {
             create: [
               {
