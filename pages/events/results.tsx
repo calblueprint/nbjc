@@ -11,6 +11,7 @@ import {
   Select,
   MenuItem,
   InputAdornment,
+  Button,
   Card,
   CardContent,
   Typography,
@@ -43,6 +44,7 @@ const Home: React.FC<EventsProps> = ({ orgs }) => {
         <TextField
           id="outlined-size-small"
           placeholder="Explore Events"
+          size="small"
           fullWidth
           InputProps={{
             startAdornment: (
@@ -53,45 +55,63 @@ const Home: React.FC<EventsProps> = ({ orgs }) => {
           }}
           variant="outlined"
         />
-
+        <div className={styles.filters}>
+          <FormControl
+            className={styles.filter}
+            variant="outlined"
+            size="small"
+          >
+            <InputLabel>Keyword</InputLabel>
+            <Select label="Keyword">
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              <MenuItem value={1}>One</MenuItem>
+              <MenuItem value={2}>Two</MenuItem>
+              <MenuItem value={3}>Three</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl
+            className={styles.filter}
+            variant="outlined"
+            size="small"
+          >
+            <InputLabel>Keyword</InputLabel>
+            <Select label="Keyword">
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              <MenuItem value={1}>One</MenuItem>
+              <MenuItem value={2}>Two</MenuItem>
+              <MenuItem value={3}>Three</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl
+            className={styles.filter}
+            variant="outlined"
+            size="small"
+          >
+            <InputLabel>More</InputLabel>
+            <Select label="More">
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              <MenuItem value={1}>One</MenuItem>
+              <MenuItem value={2}>Two</MenuItem>
+              <MenuItem value={3}>Three</MenuItem>
+            </Select>
+          </FormControl>
+          <Button
+            variant="contained"
+            color="primary"
+            className={styles.searchbutton}
+            type="submit"
+          >
+            Search
+          </Button>
+        </div>
         <div className={styles.pageContent}>
           <div className={styles.leftCol}>
-            <div className={styles.filters}>
-              <FormControl className={styles.filter} variant="outlined">
-                <InputLabel>Keyword</InputLabel>
-                <Select label="Keyword">
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={1}>One</MenuItem>
-                  <MenuItem value={2}>Two</MenuItem>
-                  <MenuItem value={3}>Three</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl className={styles.filter} variant="outlined">
-                <InputLabel>Keyword</InputLabel>
-                <Select label="Keyword">
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={1}>One</MenuItem>
-                  <MenuItem value={2}>Two</MenuItem>
-                  <MenuItem value={3}>Three</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl className={styles.filter} variant="outlined">
-                <InputLabel>More</InputLabel>
-                <Select label="More">
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={1}>One</MenuItem>
-                  <MenuItem value={2}>Two</MenuItem>
-                  <MenuItem value={3}>Three</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-
             <div className={styles.event_cards}>
               <HorizEventCard event={1} />
             </div>

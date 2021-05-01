@@ -79,6 +79,15 @@
   color: #908d93;
 }
 
+.searchbutton {
+  display: flex;
+  border-radius: 25px;
+  padding-left: 10px;
+  height: 2%;
+  margin-top: 0.8%;
+  margin-left: 1%;
+}
+
 .auto {
   display: flex;
   flex-direction: row;
