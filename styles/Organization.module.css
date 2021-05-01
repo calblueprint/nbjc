@@ -22,7 +22,7 @@
   margin-left: 20px;
 }
 
-.projects {
+.events {
   margin-top: 36px;
 }
 
@@ -115,4 +115,19 @@
   border-width: 1px;
   box-shadow: none;
   padding: 1px;
+}
+
+.modContent {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.modTab {
+  width: 50%;
+  height: 300px;
+}
+
+.event {
+  margin-bottom: 50px;
 }
