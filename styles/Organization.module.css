@@ -11,15 +11,17 @@
   display: flex;
   flex-direction: column;
   flex-grow: 2;
-  width: 30%;
+  width: 25%;
   margin-right: 20px;
+  margin-left: 110px;
 }
 
 .rightColumn {
   display: flex;
   flex-direction: column;
-  width: 70%;
+  width: 75%;
   margin-left: 20px;
+  margin-right: 110px;
 }
 
 .projects {
@@ -34,11 +36,15 @@
 .Header {
   margin-top: 15px;
   margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 26px;
 }
 
 .subHeader {
   margin-top: 5px;
   margin-bottom: 0px;
+  font-weight: bold;
+  font-size: 18px;
 }
 
 .info {
@@ -49,6 +55,7 @@
 .infoHeader {
   margin-bottom: 5px;
   margin-top: 20px;
+  font-weight: bold;
 }
 
 .orgImages {
@@ -61,6 +68,7 @@
   justify-content: flex-end;
   margin-top: 10px;
   margin-bottom: 0px;
+  margin-right: 55px;
 }
 
 .buttonInd:hover {
@@ -95,11 +103,24 @@
   flex-wrap: wrap;
 }
 
+.demographicEdit {
+  display: flex;
+  flex-direction: column;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  width: 30%;
+}
+
 .demographic {
   display: flex;
   flex-direction: column;
   margin-right: 8px;
   margin-bottom: 8px;
+  width: 20%;
+}
+
+.missionAndProj {
+  width: 100%
 }
 
 .demographicTags {
