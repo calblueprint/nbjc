@@ -64,7 +64,7 @@ const EventCard: React.FunctionComponent<CardProps> = ({ event }) => {
         </div>
         <CardContent className={styles.content}>
           <div className={styles.info}>
-            <Typography className={styles.dateLoc} variant="h5" component="h1">
+            <Typography className={styles.dateLoc} component="h1">
               {date} at {location}
             </Typography>
             <Typography

@@ -18,14 +18,20 @@
 }
 
 .dateLoc {
-  font-weight: bold;
-  font-size: 15px;
   margin-bottom: 7px;
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 17.22px;
+  line-height: 125%;
 }
 
 .eventName {
-  font-weight: bold;
-  font-size: 22px;
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 26.05px;
+  line-height: 125%;
   margin-bottom: 7px;
   color: #694f95;
 }
@@ -37,6 +43,11 @@
 .description {
   margin-bottom: 35px;
   color: black;
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 125%;
 }
 
 .demographicSection {
@@ -44,6 +55,11 @@
   flex-direction: row;
   justify-content: space-between;
   flex-wrap: wrap;
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 17.22px;
+  line-height: 125%;
 }
 
 .demographic {
@@ -68,9 +84,19 @@
 .demTitle {
   font-size: 15px;
   margin-bottom: 15px;
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 17.22px;
+  line-height: 125%;
 }
 
 .linkText {
   color: black;
   text-decoration: underline;
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 125%;
 }
