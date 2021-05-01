@@ -48,6 +48,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
   const [selected, setSelected] = useState(0);
   const [exitDialogOpen, setExitDialogOpen] = useState(false);
   const [saveDraft, setSaveDraft] = useState(false);
+  const [saveTime, setSaveTime] = useState('');
   const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(
     router.query?.feedback === 'true'
   );
@@ -125,6 +126,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
             // Linter ignored because formik is reference before it is defined.
             // eslint-disable-next-line no-use-before-define
             formik.setFieldValue('projects', data.newOrg.organizationProjects);
+            setSaveTime(`Last saved at: ${new Date().toLocaleString()}`);
             if (!draft) {
               router.push('/users/profile');
             }
@@ -196,13 +198,6 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
     validateOnChange: false,
     onSubmit: handleSubmit(false),
   });
-
-  function helperText(): React.ReactElement {
-    return <Typography>last saved at</Typography>;
-    const timer = setTimeout(() => {
-      return <Typography />;
-    }, 5000);
-  }
 
   if (!sessionLoading && (!session || session.user.role !== 'organization'))
     router.push('/');
@@ -294,7 +289,7 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
             <div className={styles.bottomButtons}>
               {!readOnly ? (
                 <div className={styles.rightBottom}>
-                  {/* <Typography className={styles.popup}>saved changes at</Typography> */}
+                  <div className={styles.popup}> {saveTime} </div>
                   <Button
                     variant="outlined"
                     color="secondary"

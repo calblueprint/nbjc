@@ -180,13 +180,7 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({
         </Typography>
       );
     }
-    return (
-      <Typography>
-        Your organization has been accepted to join [Network Name]! Your
-        organization’s profile is partly auto-filled with answers from your
-        application, but complete your profile with more details!
-      </Typography>
-    );
+    return <Typography />;
   }
 
   return (
