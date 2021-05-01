@@ -28,10 +28,10 @@ const OrgProfile: React.FunctionComponent<Props> = ({
   const router = useRouter();
   const { isEvent } = router.query;
   const [tabState, setTabState] = useState<0 | 1 | 2>(0);
-  const projectsList = org?.organizationProjects?.map((project) => {
+  const eventsList = org?.organizationEvents?.map((event) => {
     return (
       <div className={styles.event}>
-        <EventCard event={project} />
+        <EventCard event={event} />
       </div>
     );
   });
@@ -157,7 +157,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({
                 </div>
               ) : (
                 // EVENT CARDS START
-                <div className={styles.projects}>{projectsList}</div>
+                <div className={styles.events}>{eventsList}</div>
                 // EVENT CARDS END
               )}
             </div>
