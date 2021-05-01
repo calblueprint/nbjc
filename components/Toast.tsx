@@ -20,6 +20,8 @@ type Props = {
   dualActionSpaced?: boolean;
   // custom max width (default: 600px)
   customMaxWidth?: string;
+  // clickAwayListener
+  clickAwayListener?: () => void;
 };
 
 const Toast: React.FunctionComponent<Props> = ({
@@ -29,12 +31,14 @@ const Toast: React.FunctionComponent<Props> = ({
   showDismissButton = false,
   dualActionSpaced = false,
   customMaxWidth,
+  clickAwayListener,
   children,
 }) => {
   const [open, setOpen] = useState(true);
   const handleClose: SnackbarProps['onClose'] = (e, reason) => {
     if (disableClickaway && reason === 'clickaway') return;
     setOpen(false);
+    if (clickAwayListener) clickAwayListener();
   };
 
   const dismissButton = (
@@ -43,7 +47,10 @@ const Toast: React.FunctionComponent<Props> = ({
       size="small"
       aria-label="close"
       color="inherit"
-      onClick={() => setOpen(false)}
+      onClick={() => {
+        setOpen(false);
+        if (clickAwayListener) clickAwayListener();
+      }}
     >
       Dismiss
     </Button>

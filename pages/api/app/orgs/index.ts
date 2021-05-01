@@ -29,7 +29,6 @@ export default async (
   if (Joi.number().validate(userId).error) {
     return CreateError(400, `ID ${userId} is not a number`, res);
   }
-
   const { error, value } = OrganizationSchema.validate(body, {
     abortEarly: false,
     context: {
