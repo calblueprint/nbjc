@@ -34,7 +34,7 @@ import {
   Typography,
   ClickAwayListener,
 } from '@material-ui/core';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import getSession from 'utils/getSession';
 import styles from '../styles/Moderator.module.css';
@@ -55,9 +55,13 @@ const orgArgs = Prisma.validator<Prisma.OrganizationArgs>()({
 
 type Props = {
   orgs: Prisma.OrganizationGetPayload<typeof orgArgs>[];
+  searchValProp: string;
 };
 
-const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
+const ModeratorDashBoard: React.FunctionComponent<Props> = ({
+  orgs,
+  searchValProp,
+}) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
 
@@ -65,7 +69,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   const [text, setText] = useState('');
   const [declineText, setDeclineText] = useState('');
 
-  const [index, setIndex] = useState<number>(0);
+  const [index, setIndex] = useState<number>(-1);
   const [processingAction, setProcessingAction] = useState(false);
   const [errorBanner, setErrorBanner] = useState('');
   const [successBanner, setSuccessBanner] = useState('');
@@ -129,7 +133,9 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         body: JSON.stringify({ note: text }),
       });
     } catch (ex) {
-      setErrorBanner('Did not save.');
+      if (index !== -1) {
+        setErrorBanner('Did not save.');
+      }
     }
     router.replace(router.asPath);
     setText('');
@@ -239,17 +245,17 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   const tab = (): JSX.Element | null => {
     if (selected === 0) {
       return (
-        <div className={styles.content}>
+        <div className={styles.contentApp}>
           {orgs && orgs.length > 0 ? (
             orgs.map((org, i) => (
               // TODO: Add accessibility support
               // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
               <div key={org.id} onClick={() => clickCard(i)}>
-                <OrgCard org={org} />
+                <OrgCard org={org} orgIndex={i} pageIndex={index} />
               </div>
             ))
           ) : (
-            <div>No organizations</div>
+            <div className={styles.noOrgs}>No organizations</div>
           )}
         </div>
       );
@@ -268,8 +274,8 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     const year = date.getFullYear();
     return (
       <>
-        <p>{`${month} ${day} ${year}`}</p>
-        <p>{r.reason}</p>
+        <p className={styles.reviewDate}>{`${month} ${day} ${year}`}</p>
+        <p className={styles.reviewReason}>{r.reason}</p>
       </>
     );
   };
@@ -312,7 +318,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           </Button>
         </div>
       </div>
-      {/* <ClickAwayListener onClickAway={handleDrawerCloseRight}> */}
       <Drawer
         className={styles.drawer}
         variant="persistent"
@@ -324,37 +329,43 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
       >
         {openNote ? (
           <div>
-            <div className={styles.textField}>
-              notes for {orgs[index] && orgs[index].name}
-            </div>
-            <div className={styles.row}>
-              <p className={styles.descriptor}>Notes</p>
-              <TextField
-                className={styles.textField}
-                onChange={(e) => setText(e.target.value)}
-                value={text}
-                name="orgName"
-                variant="outlined"
-                multiline
-              />
+            <IconButton onClick={handleDrawerCloseRight}>
+              <ChevronRightIcon className={styles.rightIcon} />
+            </IconButton>
+            <div className={styles.rightCont}>
+              <div className={styles.textField}>
+                Notes for {orgs[index] && orgs[index].name}
+              </div>
+              <div className={styles.row}>
+                <TextField
+                  className={styles.textFieldNotes}
+                  onChange={(e) => setText(e.target.value)}
+                  value={text}
+                  placeholder="Type your note here!"
+                  name="orgName"
+                  variant="outlined"
+                  multiline
+                />
+              </div>
             </div>
           </div>
         ) : (
           <div>
-            <div className={styles.textField}>
-              reviews for {orgs[index] && orgs[index].name}
-            </div>
-            <div className={styles.row}>
-              <p className={styles.descriptor}>Reviews</p>
-              {orgs[index].organizationApplicationReviews?.map((r) =>
-                // There is not necessarily a reason because sometimes you just want to reject someone and not give them a reason.
-                r.reason ? makeReview(r) : null
-              )}
+            <IconButton onClick={handleDrawerCloseRight}>
+              <ChevronRightIcon className={styles.rightIcon} />
+            </IconButton>
+            <div className={styles.rightCont}>
+              <div className={styles.textField}>Rejection History</div>
+              <div className={styles.row}>
+                {orgs[index].organizationApplicationReviews?.map((r) =>
+                  // There is not necessarily a reason because sometimes you just want to reject someone and not give them a reason.
+                  r.reason ? makeReview(r) : null
+                )}
+              </div>
             </div>
           </div>
         )}
       </Drawer>
-      {/* </ClickAwayListener> */}
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
       <div className={styles.content} onClick={handleDrawerCloseRight}>
         {/* </div> onClick={handleDrawerCloseRight}> */}
@@ -397,105 +408,159 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
 
   const noteExists = orgs.length > 0 && orgs[index]?.applicationNote?.note;
 
+  const [searchVal, setSearchVal] = useState(searchValProp);
+  const [demographicFilters, setDemographicFilters] = useState<string[]>([]);
+  const [backgroundFilters, setBackgroundFilters] = useState<string[]>([]);
+  const [audienceFilters, setAudienceFilters] = useState<string[]>([]);
+
+  const handleDemographicChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ): void => {
+    setDemographicFilters(event.target.value as string[]);
+  };
+
+  const handleBackgroundChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ): void => {
+    setBackgroundFilters(event.target.value as string[]);
+  };
+
+  const handleAudienceChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ): void => {
+    setAudienceFilters(event.target.value as string[]);
+  };
+
+  const handleSearch = (): void => {
+    Router.push({
+      pathname: 'moderator',
+      query: {
+        orgName: searchVal,
+        ages: audienceFilters,
+        ethnicity: backgroundFilters,
+        orientation: demographicFilters,
+      },
+    });
+  };
+
   if (
     !sessionLoading &&
     session &&
     (session.user.role === 'moderator' || session.user.role === 'admin')
   )
     return (
-      <Layout title="Moderator Dashboard">
-        {
-          // MODAL ADDED
-        }
-        {approveToast}
-        {declineToast}
-        <Dialog
-          onClose={closeModal()}
-          fullWidth
-          maxWidth={noteExists ? 'md' : 'sm'}
-          open={openModal}
-        >
-          <DialogTitle>
-            <div className={styles.dialogTitle}>
-              Reason For Declining
-              <IconButton aria-label="close" onClick={closeModal()}>
-                <CloseIcon />
-              </IconButton>
-            </div>
-          </DialogTitle>
-          <DialogContent>
-            <div className={styles.modContent}>
-              {noteExists ? (
-                <div className={styles.modTab}>
-                  <div className={styles.declineNotes}>Notes</div>
-                  <div className={styles.declineNotesContent}>
-                    {orgs[index]?.applicationNote?.note}
+      <Layout
+        title="Moderator Dashboard"
+        handleClickSearch={() => handleSearch()}
+        searchFilters={searchVal}
+        handleSearchChange={(event) => setSearchVal(event.target.value)}
+        pageTitle="Moderator Dashboard"
+      >
+        <div className={styles.entire}>
+          {
+            // MODAL ADDED
+          }
+          {approveToast}
+          {declineToast}
+          <Dialog
+            onClose={closeModal()}
+            fullWidth
+            maxWidth={noteExists ? 'md' : 'sm'}
+            open={openModal}
+          >
+            <DialogTitle>
+              <div className={styles.dialogTitle}>
+                Reason For Declining
+                <IconButton aria-label="close" onClick={closeModal()}>
+                  <CloseIcon />
+                </IconButton>
+              </div>
+            </DialogTitle>
+            <DialogContent>
+              <div className={styles.modContent}>
+                {noteExists ? (
+                  <div className={styles.modTab}>
+                    <div className={styles.declineNotes}>Notes</div>
+                    <div className={styles.declineNotesContent}>
+                      {orgs[index]?.applicationNote?.note}
+                    </div>
+                  </div>
+                ) : null}
+                <div className={styles.declineBox}>
+                  <TextField
+                    id="outlined-basic"
+                    label="Reasons for declining."
+                    variant="outlined"
+                    multiline
+                    size="small"
+                    rows={13}
+                    onChange={(e) => setDeclineText(e.target.value)}
+                    className={styles.declineReason}
+                  />
+                </div>
+              </div>
+              <div className={styles.send}>
+                <Button
+                  variant="outlined"
+                  className={styles.editButtonStyles}
+                  disableElevation
+                  color="primary"
+                  onClick={declineOrg()}
+                >
+                  Send
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+          {
+            // MODAL ADDED
+          }
+          <div className={styles.root}>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpenLeft}
+              edge="start"
+              className={clsx(styles.menuButton, openLeft && styles.hide)}
+            >
+              <ChevronRightIcon />
+            </IconButton>
+            <Drawer
+              className={styles.drawer}
+              variant="persistent"
+              anchor="left"
+              open={openLeft}
+              classes={{
+                paper: styles.drawerPaperLeft,
+                root: styles.drawerRoot,
+              }}
+            >
+              <div className={styles.tabs}>
+                <Typography className={styles.appTitle}>
+                  Applications
+                </Typography>
+                <IconButton onClick={handleDrawerCloseLeft}>
+                  <ChevronLeftIcon />
+                </IconButton>
+              </div>
+              {tab()}
+            </Drawer>
+            <main
+              className={clsx(styles.main, {
+                [styles.mainShift]: openLeft,
+              })}
+            >
+              {orgs[index] ? (
+                orgApp(orgs[index])
+              ) : (
+                <div className={styles.selectApp}>
+                  <div className={styles.selectAppText}>
+                    Select an application to start reading!
                   </div>
                 </div>
-              ) : null}
-              <div className={styles.declineBox}>
-                <TextField
-                  id="outlined-basic"
-                  label="Reasons for declining."
-                  variant="outlined"
-                  multiline
-                  size="small"
-                  rows={13}
-                  onChange={(e) => setDeclineText(e.target.value)}
-                  className={styles.declineReason}
-                />
-              </div>
-            </div>
-            <div className={styles.send}>
-              <Button
-                variant="outlined"
-                className={styles.editButtonStyles}
-                disableElevation
-                color="primary"
-                onClick={declineOrg()}
-              >
-                Send
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-        {
-          // MODAL ADDED
-        }
-        <div className={styles.root}>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpenLeft}
-            edge="start"
-            className={clsx(styles.menuButton, openLeft && styles.hide)}
-          >
-            <ChevronRightIcon />
-          </IconButton>
-          <Drawer
-            className={styles.drawer}
-            variant="persistent"
-            anchor="left"
-            open={openLeft}
-            classes={{
-              paper: styles.drawerPaperLeft,
-            }}
-          >
-            <div className={styles.tabs}>
-              <Typography className={styles.appTitle}>Applications</Typography>
-              <IconButton onClick={handleDrawerCloseLeft}>
-                <ChevronLeftIcon />
-              </IconButton>
-            </div>
-            {tab()}
-          </Drawer>
-          <main
-            className={clsx(styles.main, {
-              [styles.mainShift]: openLeft,
-            })}
-          >
-            {orgs[index] ? orgApp(orgs[index]) : 'No application selected'}
-          </main>
+              )}
+            </main>
+          </div>
         </div>
       </Layout>
     );
