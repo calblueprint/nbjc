@@ -15,6 +15,7 @@ import {
   TextField,
   LinearProgress,
   Typography,
+  Link,
 } from '@material-ui/core';
 import {
   LgbtqDemographic,
@@ -43,7 +44,7 @@ import styles from '../../styles/Organization.module.css';
 
 type Props = {
   orgProp: Prisma.OrganizationGetPayload<{
-    include: { organizationProjects: true };
+    include: { organizationProjects: true; organizationEvents: true };
   }>;
   // org: Prisma.OrganizationGetPayload<typeof orgProfile>;
   orgUser: {
@@ -104,7 +105,6 @@ const OrgProfile: React.FunctionComponent<Props> = ({
   });
 
   const handleSubmit = async (values: EditForm): Promise<void> => {
-    console.log(values);
     try {
       await fetch(`/api/org/${org.id}`, {
         method: 'PATCH',
@@ -171,15 +171,17 @@ const OrgProfile: React.FunctionComponent<Props> = ({
             <Typography className={styles.projres}>
               Project or Resource Name
             </Typography>
-            <Button
-              className={styles.deleteButton}
-              color="secondary"
-              onClick={() =>
-                deleteProj(formik.values, formik.setFieldValue, index)
-              }
-            >
-              Delete
-            </Button>
+            <Link>
+              <Button
+                className={styles.deleteButton}
+                color="secondary"
+                onClick={() =>
+                  deleteProj(formik.values, formik.setFieldValue, index)
+                }
+              >
+                Delete
+              </Button>
+            </Link>
           </div>
 
           <TextField
@@ -410,29 +412,27 @@ const OrgProfile: React.FunctionComponent<Props> = ({
               multiline
               rows={7}
             />
-            <Button
-              onClick={() => addNewProj(formik.values, formik.setFieldValue)}
-              variant="outlined"
-              className={styles.addNewProj}
-            >
-              Add New Project
-            </Button>
-            <div className={styles.projects}>
-              {projectsListEditable}
-              {/* <FieldArray
+            <div className={styles.alignProjects}>
+              <Button
+                onClick={() => addNewProj(formik.values, formik.setFieldValue)}
+                variant="outlined"
+                className={styles.addNewProj}
+              >
+                Add New Project
+              </Button>
+              <div className={styles.projects}>
+                {projectsListEditable}
+                {/* <FieldArray
                 name="organizationProjects"
                 render={projectsListEditable(formik)}
               />
               ; */}
+              </div>
             </div>
           </div>
         )}
       </div>
     );
-  };
-
-  const editableRight = (): JSX.Element => {
-    return <div>hey! Events here.</div>;
   };
 
   const editAndSave = (): JSX.Element => (
