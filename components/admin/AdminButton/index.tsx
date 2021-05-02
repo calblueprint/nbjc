@@ -1,7 +1,8 @@
-import { Button } from '@material-ui/core';
+import { Button, CircularProgress } from '@material-ui/core';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import InfoIcon from '@material-ui/icons/Info';
 import { MouseEventHandler } from 'react';
+import styles from './AdminButton.module.css';
 
 type Props = {
   variant:
@@ -13,30 +14,51 @@ type Props = {
     | 'edit'
     | 'reset';
   onClick?: MouseEventHandler<HTMLButtonElement>;
+  loading?: boolean;
 };
 
-const AdminButton: React.FC<Props> = ({ variant, onClick }) => {
+const AdminButton: React.FC<Props> = ({ variant, onClick, loading }) => {
+  let ret;
+
   switch (variant) {
     case 'decline':
-      return (
-        <Button variant="outlined" size="small" onClick={onClick}>
+      ret = (
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={onClick}
+          disabled={loading}
+        >
           Decline
         </Button>
       );
+      break;
     case 'delete':
-      return (
-        <Button variant="outlined" size="small" onClick={onClick}>
+      ret = (
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={onClick}
+          disabled={loading}
+        >
           Delete
         </Button>
       );
+      break;
     case 'suspend':
-      return (
-        <Button variant="outlined" size="small" onClick={onClick}>
+      ret = (
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={onClick}
+          disabled={loading}
+        >
           Suspend
         </Button>
       );
+      break;
     case 'accept':
-      return (
+      ret = (
         <Button
           variant="contained"
           color="primary"
@@ -44,12 +66,14 @@ const AdminButton: React.FC<Props> = ({ variant, onClick }) => {
           startIcon={<CheckCircleIcon />}
           disableElevation
           onClick={onClick}
+          disabled={loading}
         >
           Accept
         </Button>
       );
+      break;
     case 'view':
-      return (
+      ret = (
         <Button
           variant="contained"
           color="primary"
@@ -57,12 +81,14 @@ const AdminButton: React.FC<Props> = ({ variant, onClick }) => {
           startIcon={<InfoIcon />}
           disableElevation
           onClick={onClick}
+          disabled={loading}
         >
           View
         </Button>
       );
+      break;
     case 'edit':
-      return (
+      ret = (
         <Button
           variant="contained"
           color="primary"
@@ -70,12 +96,14 @@ const AdminButton: React.FC<Props> = ({ variant, onClick }) => {
           startIcon={<InfoIcon />}
           disableElevation
           onClick={onClick}
+          disabled={loading}
         >
           Edit
         </Button>
       );
+      break;
     case 'reset':
-      return (
+      ret = (
         <Button
           variant="contained"
           color="primary"
@@ -83,13 +111,24 @@ const AdminButton: React.FC<Props> = ({ variant, onClick }) => {
           startIcon={<InfoIcon />}
           disableElevation
           onClick={onClick}
+          disabled={loading}
         >
           Reset Password
         </Button>
       );
+      break;
     default:
-      return null;
+      ret = null;
   }
+
+  return (
+    <div className={styles.buttonPosition}>
+      {ret}
+      {loading && (
+        <CircularProgress size={20} className={styles.buttonProgress} />
+      )}
+    </div>
+  );
 };
 
 export default AdminButton;
