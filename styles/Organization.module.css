@@ -90,6 +90,7 @@
 .audienceHeader {
   margin-top: 48px;
   margin-bottom: 5px;
+  font-size: 20px;
 }
 
 .infoContent {
@@ -136,4 +137,39 @@
   border-width: 1px;
   box-shadow: none;
   padding: 1px;
+}
+
+.projheader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.addEvent {
+  display: flex;
+  flex-direction: column;
+}
+
+.projres {
+  font-weight: bolder;
+  font-size: 20px;
+}
+
+.projTitle {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.projDesc {
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+
+.projdesctitle {
+  font-size: 15px;
+}
+
+.addNewProj {
+  margin-left: 81%;
+  margin-top: 20px;
 }

@@ -9,7 +9,13 @@ import {
 } from 'formik';
 import prisma from 'utils/prisma';
 import { orgProfile, EditForm } from 'interfaces/organization';
-import { Button, Chip, TextField, LinearProgress } from '@material-ui/core';
+import {
+  Button,
+  Chip,
+  TextField,
+  LinearProgress,
+  Typography,
+} from '@material-ui/core';
 import {
   LgbtqDemographic,
   RaceDemographic,
@@ -152,16 +158,22 @@ const OrgProfile: React.FunctionComponent<Props> = ({
   const projectsListEditable = formik.values.organizationProjects?.map(
     (project, index) => {
       return (
-        <div>
-          <Button
-            className={styles.deleteButton}
-            color="secondary"
-            onClick={() =>
-              deleteProj(formik.values, formik.setFieldValue, index)
-            }
-          >
-            Delete
-          </Button>
+        <div className={styles.addEvent}>
+          <div className={styles.projheader}>
+            <Typography className={styles.projres}>
+              Project or Resource Name
+            </Typography>
+            <Button
+              className={styles.deleteButton}
+              color="secondary"
+              onClick={() =>
+                deleteProj(formik.values, formik.setFieldValue, index)
+              }
+            >
+              Delete
+            </Button>
+          </div>
+
           <TextField
             className={styles.projTitle}
             value={project.title}
@@ -169,12 +181,16 @@ const OrgProfile: React.FunctionComponent<Props> = ({
             variant="outlined"
             onChange={formik.handleChange}
           />
+          <Typography className={styles.projdesctitle}>
+            Description or Links
+          </Typography>
           <TextField
             className={styles.projDesc}
             value={project.description ?? ''}
             name={`organizationProjects.${index}.description`}
             variant="outlined"
             multiline
+            rows={6}
             onChange={formik.handleChange}
           />
         </div>
@@ -374,7 +390,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({
               multiline
               rows={7}
             />
-            <h3>Our History</h3>
+            <h3 className={styles.audienceHeader}>Our History</h3>
             <TextField
               className={styles.missionAndProj}
               id="shortHistory"
@@ -386,6 +402,13 @@ const OrgProfile: React.FunctionComponent<Props> = ({
               multiline
               rows={7}
             />
+            <Button
+              onClick={() => addNewProj(formik.values, formik.setFieldValue)}
+              variant="outlined"
+              className={styles.addNewProj}
+            >
+              Add New Project
+            </Button>
             <div className={styles.projects}>
               {projectsListEditable}
               {/* <FieldArray
@@ -394,11 +417,6 @@ const OrgProfile: React.FunctionComponent<Props> = ({
               />
               ; */}
             </div>
-            <Button
-              onClick={() => addNewProj(formik.values, formik.setFieldValue)}
-            >
-              Add New Project
-            </Button>
           </div>
         )}
       </div>
