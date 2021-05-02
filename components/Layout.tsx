@@ -7,6 +7,7 @@ import {
   Menu,
   MenuItem,
   TextField,
+  Input,
   InputAdornment,
   IconButton,
 } from '@material-ui/core';
@@ -20,6 +21,7 @@ import styles from '../styles/Layout.module.css';
 type Props = {
   title?: string;
   page?: boolean;
+  pageTitle?: string;
   handleSearch?: () => void;
   searchFilters?: string;
   handleSearchChange?: React.ChangeEventHandler<HTMLInputElement>;
@@ -31,6 +33,7 @@ const Layout: React.FunctionComponent<Props> = ({
   handleSearch,
   searchFilters,
   handleSearchChange,
+  pageTitle,
 }) => {
   const router = useRouter();
   const [session, sessionLoading] = useSession();
@@ -39,13 +42,21 @@ const Layout: React.FunctionComponent<Props> = ({
   );
 
   let searchBar = null;
+  let placeholderText = 'Explore Organizations';
+  if (pageTitle === 'Moderator Dashboard') {
+    placeholderText = "Look for an Organization's Application";
+  }
   if (handleSearch) {
     searchBar = (
       <div className={styles.searchbar}>
-        <TextField
-          placeholder="Explore Organizations"
+        <IconButton onClick={handleSearch}>
+          <SearchIcon />
+        </IconButton>
+        <Input
+          placeholder={placeholderText}
           fullWidth
-          InputProps={{
+          disableUnderline
+          inputProps={{
             startAdornment: (
               <InputAdornment position="start">
                 <IconButton onClick={handleSearch}>
@@ -54,7 +65,10 @@ const Layout: React.FunctionComponent<Props> = ({
               </InputAdornment>
             ),
           }}
-          variant="outlined"
+          classes={{
+            root: styles.searchRoot,
+          }}
+          // variant="outlined"
           value={searchFilters}
           onChange={handleSearchChange}
           onKeyDown={(e) => {
@@ -69,7 +83,7 @@ const Layout: React.FunctionComponent<Props> = ({
 
   if (sessionLoading) return <LinearProgress />;
   return (
-    <div>
+    <div className={styles.entire}>
       <Head>
         <title>{title}</title>
         <meta charSet="utf-8" />
@@ -88,7 +102,7 @@ const Layout: React.FunctionComponent<Props> = ({
             (session.user.role === 'moderator' ||
               session.user.role === 'admin') ? (
               <>
-                <Link href="/moderator">
+                <Link href="/">
                   <a className={styles.link}>
                     <Typography variant="h5">Map</Typography>
                   </a>
