@@ -7,6 +7,7 @@ import {
   Menu,
   MenuItem,
   TextField,
+  Input,
   InputAdornment,
   IconButton,
 } from '@material-ui/core';
@@ -48,10 +49,14 @@ const Layout: React.FunctionComponent<Props> = ({
   if (handleClickSearch) {
     searchBar = (
       <div className={styles.searchbar}>
-        <TextField
+        <IconButton onClick={handleClickSearch}>
+          <SearchIcon />
+        </IconButton>
+        <Input
           placeholder={placeholderText}
           fullWidth
-          InputProps={{
+          disableUnderline
+          inputProps={{
             startAdornment: (
               <InputAdornment position="start">
                 <IconButton onClick={handleClickSearch}>
@@ -60,7 +65,10 @@ const Layout: React.FunctionComponent<Props> = ({
               </InputAdornment>
             ),
           }}
-          variant="outlined"
+          classes={{
+            root: styles.searchRoot,
+          }}
+          // variant="outlined"
           value={searchFilters}
           onChange={handleSearchChange}
           onKeyDown={(e) => {
