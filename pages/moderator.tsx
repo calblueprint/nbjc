@@ -86,8 +86,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({
     <Toast showDismissButton>Organization successfully declined.</Toast>
   ) : null;
 
-  const [selected] = useState<number>(0);
-
   const [openLeft, setOpenLeft] = useState<boolean>(true);
 
   const handleDrawerOpenLeft = (): void => {
@@ -100,6 +98,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({
 
   const [openNote, setOpenNote] = useState<boolean>(false);
   const [openReview, setOpenReview] = useState<boolean>(false);
+  const [searchVal, setSearchVal] = useState(searchValProp);
 
   const handleDrawerOpenRight = (
     isNote: boolean,
@@ -127,8 +126,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({
       }
     }
     router.replace(router.asPath);
-    setText('');
-    setLastText('');
     setOpenNote(false);
     setOpenReview(false);
   };
@@ -231,29 +228,21 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({
     return undefined;
   }, [text, lastText, orgs, index]);
 
-  const tab = (): JSX.Element | null => {
-    if (selected === 0) {
-      return (
-        <div className={styles.contentApp}>
-          {orgs && orgs.length > 0 ? (
-            orgs.map((org, i) => (
-              // TODO: Add accessibility support
-              // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-              <div key={org.id} onClick={() => clickCard(i)}>
-                <OrgCard org={org} orgIndex={i} pageIndex={index} />
-              </div>
-            ))
-          ) : (
-            <div className={styles.noOrgs}>No organizations</div>
-          )}
-        </div>
-      );
-    }
-    if (selected === 1) {
-      return <div>Event list, mimic the Org mapping on first tab?</div>;
-    }
-    return null;
-  };
+  const tab = (): JSX.Element | null => (
+    <div className={styles.contentApp}>
+      {orgs && orgs.length > 0 ? (
+        orgs.map((org, i) => (
+          // TODO: Add accessibility support
+          // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+          <div key={org.id} onClick={() => clickCard(i)}>
+            <OrgCard org={org} selected={i === index} />
+          </div>
+        ))
+      ) : (
+        <div className={styles.noOrgs}>No organizations</div>
+      )}
+    </div>
+  );
 
   // Make this look nice
   const makeReview = (r: OrganizationApplicationReview): JSX.Element => {
@@ -357,7 +346,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({
       </Drawer>
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
       <div className={styles.content} onClick={handleDrawerCloseRight}>
-        {/* </div> onClick={handleDrawerCloseRight}> */}
         <OrgDetail org={app} />
       </div>
       <div className={styles.footer}>
@@ -397,37 +385,11 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({
 
   const noteExists = orgs.length > 0 && orgs[index]?.applicationNote?.note;
 
-  const [searchVal, setSearchVal] = useState(searchValProp);
-  const [demographicFilters, setDemographicFilters] = useState<string[]>([]);
-  const [backgroundFilters, setBackgroundFilters] = useState<string[]>([]);
-  const [audienceFilters, setAudienceFilters] = useState<string[]>([]);
-
-  const handleDemographicChange = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ): void => {
-    setDemographicFilters(event.target.value as string[]);
-  };
-
-  const handleBackgroundChange = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ): void => {
-    setBackgroundFilters(event.target.value as string[]);
-  };
-
-  const handleAudienceChange = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ): void => {
-    setAudienceFilters(event.target.value as string[]);
-  };
-
   const handleSearch = (): void => {
     Router.push({
-      pathname: 'moderator',
+      pathname: router.pathname,
       query: {
         orgName: searchVal,
-        ages: audienceFilters,
-        ethnicity: backgroundFilters,
-        orientation: demographicFilters,
       },
     });
   };
@@ -564,7 +526,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       (session.user.role === 'moderator' || session.user.role === 'admin')
     ) {
       const orgs = await prisma.organization.findMany({
-        where: { AND: [{ active: false }, { applicationStatus: 'submitted' }] },
+        where: {
+          AND: [
+            { active: false },
+            {
+              name: {
+                contains: context.query?.orgName as string,
+                mode: 'insensitive',
+              },
+            },
+            { applicationStatus: 'submitted' },
+          ],
+        },
         include: orgArgs.include,
       });
       return { props: { orgs } };
