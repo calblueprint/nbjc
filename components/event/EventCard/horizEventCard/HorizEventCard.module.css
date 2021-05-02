@@ -1,0 +1,33 @@
+.event_card {
+  margin: 10px;
+  flex-basis: 45%;
+  text-align: left;
+}
+
+.event_date {
+  font-size: 12px;
+}
+
+.event_name {
+  font-size: 25px;
+  color: #71579c;
+  font-weight: bolder;
+}
+
+.event_description {
+  font-size: 12px;
+  color: grey;
+}
+
+.card {
+  display: flex;
+  flex-direction: row;
+}
+
+.left {
+  width: 50%;
+}
+
+.right {
+  width: 50%;
+}
