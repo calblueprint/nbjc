@@ -8,7 +8,6 @@ import OrgDetail from 'components/moderator/OrgDetail';
 import clsx from 'clsx';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import CloseIcon from '@material-ui/icons/Close';
 import {
   Organization,
   ApplicationNote,
@@ -18,9 +17,6 @@ import {
 } from '@prisma/client';
 import Toast from 'components/Toast';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
   Button,
   TextField,
   Drawer,
@@ -32,6 +28,7 @@ import {
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import getSession from 'utils/getSession';
+import DeclineModal from 'components/moderator/DeclineModal';
 import styles from '../styles/Moderator.module.css';
 
 const orgArgs = Prisma.validator<Prisma.OrganizationArgs>()({
@@ -58,19 +55,13 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
 
   const [lastText, setLastText] = useState('');
   const [text, setText] = useState('');
-  const [declineText, setDeclineText] = useState('');
 
   const [index, setIndex] = useState<number>(0);
   const [processingAction, setProcessingAction] = useState(false);
   const [errorBanner, setErrorBanner] = useState('');
   const [successBanner, setSuccessBanner] = useState('');
 
-  // MODAL ADDED
-  const [openModal, setOpenModal] = useState(false);
-
-  const closeModal = () => (): void => {
-    setOpenModal(false);
-  };
+  const [openDeclineModal, setOpenDeclineModal] = useState(false);
 
   const [openApprove, setOpenApprove] = useState(false);
   const approveToast = openApprove ? (
@@ -144,7 +135,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     });
   }, [orgs.length]);
 
-  const approveApp = async (approve: boolean): Promise<void> => {
+  const approveApp = async (approve: boolean, reason = ''): Promise<void> => {
     setProcessingAction(true);
     if (orgs[index]) {
       if (approve) {
@@ -169,7 +160,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
           const res = await fetch(`/api/app/orgs/${orgs[index].id}/reject`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ reason: declineText }),
+            body: JSON.stringify({ reason }),
           });
           if (res.ok) {
             setSuccessBanner(
@@ -189,14 +180,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     }
     setProcessingAction(false);
   };
-
-  // FOR MODAL
-  const declineOrg = () => (): void => {
-    setOpenModal(false);
-    setOpenDecline(true);
-    approveApp(false);
-  };
-  //
 
   /** For auto-saving a moderator's notes */
   const AUTOSAVE_INTERVAL = 3000;
@@ -249,7 +232,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     return null;
   };
 
-  // Make this look nice
+  // TODO: Make this look nice
   const makeReview = (r: OrganizationApplicationReview): JSX.Element => {
     const date = new Date(r.createdAt);
     const month = date.toLocaleString('default', { month: 'short' });
@@ -356,7 +339,7 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
         ) : null}
         <div className={`${styles.submitButton} ${styles.buttonSpace}`}>
           <Button
-            onClick={() => setOpenModal(true)}
+            onClick={() => setOpenDeclineModal(true)}
             variant="outlined"
             color="primary"
             disabled={processingAction}
@@ -384,8 +367,6 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
     </div>
   );
 
-  const noteExists = orgs.length > 0 && orgs[index]?.applicationNote?.note;
-
   if (
     !sessionLoading &&
     session &&
@@ -393,64 +374,18 @@ const ModeratorDashBoard: React.FunctionComponent<Props> = ({ orgs }) => {
   )
     return (
       <Layout title="Moderator Dashboard">
-        {
-          // MODAL ADDED
-        }
         {approveToast}
         {declineToast}
-        <Dialog
-          onClose={closeModal()}
-          fullWidth
-          maxWidth={noteExists ? 'md' : 'sm'}
-          open={openModal}
-        >
-          <DialogTitle>
-            <div className={styles.dialogTitle}>
-              Reason For Declining
-              <IconButton aria-label="close" onClick={closeModal()}>
-                <CloseIcon />
-              </IconButton>
-            </div>
-          </DialogTitle>
-          <DialogContent>
-            <div className={styles.modContent}>
-              {noteExists ? (
-                <div className={styles.modTab}>
-                  <div className={styles.declineNotes}>Notes</div>
-                  <div className={styles.declineNotesContent}>
-                    {orgs[index]?.applicationNote?.note}
-                  </div>
-                </div>
-              ) : null}
-              <div className={styles.declineBox}>
-                <TextField
-                  id="outlined-basic"
-                  label="Reasons for declining."
-                  variant="outlined"
-                  multiline
-                  size="small"
-                  rows={13}
-                  onChange={(e) => setDeclineText(e.target.value)}
-                  className={styles.declineReason}
-                />
-              </div>
-            </div>
-            <div className={styles.send}>
-              <Button
-                variant="outlined"
-                className={styles.editButtonStyles}
-                disableElevation
-                color="primary"
-                onClick={declineOrg()}
-              >
-                Send
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-        {
-          // MODAL ADDED
-        }
+        <DeclineModal
+          id={orgs[index]?.id}
+          openModal={openDeclineModal}
+          closeModal={() => setOpenDeclineModal(false)}
+          note={orgs[index]?.applicationNote?.note}
+          declineAction={(declineReason: string) => {
+            setOpenDecline(true);
+            approveApp(false, declineReason);
+          }}
+        />
         <div className={styles.root}>
           <IconButton
             color="inherit"
