@@ -1,6 +1,5 @@
 import {
   Button,
-  ButtonGroup,
   Table,
   TableBody,
   TableCell,
@@ -103,34 +102,34 @@ const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
   const actionButtons = (): React.ReactElement | null => {
     if (pageType === 'applications') {
       return (
-        <ButtonGroup>
-          {declineButton}
+        <>
           {acceptButton}
-        </ButtonGroup>
+          {declineButton}
+        </>
       );
     }
     if (pageType === 'organizations') {
       return (
-        <ButtonGroup>
-          {deleteButton}
+        <>
           {viewButton}
-        </ButtonGroup>
+          {deleteButton}
+        </>
       );
     }
     if (pageType === 'users') {
       return (
-        <ButtonGroup>
-          {suspendButton}
+        <>
           {resetButton}
-        </ButtonGroup>
+          {suspendButton}
+        </>
       );
     }
     if (pageType === 'questions') {
       return (
-        <ButtonGroup>
-          {deleteButton}
+        <>
           {editButton}
-        </ButtonGroup>
+          {deleteButton}
+        </>
       );
     }
     return null;
@@ -176,7 +175,9 @@ const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
                   </TableCell>
                 );
               })}
-              <TableCell align="right">{actionButtons()}</TableCell>
+              <TableCell align="right" className={styles.actions}>
+                {actionButtons()}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
