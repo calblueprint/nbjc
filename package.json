@@ -66,6 +66,7 @@
     "next": "10.0.0",
     "next-auth": "^3.14.7",
     "node-fetch": "^2.6.1",
+    "notistack": "^1.0.6",
     "ora": "^5.1.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",

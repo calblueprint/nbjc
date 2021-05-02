@@ -58,12 +58,15 @@ const Toast: React.FunctionComponent<Props> = ({
 
   return (
     <>
-      <Snackbar open={open} onClose={handleClose} {...snackbarProps}>
+      <Snackbar
+        open={open}
+        onClose={handleClose}
+        {...snackbarProps}
+        classes={{ root: styles.root }}
+      >
         <SnackbarContent
           classes={{
-            root: `${styles.root} ${
-              type === 'error' ? styles.error : styles.default
-            }`,
+            root: type === 'error' ? styles.error : '',
             action: dualActionSpaced ? styles.action : undefined,
           }}
           style={{ maxWidth: customMaxWidth }}
