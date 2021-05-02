@@ -24,7 +24,6 @@ import {
   Prisma,
 } from '@prisma/client';
 import Layout from 'components/Layout';
-import Project from 'components/organization/Project';
 import Tab from 'components/Tab';
 import computeDate from 'utils/computeDate';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -38,6 +37,8 @@ import {
 import { useRouter } from 'next/router';
 import useSession from 'utils/useSession';
 import Toast from 'components/Toast';
+import EventCard from 'components/organization/EventCard';
+import Project from 'components/organization/Project';
 import styles from '../../styles/Organization.module.css';
 
 type Props = {
@@ -63,6 +64,13 @@ const OrgProfile: React.FunctionComponent<Props> = ({
   const [editState, setEditState] = useState<0 | 1>(0); // 0 == read, 1 == edit
   const [errorBanner, setErrorBanner] = useState('');
   const [org, setOrg] = useState(orgProp);
+  const eventsList = org?.organizationEvents?.map((event) => {
+    return (
+      <div className={styles.event}>
+        <EventCard event={event} />
+      </div>
+    );
+  });
   const [session, sessionLoading] = useSession();
 
   const cleanVals = (o: EditForm): EditForm => ({
@@ -538,7 +546,9 @@ const OrgProfile: React.FunctionComponent<Props> = ({
               {tabState === 0 ? (
                 <div>{editableLeft()}</div>
               ) : (
-                <div>{editableRight()}</div>
+                // EVENT CARDS START
+                <div className={styles.events}>{eventsList}</div>
+                // EVENT CARDS END
               )}
             </div>
           </div>

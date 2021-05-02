@@ -47,6 +47,7 @@ export const orgProfile = Prisma.validator<Prisma.OrganizationArgs>()({
       },
     },
     organizationProjects: true,
+    organizationEvents: true,
   },
 });
 

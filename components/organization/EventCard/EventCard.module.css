@@ -1,0 +1,76 @@
+.imgContainer {
+  width: 100%;
+  height: 170px;
+  background-color: #eceaee;
+}
+
+.img {
+  object-fit: cover;
+  width: 100%;
+  height: 170px;
+  display: flex;
+}
+
+.content {
+  padding: 50px;
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+
+.dateLoc {
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 7px;
+}
+
+.eventName {
+  font-weight: bold;
+  font-size: 22px;
+  margin-bottom: 7px;
+  color: #694f95;
+}
+
+.info {
+  margin-bottom: 35px;
+}
+
+.description {
+  margin-bottom: 35px;
+  color: black;
+}
+
+.demographicSection {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.demographic {
+  display: flex;
+  flex-direction: column;
+  width: 166px;
+}
+
+.demographicTags {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.demTag {
+  display: flex;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  background-color: #f8f4ff;
+}
+
+.demTitle {
+  font-size: 15px;
+  margin-bottom: 15px;
+}
+
+.linkText {
+  color: black;
+  text-decoration: underline;
+}
