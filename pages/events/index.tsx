@@ -1,4 +1,10 @@
-import { TextField, InputAdornment, Card, Button } from '@material-ui/core';
+import {
+  TextField,
+  InputAdornment,
+  Card,
+  Button,
+  Typography,
+} from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useFormik } from 'formik';
@@ -10,13 +16,14 @@ import {
   RaceDemographicLabels,
   LgbtqDemographicLabels,
 } from 'utils/typesLinker';
-import styles from 'styles/Home.module.css';
+import styles from 'styles/Events.module.css';
 import {
   LgbtqDemographic,
   RaceDemographic,
   AgeDemographic,
 } from '@prisma/client';
-import EventCard from 'components/event/EventCard';
+import HorizEventCard from 'components/event/EventCard/horizEventCard';
+import { func } from 'joi';
 
 const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
 
@@ -48,8 +55,8 @@ const Home: React.FC = () => {
     <Layout title="Home">
       <form onSubmit={formik.handleSubmit}>
         <div className={styles.root}>
-          <div className={styles.leftCol}>{slogan}</div>
-          <div className={styles.rightCol}>
+          <div className={styles.topCol}>{slogan}</div>
+          <div className={styles.bottomCol}>
             <Card className={styles.searchCard}>
               <div className={styles.big}>Explore Events</div>
               <div className={styles.auto}>
@@ -72,6 +79,7 @@ const Home: React.FC = () => {
                       {...params}
                       variant="outlined"
                       placeholder="By Identities"
+                      size="small"
                     />
                   )}
                 />
@@ -94,6 +102,7 @@ const Home: React.FC = () => {
                       {...params}
                       variant="outlined"
                       placeholder="By Background"
+                      size="small"
                     />
                   )}
                 />
@@ -116,6 +125,7 @@ const Home: React.FC = () => {
                       {...params}
                       variant="outlined"
                       placeholder="By Audiences"
+                      size="small"
                     />
                   )}
                 />
@@ -136,11 +146,11 @@ const Home: React.FC = () => {
                     ),
                   }}
                   variant="outlined"
+                  size="small"
                 />
                 <Button
                   variant="contained"
                   className={styles.button}
-                  color="primary"
                   type="submit"
                 >
                   Search
@@ -149,8 +159,32 @@ const Home: React.FC = () => {
             </Card>
           </div>
         </div>
-        <div>Trending Events</div>
-        <EventCard event={1} />
+        <div className={styles.explore}>
+          <Typography className={styles.trending}>Trending Events</Typography>
+          <Button className={styles.seeMore} type="submit">
+            See More {'>'}
+          </Button>
+        </div>
+        <div className={styles.trendingEvents}>
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
+        </div>
+        <div className={styles.explore}>
+          <Typography className={styles.trending}>Popular Near You</Typography>
+          <Button className={styles.seeMore} type="submit">
+            See More {'>'}
+          </Button>
+        </div>
+        <div className={styles.trendingEvents}>
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
+          <HorizEventCard event={1} />
+        </div>
       </form>
     </Layout>
   );

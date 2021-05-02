@@ -20,7 +20,7 @@ import styles from '../styles/Layout.module.css';
 type Props = {
   title?: string;
   page?: boolean;
-  handleClickSearch?: () => void;
+  handleSearch?: () => void;
   searchFilters?: string;
   handleSearchChange?: React.ChangeEventHandler<HTMLInputElement>;
 };
@@ -28,7 +28,7 @@ type Props = {
 const Layout: React.FunctionComponent<Props> = ({
   children,
   title = 'NBJC',
-  handleClickSearch,
+  handleSearch,
   searchFilters,
   handleSearchChange,
 }) => {
@@ -39,7 +39,7 @@ const Layout: React.FunctionComponent<Props> = ({
   );
 
   let searchBar = null;
-  if (handleClickSearch) {
+  if (handleSearch) {
     searchBar = (
       <div className={styles.searchbar}>
         <TextField
@@ -48,7 +48,7 @@ const Layout: React.FunctionComponent<Props> = ({
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <IconButton onClick={handleClickSearch}>
+                <IconButton onClick={handleSearch}>
                   <SearchIcon />
                 </IconButton>
               </InputAdornment>
@@ -59,7 +59,7 @@ const Layout: React.FunctionComponent<Props> = ({
           onChange={handleSearchChange}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              handleClickSearch();
+              handleSearch();
             }
           }}
         />
