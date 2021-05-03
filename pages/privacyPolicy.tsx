@@ -3,9 +3,8 @@ import Layout from 'components/Layout';
 
 const AboutPage: React.FunctionComponent = () => (
   <Layout title="About | Next.js + TypeScript Example">
-    <h1>About</h1>
-    <p>This is the about page</p>
-    <p>Created by Cal Blueprint</p>
+    <h1>Privacy Policy</h1>
+    <p>This is the privacy policy page</p>
     <p>
       <Link href="/">
         <a>Go home</a>
