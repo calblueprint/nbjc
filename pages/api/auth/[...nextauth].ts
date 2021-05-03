@@ -34,7 +34,9 @@ const options = {
           where: { email: credentials.email },
         });
         if (!user) {
-          return Promise.reject(new Error('No account exists'));
+          return Promise.reject(
+            new Error(`No account exists with ${credentials.email}`)
+          );
         }
         // Verify that their password matches
         if (user.hashedPassword === hashPassword(credentials.password)) {
