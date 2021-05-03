@@ -27,7 +27,7 @@ import {
 import HorizEventCard from 'components/event/EventCard/horizEventCard';
 import styles from '../../styles/Events.module.css';
 
-const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
+const slogan = 'Empowering Black, LGBTQ+/SGL people and communities.';
 
 /* TODO: add onClick={goToMap} to submit button */
 

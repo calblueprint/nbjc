@@ -18,7 +18,7 @@ import {
 import styles from 'styles/Home.module.css';
 import Toast from 'components/Toast';
 
-const slogan = 'Empowering Black, LGBTQ+, & SGL people and communities.';
+const slogan = 'Empowering Black, LGBTQ+/SGL people and communities.';
 
 const initialValues: homepageFields = {
   ages: [],
