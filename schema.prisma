@@ -75,15 +75,16 @@ model Session {
 }
 
 model User {
-  id             Int           @id @default(autoincrement())
+  id             Int              @id @default(autoincrement())
   role           UserRole?
-  email          String        @unique @db.VarChar(255)
-  emailVerified  DateTime?     @map("email_verified") @db.Timestamptz(6)
-  image          String?       @db.VarChar(255)
-  hashedPassword String        @map("hashed_password") @db.VarChar(255)
-  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  organization   Organization? @relation("OrganizationsToUsers")
+  email          String           @unique @db.VarChar(255)
+  emailVerified  DateTime?        @map("email_verified") @db.Timestamptz(6)
+  image          String?          @db.VarChar(255)
+  hashedPassword String           @map("hashed_password") @db.VarChar(255)
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization   Organization?    @relation("OrganizationsToUsers")
+  passwordResets PasswordResets[] @relation("PasswordResetsToUsers")
 
   @@map("users")
 }
@@ -151,6 +152,25 @@ model OrganizationProject {
   organization   Organization @relation("OrganizationProjectsToOrganizations", fields: [organizationId], references: [id])
 
   @@map("organization_projects")
+}
+
+model PasswordResets {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  valid     Boolean  @default(true)
+  users     User     @relation("PasswordResetsToUsers", fields: [userId], references: [id])
+
+  @@map("password_resets")
+}
+
+model ModeratorInvite {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  email     String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  valid     Boolean  @default(true)
+
+  @@map("moderator_invites")
 }
 
 model OrganizationApplicationReview {

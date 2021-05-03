@@ -57,7 +57,7 @@ const Layout: React.FunctionComponent<Props> = ({
           fullWidth
           disableUnderline
           inputProps={{
-            startAdornment: (
+            startadornment: (
               <InputAdornment position="start">
                 <IconButton onClick={handleSearch}>
                   <SearchIcon />

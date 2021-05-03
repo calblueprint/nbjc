@@ -4,7 +4,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useFormik } from 'formik';
 import Layout from 'components/Layout';
 import { homepageFields } from 'interfaces';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import {
   AgeDemographicLabels,
   RaceDemographicLabels,
@@ -16,6 +16,7 @@ import {
   AgeDemographic,
 } from '@prisma/client';
 import styles from 'styles/Home.module.css';
+import Toast from 'components/Toast';
 
 const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
 
@@ -43,8 +44,28 @@ const Home: React.FC = () => {
       });
     },
   });
+
+  const renderSuccessToast = () => {
+      return(
+      <Toast
+          snackbarProps={{
+              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          }}
+          type="success"
+          showDismissButton
+          >
+          <div>
+              Password has been successfully reset!
+          </div>
+      </Toast>
+  )};
+
+  const router = useRouter();
+  const resetSuccess = router.query.resetSuccess;
+
   return (
     <Layout title="Home">
+      {resetSuccess ? renderSuccessToast() : null}
       <form onSubmit={formik.handleSubmit}>
         <div className={styles.root}>
           <div className={styles.topCol}>{slogan}</div>
