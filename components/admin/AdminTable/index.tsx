@@ -82,7 +82,7 @@ const AdminTable: React.FunctionComponent<Props> = ({
             loading={index === actionLoadingIndex}
           />
           <AdminButton
-            variant="suspend"
+            variant="delete"
             onClick={() => (secondaryAction ? secondaryAction(index) : null)}
             loading={index === actionLoadingIndex}
           />
