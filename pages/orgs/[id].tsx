@@ -6,6 +6,7 @@ import {
   ArrayHelpers,
   FormikProps,
   FormikHelpers,
+  Formik,
 } from 'formik';
 import prisma from 'utils/prisma';
 import { orgProfile, EditForm, EventVals } from 'interfaces/organization';
@@ -69,14 +70,6 @@ const OrgProfile: React.FunctionComponent<Props> = ({
   const [editState, setEditState] = useState<0 | 1>(0); // 0 == read, 1 == edit
   const [errorBanner, setErrorBanner] = useState('');
   const [org, setOrg] = useState(orgProp);
-  const eventsList = org?.organizationEvents?.map((event) => {
-    return (
-      <div className={styles.event}>
-        name
-        <EventCard event={event} />
-      </div>
-    );
-  });
   const [session, sessionLoading] = useSession();
 
   const cleanVals = (o: EditForm): EditForm => ({
@@ -193,7 +186,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({
       raceDemographic: [],
       ageDemographic: [],
       startDateTime: new Date(),
-      address: 'Location here',
+      address: 'Location',
     });
     setFieldValue('organizationEvents', currEvents);
   };
@@ -303,6 +296,46 @@ const OrgProfile: React.FunctionComponent<Props> = ({
           ) : (
             <Chip label="None" variant="outlined" />
           )}
+        </div>
+      </div>
+    );
+  };
+
+  // FIXME: tricky, pass in formik hook somehow?
+  const demEditOrienE = (category: string, groups: string[]): JSX.Element => {
+    return (
+      <div className={styles.demographicEdit}>
+        {category}
+        <div className={styles.demographicTags}>
+          <Autocomplete
+            multiple
+            id="lgbtqDemographic"
+            options={Object.keys(LgbtqDemographicLabels) as LgbtqDemographic[]}
+            getOptionLabel={(option: LgbtqDemographic) =>
+              LgbtqDemographicLabels[option]
+            }
+            filterSelectedOptions
+            value={formikEvents.values.groups}
+            onChange={(event, newValue) => {
+              formikEvents.setFieldValue('lgbtqDemographic', newValue);
+            }}
+            onBlur={formik.handleBlur}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                error={Boolean(
+                  formikEvents.errors.organizationEvents &&
+                    formikEvents.touched.organizationEvents
+                )}
+                helperText={
+                  formikEvents.touched.organizationEvents
+                    ? formikEvents.errors.organizationEvents
+                    : undefined
+                }
+              />
+            )}
+          />
         </div>
       </div>
     );
@@ -426,6 +459,14 @@ const OrgProfile: React.FunctionComponent<Props> = ({
     );
   };
 
+  const eventsList = formikEvents.values.organizationEvents?.map((event) => {
+    return (
+      <div className={styles.event}>
+        <EventCard event={event} />
+      </div>
+    );
+  });
+
   const eventsListEditable = formikEvents.values.organizationEvents?.map(
     (event, index) => {
       return (
@@ -448,24 +489,6 @@ const OrgProfile: React.FunctionComponent<Props> = ({
               </Button>
             </Link>
           </div>
-
-          {/* <TextField
-            className={styles.projTitle}
-            value={project.title}
-            name={`organizationProjects.${index}.title`}
-            variant="outlined"
-            onChange={formik.handleChange}
-          />
-          <Typography className={styles.projdesctitle}>Description</Typography>
-          <TextField
-            className={styles.projDesc}
-            value={project.description ?? ''}
-            name={`organizationProjects.${index}.description`}
-            variant="outlined"
-            multiline
-            rows={6}
-            onChange={formik.handleChange}
-          /> */}
           <Card>
             <div className={styles.imgContainer}>
               <img
@@ -487,7 +510,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({
                     value={event.address ?? ''}
                     name={`organizationEvents.${index}.address`}
                     variant="outlined"
-                    onChange={formik.handleChange}
+                    onChange={formikEvents.handleChange}
                   />
                   {/* {event.address} */}
                 </Typography>
@@ -496,20 +519,27 @@ const OrgProfile: React.FunctionComponent<Props> = ({
                   variant="h5"
                   component="h2"
                 >
-                  Title
-                  {event.title}
+                  Title:
+                  <TextField
+                    className={styles.projDesc}
+                    value={event.title ?? ''}
+                    name={`organizationEvents.${index}.title`}
+                    variant="outlined"
+                    onChange={formikEvents.handleChange}
+                  />
+                  {/* {event.title} */}
                 </Typography>
-                <Link className={styles.linkText} href={event.link || ''}>
+                <Typography>
                   Link:
                   <TextField
                     className={styles.projDesc}
                     value={event.link ?? ''}
                     name={`organizationEvents.${index}.link`}
                     variant="outlined"
-                    onChange={formik.handleChange}
+                    onChange={formikEvents.handleChange}
                   />
                   {/* {event.link} */}
-                </Link>
+                </Typography>
               </div>
               <div className={styles.description}>
                 <Typography variant="body2" component="p">
@@ -522,17 +552,17 @@ const OrgProfile: React.FunctionComponent<Props> = ({
                       variant="outlined"
                       multiline
                       rows={6}
-                      onChange={formik.handleChange}
+                      onChange={formikEvents.handleChange}
                     />
                     {/* <p>{event.description}</p> */}
                   </div>
                 </Typography>
               </div>
-              <div className={styles.demographicSection}>
-                {demEditOrien('Identities', event.lgbtqDemographic)}
-                {demEditBack('Background', event.raceDemographic)}
-                {demEditAge('Ages', event.ageDemographic)}
-              </div>
+              {/* <div className={styles.demographicSection}>
+                {demEditOrienE('Identities', event.lgbtqDemographic)}
+                {demEditBackE('Background', event.raceDemographic)}
+                {demEditAgeE('Ages', event.ageDemographic)}
+              </div> */}
             </CardContent>
           </Card>
           {/* Add more fields, like links, address etc. */}
@@ -575,9 +605,9 @@ const OrgProfile: React.FunctionComponent<Props> = ({
           <div className={styles.rightContent}>
             <h3 className={styles.audienceHeader}>Audience Demographics</h3>
             <div className={styles.demographicSection}>
-              {demEditOrien('Orientation', org.lgbtqDemographic)}
-              {demEditBack('Background', org.raceDemographic)}
-              {demEditAge('Age Range', org.ageDemographic)}
+              {/* {demEditOrien('Orientation', org.lgbtqDemographic)} */}
+              {/* {demEditBack('Background', org.raceDemographic)} */}
+              {/* {demEditAge('Age Range', org.ageDemographic)} */}
             </div>
             <h3 className={styles.audienceHeader}>Our Mission</h3>
             <TextField
