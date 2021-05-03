@@ -154,7 +154,6 @@ model OrganizationProject {
   @@map("organization_projects")
 }
 
-
 model PasswordResets {
   id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   userId    Int      @map("user_id")
