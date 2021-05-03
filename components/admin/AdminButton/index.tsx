@@ -5,14 +5,7 @@ import { MouseEventHandler } from 'react';
 import styles from './AdminButton.module.css';
 
 type Props = {
-  variant:
-    | 'decline'
-    | 'delete'
-    | 'suspend'
-    | 'accept'
-    | 'view'
-    | 'edit'
-    | 'reset';
+  variant: 'decline' | 'delete' | 'accept' | 'view' | 'edit' | 'reset';
   onClick?: MouseEventHandler<HTMLButtonElement>;
   loading?: boolean;
 };
@@ -42,18 +35,6 @@ const AdminButton: React.FC<Props> = ({ variant, onClick, loading }) => {
           disabled={loading}
         >
           Delete
-        </Button>
-      );
-      break;
-    case 'suspend':
-      ret = (
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={onClick}
-          disabled={loading}
-        >
-          Suspend
         </Button>
       );
       break;
