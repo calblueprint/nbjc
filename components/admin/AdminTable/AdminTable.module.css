@@ -5,9 +5,13 @@
   display: 'flex';
   margin-right: 10;
 }
+
 .actions {
-  display: 'flex';
-  flex-direction: 'row';
+  display: flex;
+}
+
+.actions > * {
+  margin: 2px 4px;
 }
 
 .headerText {

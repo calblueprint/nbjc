@@ -1,6 +1,4 @@
 import {
-  Button,
-  ButtonGroup,
   Table,
   TableBody,
   TableCell,
@@ -9,8 +7,6 @@ import {
   TableRow,
   Paper,
 } from '@material-ui/core';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import InfoIcon from '@material-ui/icons/Info';
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
 import computeDate from 'utils/computeDate';
@@ -20,73 +16,8 @@ import {
   TableOrgApplication,
   TableUser,
 } from 'interfaces/admin';
+import AdminButton from 'components/admin/AdminButton';
 import styles from './AdminTable.module.css';
-
-const declineButton = (
-  <Button variant="outlined" size="small">
-    Decline
-  </Button>
-);
-
-const deleteButton = (
-  <Button variant="outlined" size="small">
-    Delete
-  </Button>
-);
-
-const suspendButton = (
-  <Button variant="outlined" size="small">
-    Suspend
-  </Button>
-);
-
-const acceptButton = (
-  <Button
-    variant="contained"
-    color="primary"
-    size="small"
-    startIcon={<CheckCircleIcon />}
-    disableElevation
-  >
-    Accept
-  </Button>
-);
-
-const viewButton = (
-  <Button
-    variant="contained"
-    color="primary"
-    size="small"
-    startIcon={<InfoIcon />}
-    disableElevation
-  >
-    View
-  </Button>
-);
-
-const editButton = (
-  <Button
-    variant="contained"
-    color="primary"
-    size="small"
-    startIcon={<InfoIcon />}
-    disableElevation
-  >
-    Edit
-  </Button>
-);
-
-const resetButton = (
-  <Button
-    variant="contained"
-    color="primary"
-    size="small"
-    startIcon={<InfoIcon />}
-    disableElevation
-  >
-    Reset Password
-  </Button>
-);
 
 type Props = {
   data: Array<
@@ -96,41 +27,82 @@ type Props = {
     | TableApplicationQuestion
   >;
   pageType: string;
+  primaryAction?: (id: number) => void;
+  secondaryAction?: (id: number) => void;
+  actionLoadingIndex?: number;
 };
 
-const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
+const AdminTable: React.FunctionComponent<Props> = ({
+  data,
+  pageType,
+  primaryAction,
+  secondaryAction,
+  actionLoadingIndex,
+}) => {
   const headList = Object.keys(data[0] ?? {});
-  const actionButtons = (): React.ReactElement | null => {
+  const actionButtons = (index: number): React.ReactElement | null => {
     if (pageType === 'applications') {
       return (
-        <ButtonGroup>
-          {declineButton}
-          {acceptButton}
-        </ButtonGroup>
+        <>
+          <AdminButton
+            variant="accept"
+            onClick={() => (primaryAction ? primaryAction(index) : null)}
+            loading={index === actionLoadingIndex}
+          />
+          <AdminButton
+            variant="decline"
+            onClick={() => (secondaryAction ? secondaryAction(index) : null)}
+            loading={index === actionLoadingIndex}
+          />
+        </>
       );
     }
     if (pageType === 'organizations') {
       return (
-        <ButtonGroup>
-          {deleteButton}
-          {viewButton}
-        </ButtonGroup>
+        <>
+          <AdminButton
+            variant="view"
+            onClick={() => (primaryAction ? primaryAction(index) : null)}
+            loading={index === actionLoadingIndex}
+          />
+          <AdminButton
+            variant="delete"
+            onClick={() => (secondaryAction ? secondaryAction(index) : null)}
+            loading={index === actionLoadingIndex}
+          />
+        </>
       );
     }
     if (pageType === 'users') {
       return (
-        <ButtonGroup>
-          {suspendButton}
-          {resetButton}
-        </ButtonGroup>
+        <>
+          <AdminButton
+            variant="reset"
+            onClick={() => (primaryAction ? primaryAction(index) : null)}
+            loading={index === actionLoadingIndex}
+          />
+          <AdminButton
+            variant="suspend"
+            onClick={() => (secondaryAction ? secondaryAction(index) : null)}
+            loading={index === actionLoadingIndex}
+          />
+        </>
       );
     }
     if (pageType === 'questions') {
       return (
-        <ButtonGroup>
-          {deleteButton}
-          {editButton}
-        </ButtonGroup>
+        <>
+          <AdminButton
+            variant="edit"
+            onClick={() => (primaryAction ? primaryAction(index) : null)}
+            loading={index === actionLoadingIndex}
+          />
+          <AdminButton
+            variant="delete"
+            onClick={() => (secondaryAction ? secondaryAction(index) : null)}
+            loading={index === actionLoadingIndex}
+          />
+        </>
       );
     }
     return null;
@@ -153,7 +125,7 @@ const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((row) => (
+          {data.map((row, orgIndex) => (
             <TableRow key={row.id}>
               {Object.values(row).map((value, index) => {
                 if (value instanceof Date) {
@@ -176,7 +148,9 @@ const AdminTable: React.FunctionComponent<Props> = ({ data, pageType }) => {
                   </TableCell>
                 );
               })}
-              <TableCell align="right">{actionButtons()}</TableCell>
+              <TableCell align="right" className={styles.actions}>
+                {actionButtons(orgIndex)}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
