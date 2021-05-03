@@ -16,8 +16,7 @@
 
 .tabinfo {
   /* BUG: Change the below height attribute to be % so it can adjust for multiple screens, but currently switching does not work. */
-  /* height: 450px; */
-  height: 65vh;
+  height: 450px;
   overflow-y: scroll;
   border-bottom: 1px solid #bbb9bd;
 }
