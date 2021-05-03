@@ -23,6 +23,24 @@ export type ExistingProject = {
   description: string;
 };
 
+export type Event = {
+  id?: number;
+  organizationId?: number;
+  title: string;
+  description: string;
+  address?: string;
+  link?: string;
+  lgbtqDemographic: LgbtqDemographic[];
+  raceDemographic: RaceDemographic[];
+  ageDemographic: AgeDemographic[];
+  startDateTime: Date;
+  endDateTime?: Date;
+};
+
+export type EventVals = {
+  organizationEvents: Event[];
+};
+
 export const orgProfile = Prisma.validator<Prisma.OrganizationArgs>()({
   select: {
     active: true,

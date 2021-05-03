@@ -8,7 +8,7 @@ import {
   FormikHelpers,
 } from 'formik';
 import prisma from 'utils/prisma';
-import { orgProfile, EditForm } from 'interfaces/organization';
+import { orgProfile, EditForm, EventVals } from 'interfaces/organization';
 import {
   Button,
   Chip,
@@ -16,17 +16,21 @@ import {
   LinearProgress,
   Typography,
   Link,
+  Card,
+  CardContent,
+  CardActionArea,
 } from '@material-ui/core';
+import computeDate from 'utils/computeDate';
 import {
   LgbtqDemographic,
   RaceDemographic,
   AgeDemographic,
   Organization,
+  OrganizationEvent,
   Prisma,
 } from '@prisma/client';
 import Layout from 'components/Layout';
 import Tab from 'components/Tab';
-import computeDate from 'utils/computeDate';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
   AgeDemographicLabels,
@@ -68,6 +72,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({
   const eventsList = org?.organizationEvents?.map((event) => {
     return (
       <div className={styles.event}>
+        name
         <EventCard event={event} />
       </div>
     );
@@ -104,6 +109,22 @@ const OrgProfile: React.FunctionComponent<Props> = ({
       [],
   });
 
+  const InitialEvents: EventVals = {
+    organizationEvents:
+      (org &&
+        org.organizationEvents?.map((event) => ({
+          id: event.id ?? undefined,
+          organizationId: org.id ?? undefined,
+          title: event.title ?? '',
+          description: event.description ?? '',
+          lgbtqDemographic: event ? event.lgbtqDemographic : [],
+          raceDemographic: event ? event.raceDemographic : [],
+          ageDemographic: event ? event.ageDemographic : [],
+          startDateTime: event.startDateTime ?? undefined,
+        }))) ??
+      [],
+  };
+
   const handleSubmit = async (values: EditForm): Promise<void> => {
     try {
       await fetch(`/api/org/${org.id}`, {
@@ -125,12 +146,67 @@ const OrgProfile: React.FunctionComponent<Props> = ({
     }
   };
 
+  const handleEventSubmit = async (values: EventVals): Promise<void> => {
+    try {
+      await fetch(`/api/org/${org.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...values }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            setErrorBanner('.');
+          } else {
+            setOrg(data);
+          }
+          setEditState(0);
+        });
+    } catch (ex) {
+      setErrorBanner('Did not save.');
+    }
+  };
+
   const formik = useFormik({
     // This conversion of org -> EditForm is not completely right.
     // Org type has more attributes than EditForm does, which is because org's attributes (capacity, foundingDate) are used in this file beyond EditForm.
     initialValues: cleanVals(org as EditForm),
     onSubmit: handleSubmit,
   });
+
+  const formikEvents = useFormik({
+    // This conversion of org -> EditForm is not completely right.
+    // Org type has more attributes than EditForm does, which is because org's attributes (capacity, foundingDate) are used in this file beyond EditForm.
+    initialValues: InitialEvents as EventVals,
+    onSubmit: handleEventSubmit,
+  });
+
+  const addNewEvent = (
+    values: EventVals,
+    setFieldValue: FormikHelpers<string>['setFieldValue']
+  ): void => {
+    const currEvents = values.organizationEvents;
+    currEvents.push({
+      title: '',
+      description: '',
+      lgbtqDemographic: [],
+      raceDemographic: [],
+      ageDemographic: [],
+      startDateTime: new Date(),
+      address: 'Location here',
+    });
+    setFieldValue('organizationEvents', currEvents);
+  };
+
+  const deleteEvent = (
+    values: EventVals,
+    setFieldValue: FormikHelpers<string>['setFieldValue'],
+    index: number
+  ): void => {
+    const currEvents = values.organizationEvents;
+    currEvents.splice(index, 1);
+    setFieldValue('organizationEvents', currEvents);
+  };
 
   const addNewProj = (
     values: EditForm,
@@ -350,6 +426,121 @@ const OrgProfile: React.FunctionComponent<Props> = ({
     );
   };
 
+  const eventsListEditable = formikEvents.values.organizationEvents?.map(
+    (event, index) => {
+      return (
+        <div className={styles.addEvent}>
+          <div className={styles.projheader}>
+            <Typography className={styles.projres}>Event Name</Typography>
+            <Link>
+              <Button
+                className={styles.deleteButton}
+                color="secondary"
+                onClick={() =>
+                  deleteEvent(
+                    formikEvents.values,
+                    formikEvents.setFieldValue,
+                    index
+                  )
+                }
+              >
+                Delete
+              </Button>
+            </Link>
+          </div>
+
+          {/* <TextField
+            className={styles.projTitle}
+            value={project.title}
+            name={`organizationProjects.${index}.title`}
+            variant="outlined"
+            onChange={formik.handleChange}
+          />
+          <Typography className={styles.projdesctitle}>Description</Typography>
+          <TextField
+            className={styles.projDesc}
+            value={project.description ?? ''}
+            name={`organizationProjects.${index}.description`}
+            variant="outlined"
+            multiline
+            rows={6}
+            onChange={formik.handleChange}
+          /> */}
+          <Card>
+            <div className={styles.imgContainer}>
+              <img
+                className={styles.img}
+                src="https://1mktxg24rspz19foqjixu9rl-wpengine.netdna-ssl.com/wp-content/uploads/2020/01/eia-berkeley-Cover.png"
+                alt="Event"
+              />
+            </div>
+            <CardContent className={styles.content}>
+              <div className={styles.info}>
+                <Typography
+                  className={styles.dateLoc}
+                  variant="h5"
+                  component="h1"
+                >
+                  {computeDate(event.startDateTime, 1)} at
+                  <TextField
+                    className={styles.projDesc}
+                    value={event.address ?? ''}
+                    name={`organizationEvents.${index}.address`}
+                    variant="outlined"
+                    onChange={formik.handleChange}
+                  />
+                  {/* {event.address} */}
+                </Typography>
+                <Typography
+                  className={styles.eventName}
+                  variant="h5"
+                  component="h2"
+                >
+                  Title
+                  {event.title}
+                </Typography>
+                <Link className={styles.linkText} href={event.link || ''}>
+                  Link:
+                  <TextField
+                    className={styles.projDesc}
+                    value={event.link ?? ''}
+                    name={`organizationEvents.${index}.link`}
+                    variant="outlined"
+                    onChange={formik.handleChange}
+                  />
+                  {/* {event.link} */}
+                </Link>
+              </div>
+              <div className={styles.description}>
+                <Typography variant="body2" component="p">
+                  <div>
+                    Description:
+                    <TextField
+                      className={styles.projDesc}
+                      value={event.description ?? ''}
+                      name={`organizationEvents.${index}.description`}
+                      variant="outlined"
+                      multiline
+                      rows={6}
+                      onChange={formik.handleChange}
+                    />
+                    {/* <p>{event.description}</p> */}
+                  </div>
+                </Typography>
+              </div>
+              <div className={styles.demographicSection}>
+                {demEditOrien('Identities', event.lgbtqDemographic)}
+                {demEditBack('Background', event.raceDemographic)}
+                {demEditAge('Ages', event.ageDemographic)}
+              </div>
+            </CardContent>
+          </Card>
+          {/* Add more fields, like links, address etc. */}
+        </div>
+      );
+    }
+  );
+
   const editableLeft = (): JSX.Element => {
     return (
       <div>
@@ -420,15 +611,33 @@ const OrgProfile: React.FunctionComponent<Props> = ({
               >
                 Add New Project
               </Button>
-              <div className={styles.projects}>
-                {projectsListEditable}
-                {/* <FieldArray
-                name="organizationProjects"
-                render={projectsListEditable(formik)}
-              />
-              ; */}
-              </div>
+              <div className={styles.projects}>{projectsListEditable}</div>
             </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const editableRight = (): JSX.Element => {
+    return (
+      <div>
+        {editState === 0 ? (
+          // not editable, just viewing
+          <div className={styles.events}>{eventsList}</div>
+        ) : (
+          // editable, map contents to TextFields
+          <div>
+            <Button
+              onClick={() =>
+                addNewEvent(formikEvents.values, formik.setFieldValue)
+              }
+              variant="outlined"
+              className={styles.addNewProj}
+            >
+              Add New Event
+            </Button>
+            <div className={styles.events}>{eventsListEditable}</div>
           </div>
         )}
       </div>
@@ -451,6 +660,8 @@ const OrgProfile: React.FunctionComponent<Props> = ({
         </Button>
       ) : (
         // you are editing, display SAVE button
+        // FIXME: logic needs to be fixed so depending on the tab,
+        // handleEventSubmit may be called instead
         <Button
           variant="contained"
           className={styles.editButton}
@@ -547,7 +758,8 @@ const OrgProfile: React.FunctionComponent<Props> = ({
                 <div>{editableLeft()}</div>
               ) : (
                 // EVENT CARDS START
-                <div className={styles.events}>{eventsList}</div>
+                // <div className={styles.events}>{eventsList}</div>
+                <div>{editableRight()}</div>
                 // EVENT CARDS END
               )}
             </div>
