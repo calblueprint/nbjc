@@ -106,20 +106,35 @@ const OrgProfile: React.FunctionComponent<Props> = ({
 
   const handleSubmit = async (values: EditForm): Promise<void> => {
     try {
-      await fetch(`/api/org/${org.id}`, {
+      const res = await fetch(`/api/org/${org.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...cleanVals(values) }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.error) {
-            setErrorBanner('.');
-          } else {
-            setOrg(data);
-          }
-          setEditState(0);
-        });
+      });
+      const data = await res.json();
+      if (data.error) {
+        setErrorBanner('.');
+      } else {
+        setOrg(data);
+      }
+      setEditState(0);
+    } catch (ex) {
+      setErrorBanner('Did not save.');
+    }
+
+    try {
+      const res = await fetch('/api/org/event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...values }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        setErrorBanner('.');
+      } else {
+        setEditState(0);
+        router.replace(router.asPath);
+      }
     } catch (ex) {
       setErrorBanner('Did not save.');
     }

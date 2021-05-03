@@ -19,7 +19,7 @@ export default async (
     return MethodNotAllowed(req.method, res);
   }
   // We will be doing a complete upsert for all the events here.
-  let eventValidation = Joi.array().items(EventSchema);
+  const eventValidation = Joi.array().items(EventSchema);
   const { error, value } = eventValidation.validate(req.body.events, {
     context: { strict: false },
   });
@@ -27,7 +27,7 @@ export default async (
     return CreateError(400, error.message, res);
   }
 
-  const events = value as OrganizationEvent[];
+  const events = value as NewEvent[];
 
   // Splitting objects into create, update, and delete
   const currEvents = await prisma.organizationEvent.findMany({
@@ -45,8 +45,40 @@ export default async (
   // ***
   let newChanges;
   try {
-    // TODO: Make this API work.
+    if (toCreate) {
+      for (let i = 0; i < toCreate.length; i += 1) {
+        const created = prisma.organizationEvent.create({
+          data: toCreate[i],
+        });
+      }
+    }
+    if (toUpdate) {
+      const updatedMany = prisma.organizationEvent.updateMany({
+        data: toUpdate,
+      });
+    }
+    if (toDelete) {
+      const deleteMany = prisma.organizationEvent.deleteMany({
+        where: {
+          id: {
+            in: toDelete,
+          },
+        },
+      });
+    }
   } catch (err) {
-    console.log(err);
+    return CreateError(
+      500,
+      'Failed to save changes to organization events.',
+      res
+    );
   }
+
+  // Return the organization events for the organization.
+  const finalEvents = await prisma.organizationEvent.findMany({
+    where: {
+      organizationId: req.body.organizationId,
+    },
+  });
+  return res.json({ finalEvents });
 };

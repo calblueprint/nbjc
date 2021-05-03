@@ -19,7 +19,6 @@ export type Event = Prisma.OrganizationEventGetPayload<{
 
 export type NewEvent = Prisma.OrganizationEventGetPayload<{
   select: {
-    id: true;
     title: true;
     description: true;
     address: true;
@@ -32,10 +31,11 @@ export type NewEvent = Prisma.OrganizationEventGetPayload<{
     endDatetime: true;
   };
 }> & {
-  id: number;
+  id?: number;
 };
 
 const schema = Joi.object({
+  id: Joi.number(),
   title: Joi.string()
     .empty('')
     .when('$strict', {
