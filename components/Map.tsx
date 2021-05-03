@@ -37,7 +37,7 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
       {...viewport}
     >
       {objs
-        ? objs.map((obj) => {
+        ? objs.map((obj: Organization | OrganizationEvent) => {
             return obj.lat && obj.long ? (
               <div key={obj.id}>
                 <Marker latitude={obj.lat} longitude={obj.long}>
@@ -56,7 +56,8 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
                     latitude={obj.lat}
                     longitude={obj.long}
                   >
-                    {obj.name}
+                    {typeof obj}
+                    {/* {obj instanceof === "OrganizationEvent" ? obj.title! : obj.name!} */}
                   </Popup>
                 ) : null}
               </div>
