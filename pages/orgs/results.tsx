@@ -141,6 +141,9 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
               {!demographicFilters.length && 'Identities'}
             </InputLabel>
             <Select
+              classes={{
+                Menu: styles.selectMenuOver,
+              }}
               native={false}
               className={
                 demographicFilters.length > 0
@@ -160,6 +163,9 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
                 anchorOrigin: {
                   vertical: 'bottom',
                   horizontal: 'left',
+                },
+                classes: {
+                  paper: styles.selectMenuOver,
                 },
                 getContentAnchorEl: null,
               }}
@@ -213,6 +219,9 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
                   vertical: 'bottom',
                   horizontal: 'left',
                 },
+                classes: {
+                  paper: styles.selectMenuOver,
+                },
                 getContentAnchorEl: null,
               }}
             >
@@ -265,6 +274,9 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
                 anchorOrigin: {
                   vertical: 'bottom',
                   horizontal: 'left',
+                },
+                classes: {
+                  paper: styles.selectMenuOver,
                 },
                 getContentAnchorEl: null,
               }}

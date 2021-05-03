@@ -310,3 +310,8 @@
   text-transform: none;
   height: 25px;
 }
+
+.selectMenuOver {
+  box-shadow: -2px 4px 23px rgba(0, 0, 0, 0.0685);
+  border-radius: 18px;
+}
