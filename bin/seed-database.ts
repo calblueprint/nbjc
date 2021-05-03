@@ -266,6 +266,8 @@ export default async function seedDatabase(): Promise<void> {
                 title: 'Annual anti-bug bug bash!',
                 description: Faker.lorem.lines(10),
                 address: '1234 Fake Street, Berkeley CA, 94709',
+                lat: 40,
+                long: 40,
                 link: 'https://www.nbjc.org',
                 lgbtqDemographic: [
                   'asexualAromantic',

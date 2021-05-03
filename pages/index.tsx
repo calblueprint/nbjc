@@ -30,11 +30,12 @@ const initialValues: homepageFields = {
 /* TODO: add onClick={goToMap} to submit button */
 
 const Home: React.FC = () => {
+  const router = useRouter();
   const formik = useFormik({
     initialValues,
     onSubmit: async (values): Promise<void> => {
       Router.push({
-        pathname: '/orgs/results',
+        pathname: 'orgs/results',
         query: {
           orgName: values.orgName,
           ages: values.ages,
