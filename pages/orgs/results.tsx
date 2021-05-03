@@ -5,6 +5,7 @@ import {
   AgeDemographic,
   Organization,
 } from '@prisma/client';
+import ReactMapGL, { Marker, Popup, ViewportProps } from 'react-map-gl';
 import {
   AgeDemographicLabels,
   LgbtqDemographicLabels,
@@ -76,6 +77,16 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
   const [backgroundFilters, setBackgroundFilters] = useState<string[]>([]);
   const [audienceFilters, setAudienceFilters] = useState<string[]>([]);
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
+  const lat = orgs[0].lat || 37.8712;
+  const lon = orgs[0].long || -122.2601;
+  const z = orgs[0] ? 9 : 0;
+  const [viewport, setViewport] = useState<ViewportStateProps | ViewportProps>({
+    width: '100%',
+    height: '100%',
+    latitude: lat,
+    longitude: lon,
+    zoom: z,
+  });
 
   const handleDemographicChange = (
     event: React.ChangeEvent<{ value: unknown }>
@@ -299,6 +310,16 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
                       className={styles.card}
                       classes={{ root: styles.cardRootSelected }}
                       key={org.id}
+                      onMouseEnter={() => {
+                        setSelectedOrg(org);
+                        setViewport({
+                          width: '100%',
+                          height: '100%',
+                          latitude: selectedOrg?.lat,
+                          longitude: selectedOrg?.long,
+                          zoom: 4,
+                        });
+                      }}
                     >
                       <CardActionArea
                         onClick={() => router.push(`/orgs/${org.id}`)}
@@ -328,6 +349,16 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
                       className={styles.card}
                       classes={{ root: styles.cardRoot }}
                       key={org.id}
+                      onMouseEnter={() => {
+                        setSelectedOrg(org);
+                        setViewport({
+                          width: '100%',
+                          height: '100%',
+                          latitude: org.lat,
+                          longitude: org.long,
+                          zoom: 4,
+                        });
+                      }}
                     >
                       <CardActionArea
                         onClick={() => router.push(`/orgs/${org.id}`)}
@@ -365,6 +396,8 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
               orgs={orgs}
               width="100%"
               height="100%"
+              viewport={viewport}
+              setViewport={setViewport}
               setSelectedOrg={setSelectedOrg}
               selectedOrg={selectedOrg}
             />
