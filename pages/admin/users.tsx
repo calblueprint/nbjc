@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core';
 import { useState } from 'react';
 import { ModeratorInviteDTO } from 'pages/api/invites/moderator';
-import Toast from 'components/Toast';
+import { useSnackbar } from 'notistack';
 import styles from '../../styles/admin/Users.module.css';
 
 type AdminUsersIndexProps = {
@@ -24,17 +24,19 @@ type AdminUsersIndexProps = {
 const AdminUsersIndex: React.FunctionComponent<AdminUsersIndexProps> = ({
   users,
 }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [openModal, setModal] = useState(false);
   const [inviteName, setInviteName] = useState('');
   const [inviteEmail, setInviteEmail] = useState('');
-  const [submissionError, setSubmissionError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
   const onInvite = async (): Promise<void> => {
-    setSubmissionError(false);
     try {
       if (!inviteEmail) {
-        throw new Error('Please input an email!');
+        enqueueSnackbar('Please input an email', {
+          variant: 'error',
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        });
+        return;
       }
       const inviteRes = await fetch('/api/invites/moderator', {
         method: 'POST',
@@ -47,44 +49,26 @@ const AdminUsersIndex: React.FunctionComponent<AdminUsersIndexProps> = ({
 
       if (!inviteRes.ok) {
         const inviteErr = await inviteRes.json();
-        throw inviteErr.error;
+        enqueueSnackbar(inviteErr.error, {
+          variant: 'error',
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        });
       }
+      enqueueSnackbar(`Sent email invite to ${inviteEmail}!`, {
+        variant: 'success',
+      });
     } catch (err) {
-      setErrorMessage(err.message);
-      setSubmissionError(true);
+      enqueueSnackbar(err.message, { variant: 'error' });
     }
     setModal(false);
     setInviteEmail('');
     setInviteName('');
   };
 
-  const handleClickOpen = (): void => {
-    setModal(true);
-  };
-
-  const handleClickClose = (): void => {
-    setModal(false);
-  };
-
-  const renderErrorToast = (): JSX.Element => {
-    return (
-      <Toast
-        snackbarProps={{
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
-        }}
-        type="error"
-        showDismissButton
-        disableClickaway
-      >
-        {errorMessage}
-      </Toast>
-    );
-  };
-
   const inviteModal = (): JSX.Element => (
     <Dialog
       open={openModal}
-      onClose={handleClickClose}
+      onClose={() => setModal(false)}
       className={styles.newModal}
       fullWidth
     >
@@ -129,13 +113,11 @@ const AdminUsersIndex: React.FunctionComponent<AdminUsersIndexProps> = ({
 
   return (
     <Layout title="Admin Users">
-      {submissionError ? renderErrorToast() : null}
       {inviteModal()}
       <AdminIndex
         page="User"
         search="Look for a User"
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        addButtonOnClick={handleClickOpen}
+        addButtonOnClick={() => setModal(true)}
       >
         <AdminTable data={users} pageType="users" />
       </AdminIndex>
