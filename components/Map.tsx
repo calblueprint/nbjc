@@ -3,35 +3,31 @@
 import { useState } from 'react';
 import ReactMapGL, { Marker, Popup, ViewportProps } from 'react-map-gl';
 import LocationOnRoundedIcon from '@material-ui/icons/LocationOnRounded';
-import { Prisma, Organization } from '@prisma/client';
+import { Prisma, Organization, OrganizationEvent } from '@prisma/client';
 import { orgProfile } from 'interfaces/organization';
 import { Button, ClickAwayListener } from '@material-ui/core';
 
 import styles from '../styles/Map.module.css';
 
 type MapProps = {
-  orgs: Organization[];
+  objs: Organization[] | OrganizationEvent[];
 };
 
 type ViewportStateProps = {
-  width: number;
-  height: number;
-  lati: number | null;
-  longi: number | null;
-  setSelectedOrg: React.EventHandler;
-  selectedOrg: Organization | null;
-  setViewport: React.EventHandler;
+  lati?: number | null;
+  longi?: number | null;
+  setSelectedObj: (obj: any) => void;
+  selectedObj: OrganizationEvent | Organization | null;
+  setViewport: (newViewport: ViewportProps) => void;
   viewport: ViewportStateProps | ViewportProps;
 };
 
 const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
-  orgs,
-  width,
-  height,
+  objs,
   lati,
   longi,
-  setSelectedOrg,
-  selectedOrg,
+  setSelectedObj,
+  selectedObj,
   viewport,
   setViewport,
 }) => {
@@ -47,7 +43,13 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
     zoom: z,
   }); */
   const handleClickAway = () => {
-    setSelectedOrg(null);
+    setSelectedObj(null);
+  };
+  const isOrganization = (
+    obj: Organization | OrganizationEvent
+  ): obj is Organization => {
+    if ((obj as Organization).name) return true;
+    return false;
   };
   return (
     <ReactMapGL
@@ -57,35 +59,35 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
       onViewportChange={(newViewport) => setViewport(newViewport)}
       {...viewport}
     >
-      {orgs
-        ? orgs.map((org) => {
-            return org.lat && org.long ? (
-              <div key={org.id}>
-                <Marker latitude={org.lat} longitude={org.long}>
+      {objs
+        ? objs.map((obj: Organization | OrganizationEvent) => {
+            return obj.lat && obj.long ? (
+              <div key={obj.id}>
+                <Marker latitude={obj.lat} longitude={obj.long}>
                   <span
-                    onMouseEnter={() => setSelectedOrg(org)}
+                    onMouseEnter={() => setSelectedObj(obj)}
                     role="img"
                     aria-label="push-pin"
                   >
                     <LocationOnRoundedIcon
                       className={
-                        selectedOrg?.id === org.id
+                        selectedObj?.id === obj.id
                           ? styles.iconClicked
                           : styles.icon
                       }
                     />
                   </span>
                 </Marker>
-                {selectedOrg?.id === org.id ? (
+                {selectedObj?.id === obj.id ? (
                   <ClickAwayListener onClickAway={handleClickAway}>
                     <Popup
                       // onClose={() => setSelectedOrg(null)}
-                      latitude={org.lat}
-                      longitude={org.long}
+                      latitude={obj.lat}
+                      longitude={obj.long}
                       className={styles.popupMap}
                     >
-                      <Button href={`${org.id}`} className={styles.popup}>
-                        {org.name}
+                      <Button href={`${obj.id}`} className={styles.popup}>
+                        {isOrganization(obj) ? obj.name : obj.title}
                       </Button>
                     </Popup>
                   </ClickAwayListener>

@@ -188,6 +188,8 @@ model OrganizationEvent {
   title            String
   description      String
   address          String?            @db.VarChar(255)
+  long             Float?
+  lat              Float?
   link             String?            @db.VarChar(255)
   lgbtqDemographic LgbtqDemographic[] @map("lgbtq_demographic")
   raceDemographic  RaceDemographic[]  @map("race_demographic")
