@@ -18,7 +18,7 @@ import {
 import styles from 'styles/Home.module.css';
 import Toast from 'components/Toast';
 
-const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
+const slogan = 'Empowering Black, LGBTQ+, & SGL people and communities.';
 
 const initialValues: homepageFields = {
   ages: [],
@@ -46,22 +46,21 @@ const Home: React.FC = () => {
   });
 
   const renderSuccessToast = () => {
-      return(
+    return (
       <Toast
-          snackbarProps={{
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
-          }}
-          type="success"
-          showDismissButton
-          >
-          <div>
-              Password has been successfully reset!
-          </div>
+        snackbarProps={{
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        }}
+        type="success"
+        showDismissButton
+      >
+        <div>Password has been successfully reset!</div>
       </Toast>
-  )};
+    );
+  };
 
   const router = useRouter();
-  const resetSuccess = router.query.resetSuccess;
+  const { resetSuccess } = router.query;
 
   return (
     <Layout title="Home">
