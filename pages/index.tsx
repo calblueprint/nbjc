@@ -31,6 +31,8 @@ const initialValues: homepageFields = {
 
 const Home: React.FC = () => {
   const router = useRouter();
+  const { resetSuccess } = router.query;
+
   const formik = useFormik({
     initialValues,
     onSubmit: async (values): Promise<void> => {
@@ -47,22 +49,18 @@ const Home: React.FC = () => {
   });
 
   const renderSuccessToast = () => {
-      return(
+    return (
       <Toast
-          snackbarProps={{
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
-          }}
-          type="success"
-          showDismissButton
-          >
-          <div>
-              Password has been successfully reset!
-          </div>
+        snackbarProps={{
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        }}
+        type="success"
+        showDismissButton
+      >
+        <div>Password has been successfully reset!</div>
       </Toast>
-  )};
-
-  const router = useRouter();
-  const resetSuccess = router.query.resetSuccess;
+    );
+  };
 
   return (
     <Layout title="Home">
