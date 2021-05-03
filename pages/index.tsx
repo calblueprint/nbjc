@@ -4,7 +4,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useFormik } from 'formik';
 import Layout from 'components/Layout';
 import { homepageFields } from 'interfaces';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import {
   AgeDemographicLabels,
   RaceDemographicLabels,
@@ -16,6 +16,7 @@ import {
   RaceDemographic,
   AgeDemographic,
 } from '@prisma/client';
+import Toast from 'components/Toast';
 
 const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
 
@@ -29,11 +30,12 @@ const initialValues: homepageFields = {
 /* TODO: add onClick={goToMap} to submit button */
 
 const Home: React.FC = () => {
+  const router = useRouter();
   const formik = useFormik({
     initialValues,
     onSubmit: async (values): Promise<void> => {
       Router.push({
-        pathname: '/orgs/results',
+        pathname: 'orgs/results',
         query: {
           orgName: values.orgName,
           ages: values.ages,
@@ -43,8 +45,27 @@ const Home: React.FC = () => {
       });
     },
   });
+
+  const renderSuccessToast = () => {
+    return (
+      <Toast
+        snackbarProps={{
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        }}
+        type="success"
+        showDismissButton
+      >
+        <div>Password has been successfully reset!</div>
+      </Toast>
+    );
+  };
+
+  // const router = useRouter();
+  const { resetSuccess } = router.query;
+
   return (
     <Layout title="Home">
+      {resetSuccess ? renderSuccessToast() : null}
       <form onSubmit={formik.handleSubmit}>
         <div className={styles.root}>
           <div className={styles.leftCol}>{slogan}</div>

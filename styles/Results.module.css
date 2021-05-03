@@ -145,12 +145,6 @@
   padding-bottom: 2px;
 }
 
-.filter {
-  min-width: 130px;
-  margin: 8px;
-  margin-left: 0;
-}
-
 .text {
   display: flex;
   margin-top: 5px;

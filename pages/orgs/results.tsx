@@ -12,9 +12,8 @@ import {
   RaceDemographicLabels,
 } from 'utils/typesLinker';
 import prisma from 'utils/prisma';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-
 import {
   FormControl,
   InputLabel,
@@ -27,6 +26,7 @@ import {
   Button,
   ButtonProps,
 } from '@material-ui/core';
+import Filters from 'components/results/Filters';
 import Layout from 'components/Layout';
 import { useState } from 'react';
 import styles from '../../styles/Results.module.css';
@@ -62,25 +62,19 @@ function splitCamCase(s: string | null) {
 
 const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
   const router = useRouter();
-
-  // TO-DO optimize theme/color changes with Select, MenuItem, & Button components
-  const demographicTypes = Object.keys(
-    LgbtqDemographicLabels
-  ) as LgbtqDemographic[];
-  const backgroundTypes = Object.keys(
-    RaceDemographicLabels
-  ) as RaceDemographic[];
-  const audienceTypes = Object.keys(AgeDemographicLabels) as AgeDemographic[];
-
   const [searchVal, setSearchVal] = useState(searchValProp);
-  const [demographicFilters, setDemographicFilters] = useState<string[]>([]);
-  const [backgroundFilters, setBackgroundFilters] = useState<string[]>([]);
-  const [audienceFilters, setAudienceFilters] = useState<string[]>([]);
+  const [demographicFilters, setDemographicFilters] = useState<
+    LgbtqDemographic[]
+  >([]);
+  const [backgroundFilters, setBackgroundFilters] = useState<RaceDemographic[]>(
+    []
+  );
+  const [audienceFilters, setAudienceFilters] = useState<AgeDemographic[]>([]);
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const lat = orgs[0].lat || 37.8712;
   const lon = orgs[0].long || -122.2601;
   const z = orgs[0] ? 9 : 0;
-  const [viewport, setViewport] = useState<ViewportStateProps | ViewportProps>({
+  const [viewport, setViewport] = useState<ViewportProps>({
     width: '100%',
     height: '100%',
     latitude: lat,
@@ -91,28 +85,23 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
   const handleDemographicChange = (
     event: React.ChangeEvent<{ value: unknown }>
   ): void => {
-    setDemographicFilters(event.target.value as string[]);
+    setDemographicFilters(event.target.value as LgbtqDemographic[]);
   };
 
   const handleBackgroundChange = (
     event: React.ChangeEvent<{ value: unknown }>
   ): void => {
-    setBackgroundFilters(event.target.value as string[]);
+    setBackgroundFilters(event.target.value as RaceDemographic[]);
   };
 
   const handleAudienceChange = (
     event: React.ChangeEvent<{ value: unknown }>
   ): void => {
-    setAudienceFilters(event.target.value as string[]);
+    setAudienceFilters(event.target.value as AgeDemographic[]);
   };
 
-  // TO-DO fix return type here
-  const outlinedButton = (props: ButtonProps): JSX.Element => (
-    <Button variant="outlined" disableRipple {...props} />
-  );
-
   const handleSearch = (): void => {
-    Router.push({
+    router.push({
       pathname: 'results',
       query: {
         orgName: searchVal,
@@ -125,7 +114,7 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
 
   return (
     <Layout
-      handleClickSearch={() => handleSearch()}
+      handleSearch={() => handleSearch()}
       searchFilters={searchVal}
       handleSearchChange={(event) => setSearchVal(event.target.value)}
     >
@@ -141,9 +130,6 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
               {!demographicFilters.length && 'Identities'}
             </InputLabel>
             <Select
-              classes={{
-                Menu: styles.selectMenuOver,
-              }}
               native={false}
               className={
                 demographicFilters.length > 0
@@ -170,7 +156,7 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
                 getContentAnchorEl: null,
               }}
             >
-              {demographicTypes.map((filterOption: LgbtqDemographic) => (
+              {demographicFilters.map((filterOption: LgbtqDemographic) => (
                 <MenuItem
                   selected
                   classes={{
@@ -225,7 +211,7 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
                 getContentAnchorEl: null,
               }}
             >
-              {backgroundTypes.map((filterOption: RaceDemographic) => (
+              {backgroundFilters.map((filterOption: RaceDemographic) => (
                 <MenuItem
                   selected
                   classes={{
@@ -281,7 +267,7 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
                 getContentAnchorEl: null,
               }}
             >
-              {audienceTypes.map((filterOption: AgeDemographic) => (
+              {audienceFilters.map((filterOption: AgeDemographic) => (
                 <MenuItem
                   selected
                   classes={{
@@ -314,104 +300,53 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
         </div>
         <div className={styles.pageContent}>
           <div className={styles.leftCol}>
+            <div className={styles.filters}>
+              <Filters
+                demographicFilters={demographicFilters}
+                backgroundFilters={backgroundFilters}
+                audienceFilters={audienceFilters}
+                handleDemographicChange={handleDemographicChange}
+                handleBackgroundChange={handleBackgroundChange}
+                handleAudienceChange={handleAudienceChange}
+                handleSearch={handleSearch}
+              />
+            </div>
+
             <div className={styles.cards}>
               {orgs && orgs.length !== 0 ? (
-                orgs.map((org) =>
-                  selectedOrg?.id === org.id ? (
-                    <Card
-                      className={styles.card}
-                      classes={{ root: styles.cardRootSelected }}
-                      key={org.id}
-                      onMouseEnter={() => {
-                        setSelectedOrg(org);
-                        setViewport({
-                          width: '100%',
-                          height: '100%',
-                          latitude: selectedOrg?.lat,
-                          longitude: selectedOrg?.long,
-                          zoom: 4,
-                        });
-                      }}
+                orgs.map((org) => (
+                  <Card className={styles.card} key={org.id}>
+                    <CardActionArea
+                      onClick={() => window.open(`/orgs/${org.id}`)}
                     >
-                      <CardActionArea
-                        onClick={() => router.push(`/orgs/${org.id}`)}
-                      >
-                        <CardContent>
-                          <Typography
-                            className={styles.longOrgTitleSelected}
-                            variant="h5"
-                          >
-                            {org.name}
-                          </Typography>
-                          <Typography
-                            className={styles.orgInfo}
-                            variant="body2"
-                          >
-                            {splitCamCase(org.organizationType)}
-                            {org.organizationType && org.workType
-                              ? ' • '
-                              : null}
-                            {splitCamCase(org.workType)}
-                          </Typography>
-                        </CardContent>
-                      </CardActionArea>
-                    </Card>
-                  ) : (
-                    <Card
-                      className={styles.card}
-                      classes={{ root: styles.cardRoot }}
-                      key={org.id}
-                      onMouseEnter={() => {
-                        setSelectedOrg(org);
-                        setViewport({
-                          width: '100%',
-                          height: '100%',
-                          latitude: org.lat,
-                          longitude: org.long,
-                          zoom: 4,
-                        });
-                      }}
-                    >
-                      <CardActionArea
-                        onClick={() => router.push(`/orgs/${org.id}`)}
-                      >
-                        <CardContent>
-                          <Typography
-                            className={styles.longOrgTitle}
-                            variant="h5"
-                          >
-                            {org.name}
-                          </Typography>
-                          <Typography
-                            className={styles.orgInfo}
-                            variant="body2"
-                          >
-                            {splitCamCase(org.organizationType)}
-                            {org.organizationType && org.workType
-                              ? ' • '
-                              : null}
-                            {splitCamCase(org.workType)}
-                          </Typography>
-                        </CardContent>
-                      </CardActionArea>
-                    </Card>
-                  )
-                )
+                      <CardContent>
+                        <Typography
+                          className={styles.longOrgTitle}
+                          variant="h5"
+                        >
+                          {org.name}
+                        </Typography>
+                        <Typography className={styles.orgInfo} variant="body2">
+                          {splitCamCase(org.organizationType)}
+                          {org.organizationType && org.workType ? ' • ' : null}
+                          {splitCamCase(org.workType)}
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                ))
               ) : (
                 <Typography>No Organizations</Typography>
               )}
             </div>
           </div>
-
           <div className={styles.rightCol}>
             <Map
-              orgs={orgs}
-              width="100%"
-              height="100%"
+              objs={orgs}
               viewport={viewport}
               setViewport={setViewport}
-              setSelectedOrg={setSelectedOrg}
-              selectedOrg={selectedOrg}
+              setSelectedObj={setSelectedOrg}
+              selectedObj={selectedOrg}
             />
           </div>
         </div>

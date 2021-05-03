@@ -7,6 +7,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { Provider } from 'next-auth/client';
 import theme from 'utils/theme';
 import Head from 'next/head';
+import { SnackbarProvider } from 'notistack';
+import toastStyles from '../styles/Toast.module.css';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   useEffect(() => {
@@ -34,7 +36,16 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
       <StylesProvider injectFirst>
         <ThemeProvider theme={theme}>
           <Provider session={pageProps.session}>
-            <Component {...pageProps} />
+            <SnackbarProvider
+              maxSnack={3}
+              classes={{
+                root: toastStyles.root,
+                variantSuccess: toastStyles.success,
+                variantError: toastStyles.error,
+              }}
+            >
+              <Component {...pageProps} />
+            </SnackbarProvider>
           </Provider>
         </ThemeProvider>
       </StylesProvider>
