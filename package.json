@@ -53,6 +53,7 @@
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/pickers": "^3.3.10",
     "@prisma/client": "^2.18.0",
+    "@sendgrid/mail": "^7.4.2",
     "@types/react-text-mask": "^5.4.7",
     "babel-plugin-superjson-next": "^0.2.3",
     "clsx": "^1.1.1",
