@@ -112,6 +112,31 @@
   width: 30%;
 }
 
+.date {
+  flex-direction: row;
+  display: flex;
+}
+
+.date2 {
+  align-self: center;
+  margin-right: 15px;
+}
+.eventDesc {
+  width: 100%;
+}
+
+.eventTitle {
+  width: 50%;
+}
+
+.eventLink {
+  width: 50%;
+}
+
+.event {
+  margin-bottom: 20px;
+}
+
 .demographic {
   display: flex;
   flex-direction: column;

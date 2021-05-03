@@ -317,44 +317,44 @@ const OrgProfile: React.FunctionComponent<Props> = ({
   };
 
   // FIXME: tricky, pass in formik hook somehow?
-  const demEditOrienE = (category: string, groups: string[]): JSX.Element => {
-    return (
-      <div className={styles.demographicEdit}>
-        {category}
-        <div className={styles.demographicTags}>
-          <Autocomplete
-            multiple
-            id="lgbtqDemographic"
-            options={Object.keys(LgbtqDemographicLabels) as LgbtqDemographic[]}
-            getOptionLabel={(option: LgbtqDemographic) =>
-              LgbtqDemographicLabels[option]
-            }
-            filterSelectedOptions
-            value={formikEvents.values.groups}
-            onChange={(event, newValue) => {
-              formikEvents.setFieldValue('lgbtqDemographic', newValue);
-            }}
-            onBlur={formik.handleBlur}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="outlined"
-                error={Boolean(
-                  formikEvents.errors.organizationEvents &&
-                    formikEvents.touched.organizationEvents
-                )}
-                helperText={
-                  formikEvents.touched.organizationEvents
-                    ? formikEvents.errors.organizationEvents
-                    : undefined
-                }
-              />
-            )}
-          />
-        </div>
-      </div>
-    );
-  };
+  // const demEditOrienE = (category: string, groups: string[]): JSX.Element => {
+  //   return (
+  //     <div className={styles.demographicEdit}>
+  //       {category}
+  //       <div className={styles.demographicTags}>
+  //         <Autocomplete
+  //           multiple
+  //           id="lgbtqDemographic"
+  //           options={Object.keys(LgbtqDemographicLabels) as LgbtqDemographic[]}
+  //           getOptionLabel={(option: LgbtqDemographic) =>
+  //             LgbtqDemographicLabels[option]
+  //           }
+  //           filterSelectedOptions
+  //           value={formikEvents.values.groups}
+  //           onChange={(event, newValue) => {
+  //             formikEvents.setFieldValue('lgbtqDemographic', newValue);
+  //           }}
+  //           onBlur={formik.handleBlur}
+  //           renderInput={(params) => (
+  //             <TextField
+  //               {...params}
+  //               variant="outlined"
+  //               error={Boolean(
+  //                 formikEvents.errors.organizationEvents &&
+  //                   formikEvents.touched.organizationEvents
+  //               )}
+  //               helperText={
+  //                 formikEvents.touched.organizationEvents
+  //                   ? formikEvents.errors.organizationEvents
+  //                   : undefined
+  //               }
+  //             />
+  //           )}
+  //         />
+  //       </div>
+  //     </div>
+  //   );
+  // };
 
   const demEditOrien = (category: string, groups: string[]): JSX.Element => {
     return (
@@ -487,7 +487,6 @@ const OrgProfile: React.FunctionComponent<Props> = ({
       return (
         <div className={styles.addEvent}>
           <div className={styles.projheader}>
-            <Typography className={styles.projres}>Event Name</Typography>
             <Link>
               <Button
                 className={styles.deleteButton}
@@ -514,14 +513,12 @@ const OrgProfile: React.FunctionComponent<Props> = ({
             </div>
             <CardContent className={styles.content}>
               <div className={styles.info}>
-                <Typography
-                  className={styles.dateLoc}
-                  variant="h5"
-                  component="h1"
-                >
-                  {computeDate(event.startDateTime, 1)} at
+                <Typography className={styles.date} variant="h5" component="h1">
+                  <div className={styles.date2}>
+                    {computeDate(event.startDateTime, 1)} at{' '}
+                  </div>
                   <TextField
-                    className={styles.projDesc}
+                    className={styles.addressText}
                     value={event.address ?? ''}
                     name={`organizationEvents.${index}.address`}
                     variant="outlined"
@@ -529,14 +526,10 @@ const OrgProfile: React.FunctionComponent<Props> = ({
                   />
                   {/* {event.address} */}
                 </Typography>
-                <Typography
-                  className={styles.eventName}
-                  variant="h5"
-                  component="h2"
-                >
-                  Title:
+                <Typography variant="h5" component="h2">
+                  <div>Title:</div>
                   <TextField
-                    className={styles.projDesc}
+                    className={styles.eventTitle}
                     value={event.title ?? ''}
                     name={`organizationEvents.${index}.title`}
                     variant="outlined"
@@ -545,9 +538,9 @@ const OrgProfile: React.FunctionComponent<Props> = ({
                   {/* {event.title} */}
                 </Typography>
                 <Typography>
-                  Link:
+                  <div>Link:</div>
                   <TextField
-                    className={styles.projDesc}
+                    className={styles.eventLink}
                     value={event.link ?? ''}
                     name={`organizationEvents.${index}.link`}
                     variant="outlined"
@@ -559,9 +552,9 @@ const OrgProfile: React.FunctionComponent<Props> = ({
               <div className={styles.description}>
                 <Typography variant="body2" component="p">
                   <div>
-                    Description:
+                    <div>Description:</div>
                     <TextField
-                      className={styles.projDesc}
+                      className={styles.eventDesc}
                       value={event.description ?? ''}
                       name={`organizationEvents.${index}.description`}
                       variant="outlined"
@@ -689,6 +682,38 @@ const OrgProfile: React.FunctionComponent<Props> = ({
     );
   };
 
+  const save = (): JSX.Element => (
+    <div className={styles.editButton}>
+      {tabState === 0 ? (
+        // save ABOUT tab
+        <Button
+          variant="contained"
+          className={styles.editButton}
+          disableElevation
+          onClick={() => {
+            handleSubmit(formik.values);
+          }}
+        >
+          Save
+        </Button>
+      ) : (
+        // save the EVENTS
+        // FIXME: logic needs to be fixed so depending on the tab,
+        // handleEventSubmit may be called instead
+        <Button
+          variant="contained"
+          className={styles.editButton}
+          disableElevation
+          onClick={() => {
+            handleEventSubmit(formikEvents.values);
+          }}
+        >
+          Save
+        </Button>
+      )}
+    </div>
+  );
+
   const editAndSave = (): JSX.Element => (
     <div className={styles.editButton}>
       {editState === 0 ? (
@@ -707,16 +732,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({
         // you are editing, display SAVE button
         // FIXME: logic needs to be fixed so depending on the tab,
         // handleEventSubmit may be called instead
-        <Button
-          variant="contained"
-          className={styles.editButton}
-          disableElevation
-          onClick={() => {
-            handleSubmit(formik.values);
-          }}
-        >
-          Save
-        </Button>
+        <div>{save()}</div>
       )}
     </div>
   );

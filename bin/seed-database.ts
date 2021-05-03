@@ -272,7 +272,7 @@ export default async function seedDatabase(): Promise<void> {
                   'lesbianSgl',
                   'straightHeterosexual',
                 ],
-                startDatetime: new Date('4/20/21 2:40'),
+                startDateTime: new Date('4/20/21 2:40'),
                 raceDemographic: ['arab', 'black', 'native'],
                 ageDemographic: ['adult', 'child'],
               },
