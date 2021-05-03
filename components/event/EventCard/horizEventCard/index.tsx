@@ -6,10 +6,12 @@ import {
   CardActionArea,
 } from '@material-ui/core';
 import { useRouter } from 'next/router';
+import { OrganizationEvent } from '@prisma/client';
+import computeDate from 'utils/computeDate';
 import styles from './HorizEventCard.module.css';
 
 type HorizEventCardProps = {
-  event: number;
+  event: OrganizationEvent;
 };
 
 const HorizEventCard: React.FunctionComponent<HorizEventCardProps> = ({
@@ -19,22 +21,26 @@ const HorizEventCard: React.FunctionComponent<HorizEventCardProps> = ({
   return (
     <div className={styles.event_cards}>
       <Card className={styles.event_card}>
-        <CardActionArea onClick={() => router.push(`/orgs/4?isEvent=${true}`)}>
+        <CardActionArea
+          onClick={() =>
+            window.open(`/orgs/${event.organizationId}?isEvent=${true}`)
+          }
+        >
           <CardContent className={styles.event_card}>
             <div className={styles.card}>
               <div className={styles.left}>
                 <Typography className={styles.event_date}>
-                  Monday, Feb 29, 10AM PST
+                  {computeDate(event.startDatetime, 1)}
                 </Typography>
                 <Typography className={styles.event_name}>
-                  Event Name
+                  {event.title}
                 </Typography>
-                <Typography className={styles.event_date}>Location</Typography>
+                <Typography className={styles.event_date}>
+                  {event.address}
+                </Typography>
                 <br />
                 <Typography className={styles.event_description}>
-                  Short Description: Lorem ipsum dolor sit amet, consectetur
-                  adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                  dolore magna aliqua.
+                  {event.description}
                 </Typography>
               </div>
               <div className={styles.right}>

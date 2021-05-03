@@ -26,6 +26,7 @@ import {
   Button,
   ButtonProps,
 } from '@material-ui/core';
+import Filters from 'components/results/Filters';
 import Layout from 'components/Layout';
 import { useState } from 'react';
 import styles from '../../styles/Results.module.css';
@@ -41,43 +42,32 @@ type ResultsProps = {
 
 const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
   const router = useRouter();
-
-  // TO-DO optimize theme/color changes with Select, MenuItem, & Button components
-  const demographicTypes = Object.keys(
-    LgbtqDemographicLabels
-  ) as LgbtqDemographic[];
-  const backgroundTypes = Object.keys(
-    RaceDemographicLabels
-  ) as RaceDemographic[];
-  const audienceTypes = Object.keys(AgeDemographicLabels) as AgeDemographic[];
-
   const [searchVal, setSearchVal] = useState(searchValProp);
-  const [demographicFilters, setDemographicFilters] = useState<string[]>([]);
-  const [backgroundFilters, setBackgroundFilters] = useState<string[]>([]);
-  const [audienceFilters, setAudienceFilters] = useState<string[]>([]);
+  const [demographicFilters, setDemographicFilters] = useState<
+    LgbtqDemographic[]
+  >([]);
+  const [backgroundFilters, setBackgroundFilters] = useState<RaceDemographic[]>(
+    []
+  );
+  const [audienceFilters, setAudienceFilters] = useState<AgeDemographic[]>([]);
 
   const handleDemographicChange = (
     event: React.ChangeEvent<{ value: unknown }>
   ): void => {
-    setDemographicFilters(event.target.value as string[]);
+    setDemographicFilters(event.target.value as LgbtqDemographic[]);
   };
 
   const handleBackgroundChange = (
     event: React.ChangeEvent<{ value: unknown }>
   ): void => {
-    setBackgroundFilters(event.target.value as string[]);
+    setBackgroundFilters(event.target.value as RaceDemographic[]);
   };
 
   const handleAudienceChange = (
     event: React.ChangeEvent<{ value: unknown }>
   ): void => {
-    setAudienceFilters(event.target.value as string[]);
+    setAudienceFilters(event.target.value as AgeDemographic[]);
   };
-
-  // TO-DO fix return type here
-  const outlinedButton = (props: ButtonProps): JSX.Element => (
-    <Button variant="outlined" disableRipple {...props} />
-  );
 
   const handleSearch = (): void => {
     Router.push({
@@ -101,179 +91,15 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
         <div className={styles.pageContent}>
           <div className={styles.leftCol}>
             <div className={styles.filters}>
-              <FormControl
-                focused={Boolean(demographicFilters.length)}
-                className={styles.filter}
-                variant="outlined"
-              >
-                <InputLabel
-                  shrink={false}
-                  classes={{ root: styles.filterLabel }}
-                >
-                  {!demographicFilters.length && 'Identities'}
-                </InputLabel>
-                <Select
-                  native={false}
-                  className={
-                    demographicFilters.length > 0
-                      ? styles.filterDropDownActive
-                      : styles.filterDropDown
-                  }
-                  multiple
-                  value={demographicFilters}
-                  onChange={handleDemographicChange}
-                  renderValue={() => (
-                    <InputLabel classes={{ root: styles.selectedLabel }}>
-                      Identities
-                    </InputLabel>
-                  )}
-                  MenuProps={{
-                    variant: 'menu',
-                    anchorOrigin: {
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    },
-                    getContentAnchorEl: null,
-                  }}
-                >
-                  {demographicTypes.map((filterOption: LgbtqDemographic) => (
-                    <MenuItem
-                      classes={{
-                        selected: styles.selectedFilter,
-                        root: styles.filterOption,
-                      }}
-                      style={{
-                        backgroundColor: demographicFilters.includes(
-                          LgbtqDemographicLabels[filterOption]
-                        )
-                          ? '#F8F4FF'
-                          : 'transparent',
-                      }}
-                      component={outlinedButton}
-                      disableRipple
-                      value={filterOption}
-                    >
-                      {LgbtqDemographicLabels[filterOption]}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl
-                focused={Boolean(backgroundFilters.length)}
-                className={styles.filter}
-                variant="outlined"
-              >
-                <InputLabel shrink={false} className={styles.filterLabel}>
-                  {!backgroundFilters.length && 'Background'}
-                </InputLabel>
-                <Select
-                  className={
-                    backgroundFilters.length > 0
-                      ? styles.filterDropDownActive
-                      : styles.filterDropDown
-                  }
-                  multiple
-                  value={backgroundFilters}
-                  onChange={handleBackgroundChange}
-                  renderValue={() => (
-                    <InputLabel classes={{ root: styles.selectedLabel }}>
-                      Background
-                    </InputLabel>
-                  )}
-                  MenuProps={{
-                    variant: 'menu',
-                    anchorOrigin: {
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    },
-                    getContentAnchorEl: null,
-                  }}
-                >
-                  {backgroundTypes.map((filterOption: RaceDemographic) => (
-                    <MenuItem
-                      classes={{
-                        selected: styles.selectedFilter,
-                        root: styles.filterOption,
-                      }}
-                      component={outlinedButton}
-                      className={styles.filterOption}
-                      style={{
-                        backgroundColor: backgroundFilters.includes(
-                          RaceDemographicLabels[filterOption]
-                        )
-                          ? '#F8F4FF'
-                          : 'transparent',
-                      }}
-                      disableRipple
-                      value={filterOption}
-                    >
-                      {RaceDemographicLabels[filterOption]}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl
-                focused={Boolean(audienceFilters.length)}
-                className={styles.filter}
-                variant="outlined"
-              >
-                <InputLabel shrink={false} className={styles.filterLabel}>
-                  {!audienceFilters.length && 'Audience'}
-                </InputLabel>
-                <Select
-                  className={
-                    audienceFilters.length > 0
-                      ? styles.filterDropDownActive
-                      : styles.filterDropDown
-                  }
-                  multiple
-                  value={audienceFilters}
-                  onChange={handleAudienceChange}
-                  renderValue={() => (
-                    <InputLabel classes={{ root: styles.selectedLabel }}>
-                      Audience
-                    </InputLabel>
-                  )}
-                  MenuProps={{
-                    variant: 'menu',
-                    anchorOrigin: {
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    },
-                    getContentAnchorEl: null,
-                  }}
-                >
-                  {audienceTypes.map((filterOption: AgeDemographic) => (
-                    <MenuItem
-                      classes={{
-                        selected: styles.selectedFilter,
-                        root: styles.filterOption,
-                      }}
-                      component={outlinedButton}
-                      disableRipple
-                      style={{
-                        backgroundColor: audienceFilters.includes(
-                          AgeDemographicLabels[filterOption]
-                        )
-                          ? '#F8F4FF'
-                          : 'transparent',
-                      }}
-                      value={filterOption}
-                    >
-                      {AgeDemographicLabels[filterOption]}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <Button
-                variant="contained"
-                color="primary"
-                className={styles.applyButton}
-                onClick={handleSearch}
-                disableElevation
-              >
-                Apply
-              </Button>
+              <Filters
+                demographicFilters={demographicFilters}
+                backgroundFilters={backgroundFilters}
+                audienceFilters={audienceFilters}
+                handleDemographicChange={handleDemographicChange}
+                handleBackgroundChange={handleBackgroundChange}
+                handleAudienceChange={handleAudienceChange}
+                handleSearch={handleSearch}
+              />
             </div>
 
             <div className={styles.cards}>
@@ -301,7 +127,7 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
           </div>
 
           <div className={styles.rightCol}>
-            <Map orgs={orgs} width="100%" height="100%" />
+            <Map objs={orgs} width="100%" height="100%" />
           </div>
         </div>
       </div>

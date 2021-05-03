@@ -4,7 +4,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useFormik } from 'formik';
 import Layout from 'components/Layout';
 import { homepageFields } from 'interfaces';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import {
   AgeDemographicLabels,
   RaceDemographicLabels,
@@ -29,11 +29,12 @@ const initialValues: homepageFields = {
 /* TODO: add onClick={goToMap} to submit button */
 
 const Home: React.FC = () => {
+  const router = useRouter();
   const formik = useFormik({
     initialValues,
     onSubmit: async (values): Promise<void> => {
       Router.push({
-        pathname: '/orgs/results',
+        pathname: 'orgs/results',
         query: {
           orgName: values.orgName,
           ages: values.ages,

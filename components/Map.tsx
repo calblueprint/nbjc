@@ -2,11 +2,11 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from 'react';
 import ReactMapGL, { Marker, Popup, ViewportProps } from 'react-map-gl';
-import { Prisma, Organization } from '@prisma/client';
+import { Prisma, Organization, OrganizationEvent } from '@prisma/client';
 import { orgProfile } from 'interfaces/organization';
 
 type MapProps = {
-  orgs: Organization[];
+  objs: Organization[] | OrganizationEvent[];
 };
 
 type ViewportStateProps = {
@@ -15,11 +15,13 @@ type ViewportStateProps = {
 };
 
 const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
-  orgs,
+  objs,
   width,
   height,
 }) => {
-  const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
+  const [selectedObj, setSelectedObj] = useState<
+    Organization | OrganizationEvent | null
+  >(null);
   const [viewport, setViewport] = useState<ViewportStateProps | ViewportProps>({
     width,
     height,
@@ -34,27 +36,27 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
       onViewportChange={(newViewport) => setViewport(newViewport)}
       {...viewport}
     >
-      {orgs
-        ? orgs.map((org) => {
-            return org.lat && org.long ? (
-              <div key={org.id}>
-                <Marker latitude={org.lat} longitude={org.long}>
+      {objs
+        ? objs.map((obj) => {
+            return obj.lat && obj.long ? (
+              <div key={obj.id}>
+                <Marker latitude={obj.lat} longitude={obj.long}>
                   <span
-                    onClick={() => setSelectedOrg(org)}
+                    onClick={() => setSelectedObj(obj)}
                     role="img"
                     aria-label="push-pin"
                   >
                     📌
                   </span>
                 </Marker>
-                {selectedOrg?.id === org.id ? (
+                {selectedObj?.id === obj.id ? (
                   <Popup
-                    onClose={() => setSelectedOrg(null)}
+                    onClose={() => setSelectedObj(null)}
                     closeOnClick
-                    latitude={org.lat}
-                    longitude={org.long}
+                    latitude={obj.lat}
+                    longitude={obj.long}
                   >
-                    {org.name}
+                    {obj.name}
                   </Popup>
                 ) : null}
               </div>
