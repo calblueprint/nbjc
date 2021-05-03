@@ -1,9 +1,8 @@
 .root {
   display: flex;
-  border-color: black;
-  border: 2px solid black;
+  border-radius: 0;
   margin-right: 10px;
-  margin-bottom: 8px;
+  margin-bottom: 18px;
   margin-left: 10px;
   margin-top: 2px;
 }
@@ -13,10 +12,41 @@
   flex-direction: column;
   width: 75%;
 }
+.contentChosen {
+  display: flex;
+  background-color: #f8f4ff;
+  flex-direction: column;
+  width: 75%;
+  color: #694f95;
+}
 .cardMain {
   display: flex;
 }
 .media {
   width: 25%;
   margin: 8px;
+}
+
+.cardRoot {
+  box-shadow: 0 0;
+}
+
+.rootChosen {
+  display: flex;
+  border-radius: 0px;
+  border-color: #694f95;
+  border-width: 4px;
+  margin-right: 10px;
+  margin-bottom: 18px;
+  margin-left: 10px;
+  margin-top: 2px;
+  border-left-style: solid;
+  background-color: #f8f4ff;
+}
+
+.cardRootChosen {
+}
+
+.date {
+  color: #908d93;
 }

@@ -93,7 +93,7 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
 
   return (
     <Layout
-      handleClickSearch={() => handleSearch()}
+      handleSearch={() => handleSearch()}
       searchFilters={searchVal}
       handleSearchChange={(event) => setSearchVal(event.target.value)}
     >
