@@ -61,7 +61,9 @@ const OrgProfile: React.FunctionComponent<Props> = ({
 }) => {
   const router = useRouter();
   const { isEvent } = router.query;
-  const [tabState, setTabState] = useState<0 | 1 | 2>(0);
+  const [tabState, setTabState] = useState<0 | 1 | 2>(
+    isEvent === 'true' ? 1 : 0
+  );
   const [editState, setEditState] = useState<0 | 1>(0); // 0 == read, 1 == edit
   const [errorBanner, setErrorBanner] = useState('');
   const [org, setOrg] = useState(orgProp);

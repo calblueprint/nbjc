@@ -16,6 +16,8 @@ export async function up(
         title                        TEXT NOT NULL,
         description                  TEXT NOT NULL,
         address                      VARCHAR(255),
+        long                         DOUBLE PRECISION,
+        lat                          DOUBLE PRECISION,
         link                         VARCHAR(255),
         lgbtq_demographic            lgbtq_demographic[],
         race_demographic             race_demographic[],
