@@ -6,6 +6,7 @@ import OrganizationSchema from 'interfaces/organization';
 import { Project, ExistingProject, QnR } from 'interfaces/registration';
 import CreateError, { MethodNotAllowed } from 'utils/error';
 import parseValidationError from 'utils/parseValidationError';
+import SplitObjs from 'utils/splitObjs';
 import Joi from 'joi';
 
 export default async (
@@ -63,36 +64,15 @@ export default async (
     active,
   } as Prisma.OrganizationCreateInput;
 
-  const appProjs = projects as Project[];
-
-  //* ** Splitting appProjs into create, update, and delete ***//
-
-  // New projects are the ones without IDs yet.
-  const toCreate = appProjs.filter((i) => !i.id);
-
-  // Deleted projects are the projects in the DB that aren't passed into the API req.
   const currOrg = await prisma.organization.findUnique({
     where: { userId },
     include: { organizationProjects: true },
   });
-  let toDelete: number[] = [];
-  if (currOrg) {
-    const currProjIds = new Set(
-      appProjs.filter(({ id }) => !!id).map((p) => p.id)
-    );
-    const DBProjs = currOrg.organizationProjects;
-    // By filtering the DB projects for projects that aren't in the current projects ids passed into the API,
-    // we know that it was deleted in the registration form.
-    toDelete = DBProjs.filter((p) => !currProjIds.has(p.id)).map((p) => p.id);
-  }
 
-  // Updated projects are the remaining projects. There aren't necessarily changed,
-  // but making the PATCH request for projects that aren't modified won't change anything.
-  const currProjs = appProjs.filter(({ id }) => !!id) as ExistingProject[];
-  let toUpdate;
-  if (currOrg) {
-    toUpdate = currProjs.filter((p) => !new Set(toDelete).has(p.id));
-  }
+  const [toCreate, toUpdate, toDelete] = SplitObjs<
+    Project,
+    OrganizationProject
+  >(projects, currOrg?.organizationProjects);
 
   // ***
   // CREATING THE REQUEST FOR ORG, PROJECTS, AND QnRs.
