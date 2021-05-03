@@ -1,3 +1,12 @@
+import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import prisma from 'utils/prisma';
+import {
+  LgbtqDemographic,
+  RaceDemographic,
+  AgeDemographic,
+  OrganizationEvent,
+} from '@prisma/client';
 import {
   TextField,
   InputAdornment,
@@ -10,37 +19,36 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useFormik } from 'formik';
 import Layout from 'components/Layout';
 import { homepageFields } from 'interfaces';
-import Router from 'next/router';
 import {
   AgeDemographicLabels,
   RaceDemographicLabels,
   LgbtqDemographicLabels,
 } from 'utils/typesLinker';
-import styles from 'styles/Events.module.css';
-import {
-  LgbtqDemographic,
-  RaceDemographic,
-  AgeDemographic,
-} from '@prisma/client';
 import HorizEventCard from 'components/event/EventCard/horizEventCard';
-import { func } from 'joi';
+import styles from '../../styles/Events.module.css';
 
 const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
 
-const initialValues: homepageFields = {
-  ages: [],
-  orientation: [],
-  ethnicity: [],
-  orgName: '',
-};
-
 /* TODO: add onClick={goToMap} to submit button */
 
-const Home: React.FC = () => {
+type Props = {
+  events?: OrganizationEvent[];
+};
+
+const EventsHome: React.FC<Props> = ({ events }) => {
+  const router = useRouter();
+
+  const initialValues: homepageFields = {
+    ages: [],
+    orientation: [],
+    ethnicity: [],
+    orgName: '',
+  };
+
   const formik = useFormik({
     initialValues,
     onSubmit: async (values): Promise<void> => {
-      Router.push({
+      router.push({
         pathname: '/events/results',
         query: {
           orgName: values.orgName,
@@ -51,8 +59,9 @@ const Home: React.FC = () => {
       });
     },
   });
+
   return (
-    <Layout title="Home">
+    <Layout title="Events Home">
       <form onSubmit={formik.handleSubmit}>
         <div className={styles.root}>
           <div className={styles.topCol}>{slogan}</div>
@@ -166,11 +175,10 @@ const Home: React.FC = () => {
           </Button>
         </div>
         <div className={styles.trendingEvents}>
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
+          {events &&
+            events.map((event) => (
+              <HorizEventCard key={event.id} event={event} />
+            ))}
         </div>
         <div className={styles.explore}>
           <Typography className={styles.trending}>Popular Near You</Typography>
@@ -179,15 +187,31 @@ const Home: React.FC = () => {
           </Button>
         </div>
         <div className={styles.trendingEvents}>
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
+          {events &&
+            events.map((event) => (
+              <HorizEventCard key={event.id} event={event} />
+            ))}
         </div>
       </form>
     </Layout>
   );
 };
 
-export default Home;
+export default EventsHome;
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  try {
+    const events = await prisma.organizationEvent.findMany();
+    return {
+      props: { events },
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+    };
+  }
+};
