@@ -1,0 +1,28 @@
+.border {
+  border-radius: 20px;
+}
+
+.icon {
+  color: #9276b5;
+  font-size: 1000;
+}
+
+.iconClicked {
+  color: rgb(202, 0, 0);
+  font-size: 1000;
+}
+
+.popup {
+  padding: 7px;
+  padding-top: 13px;
+  padding-bottom: 10px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 125%;
+  color: #694f95;
+}
+
+.popupMap {
+  margin-left: 11px;
+}

@@ -100,6 +100,15 @@
   height: 80vh;
 }
 
+.resultsTitle {
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 26.05px;
+  line-height: 125%;
+  margin-bottom: -10px;
+}
+
 .pageContent {
   display: flex;
   flex-direction: row;
@@ -124,11 +133,22 @@
   flex-direction: row;
   flex-wrap: wrap;
   align-items: baseline;
+  margin-bottom: -5px;
+}
+
+.apply {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 125%;
+  color: white;
+  padding-bottom: 2px;
 }
 
 .filter {
   min-width: 130px;
   margin: 8px;
+  margin-left: 0;
 }
 
 .text {
@@ -152,17 +172,17 @@
 .leftCol {
   display: flex;
   flex-direction: column;
-  width: 35%;
+  width: 30%;
 }
 
 .rightCol {
   display: flex;
-  width: 65%;
-  border-width: 1px;
-  border-style: solid;
+  box-sizing: border-box;
+  width: 70%;
   border-radius: 5px;
-  border-color: rgba(187, 186, 186, 0.856);
+  border-color: white;
   flex-wrap: wrap;
+  height: 95%;
 }
 
 .cards {
@@ -174,6 +194,49 @@
   margin: 8px;
   flex-basis: 45%;
   text-align: left;
+}
+
+.cardRoot {
+  background-color: #ffffff00;
+  box-shadow: none;
+  margin-bottom: 20px;
+}
+
+.cardRootSelected {
+  background: #f8f4ff;
+  border-left: solid;
+  border-radius: 0;
+  border-width: 4px;
+  border-left-color: #694f95;
+  box-shadow: none;
+  margin-bottom: 20px;
+}
+
+.longOrgTitle {
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 21.18px;
+  line-height: 125%;
+  margin-bottom: 10px;
+}
+
+.longOrgTitleSelected {
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 21.18px;
+  line-height: 125%;
+  margin-bottom: 10px;
+  color: #694f95;
+}
+
+.orgInfo {
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 125%;
 }
 
 .filter {
@@ -207,18 +270,23 @@
   justify-content: center;
   text-transform: none;
   height: 25px;
+  background-color: transparent;
 }
 
 .filterLabel {
   font-style: normal;
+  font-weight: 600;
   font-size: 13px;
+  line-height: 125%;
 }
 
 .selectedLabel {
   font-style: normal;
-  font-size: 13px;
   margin-top: 4px;
   color: #423e45;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 125%;
 }
 
 .selectedFilter {
@@ -229,17 +297,16 @@
   border: 1px solid #423e45;
   margin: 10px;
   justify-content: center;
-  text-transform: none;
-  background: #f8f4ff;
+  background-color: #f8f4ff;
 }
 
 .applyButton {
   font-style: normal;
   font-size: 13px;
   border-radius: 18px;
-  border: 1px solid #908d93;
   margin: 10px;
-  justify-content: bottom;
+  padding-bottom: 1px;
+  justify-content: center;
   text-transform: none;
   height: 25px;
 }
