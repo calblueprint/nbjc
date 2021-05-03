@@ -13,9 +13,9 @@ import {
   TextField,
 } from '@material-ui/core';
 import { useState } from 'react';
-import styles from '../../styles/admin/Users.module.css';
 import { ModeratorInviteDTO } from 'pages/api/invites/moderator';
 import Toast from 'components/Toast';
+import styles from '../../styles/admin/Users.module.css';
 
 type AdminUsersIndexProps = {
   users: TableUser[];
@@ -28,27 +28,27 @@ const AdminUsersIndex: React.FunctionComponent<AdminUsersIndexProps> = ({
   const [inviteName, setInviteName] = useState('');
   const [inviteEmail, setInviteEmail] = useState('');
   const [submissionError, setSubmissionError] = useState(false);
-  const [errorMessage, setErrorMessage ] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const onInvite = async() : Promise<void> => {
+  const onInvite = async (): Promise<void> => {
     setSubmissionError(false);
     try {
-          if (!inviteEmail) {
-            throw new Error('Please input an email!');
-          }
-          const inviteRes = await fetch('/api/invites/moderator', {
-          method: 'POST',
-          headers: { "Content-Type": "application/json"},
-          credentials: "include",
-          body: JSON.stringify({
-              email: inviteEmail
-          } as ModeratorInviteDTO),
-        });
+      if (!inviteEmail) {
+        throw new Error('Please input an email!');
+      }
+      const inviteRes = await fetch('/api/invites/moderator', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          email: inviteEmail,
+        } as ModeratorInviteDTO),
+      });
 
-        if (!inviteRes.ok) {
-          const inviteErr = await inviteRes.json();
-          throw inviteErr.error;
-        }
+      if (!inviteRes.ok) {
+        const inviteErr = await inviteRes.json();
+        throw inviteErr.error;
+      }
     } catch (err) {
       setErrorMessage(err.message);
       setSubmissionError(true);
@@ -66,27 +66,27 @@ const AdminUsersIndex: React.FunctionComponent<AdminUsersIndexProps> = ({
     setModal(false);
   };
 
-  const renderErrorToast = () : JSX.Element => {
-    return(
-        <Toast
+  const renderErrorToast = (): JSX.Element => {
+    return (
+      <Toast
         snackbarProps={{
-            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
         }}
         type="error"
         showDismissButton
         disableClickaway
-        > 
+      >
         {errorMessage}
-        </Toast>
+      </Toast>
     );
-  }
+  };
 
-  const inviteModal = () : JSX.Element => (
+  const inviteModal = (): JSX.Element => (
     <Dialog
-    open={openModal}
-    onClose={handleClickClose}
-    className={styles.newModal}
-    fullWidth
+      open={openModal}
+      onClose={handleClickClose}
+      className={styles.newModal}
+      fullWidth
     >
       <div className={styles.dialogTitle}> Invite Moderator </div>
       <div className={styles.modalInput}>
@@ -129,8 +129,8 @@ const AdminUsersIndex: React.FunctionComponent<AdminUsersIndexProps> = ({
 
   return (
     <Layout title="Admin Users">
-      { submissionError? renderErrorToast() : null}
-      { inviteModal() }
+      {submissionError ? renderErrorToast() : null}
+      {inviteModal()}
       <AdminIndex
         page="User"
         search="Look for a User"
