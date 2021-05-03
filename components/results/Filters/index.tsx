@@ -75,6 +75,9 @@ const Filters: React.FunctionComponent<FiltersProps> = ({
               vertical: 'bottom',
               horizontal: 'left',
             },
+            classes: {
+              paper: styles.selectMenuOver,
+            },
             getContentAnchorEl: null,
           }}
         >
@@ -129,6 +132,9 @@ const Filters: React.FunctionComponent<FiltersProps> = ({
             anchorOrigin: {
               vertical: 'bottom',
               horizontal: 'left',
+            },
+            classes: {
+              paper: styles.selectMenuOver,
             },
             getContentAnchorEl: null,
           }}
@@ -185,6 +191,9 @@ const Filters: React.FunctionComponent<FiltersProps> = ({
             anchorOrigin: {
               vertical: 'bottom',
               horizontal: 'left',
+            },
+            classes: {
+              paper: styles.selectMenuOver,
             },
             getContentAnchorEl: null,
           }}
