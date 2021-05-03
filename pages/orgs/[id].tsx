@@ -23,6 +23,7 @@ import {
   AgeDemographic,
   Organization,
   Prisma,
+  OrganizationEvent,
 } from '@prisma/client';
 import Layout from 'components/Layout';
 import Tab from 'components/Tab';
@@ -40,6 +41,7 @@ import useSession from 'utils/useSession';
 import Toast from 'components/Toast';
 import EventCard from 'components/organization/EventCard';
 import Project from 'components/organization/Project';
+import ImgCarousel from 'components/organization/ImgCarousel';
 import styles from '../../styles/Organization.module.css';
 
 type Props = {
@@ -67,14 +69,21 @@ const OrgProfile: React.FunctionComponent<Props> = ({
   const [editState, setEditState] = useState<0 | 1>(0); // 0 == read, 1 == edit
   const [errorBanner, setErrorBanner] = useState('');
   const [org, setOrg] = useState(orgProp);
-  const eventsList = org?.organizationEvents?.map((event) => {
-    return (
-      <div className={styles.event}>
-        <EventCard event={event} />
-      </div>
-    );
-  });
+  const eventsList = org?.organizationEvents?.map(
+    (event: OrganizationEvent) => {
+      return (
+        <div className={styles.event}>
+          <EventCard event={event} />
+        </div>
+      );
+    }
+  );
   const [session, sessionLoading] = useSession();
+  const images = [
+    'https://1mktxg24rspz19foqjixu9rl-wpengine.netdna-ssl.com/wp-content/uploads/2020/01/eia-berkeley-Cover.png',
+    'public/logo2.png',
+    'public/sampleCover.png',
+  ];
 
   const cleanVals = (o: EditForm): EditForm => ({
     name: (o && o.name) ?? '',
@@ -481,10 +490,7 @@ const OrgProfile: React.FunctionComponent<Props> = ({
     <Layout title={`${org && org.name} Profile`}>
       <div className={styles.orgMargins}>
         <div className={styles.orgImages}>
-          <img
-            src="https://1mktxg24rspz19foqjixu9rl-wpengine.netdna-ssl.com/wp-content/uploads/2020/01/eia-berkeley-Cover.png"
-            alt="Organization"
-          />
+          <ImgCarousel images={images} />
         </div>
         <form onSubmit={formik.handleSubmit}>
           {errorBanner ? (
