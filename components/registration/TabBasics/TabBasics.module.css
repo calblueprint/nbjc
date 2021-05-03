@@ -7,12 +7,9 @@
 .row {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 5%;
   font-size: 15px;
   font-weight: bold;
-}
-
-.innerRow {
 }
 
 .innerLeftCol {

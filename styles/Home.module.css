@@ -12,27 +12,26 @@
   flex-direction: column;
   align-items: center;
   margin-right: 25px;
-  margin-bottom: 10px;
+  margin-bottom: 1%;
   margin-left: 25px;
-  height: 80%;
   border-radius: 25px;
   padding: 50px;
   background-image: url('/homepage2.png');
   background-repeat: no-repeat;
   background-size: cover;
+  min-height: 80vh;
 }
 
 .topCol {
   font-family: Epilogue, sans-serif;
   font-style: normal;
   font-weight: 1000;
-  font-size: 60px;
-  padding-right: 50px;
-  width: 60%;
+  font-size: 400%;
+  width: 55%;
   text-align: center;
   color: #423e45;
-  word-spacing: 15px;
-  margin-top: 3%;
+  word-spacing: 10px;
+  margin-top: 4%;
 }
 .bottomCol {
   width: 55%;
@@ -45,6 +44,7 @@
   display: flex;
   flex-direction: column;
   padding: 15px;
+  margin-top: 5%;
 }
 
 .big {

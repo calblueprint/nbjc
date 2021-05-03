@@ -105,7 +105,7 @@ const TabProj: React.FC<TabProps> = ({
                             : undefined
                         }
                       />
-                      <p>Description</p>
+                      <p className={styles.description}>Description</p>
                       <TextField
                         onChange={handleChange}
                         onBlur={handleBlur}
