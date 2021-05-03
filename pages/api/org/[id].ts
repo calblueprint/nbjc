@@ -1,6 +1,6 @@
 import prisma from 'utils/prisma';
-import { Organization, OrganizationProject } from '@prisma/client';
-import Joi, { ValidationError, x } from 'joi';
+import { Organization } from '@prisma/client';
+import Joi, { ValidationError } from 'joi';
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import OrganizationSchema, {
@@ -55,7 +55,7 @@ export const updateOrganization = async (
   let toDelete: number[] = [];
   if (currOrg) {
     const currProjIds = new Set(
-      orgProjects.filter(({ id }) => !!id).map((p) => p.id)
+      orgProjects.filter(({ id: projId }) => !!projId).map((p) => p.id)
     );
     const DBProjs = currOrg.organizationProjects;
     // By filtering the DB projects for projects that aren't in the current projects ids passed into the API,
@@ -65,7 +65,9 @@ export const updateOrganization = async (
 
   // Updated projects are the remaining projects. There aren't necessarily changed,
   // but making the PATCH request for projects that aren't modified won't change anything.
-  const currProjs = orgProjects.filter(({ id }) => !!id) as ExistingProject[];
+  const currProjs = orgProjects.filter(
+    ({ id: projId }) => !!projId
+  ) as ExistingProject[];
   let toUpdate;
   if (currOrg) {
     toUpdate = currProjs.filter((p) => !new Set(toDelete).has(p.id));
@@ -88,7 +90,7 @@ export const updateOrganization = async (
               description,
             },
           })),
-          deleteMany: toDelete.map((id) => ({ id })),
+          deleteMany: toDelete.map((projId) => ({ id: projId })),
         },
       },
       create: {
@@ -141,8 +143,32 @@ export const updateOrganization = async (
  * @param id - the ID of the Organization
  */
 export const deleteOrganization = async (
-  id: string
+  orgId: string
 ): Promise<Organization | null> => {
+  const id = Number(orgId);
+  await prisma.applicationNote.deleteMany({
+    where: { organizationId: id },
+  });
+  await prisma.applicationResponse.deleteMany({
+    where: { organization: { id } },
+  });
+  await prisma.organizationEvent.deleteMany({
+    where: { organization: { id } },
+  });
+  await prisma.organizationProject.deleteMany({
+    where: { organization: { id } },
+  });
+  await prisma.organizationApplicationReview.deleteMany({
+    where: { organization: { id } },
+  });
+  await prisma.organization.update({
+    where: { id: Number(id) },
+    data: {
+      user: {
+        disconnect: true,
+      },
+    },
+  });
   const deletedOrg = await prisma.organization.delete({
     where: { id: Number(id) },
   });
@@ -188,7 +214,11 @@ export default async (
       const deletedOrg = await deleteOrganization(orgId);
       return res.json(deletedOrg);
     } catch (err) {
-      return CreateError(500, `Failed to delete organization ${orgId}`, res);
+      return CreateError(
+        500,
+        `Failed to delete organization ${orgId}, ${err.message}`,
+        res
+      );
     }
   }
   return MethodNotAllowed(req.method, res);
