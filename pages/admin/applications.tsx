@@ -9,6 +9,7 @@ import { TableOrgApplication, tableOrgApplicationArgs } from 'interfaces/admin';
 import getSession from 'utils/getSession';
 import DeclineModal from 'components/moderator/DeclineModal';
 import { ApplicationNote } from '@prisma/client';
+import { useSnackbar } from 'notistack';
 
 type AdminAppIndexProps = {
   orgs: TableOrgApplication[];
@@ -19,67 +20,77 @@ const AdminAppIndex: React.FunctionComponent<AdminAppIndexProps> = ({
   orgs,
   notes,
 }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
   const [openDeclineModal, setOpenDeclineModal] = useState(false);
   const [actionIndex, setActionIndex] = useState(-1);
   const [processingAction, setProcessingAction] = useState(false);
 
-  const approveApp = async (approve: boolean, reason = ''): Promise<void> => {
+  const approveApp = async (
+    approve: boolean,
+    index: number,
+    reason = ''
+  ): Promise<void> => {
     setProcessingAction(true);
-    if (orgs[actionIndex]) {
+    if (orgs[index]) {
       if (approve) {
         /** put in form of const res so you can say if res === ok then display this banner */
         try {
-          const res = await fetch(
-            `/api/app/orgs/${orgs[actionIndex].id}/approve`,
-            {
-              method: 'POST',
-            }
-          );
+          const res = await fetch(`/api/app/orgs/${orgs[index].id}/approve`, {
+            method: 'POST',
+          });
           if (res.ok) {
-            // setOpenApprove(true);
-            // setSuccessBanner('Successfully approved.');
+            enqueueSnackbar(`Successfully approved ${orgs[index].name}`, {
+              variant: 'success',
+            });
             // Refresh data without full page reload
             router.replace(router.asPath);
           } else {
-            // setErrorBanner('Failed to process approval');
+            enqueueSnackbar(`Failed to approve ${orgs[index].name}`, {
+              variant: 'error',
+            });
           }
         } catch (err) {
-          // setErrorBanner('Failed to process approval');
+          enqueueSnackbar(`Failed to approve ${orgs[index].name}`, {
+            variant: 'error',
+          });
         }
       } else {
         try {
-          const res = await fetch(
-            `/api/app/orgs/${orgs[actionIndex].id}/reject`,
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ reason }),
-            }
-          );
+          const res = await fetch(`/api/app/orgs/${orgs[index].id}/reject`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reason }),
+          });
           if (res.ok) {
-            // setSuccessBanner(
-            //   `${orgs[index].name} has been successfully rejected.`
-            // );
+            enqueueSnackbar(`Successfully declined ${orgs[index].name}`, {
+              variant: 'success',
+            });
             // Refresh data without full page reload
             router.replace(router.asPath);
           } else {
-            // setErrorBanner('Failed to process rejection');
+            enqueueSnackbar(`Failed to reject ${orgs[index].name}`, {
+              variant: 'error',
+            });
           }
         } catch (err) {
-          // setErrorBanner('Failed to process rejection');
+          enqueueSnackbar(`Failed to reject ${orgs[index].name}`, {
+            variant: 'error',
+          });
         }
       }
     } else {
-      // setErrorBanner('An organization app must be selected first');
+      enqueueSnackbar('Organization does not exist', {
+        variant: 'error',
+      });
     }
     setActionIndex(-1);
     setProcessingAction(false);
   };
 
-  const acceptClick = async (index: number) => {
+  const acceptClick = (index: number) => {
     setActionIndex(index);
-    approveApp(true);
+    approveApp(true, index);
   };
 
   const declineClick = (index: number) => {
@@ -94,7 +105,7 @@ const AdminAppIndex: React.FunctionComponent<AdminAppIndexProps> = ({
         openModal={openDeclineModal}
         closeModal={() => setOpenDeclineModal(false)}
         declineAction={(declineReason: string) =>
-          approveApp(false, declineReason)
+          approveApp(false, actionIndex, declineReason)
         }
         note={notes[actionIndex]?.note}
       />

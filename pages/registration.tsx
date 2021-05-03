@@ -319,7 +319,10 @@ const Registration: React.FunctionComponent<RegistrationProps> = ({
                     color="primary"
                     type="submit"
                     onClick={() => {
-                      if (Object.keys(formik.errors).length !== 0) {
+                      if (
+                        formik.errors &&
+                        Object.keys(formik.errors).length !== 0
+                      ) {
                         setShowErrorToast(true);
                       } else {
                         handleSubmit(false)(formik.values);

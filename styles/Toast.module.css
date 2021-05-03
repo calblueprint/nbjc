@@ -1,4 +1,4 @@
-.root {
+.root > * {
   color: black;
   border-radius: 20px;
   box-shadow: 1px 2px 20px rgba(128, 128, 128, 0.171);
@@ -10,14 +10,17 @@
   padding-left: 25px;
   padding-right: 25px;
   max-width: 600px;
+  background-color: #f8f4ff;
 }
 
-.default {
-  background: #f8f4ff;
+.success {
+  color: black !important;
+  background-color: #f8f4ff !important;
 }
 
 .error {
-  background: #fff0f0;
+  color: black !important;
+  background-color: #fff0f0 !important;
 }
 
 .defaultMaxWidth {
