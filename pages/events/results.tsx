@@ -12,7 +12,7 @@ import {
 } from 'utils/typesLinker';
 import prisma from 'utils/prisma';
 import Filters from 'components/results/Filters';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import HorizEventCard from 'components/event/EventCard/horizEventCard';
 import Layout from 'components/Layout';
@@ -61,7 +61,7 @@ const EventsResults: React.FC<EventsResultsProps> = ({
   };
 
   const handleSearch = (): void => {
-    Router.push({
+    router.push({
       pathname: router.pathname,
       query: {
         eventName: searchVal,

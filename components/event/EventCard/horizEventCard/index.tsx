@@ -17,7 +17,6 @@ type HorizEventCardProps = {
 const HorizEventCard: React.FunctionComponent<HorizEventCardProps> = ({
   event,
 }) => {
-  const router = useRouter();
   return (
     <div className={styles.event_cards}>
       <Card className={styles.event_card}>

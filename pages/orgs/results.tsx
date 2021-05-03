@@ -11,9 +11,8 @@ import {
   RaceDemographicLabels,
 } from 'utils/typesLinker';
 import prisma from 'utils/prisma';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-
 import {
   FormControl,
   InputLabel,
@@ -70,7 +69,7 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
   };
 
   const handleSearch = (): void => {
-    Router.push({
+    router.push({
       pathname: 'results',
       query: {
         orgName: searchVal,
@@ -107,7 +106,7 @@ const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
                 orgs.map((org) => (
                   <Card className={styles.card} key={org.id}>
                     <CardActionArea
-                      onClick={() => router.push(`/orgs/${org.id}`)}
+                      onClick={() => window.open(`/orgs/${org.id}`)}
                     >
                       <CardContent>
                         <Typography variant="h5">{org.name}</Typography>

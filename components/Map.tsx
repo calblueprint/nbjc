@@ -29,6 +29,12 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
     longitude: -122.2601,
     zoom: 12,
   });
+  const isOrganization = (
+    obj: Organization | OrganizationEvent
+  ): obj is Organization => {
+    if ((obj as Organization).name) return true;
+    return false;
+  };
   return (
     <ReactMapGL
       mapStyle="mapbox://styles/nbjc-calblueprint/ckhn0b28l04yz1apxewszuevn"
@@ -56,8 +62,7 @@ const Map: React.FunctionComponent<MapProps & ViewportStateProps> = ({
                     latitude={obj.lat}
                     longitude={obj.long}
                   >
-                    {typeof obj}
-                    {/* {obj instanceof === "OrganizationEvent" ? obj.title! : obj.name!} */}
+                    {isOrganization(obj) ? obj.name : obj.title}
                   </Popup>
                 ) : null}
               </div>
