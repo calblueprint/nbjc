@@ -154,7 +154,6 @@ model OrganizationProject {
   @@map("organization_projects")
 }
 
-
 model PasswordResets {
   id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   userId    Int      @map("user_id")
@@ -163,6 +162,15 @@ model PasswordResets {
   users     User     @relation("PasswordResetsToUsers", fields: [userId], references: [id])
 
   @@map("password_resets")
+}
+
+model ModeratorInvite {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  email     String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  valid     Boolean  @default(true)
+
+  @@map("moderator_invites")
 }
 
 model OrganizationApplicationReview {
