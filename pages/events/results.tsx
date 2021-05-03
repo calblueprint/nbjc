@@ -55,6 +55,7 @@ const Home: React.FC<EventsProps> = ({ orgs }) => {
           }}
           variant="outlined"
         />
+        <Typography className={styles.results}>Results</Typography>
         <div className={styles.filters}>
           <FormControl
             className={styles.filter}

@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { useFormik } from 'formik';
+import { useFormik, FormikHandlers } from 'formik';
 import Layout from 'components/Layout';
 import { homepageFields } from 'interfaces';
 import Router from 'next/router';
@@ -16,7 +16,11 @@ import {
   RaceDemographicLabels,
   LgbtqDemographicLabels,
 } from 'utils/typesLinker';
-import styles from 'styles/Events.module.css';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
 import {
   LgbtqDemographic,
   RaceDemographic,
@@ -24,6 +28,12 @@ import {
 } from '@prisma/client';
 import HorizEventCard from 'components/event/EventCard/horizEventCard';
 import { func } from 'joi';
+import { useState } from 'react';
+import styles from 'styles/Events.module.css';
+
+type TabProps = {
+  handleBlur: FormikHandlers['handleBlur'];
+};
 
 const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
 
@@ -37,6 +47,10 @@ const initialValues: homepageFields = {
 /* TODO: add onClick={goToMap} to submit button */
 
 const Home: React.FC = () => {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const handleDateChange = (date: Date | null): void => {
+    setSelectedDate(date);
+  };
   const formik = useFormik({
     initialValues,
     onSubmit: async (values): Promise<void> => {
@@ -60,6 +74,26 @@ const Home: React.FC = () => {
             <Card className={styles.searchCard}>
               <div className={styles.big}>Explore Events</div>
               <div className={styles.auto}>
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                  <KeyboardDatePicker
+                    className={styles.autoField}
+                    size="small"
+                    // onBlur={handleBlur}
+                    // value={
+                    //   selectedDate === new Date() ? values.foundingDate : selectedDate
+                    // }
+                    value={new Date()}
+                    name="foundingDate"
+                    format="MM/dd/yyyy"
+                    margin="normal"
+                    id="date-picker-inline"
+                    onChange={handleDateChange}
+                    inputVariant="outlined"
+                    KeyboardButtonProps={{
+                      'aria-label': 'change date',
+                    }}
+                  />
+                </MuiPickersUtilsProvider>
                 <Autocomplete
                   multiple
                   id="tags-outlined"

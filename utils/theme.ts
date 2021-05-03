@@ -54,7 +54,8 @@ export default createMuiTheme({
   overrides: {
     MuiOutlinedInput: {
       root: {
-        borderRadius: '10px',
+        borderRadius: '20px',
+        maxHeight: '40px',
       },
     },
   },

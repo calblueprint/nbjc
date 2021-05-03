@@ -2,6 +2,7 @@
   margin: 10px;
   flex-basis: 45%;
   text-align: left;
+  border-radius: 15px;
 }
 
 .event_date {
