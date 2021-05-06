@@ -89,11 +89,9 @@ const Filters: React.FunctionComponent<FiltersProps> = ({
                   root: styles.filterOption,
                 }}
                 style={{
-                  backgroundColor: demographicFilters.includes(
-                    LgbtqDemographicLabels[filterOption] as LgbtqDemographic
-                  )
+                  backgroundColor: demographicFilters.includes(filterOption)
                     ? '#F8F4FF'
-                    : 'transparent',
+                    : 'white',
                 }}
                 component={outlinedButton}
                 disableRipple
@@ -147,13 +145,10 @@ const Filters: React.FunctionComponent<FiltersProps> = ({
                   root: styles.filterOption,
                 }}
                 component={outlinedButton}
-                className={styles.filterOption}
                 style={{
-                  backgroundColor: backgroundFilters.includes(
-                    RaceDemographicLabels[filterOption] as RaceDemographic
-                  )
+                  backgroundColor: backgroundFilters.includes(filterOption)
                     ? '#F8F4FF'
-                    : 'transparent',
+                    : 'white',
                 }}
                 disableRipple
                 value={filterOption}
@@ -208,11 +203,9 @@ const Filters: React.FunctionComponent<FiltersProps> = ({
                 component={outlinedButton}
                 disableRipple
                 style={{
-                  backgroundColor: audienceFilters.includes(
-                    AgeDemographicLabels[filterOption] as AgeDemographic
-                  )
+                  backgroundColor: audienceFilters.includes(filterOption)
                     ? '#F8F4FF'
-                    : 'transparent',
+                    : 'white',
                 }}
                 value={filterOption}
               >
