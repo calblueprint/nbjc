@@ -1,9 +1,10 @@
 import prisma from 'utils/prisma';
 import { OrganizationEvent } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
-
-import EventSchema from 'interfaces/event';
+import EventSchema, { NewEvent } from 'interfaces/event';
 import CreateError, { MethodNotAllowed } from 'utils/error';
+import SplitObjs from 'utils/splitObjs';
+import Joi from 'joi';
 
 export const getAllEvents = async (): Promise<OrganizationEvent[] | null> => {
   const events = await prisma.organizationEvent.findMany();
@@ -17,37 +18,67 @@ export default async (
   if (req.method !== 'POST') {
     return MethodNotAllowed(req.method, res);
   }
-
-  // should the context be strict: true?
-  const { error, value } = EventSchema.validate(req.body, {
+  // We will be doing a complete upsert for all the events here.
+  const eventValidation = Joi.array().items(EventSchema);
+  const { error, value } = eventValidation.validate(req.body.events, {
     context: { strict: false },
   });
   if (error) {
     return CreateError(400, error.message, res);
   }
 
-  const data = value as OrganizationEvent;
+  const events = value as NewEvent[];
 
-  // line 36, should organizations be singular? it won't let me make it so.
+  // Splitting objects into create, update, and delete
+  const currEvents = await prisma.organizationEvent.findMany({
+    where: {
+      organizationId: req.body.organizationId,
+    },
+  });
+  const [toCreate, toUpdate, toDelete] = SplitObjs<NewEvent, OrganizationEvent>(
+    events,
+    currEvents
+  );
+
+  // ***
+  // CREATING THE REQUESTS FOR CREATEMANY, UPDATEMANY, AND DELETEMANY
+  // ***
+  let newChanges;
   try {
-    const newEvent = await prisma.organizationEvent.create({
-      data: {
-        title: data.title,
-        description: data.description,
-        lgbtqDemographic: data.lgbtqDemographic,
-        ageDemographic: data.ageDemographic,
-        raceDemographic: data.raceDemographic,
-        link: data.link,
-        address: data.address,
-        organization: {
-          connect: { id: data.organizationId },
+    if (toCreate) {
+      for (let i = 0; i < toCreate.length; i += 1) {
+        const created = prisma.organizationEvent.create({
+          data: toCreate[i],
+        });
+      }
+    }
+    if (toUpdate) {
+      const updatedMany = prisma.organizationEvent.updateMany({
+        data: toUpdate,
+      });
+    }
+    if (toDelete) {
+      const deleteMany = prisma.organizationEvent.deleteMany({
+        where: {
+          id: {
+            in: toDelete,
+          },
         },
-        startDatetime: data.startDatetime,
-        endDatetime: data.endDatetime,
-      },
-    });
-    return res.json(newEvent);
+      });
+    }
   } catch (err) {
-    return CreateError(500, 'Failed to create event', res);
+    return CreateError(
+      500,
+      'Failed to save changes to organization events.',
+      res
+    );
   }
+
+  // Return the organization events for the organization.
+  const finalEvents = await prisma.organizationEvent.findMany({
+    where: {
+      organizationId: req.body.organizationId,
+    },
+  });
+  return res.json({ finalEvents });
 };

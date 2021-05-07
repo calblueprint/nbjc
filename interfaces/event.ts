@@ -17,7 +17,25 @@ export type Event = Prisma.OrganizationEventGetPayload<{
   };
 }>;
 
+export type NewEvent = Prisma.OrganizationEventGetPayload<{
+  select: {
+    title: true;
+    description: true;
+    address: true;
+    link: true;
+    lgbtqDemographic: true;
+    raceDemographic: true;
+    ageDemographic: true;
+    organizationId: true;
+    startDatetime: true;
+    endDatetime: true;
+  };
+}> & {
+  id?: number;
+};
+
 const schema = Joi.object({
+  id: Joi.number(),
   title: Joi.string()
     .empty('')
     .when('$strict', {

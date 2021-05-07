@@ -73,7 +73,7 @@ const TabProj: React.FC<TabProps> = ({
                     // eslint-disable-next-line react/no-array-index-key
                     <div className={styles.row} key={index}>
                       <div className={styles.rowEntry}>
-                        <p>Project or Event Name</p>
+                        <p>Project or Resource Name</p>
                         {/* <Button onClick={() => arrayHelpers.remove(index)}> */}
                         <Button
                           className={styles.deleteButton}
