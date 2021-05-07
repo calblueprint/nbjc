@@ -34,7 +34,7 @@
   word-spacing: 15px;
 }
 .bottomCol {
-  width: 55%;
+  width: 68%;
 }
 
 .searchCard {
@@ -262,7 +262,7 @@
 .trending {
   font-weight: bolder;
   margin-left: 5%;
-  font-size: 20px;
+  font-size: 25px;
   margin-top: 2%;
   margin-bottom: 1%;
   color: #423e45;
@@ -273,6 +273,7 @@
   margin-right: 3%;
   font-weight: bolder;
   color: #423e45;
+  font-size: 15px;
 }
 
 .trendingEvents {
@@ -280,4 +281,11 @@
   flex-direction: row;
   margin-left: 5%;
   overflow: auto;
+}
+
+.results {
+  margin-left: 15px;
+  font-size: 20px;
+  font-weight: bolder;
+  color: #423e45;
 }

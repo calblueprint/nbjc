@@ -3,7 +3,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useFormik } from 'formik';
 import Layout from 'components/Layout';
-import { homepageFields } from 'interfaces';
+import { OrgPageFields } from 'interfaces';
 import Router, { useRouter } from 'next/router';
 import {
   AgeDemographicLabels,
@@ -15,21 +15,18 @@ import {
   RaceDemographic,
   AgeDemographic,
 } from '@prisma/client';
+import { SLOGAN } from 'utils/typography';
 import styles from 'styles/Home.module.css';
 import Toast from 'components/Toast';
 
-const slogan = 'Empowering Black, LGBTQ+/SGL people and communities.';
-
-const initialValues: homepageFields = {
-  ages: [],
-  orientation: [],
-  ethnicity: [],
-  orgName: '',
-};
-
-/* TODO: add onClick={goToMap} to submit button */
-
 const Home: React.FC = () => {
+  const initialValues: OrgPageFields = {
+    ages: [],
+    orientation: [],
+    ethnicity: [],
+    orgName: '',
+  };
+
   const formik = useFormik({
     initialValues,
     onSubmit: async (values): Promise<void> => {
@@ -67,7 +64,7 @@ const Home: React.FC = () => {
       {resetSuccess ? renderSuccessToast() : null}
       <form onSubmit={formik.handleSubmit}>
         <div className={styles.root}>
-          <div className={styles.topCol}>{slogan}</div>
+          <div className={styles.topCol}>{SLOGAN}</div>
           <div className={styles.bottomCol}>
             <Card className={styles.searchCard}>
               <div className={styles.big}>Explore Organizations</div>

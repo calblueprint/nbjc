@@ -36,19 +36,23 @@ const Map = dynamic(() => import('../../components/Map'), {
 
 type ResultsProps = {
   orgs: Organization[];
-  searchValProp: string;
 };
 
-const Results: React.FC<ResultsProps> = ({ orgs, searchValProp }) => {
+const Results: React.FC<ResultsProps> = ({ orgs }) => {
   const router = useRouter();
-  const [searchVal, setSearchVal] = useState(searchValProp);
+  const { orgName, ages, ethnicity, orientation } = router.query;
+  const filtersConverter = (filters: any) =>
+    typeof filters === 'string' ? [filters] : filters;
+  const [searchVal, setSearchVal] = useState(orgName as string | undefined);
   const [demographicFilters, setDemographicFilters] = useState<
     LgbtqDemographic[]
-  >([]);
+  >(filtersConverter(orientation));
   const [backgroundFilters, setBackgroundFilters] = useState<RaceDemographic[]>(
-    []
+    filtersConverter(ethnicity)
   );
-  const [audienceFilters, setAudienceFilters] = useState<AgeDemographic[]>([]);
+  const [audienceFilters, setAudienceFilters] = useState<AgeDemographic[]>(
+    filtersConverter(ages)
+  );
 
   const handleDemographicChange = (
     event: React.ChangeEvent<{ value: unknown }>
@@ -170,7 +174,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       props: {
         orgs,
-        searchValProp: context.query?.orgName,
       },
     };
   } catch (err) {

@@ -18,18 +18,20 @@ import SearchIcon from '@material-ui/icons/Search';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useFormik } from 'formik';
 import Layout from 'components/Layout';
-import { homepageFields } from 'interfaces';
+import { EventPageFields } from 'interfaces';
 import {
   AgeDemographicLabels,
   RaceDemographicLabels,
   LgbtqDemographicLabels,
 } from 'utils/typesLinker';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
 import HorizEventCard from 'components/event/EventCard/horizEventCard';
-import styles from '../../styles/Events.module.css';
-
-const slogan = 'Empowering Black, LGBTQ+/SGL people and communities.';
-
-/* TODO: add onClick={goToMap} to submit button */
+import { SLOGAN } from 'utils/typography';
+import styles from 'styles/Events.module.css';
 
 type Props = {
   events?: OrganizationEvent[];
@@ -38,23 +40,26 @@ type Props = {
 const EventsHome: React.FC<Props> = ({ events }) => {
   const router = useRouter();
 
-  const initialValues: homepageFields = {
+  const initialValues: EventPageFields = {
     ages: [],
     orientation: [],
     ethnicity: [],
-    orgName: '',
+    eventName: '',
+    date: '',
   };
 
   const formik = useFormik({
     initialValues,
     onSubmit: async (values): Promise<void> => {
+      console.log(values);
       router.push({
         pathname: '/events/results',
         query: {
-          orgName: values.orgName,
+          eventName: values.eventName,
           ages: values.ages,
           ethnicity: values.ethnicity,
           orientation: values.orientation,
+          date: values.date,
         },
       });
     },
@@ -64,11 +69,31 @@ const EventsHome: React.FC<Props> = ({ events }) => {
     <Layout title="Events Home">
       <form onSubmit={formik.handleSubmit}>
         <div className={styles.root}>
-          <div className={styles.topCol}>{slogan}</div>
+          <div className={styles.topCol}>{SLOGAN}</div>
           <div className={styles.bottomCol}>
             <Card className={styles.searchCard}>
               <div className={styles.big}>Explore Events</div>
               <div className={styles.auto}>
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                  <KeyboardDatePicker
+                    className={styles.autoField}
+                    size="small"
+                    value={
+                      formik.values.date ? new Date(formik.values.date) : null
+                    }
+                    name="foundingDate"
+                    format="MM/dd/yyyy"
+                    margin="normal"
+                    id="date-picker-inline"
+                    onChange={(event, newValue) => {
+                      formik.setFieldValue('date', newValue);
+                    }}
+                    inputVariant="outlined"
+                    KeyboardButtonProps={{
+                      'aria-label': 'change date',
+                    }}
+                  />
+                </MuiPickersUtilsProvider>
                 <Autocomplete
                   multiple
                   id="tags-outlined"
@@ -146,7 +171,7 @@ const EventsHome: React.FC<Props> = ({ events }) => {
                   fullWidth
                   className={styles.textField}
                   onChange={formik.handleChange}
-                  name="orgName"
+                  name="eventName"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">

@@ -10,6 +10,7 @@ import {
   LgbtqDemographicLabels,
   RaceDemographicLabels,
 } from 'utils/typesLinker';
+import { Typography } from '@material-ui/core';
 import prisma from 'utils/prisma';
 import Filters from 'components/results/Filters';
 import { useRouter } from 'next/router';
@@ -25,22 +26,25 @@ const Map = dynamic(() => import('../../components/Map'), {
 
 type EventsResultsProps = {
   events: OrganizationEvent[];
-  searchValProp: string;
 };
 
-const EventsResults: React.FC<EventsResultsProps> = ({
-  events,
-  searchValProp,
-}) => {
+const EventsResults: React.FC<EventsResultsProps> = ({ events }) => {
   const router = useRouter();
-  const [searchVal, setSearchVal] = useState(searchValProp);
+  const { eventName, orientation, ethnicity, ages } = router.query;
+  const filtersConverter = (filters: any) =>
+    typeof filters === 'string' ? [filters] : filters;
+
+  const [searchVal, setSearchVal] = useState(eventName as string | undefined);
+  // Ugly solution to the one filter issues.
   const [demographicFilters, setDemographicFilters] = useState<
     LgbtqDemographic[]
-  >([]);
+  >((filtersConverter(orientation) as LgbtqDemographic[]) ?? []);
   const [backgroundFilters, setBackgroundFilters] = useState<RaceDemographic[]>(
-    []
+    (filtersConverter(ethnicity) as RaceDemographic[]) ?? []
   );
-  const [audienceFilters, setAudienceFilters] = useState<AgeDemographic[]>([]);
+  const [audienceFilters, setAudienceFilters] = useState<AgeDemographic[]>(
+    (filtersConverter(ages) as AgeDemographic[]) ?? []
+  );
 
   const handleDemographicChange = (
     event: React.ChangeEvent<{ value: unknown }>
@@ -92,10 +96,12 @@ const EventsResults: React.FC<EventsResultsProps> = ({
                 handleSearch={handleSearch}
               />
             </div>
-            <div className={styles.event_cards}>
-              {events.map((event) => (
-                <HorizEventCard event={event} />
-              ))}
+            <div className={styles.eventCards}>
+              {events && events.length !== 0 ? (
+                events.map((event) => <HorizEventCard event={event} />)
+              ) : (
+                <Typography>No Events</Typography>
+              )}
             </div>
           </div>
           <div className={styles.rightCol}>
@@ -121,27 +127,34 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const agesBody = context.query.ages
       ? context.query.ages
       : Object.keys(AgeDemographicLabels);
+    const date = context.query.date
+      ? new Date(context.query.date as string)
+      : undefined;
     const events = await prisma.organizationEvent.findMany({
       where: {
-        title: {
-          contains: context.query?.eventName as string,
-          mode: 'insensitive',
-        },
-        lgbtqDemographic: {
-          hasSome: orientationBody as LgbtqDemographic[],
-        },
-        raceDemographic: {
-          hasSome: ethnicityBody as RaceDemographic[],
-        },
-        ageDemographic: {
-          hasSome: agesBody as AgeDemographic[],
+        AND: {
+          title: {
+            contains: context.query?.eventName as string,
+            mode: 'insensitive',
+          },
+          lgbtqDemographic: {
+            hasSome: orientationBody as LgbtqDemographic[],
+          },
+          raceDemographic: {
+            hasSome: ethnicityBody as RaceDemographic[],
+          },
+          ageDemographic: {
+            hasSome: agesBody as AgeDemographic[],
+          },
+          startDatetime: {
+            equals: date,
+          },
         },
       },
     });
     return {
       props: {
         events,
-        searchValProp: context.query?.eventName,
       },
     };
   } catch (err) {
