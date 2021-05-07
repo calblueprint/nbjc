@@ -81,8 +81,9 @@ const OrgProfile: React.FunctionComponent<Props> = ({
   const [session, sessionLoading] = useSession();
   const images = [
     'https://1mktxg24rspz19foqjixu9rl-wpengine.netdna-ssl.com/wp-content/uploads/2020/01/eia-berkeley-Cover.png',
-    'public/logo2.png',
-    'public/sampleCover.png',
+    '/logo1.png',
+    '/homepage.png',
+    '/logo1.png',
   ];
 
   const cleanVals = (o: EditForm): EditForm => ({

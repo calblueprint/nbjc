@@ -1,14 +1,9 @@
-// eslint-disable-next-line no-use-before-define
-import React from 'react';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
+import { Tab, Tabs, Typography, Box } from '@material-ui/core';
+import { useState } from 'react';
 import styles from './ImgCarousel.module.css';
 
 interface TabPanelProps {
-  // eslint-disable-next-line react/require-default-props
-  children?: React.ReactNode;
+  children: React.ReactNode;
   index: any;
   value: any;
 }
@@ -45,32 +40,25 @@ type ImgProps = {
 };
 
 const ImgCarousel: React.FC<ImgProps> = ({ images }) => {
-  const [value, setValue] = React.useState(0);
-
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
-  };
+  const [imgIndex, setImgIndex] = useState(0);
 
   return (
     <div className={styles.root}>
       <div className={styles.tabPanel}>
-        <TabPanel value={value} index={0}>
-          <img className={styles.tabImg} src={images[0]} alt="0" />
-        </TabPanel>
-        <TabPanel value={value} index={1}>
-          <img className={styles.tabImg} src={images[1]} alt="1" />
-        </TabPanel>
-        <TabPanel value={value} index={2}>
-          <img className={styles.tabImg} src={images[2]} alt="2" />
-        </TabPanel>
+        {images && images.length
+          ? images.map((img, idx) => (
+              <TabPanel value={imgIndex} index={idx}>
+                <img className={styles.tabImg} src={img} alt={idx.toString()} />
+              </TabPanel>
+            ))
+          : null}
       </div>
       <Tabs
         orientation="vertical"
-        variant="standard"
+        variant="scrollable"
         selectionFollowsFocus={false}
-        value={value}
-        onChange={handleChange}
+        value={imgIndex}
+        onChange={(e, newVal) => setImgIndex(newVal)}
         aria-label="Vertical tabs"
         className={styles.tabs}
         TabIndicatorProps={{
@@ -79,21 +67,15 @@ const ImgCarousel: React.FC<ImgProps> = ({ images }) => {
           },
         }}
       >
-        <Tab
-          className={styles.sideTab}
-          icon={<img alt="0" src={images[0]} />}
-          {...a11yProps(0)}
-        />
-        <Tab
-          className={styles.sideTab}
-          icon={<img alt="1" src={images[1]} />}
-          {...a11yProps(1)}
-        />
-        <Tab
-          className={styles.sideTab}
-          icon={<img alt="2" src={images[2]} />}
-          {...a11yProps(2)}
-        />
+        {images && images.length
+          ? images.map((img, idx) => (
+              <Tab
+                className={styles.sideTab}
+                icon={<img alt={idx.toString()} src={img} />}
+                {...a11yProps(idx)}
+              />
+            ))
+          : null}
       </Tabs>
     </div>
   );

@@ -46,12 +46,12 @@ const Results: React.FC<ResultsProps> = ({ orgs }) => {
   const [searchVal, setSearchVal] = useState(orgName as string | undefined);
   const [demographicFilters, setDemographicFilters] = useState<
     LgbtqDemographic[]
-  >(filtersConverter(orientation));
+  >(filtersConverter(orientation) ?? []);
   const [backgroundFilters, setBackgroundFilters] = useState<RaceDemographic[]>(
-    filtersConverter(ethnicity)
+    filtersConverter(ethnicity) ?? []
   );
   const [audienceFilters, setAudienceFilters] = useState<AgeDemographic[]>(
-    filtersConverter(ages)
+    filtersConverter(ages) ?? []
   );
 
   const handleDemographicChange = (
