@@ -9,7 +9,15 @@ export type Moderator = {
   name: string;
 };
 
-export type homepageFields = {
+export type EventPageFields = {
+  eventName: string;
+  ages: string[];
+  ethnicity: string[];
+  orientation: string[];
+  date: string;
+};
+
+export type OrgPageFields = {
   orgName: string;
   ages: string[];
   ethnicity: string[];

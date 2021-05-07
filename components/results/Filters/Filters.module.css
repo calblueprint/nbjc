@@ -1,0 +1,71 @@
+.filter {
+  min-width: 130px;
+  margin: 8px;
+}
+
+.filterDropDown {
+  border-radius: 35px;
+  width: 120px;
+  height: 25px;
+  margin-top: 13px;
+}
+
+.filterDropDownActive {
+  border-radius: 35px;
+  width: 120px;
+  height: 25px;
+  margin-top: 13px;
+  background-color: #f8f4ff;
+}
+
+.filterOption {
+  font-style: normal;
+  font-size: 13px;
+  color: #908d93;
+  border-radius: 18px;
+  border: 1px solid #908d93;
+  margin: 10px;
+  justify-content: center;
+  text-transform: none;
+  height: 25px;
+}
+
+.filterLabel {
+  font-style: normal;
+  font-size: 13px;
+}
+
+.selectedLabel {
+  font-style: normal;
+  font-size: 13px;
+  margin-top: 4px;
+  color: #423e45;
+}
+
+.selectedFilter {
+  font-style: normal;
+  font-size: 13px;
+  color: #423e45;
+  border-radius: 18px;
+  border: 1px solid #423e45;
+  margin: 10px;
+  justify-content: center;
+  text-transform: none;
+  background: #f8f4ff;
+}
+
+.applyButton {
+  font-style: normal;
+  font-size: 13px;
+  border-radius: 18px;
+  border: 1px solid #908d93;
+  margin: 10px;
+  justify-content: bottom;
+  text-transform: none;
+  height: 25px;
+}
+
+.selectMenuOver {
+  box-shadow: -2px 4px 23px rgba(0, 0, 0, 0.0685);
+  border-radius: 18px;
+}

@@ -23,7 +23,7 @@ type Props = {
   page?: boolean;
   pageTitle?: string;
   handleSearch?: () => void;
-  searchFilters?: string;
+  searchFilters?: string | undefined;
   handleSearchChange?: React.ChangeEventHandler<HTMLInputElement>;
 };
 

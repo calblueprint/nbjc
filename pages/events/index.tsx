@@ -1,3 +1,12 @@
+import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import prisma from 'utils/prisma';
+import {
+  LgbtqDemographic,
+  RaceDemographic,
+  AgeDemographic,
+  OrganizationEvent,
+} from '@prisma/client';
 import {
   TextField,
   InputAdornment,
@@ -7,10 +16,9 @@ import {
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { useFormik, FormikHandlers } from 'formik';
+import { useFormik } from 'formik';
 import Layout from 'components/Layout';
-import { homepageFields } from 'interfaces';
-import Router from 'next/router';
+import { EventPageFields } from 'interfaces';
 import {
   AgeDemographicLabels,
   RaceDemographicLabels,
@@ -21,55 +29,47 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-import {
-  LgbtqDemographic,
-  RaceDemographic,
-  AgeDemographic,
-} from '@prisma/client';
 import HorizEventCard from 'components/event/EventCard/horizEventCard';
-import { func } from 'joi';
-import { useState } from 'react';
+import { SLOGAN } from 'utils/typography';
 import styles from 'styles/Events.module.css';
 
-type TabProps = {
-  handleBlur: FormikHandlers['handleBlur'];
+type Props = {
+  events?: OrganizationEvent[];
 };
 
-const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
+const EventsHome: React.FC<Props> = ({ events }) => {
+  const router = useRouter();
 
-const initialValues: homepageFields = {
-  ages: [],
-  orientation: [],
-  ethnicity: [],
-  orgName: '',
-};
-
-/* TODO: add onClick={goToMap} to submit button */
-
-const Home: React.FC = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-  const handleDateChange = (date: Date | null): void => {
-    setSelectedDate(date);
+  const initialValues: EventPageFields = {
+    ages: [],
+    orientation: [],
+    ethnicity: [],
+    eventName: '',
+    date: '',
   };
+
   const formik = useFormik({
     initialValues,
     onSubmit: async (values): Promise<void> => {
-      Router.push({
+      console.log(values);
+      router.push({
         pathname: '/events/results',
         query: {
-          orgName: values.orgName,
+          eventName: values.eventName,
           ages: values.ages,
           ethnicity: values.ethnicity,
           orientation: values.orientation,
+          date: values.date,
         },
       });
     },
   });
+
   return (
-    <Layout title="Home">
+    <Layout title="Events Home">
       <form onSubmit={formik.handleSubmit}>
         <div className={styles.root}>
-          <div className={styles.topCol}>{slogan}</div>
+          <div className={styles.topCol}>{SLOGAN}</div>
           <div className={styles.bottomCol}>
             <Card className={styles.searchCard}>
               <div className={styles.big}>Explore Events</div>
@@ -78,16 +78,16 @@ const Home: React.FC = () => {
                   <KeyboardDatePicker
                     className={styles.autoField}
                     size="small"
-                    // onBlur={handleBlur}
-                    // value={
-                    //   selectedDate === new Date() ? values.foundingDate : selectedDate
-                    // }
-                    value={new Date()}
+                    value={
+                      formik.values.date ? new Date(formik.values.date) : null
+                    }
                     name="foundingDate"
                     format="MM/dd/yyyy"
                     margin="normal"
                     id="date-picker-inline"
-                    onChange={handleDateChange}
+                    onChange={(event, newValue) => {
+                      formik.setFieldValue('date', newValue);
+                    }}
                     inputVariant="outlined"
                     KeyboardButtonProps={{
                       'aria-label': 'change date',
@@ -171,7 +171,7 @@ const Home: React.FC = () => {
                   fullWidth
                   className={styles.textField}
                   onChange={formik.handleChange}
-                  name="orgName"
+                  name="eventName"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -200,11 +200,10 @@ const Home: React.FC = () => {
           </Button>
         </div>
         <div className={styles.trendingEvents}>
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
+          {events &&
+            events.map((event) => (
+              <HorizEventCard key={event.id} event={event} />
+            ))}
         </div>
         <div className={styles.explore}>
           <Typography className={styles.trending}>Popular Near You</Typography>
@@ -213,15 +212,31 @@ const Home: React.FC = () => {
           </Button>
         </div>
         <div className={styles.trendingEvents}>
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
-          <HorizEventCard event={1} />
+          {events &&
+            events.map((event) => (
+              <HorizEventCard key={event.id} event={event} />
+            ))}
         </div>
       </form>
     </Layout>
   );
 };
 
-export default Home;
+export default EventsHome;
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  try {
+    const events = await prisma.organizationEvent.findMany();
+    return {
+      props: { events },
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+    };
+  }
+};
