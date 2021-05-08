@@ -13,6 +13,7 @@ import { signinSchema } from 'interfaces/auth';
 import Layout from 'components/Layout';
 import { useRouter } from 'next/router';
 import signInRedirect from 'utils/signInRedirect';
+import { useSnackbar } from 'notistack';
 import styles from '../styles/Auth.module.css';
 import { useEffect, useState } from 'react';
 import Toast from 'components/Toast';
@@ -27,6 +28,7 @@ type FormValues = {
 const UserSignIn: React.FC = () => {
   // Get URL params for error callbacks.
   const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
   const [session, sessionLoading] = useSession();
   const [toastMessage, setToast] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
@@ -62,13 +64,16 @@ const UserSignIn: React.FC = () => {
   ): Promise<void> => {
     try {
       // Sign in with credentials
-      await signIn('credentials', {
+      const res = await signIn('credentials', {
         email: values.email,
         password: values.password,
         redirect: false,
       });
+      if (res.error) {
+        throw new Error(res.error);
+      }
     } catch (err) {
-      console.log(err);
+      enqueueSnackbar(err.message, { variant: 'error' });
     } finally {
       actions.setSubmitting(false);
     }
@@ -159,9 +164,6 @@ const UserSignIn: React.FC = () => {
               <Typography variant="h5">Sign In</Typography>
             </div>
             <form onSubmit={formik.handleSubmit}>
-              {errorBanner ? (
-                <div className={styles.errorBanner}>{errorBanner}</div>
-              ) : null}
               <div className={styles.fields}>
                 {constructRow(
                   'email',

@@ -1,0 +1,53 @@
+.sideTab {
+  width: 100%;
+  height: 100px;
+  background-color: #eceaee;
+  border-radius: 18px;
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.tabs {
+  width: 18%;
+  display: flex;
+  margin: 0;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  /* overflow-y: scroll; */
+}
+
+.tabPanel {
+  display: flex;
+  width: 80%;
+  height: 100%;
+  margin-top: -47px;
+  margin-left: auto;
+  margin-right: auto;
+  object-fit: cover;
+  border-radius: 18px;
+}
+
+.tabImg {
+  display: flex;
+  width: 100%;
+  height: 330px;
+  border-radius: 18px;
+  margin-left: auto;
+  margin-right: auto;
+  object-fit: cover;
+}
+
+.img {
+  object-fit: cover;
+}
+
+.root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 75%;
+  height: 330px;
+  margin-bottom: 50px;
+}

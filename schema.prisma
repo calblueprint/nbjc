@@ -56,7 +56,7 @@ model Organization {
   applicationNote                ApplicationNote?                @relation("ApplicationNotesToOrganizations")
   applicationResponses           ApplicationResponse[]           @relation("ApplicationResponsesToOrganizations")
   organizationApplicationReviews OrganizationApplicationReview[] @relation("OrganizationApplicationReviewsToOrganizations")
-  OrganizationEvents             OrganizationEvent[]             @relation("OrganizationEventsToOrganizations")
+  organizationEvents             OrganizationEvent[]             @relation("OrganizationEventsToOrganizations")
   organizationProjects           OrganizationProject[]           @relation("OrganizationProjectsToOrganizations")
 
   @@map("organizations")
@@ -83,7 +83,7 @@ model User {
   hashedPassword      String              @map("hashed_password") @db.VarChar(255)
   createdAt           DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt           DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  email_verifications EmailVerification[]
+  email_verifications EmailVerification[] @relation("VerificationToUser")
   organization        Organization?       @relation("OrganizationsToUsers")
   passwordResets      PasswordResets[]    @relation("PasswordResetsToUsers")
 
@@ -170,9 +170,18 @@ model EmailVerification {
   userId    Int      @map("user_id")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   valid     Boolean  @default(true)
-  users     User     @relation(fields: [userId], references: [id])
+  users     User     @relation("VerificationToUser", fields: [userId], references: [id])
 
   @@map("email_verifications")
+}
+
+model ModeratorInvite {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  email     String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  valid     Boolean  @default(true)
+
+  @@map("moderator_invites")
 }
 
 model OrganizationApplicationReview {
@@ -190,6 +199,8 @@ model OrganizationEvent {
   title            String
   description      String
   address          String?            @db.VarChar(255)
+  long             Float?
+  lat              Float?
   link             String?            @db.VarChar(255)
   lgbtqDemographic LgbtqDemographic[] @map("lgbtq_demographic")
   raceDemographic  RaceDemographic[]  @map("race_demographic")

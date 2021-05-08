@@ -10,18 +10,17 @@ import {
   User,
   UserRole,
   WorkType,
-  // OrganizationApplicationReviews,
 } from '@prisma/client';
 import Faker from 'faker';
 import Ora from 'ora';
 import hashPassword from '../utils/hashPassword';
 
-const NUMBER_USERS = 10;
+const NUMBER_USERS = 20;
 const NUMBER_ORGS = {
-  rejected: 1,
-  approved: 2,
-  submitted: 3,
-  draft: 2,
+  rejected: 3,
+  approved: 3,
+  submitted: 5,
+  draft: 5,
 };
 const SAMPLE_QUESTIONS = [
   {
@@ -70,9 +69,9 @@ export default async function seedDatabase(): Promise<void> {
 
     await prisma.applicationResponse.deleteMany({
       where: {
-        organization: {
-          userId: {
-            in: users.map((user: User) => user.id),
+        applicationQuestion: {
+          question: {
+            in: SAMPLE_QUESTIONS.map((q) => q.question),
           },
         },
       },
@@ -88,7 +87,45 @@ export default async function seedDatabase(): Promise<void> {
       },
     });
 
+    await prisma.organizationApplicationReview.deleteMany({
+      where: {
+        organization: {
+          userId: {
+            in: users.map((user: User) => user.id),
+          },
+        },
+      },
+    });
+
+    await prisma.organizationEvent.deleteMany({
+      where: {
+        organization: {
+          userId: {
+            in: users.map((user: User) => user.id),
+          },
+        },
+      },
+    });
+
+    await prisma.organizationProject.deleteMany({
+      where: {
+        organization: {
+          userId: {
+            in: users.map((user: User) => user.id),
+          },
+        },
+      },
+    });
+
     await prisma.organization.deleteMany({
+      where: {
+        userId: {
+          in: users.map((user: User) => user.id),
+        },
+      },
+    });
+
+    await prisma.passwordResets.deleteMany({
       where: {
         userId: {
           in: users.map((user: User) => user.id),
@@ -196,28 +233,149 @@ export default async function seedDatabase(): Promise<void> {
                   ageDemographic: Faker.random.arrayElements<AgeDemographic>(
                     Object.values(AgeDemographic)
                   ),
-                  // organizationApplicationReviews: new Array(
-                  //   Faker.random.number(3)
-                  // )
-                  //   .fill(null)
-                  //   .map((i) => ({
-                  //     reason: Faker.lorem.lines(10),
-                  //   })),
+                  organizationApplicationReviews:
+                    orgStatus[index][0] === 'rejected'
+                      ? {
+                          create: Array(Faker.random.number({ min: 1, max: 3 }))
+                            .fill(null)
+                            .map(() => ({
+                              reason: Faker.lorem.lines(10),
+                            })),
+                        }
+                      : undefined,
                   applicationResponses: {
                     create: appQuestions.map((q) => ({
                       answer: Faker.lorem.lines(10),
                       applicationQuestion: { connect: { id: q.id } },
                     })),
                   },
+                  organizationProjects: {
+                    create: Array(Faker.random.number(10))
+                      .fill(null)
+                      .map(() => ({
+                        title: Faker.commerce.productName(),
+                        description: Faker.commerce.productDescription(),
+                      })),
+                  },
+                  organizationEvents: orgStatus[index][1]
+                    ? {
+                        create: Array(Faker.random.number(10))
+                          .fill(null)
+                          .map(() => ({
+                            title: Faker.commerce.productName(),
+                            description: Faker.lorem.lines(10),
+                            address: Faker.address.streetAddress(true),
+                            lat: parseFloat(Faker.address.latitude()),
+                            long: parseFloat(Faker.address.longitude()),
+                            link: Faker.internet.url(),
+                            lgbtqDemographic: Faker.random.arrayElements<
+                              LgbtqDemographic
+                            >(Object.values(LgbtqDemographic)),
+                            raceDemographic: Faker.random.arrayElements<
+                              RaceDemographic
+                            >(Object.values(RaceDemographic)),
+                            ageDemographic: Faker.random.arrayElements<
+                              AgeDemographic
+                            >(Object.values(AgeDemographic)),
+                            startDatetime: Faker.date.soon(),
+                          })),
+                      }
+                    : undefined,
                 },
               }
             : undefined,
         },
       };
     });
+
+  // Creating seeding data for demos
+  const demoOrg: Prisma.UserCreateArgs = {
+    data: {
+      email: `demo@nbjc.dev`,
+      hashedPassword: hashPassword('password'),
+      role: UserRole.organization,
+      organization: {
+        create: {
+          applicationStatus: 'approved',
+          active: true,
+          name: 'Redprint',
+          lat: 40,
+          long: 40,
+          address: '1234 Fake Street, Berkeley CA, 94709',
+          contactName: 'Frederick Chen',
+          contactPhone: '(123) 456-7890',
+          contactEmail: 'blue@print.com',
+          missionStatement: Faker.lorem.lines(10),
+          shortHistory: Faker.lorem.lines(10),
+          is501c3: true,
+          website: 'https://www.nbjc.org',
+          organizationType: 'national',
+          workType: 'advocacy',
+          lgbtqDemographic: [
+            'asexualAromantic',
+            'lesbianSgl',
+            'straightHeterosexual',
+          ],
+          raceDemographic: ['arab', 'black', 'native'],
+          ageDemographic: ['adult', 'child'],
+          organizationProjects: {
+            create: [
+              {
+                title: 'Our First Project!',
+                description:
+                  'This is a description of what our first project is.',
+              },
+              {
+                title: 'Our First Resource!',
+                description:
+                  'This is a description of what our first resource is. This is different.',
+              },
+            ],
+          },
+          organizationEvents: {
+            create: [
+              {
+                title: 'Annual anti-bug bug bash!',
+                description: Faker.lorem.lines(10),
+                address: '1234 Fake Street, Berkeley CA, 94709',
+                lat: 40,
+                long: 40,
+                link: 'https://www.nbjc.org',
+                lgbtqDemographic: [
+                  'asexualAromantic',
+                  'lesbianSgl',
+                  'straightHeterosexual',
+                ],
+                startDatetime: new Date('4/20/21 2:40'),
+                raceDemographic: ['arab', 'black', 'native'],
+                ageDemographic: ['adult', 'child'],
+              },
+            ],
+          },
+          applicationResponses: {
+            create: [
+              {
+                answer: 'Response 1',
+                applicationQuestion: { connect: { id: appQuestions[0].id } },
+              },
+              {
+                answer: 'Response 2',
+                applicationQuestion: { connect: { id: appQuestions[1].id } },
+              },
+              {
+                answer: 'Response 3',
+                applicationQuestion: { connect: { id: appQuestions[2].id } },
+              },
+            ],
+          },
+        },
+      },
+    },
+  };
+
   try {
-    await Promise.all(mockOrgUsers.map(prisma.user.create));
-    orgUsersCreateMessage.text = `Created ${NUMBER_USERS} org users.`;
+    await Promise.all([...mockOrgUsers, demoOrg].map(prisma.user.create));
+    orgUsersCreateMessage.text = `Created ${NUMBER_USERS} org users and created demo org.`;
     orgUsersCreateMessage.succeed();
   } catch (err) {
     orgUsersCreateMessage.fail(`Creating org users failed\n\n${err.message}`);

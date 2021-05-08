@@ -3,33 +3,30 @@ import SearchIcon from '@material-ui/icons/Search';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useFormik } from 'formik';
 import Layout from 'components/Layout';
-import { homepageFields } from 'interfaces';
+import { OrgPageFields } from 'interfaces';
 import Router, { useRouter } from 'next/router';
 import {
   AgeDemographicLabels,
   RaceDemographicLabels,
   LgbtqDemographicLabels,
 } from 'utils/typesLinker';
-import styles from 'styles/Home.module.css';
 import {
   LgbtqDemographic,
   RaceDemographic,
   AgeDemographic,
 } from '@prisma/client';
+import { SLOGAN } from 'utils/typography';
+import styles from 'styles/Home.module.css';
 import Toast from 'components/Toast';
 
-const slogan = 'Empowering Black, LGBTQ, & SGL people and communities.';
-
-const initialValues: homepageFields = {
-  ages: [],
-  orientation: [],
-  ethnicity: [],
-  orgName: '',
-};
-
-/* TODO: add onClick={goToMap} to submit button */
-
 const Home: React.FC = () => {
+  const initialValues: OrgPageFields = {
+    ages: [],
+    orientation: [],
+    ethnicity: [],
+    orgName: '',
+  };
+
   const formik = useFormik({
     initialValues,
     onSubmit: async (values): Promise<void> => {
@@ -46,34 +43,34 @@ const Home: React.FC = () => {
   });
 
   const renderSuccessToast = () => {
-      return(
+    return (
       <Toast
-          snackbarProps={{
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
-          }}
-          type="success"
-          showDismissButton
-          >
-          <div>
-              Password has been successfully reset!
-          </div>
+        snackbarProps={{
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        }}
+        type="success"
+        showDismissButton
+      >
+        <div>Password has been successfully reset!</div>
       </Toast>
-  )};
+    );
+  };
 
   const router = useRouter();
-  const resetSuccess = router.query.resetSuccess;
+  const { resetSuccess } = router.query;
 
   return (
     <Layout title="Home">
       {resetSuccess ? renderSuccessToast() : null}
       <form onSubmit={formik.handleSubmit}>
         <div className={styles.root}>
-          <div className={styles.leftCol}>{slogan}</div>
-          <div className={styles.rightCol}>
+          <div className={styles.topCol}>{SLOGAN}</div>
+          <div className={styles.bottomCol}>
             <Card className={styles.searchCard}>
               <div className={styles.big}>Explore Organizations</div>
               <div className={styles.auto}>
                 <Autocomplete
+                  classes={{ listbox: styles.popper }}
                   multiple
                   id="tags-outlined"
                   options={
@@ -90,12 +87,15 @@ const Home: React.FC = () => {
                   renderInput={(params) => (
                     <TextField
                       {...params}
+                      // className={styles.testing}
                       variant="outlined"
                       placeholder="By Identities"
+                      size="small"
                     />
                   )}
                 />
                 <Autocomplete
+                  classes={{ listbox: styles.popper }}
                   multiple
                   id="tags-outlined"
                   options={
@@ -114,10 +114,12 @@ const Home: React.FC = () => {
                       {...params}
                       variant="outlined"
                       placeholder="By Background"
+                      size="small"
                     />
                   )}
                 />
                 <Autocomplete
+                  classes={{ listbox: styles.popper }}
                   multiple
                   id="tags-outlined"
                   options={
@@ -136,6 +138,7 @@ const Home: React.FC = () => {
                       {...params}
                       variant="outlined"
                       placeholder="By Audiences"
+                      size="small"
                     />
                   )}
                 />
@@ -156,11 +159,11 @@ const Home: React.FC = () => {
                     ),
                   }}
                   variant="outlined"
+                  size="small"
                 />
                 <Button
                   variant="contained"
                   className={styles.button}
-                  color="primary"
                   type="submit"
                 >
                   Search
@@ -170,6 +173,17 @@ const Home: React.FC = () => {
           </div>
         </div>
       </form>
+      <div className={styles.bottomButtons}>
+        <a href="/about" className={styles.bottomButton}>
+          About Us
+        </a>
+        <a href="/termsOfUse" className={styles.bottomButton}>
+          Terms of Use
+        </a>
+        <a href="/privacyPolicy" className={styles.bottomButton}>
+          Privacy Policy
+        </a>
+      </div>
     </Layout>
   );
 };

@@ -29,6 +29,12 @@
   overflow: auto;
 }
 
+.contentApp {
+  flex: 1;
+  overflow: auto;
+  padding: 20px;
+}
+
 .large {
   font-size: 30px;
   font-weight: bold;
@@ -62,13 +68,18 @@
   width: 350px;
   height: calc(100% - 84px);
   top: 84px;
+  border-color: white;
 }
 
 .drawerPaperRight {
-  width: 350px;
-  height: calc(100% - 22%);
-  top: 110px;
-  background-color: lightgray;
+  width: 400px;
+  height: calc(100% - 16%);
+  top: 80px;
+  background-color: white;
+  border-color: white;
+  box-shadow: 0px 0px 20px 5px #88888834;
+  border: 20px solid white;
+  border-radius: 15px;
 }
 
 .main {
@@ -102,64 +113,10 @@
   margin-left: 10px;
 }
 
-.modContent {
-  display: flex;
-  justify-content: space-evenly;
-  flex-direction: row;
-}
-
-.modTab {
-  width: 100%;
-}
-
-.declineReason {
-  display: flex;
-}
-
-.declineBox {
-  width: 100%;
-}
-
 .declineButtons {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-}
-
-.dialogTitle {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  font-size: x-large;
-  font-weight: 700;
-}
-
-.send {
-  margin: 20px;
-  margin-right: 0px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.declineNotes {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  font-size: large;
-  font-weight: 600;
-  margin-bottom: 7px;
-}
-
-.declineNotesContent {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-left: 15px;
-  margin-right: 15px;
-  color: gray;
 }
 
 .customButton {
@@ -173,4 +130,90 @@
   /* Change the below two with better styling in the future */
   font-weight: bold;
   font-size: x-large;
+}
+
+.textField {
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 21.18px;
+  line-height: 125%;
+  margin-bottom: 40px;
+}
+
+.textFieldNotes {
+  width: 100%;
+}
+
+.rightCont {
+  padding: 20px;
+}
+
+.drawerRoot {
+  border-style: none;
+  border-right-style: solid;
+  border-color: white;
+}
+
+.descriptor {
+  width: 350px;
+  height: 219.88px;
+  left: 1030px;
+  top: 274px;
+}
+
+.row {
+  margin-top: 20px;
+}
+
+.rightIcon {
+  color: #bbb9bd;
+  margin-bottom: 5px;
+}
+
+.selectApp {
+  display: flex;
+  height: 95%;
+  width: calc(100%-40px);
+  margin-left: 50px;
+  margin-right: 50px;
+  border: 1px solid #908d93;
+  border-radius: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+.selectAppText {
+  color: #908d93;
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 26.05px;
+  line-height: 125%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.reviewDate {
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 17.22px;
+  line-height: 125%;
+  margin-bottom: -5px;
+}
+
+.reviewReason {
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 125%;
+  margin-bottom: 60px;
+}
+
+.noOrgs {
+  margin: 70px;
+  margin-top: -20px;
 }

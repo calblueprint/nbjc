@@ -12,24 +12,32 @@
 }
 
 .leftMedia {
-  width: 50%;
-  height: 200px;
+  width: 80%;
+  height: 300px;
   margin: 8px;
+  margin-left: 0px;
+  border-radius: 18px;
 }
 
 .colMedia {
-  width: 50%;
+  width: 20%;
   margin: 8px;
+  height: 300px;
+  flex-direction: column;
+  justify-content: space-between;
+  display: flex;
 }
 
 .rightMedia {
-  height: 100px;
-  margin-bottom: 2px;
+  display: flex;
+  height: 95px;
+  border-radius: 18px;
 }
 
 .section {
   display: flex;
   flex-direction: column;
+  width: 33%;
 }
 
 .full {
@@ -37,8 +45,60 @@
 }
 
 .big {
-  font-size: 20px;
+  font-family: Epilogue;
+  font-style: normal;
   font-weight: bold;
+  font-size: 21.18px;
+  line-height: 125%;
+  margin-bottom: -10px;
+}
+
+.big2 {
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 21.18px;
+  line-height: 125%;
+  margin-bottom: 4px;
+  margin-top: 60px;
+}
+
+.line {
+  display: flex;
+  flex-direction: row;
+  height: 40px;
+}
+
+.title {
+  display: flex;
+  margin-right: 10px;
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 17.22px;
+  line-height: 125%;
+  height: 0px;
+}
+
+.title2 {
+  display: flex;
+  margin-right: 10px;
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 17.22px;
+  line-height: 125%;
+  margin-bottom: 16px;
+}
+
+.cont {
+  display: flex;
+  font-family: Epilogue;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 125%;
+  padding-top: 6px;
 }
 
 .small {
@@ -50,4 +110,14 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+}
+
+.space {
+  height: 30px;
+}
+
+.chip {
+  background-color: #f8f4ff;
+  margin-right: 14px;
+  margin-bottom: 14px;
 }

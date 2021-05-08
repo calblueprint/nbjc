@@ -109,7 +109,7 @@ const ResetPasswordPage : React.FC = () => {
         </div>
       </div>
     </Layout>
-    )
-}
+  );
+};
 
 export default ResetPasswordPage;
