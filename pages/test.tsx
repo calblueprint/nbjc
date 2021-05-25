@@ -20,7 +20,7 @@ const Test: React.FunctionComponent = () => {
         type="button"
         onClick={() =>
           enqueueSnackbar(
-            'helloasdf askdjfka sjdfklajs dklfj asdkjfkjla sdlkfj asasdfsad f asdf sd f asasdfsadasasdfsadasasdfsad asasdfsad v asasdfsad'
+      'Testing snack bar'
           )
         }
       >
