@@ -1,73 +1,74 @@
 import { Button, TextField } from '@material-ui/core';
 import Layout from 'components/Layout';
 import { useState } from 'react';
+import styles from '../../../styles/users/PasswordChange.module.css';
 import { NewPasswordDTO } from 'pages/api/auth/reset-password';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/client';
 import Toast from 'components/Toast';
-import styles from '../../../styles/users/PasswordChange.module.css';
 
-const ResetPasswordPage: React.FC = () => {
-  const router = useRouter();
+const ResetPasswordPage : React.FC = () => {
+    const router = useRouter();
 
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [submissionError, setSubmissionError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [submissionError, setSubmissionError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
-  async function onClick(): Promise<void> {
-    try {
-      setSubmissionError(false);
-      if (password !== confirmPassword) {
-        throw new Error('Passwords do not match!');
-      }
+    async function onClick(): Promise<void> {
+      try {
+        setSubmissionError(false);
+        if (password !== confirmPassword) {
+          throw new Error("Passwords do not match!");
+        }
 
-      const response = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          resetCode: router.query.resetCode,
-          newPassword: password,
-        } as NewPasswordDTO),
-      });
+        const response = await fetch('/api/auth/reset-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json'},
+          credentials: 'include',
+          body: JSON.stringify({
+            resetCode:   router.query['resetCode'],
+            newPassword: password,
+          } as NewPasswordDTO),
+        });
 
-      if (!response.ok) {
+        if (!response.ok) {
+          setSubmissionError(true);
+          const respJson = await response.json();
+          setErrorMessage(String(respJson.error.message));
+          return;
+        } else {
+          const userInfo = await response.json();
+          signIn('credentials', {
+            email: userInfo.email,
+            password: password,
+            callbackUrl: 'http://localhost:3000/?resetSuccess=true',
+          });
+        }
+      } catch (err) {
         setSubmissionError(true);
-        const respJson = await response.json();
-        setErrorMessage(String(respJson.error.message));
-        return;
+        setErrorMessage(err.error.message);
       }
-      const userInfo = await response.json();
-      signIn('credentials', {
-        email: userInfo.email,
-        password,
-        callbackUrl: 'http://localhost:3000/?resetSuccess=true',
-      });
-    } catch (err) {
-      setSubmissionError(true);
-      setErrorMessage(err.error.message);
+    };
+
+    const renderErrorToast = () => {
+      return(
+          <Toast
+          snackbarProps={{
+              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          }}
+          type="error"
+          showDismissButton
+          disableClickaway
+          > 
+          {errorMessage}
+          </Toast>
+      );
     }
-  }
 
-  const renderErrorToast = () => {
-    return (
-      <Toast
-        snackbarProps={{
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
-        }}
-        type="error"
-        showDismissButton
-        disableClickaway
-      >
-        {errorMessage}
-      </Toast>
-    );
-  };
-
-  return (
+    return(
     <Layout>
-      {submissionError ? renderErrorToast() : null}
+      { submissionError ? renderErrorToast() : null}
       <div className={styles.page}>
         <div className={styles.content}>
           <div className={styles.title}>Reset Password</div>

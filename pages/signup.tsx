@@ -52,6 +52,22 @@ const UserSignUp: React.FC = () => {
         throw error;
       }
 
+      // Send a verification email
+      const verificationRes = await fetch('/api/emailVerification', {
+        method: 'POST',
+        headers: {
+          'Content-Type' : 'application/json',
+        },
+        body: JSON.stringify({
+          email: values.email
+        })
+      });
+
+      if (!verificationRes.ok) {
+        const { error } = await verificationRes.json();
+        throw error;
+      }
+
       // Sign in user
       await signIn('credentials', {
         email: values.email,
