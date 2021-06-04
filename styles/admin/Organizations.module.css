@@ -1,0 +1,12 @@
+.dialogTitle {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-size: x-large;
+  font-weight: 700;
+}
+
+.dialogActions {
+  padding: 8px 24px;
+}
