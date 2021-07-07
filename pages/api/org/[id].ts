@@ -1,13 +1,13 @@
 import prisma from 'utils/prisma';
 import { Organization, OrganizationProject } from '@prisma/client';
 import Joi, { ValidationError, x } from 'joi';
-
 import { NextApiRequest, NextApiResponse } from 'next';
 import OrganizationSchema, {
   Project,
   ExistingProject,
 } from 'interfaces/organization';
 import CreateError, { MethodNotAllowed } from 'utils/error';
+import SplitObjs from 'utils/splitObjs';
 
 /**
  * Retrieve an Organization by its ID
@@ -33,7 +33,7 @@ export const updateOrganization = async (
 ): Promise<Organization | null> => {
   const { error, value } = OrganizationSchema.validate(body);
   if (error) {
-    console.log('errr', error);
+    console.log('error', error);
     throw error;
   }
 
@@ -41,37 +41,16 @@ export const updateOrganization = async (
   const dataTyped = data as Organization;
   const orgProjects = organizationProjects as Project[];
 
-  // same logic as registration, generalize logic later.
-  //* ** Splitting appProjs into create, update, and delete ***//
-
-  // New projects are the ones without IDs yet.
-  const toCreate = orgProjects.filter((i) => !i.id);
-
-  // Deleted projects are the projects in the DB that aren't passed into the API req.
   const currOrg = await prisma.organization.findUnique({
     where: { id: Number(id) },
     include: { organizationProjects: true },
   });
-  let toDelete: number[] = [];
-  if (currOrg) {
-    const currProjIds = new Set(
-      orgProjects.filter(({ id }) => !!id).map((p) => p.id)
-    );
-    const DBProjs = currOrg.organizationProjects;
-    // By filtering the DB projects for projects that aren't in the current projects ids passed into the API,
-    // we know that it was deleted in the registration form.
-    toDelete = DBProjs.filter((p) => !currProjIds.has(p.id)).map((p) => p.id);
-  }
 
-  // Updated projects are the remaining projects. There aren't necessarily changed,
-  // but making the PATCH request for projects that aren't modified won't change anything.
-  const currProjs = orgProjects.filter(({ id }) => !!id) as ExistingProject[];
-  let toUpdate;
-  if (currOrg) {
-    toUpdate = currProjs.filter((p) => !new Set(toDelete).has(p.id));
-  }
+  const [toCreate, toUpdate, toDelete] = SplitObjs<
+    Project,
+    OrganizationProject
+  >(orgProjects, currOrg?.organizationProjects);
 
-  console.log(toCreate);
   let newChanges;
   try {
     newChanges = await prisma.organization.upsert({
@@ -119,7 +98,7 @@ export const updateOrganization = async (
         });
       }
     } catch (err) {
-      console.log('hi');
+      console.log('error', err);
       // return CreateError(500, 'Failed to create project', res);
     }
   }
